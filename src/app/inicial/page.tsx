@@ -7,7 +7,7 @@ export default function Inicial() {
       pagina='inicial'
       breadcrumbs={[{
         label: 'Inicial',
-        href: 'inicial'
+        href: ''
       }]}
     >
     </Content>
