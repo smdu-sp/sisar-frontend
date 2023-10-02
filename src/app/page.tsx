@@ -4,269 +4,83 @@ import Table from '@mui/joy/Table';
 import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 import Content from '@/components/Content';
-import { Box, Chip, ColorPaletteProp, FormControl, FormLabel, Input, Select, IconButton, Option } from '@mui/joy';
+import { Box, Chip, ColorPaletteProp, FormControl, FormLabel, Input, Select, IconButton, Option, Button } from '@mui/joy';
 import { AutorenewRounded, Block, CheckRounded, KeyboardArrowLeft, KeyboardArrowRight, Search } from '@mui/icons-material';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import Pagination from '@mui/material/Pagination';
+import { IInicial, IPaginatedInicial, IniciaisService } from '@/shared/services/inicial';
 
-const rows = [
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-  {
-    id: 'INV-1234',
-    date: 'Feb 3, 2023',
-    status: 'Refunded',
-    customer: {
-      initial: 'O',
-      name: 'Olivia Ryhe',
-      email: 'olivia@email.com',
-    },
-  },
-];
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const rootUrl = '/iniciais';
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [rows, setRows] = useState<IInicial[]>();
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const page = useMemo(() => {
+    return Number(searchParams.get('page')) || 1;
+  }, [searchParams])
+
+  const limit = useMemo(() => {
+    return Number(searchParams.get('limit')) || 10;
+  }, [searchParams])
+
+  const clearAllParams = () => {
+    var params = new URLSearchParams(searchParams);
+    router.push(pathname);
+  }
+
+  const handleChangePage = (event: unknown, newPage: number | null) => {
+    var params = new URLSearchParams(searchParams);
+    params.set('page', String(newPage));
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const handleLimitChange = (event: unknown, newLimit: number | null) => {
+    var params = new URLSearchParams(searchParams);
+    params.set('limit', String(newLimit));
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  useEffect(() => {
+    IniciaisService.findAll(page, limit).then((result: IPaginatedInicial | Error) => {
+      setLoading(false);
+      if (result) {
+          if (result instanceof Error){
+            alert(result.message);
+          } else {
+            result = result as IPaginatedInicial;
+            console.log(result);
+            setRows(result.data);
+            setTotalCount(result.totalCount);
+          }
+      }
+    });
+  }, [ searchParams, limit, page ])
+  
   return (
     <Content
       breadcrumbs={[]}
       titulo='Home'
       pagina='/'
     >
+    <a href="/inicial/detalhes">
+      <Button
+        variant="solid"
+        size='lg'
+        sx={{
+          position: 'absolute',
+          bottom: 50,
+          right: 50,
+        }}
+      >
+        Novo
+      </Button>
+    </a>
     <Box
       className="SearchAndFilters-tabletUp"
       sx={{
@@ -335,66 +149,28 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {rows?.map((row: any) => (
               <tr key={row.id}>
                 <td>
                   <Typography level="body-xs">{row.id}</Typography>
                 </td>
                 <td>
-                  <Typography level="body-xs">{row.id}</Typography>
+                  <Typography level="body-xs">{row.num_sql}</Typography>
                 </td>
                 <td>
-                  <Typography level="body-xs">{row.id}</Typography>
+                  <a href={`/inicial/detalhes/${row.id}`}><Typography level="body-xs">{row.sei}</Typography></a>
                 </td>
                 <td>
-                  <Typography level="body-xs">{row.date}</Typography>
+                  <Typography level="body-xs">{row.data_protocolo}</Typography>
                 </td>
                 <td>
-                  <Chip
-                    variant="soft"
-                    size="sm"
-                    startDecorator={
-                      {
-                        Paid: <CheckRounded />,
-                        Refunded: <AutorenewRounded />,
-                        Cancelled: <Block />,
-                      }[row.status]
-                    }
-                    color={
-                      {
-                        Paid: 'success',
-                        Refunded: 'danger',
-                        Cancelled: 'danger',
-                      }[row.status] as ColorPaletteProp
-                    }
-                  >
-                    {row.status}
-                  </Chip>
+                  {row.status}
                 </td>
                 <td>
-                  <Typography level="body-xs">{row.date}</Typography>
+                  <Typography level="body-xs"></Typography>
                 </td>
                 <td>
-                  <Chip
-                    variant="soft"
-                    size="sm"
-                    startDecorator={
-                      {
-                        Paid: <CheckRounded />,
-                        Refunded: <AutorenewRounded />,
-                        Cancelled: <Block />,
-                      }[row.status]
-                    }
-                    color={
-                      {
-                        Paid: 'success',
-                        Refunded: 'danger',
-                        Cancelled: 'danger',
-                      }[row.status] as ColorPaletteProp
-                    }
-                  >
-                    {row.status}
-                  </Chip>
+                  <Typography level="body-xs"></Typography>
                 </td>
               </tr>
             ))}
@@ -412,7 +188,7 @@ export default function Home() {
                   }}
                 >
                   <FormControl orientation="horizontal" size="sm" sx={{ alignItems: 'center', gap: 2, }}>
-                    <Select value={5}>
+                    <Select value={limit} onChange={(event, number) => handleLimitChange(event, number)}>
                       <Option value={5}>5</Option>
                       <Option value={10}>10</Option>
                       <Option value={25}>25</Option>
@@ -421,27 +197,39 @@ export default function Home() {
                       Linhas por página
                     </Typography>
                   </FormControl>
+                  {/* <Pagination
+                    count={Math.ceil(totalCount/limit)}
+                    page={page}
+                    onChange={handleChangePage}
+                    size="small"
+                    shape="rounded"
+                    siblingCount={1}
+                    boundaryCount={1}
+                  /> */}
+                  {totalCount > 0 ?
                   <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    {page > 1 && 
                     <IconButton
                       size="sm"
                       color="neutral"
                       variant="outlined"
-                      sx={{ bgcolor: 'background.surface' }}
+                      onClick={(event) => handleChangePage(event, page-1)}
                     >
                       <KeyboardArrowLeft />
-                    </IconButton>
+                    </IconButton>}
                     <FormLabel>
-                      1 - 10 de 100
+                      {limit*(page-1)+1} - {(limit*page) <= totalCount ? limit*page : totalCount} de {totalCount} registro{totalCount > 1 && 's'}
                     </FormLabel>
+                    {page < Math.ceil(totalCount/limit) &&
                     <IconButton
                       size="sm"
                       color="neutral"
                       variant="outlined"
-                      sx={{ bgcolor: 'background.surface' }}
+                      onClick={(event) => handleChangePage(event, page+1)}
                     >
                       <KeyboardArrowRight />
-                    </IconButton>
-                  </Box>
+                    </IconButton>}
+                  </Box> : <Typography>Nenhum registro encontrado</Typography>}
                 </Box>
               </td>
             </tr>

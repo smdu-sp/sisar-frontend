@@ -17,7 +17,7 @@ export default function SecondSidebar({
         className="SecondSidebar-overlay"
         sx={{
           position: 'fixed',
-          // zIndex: 9998,
+          zIndex: 99,
           top: 0,
           left: 0,
           width: '100vw',
@@ -65,13 +65,15 @@ export default function SecondSidebar({
           }}
         >
           <ListItem>
-            <ListItemButton selected={pagina==='/'} onClick={() => {}}>
-              <Image
-                src={logo}
-                alt="SISAR"
-                width={160}
-              />
-            </ListItemButton>
+            <a href="/">
+              <ListItemButton selected={pagina==='/'} onClick={() => {}}>
+                <Image
+                  src={logo}
+                  alt="SISAR"
+                  width={160}
+                />
+              </ListItemButton>
+            </a>
           </ListItem>
           <ListSubheader role="presentation" sx={{ fontWeight: 'lg' }}>
             Registros
