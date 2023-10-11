@@ -50,9 +50,9 @@ const findAll = async (
     try {
         const relative = `${entityUrl}?page=${page}&limit=${limit}`
         const { data } = await Api.get(relative);
-        return data ? data : new Error('Erro ao buscar categorias.');
+        return data ? data : new Error('Erro ao buscar registros.');
     } catch (error: any) {
-        return new Error(error.response ? error.response.data.message : error.request ? error.request : error.message || 'Erro ao buscar iniciais.');
+        return new Error(error.response ? error.response.data.message : error.request ? error.request : error.message || 'Erro ao buscar registros.');
     }
 }
  

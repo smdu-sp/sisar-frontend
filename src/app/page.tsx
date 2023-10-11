@@ -187,8 +187,10 @@ export default function Home() {
                     p: 1,
                   }}
                 >
+                  {totalCount > 0 ? <>
                   <FormControl orientation="horizontal" size="sm" sx={{ alignItems: 'center', gap: 2, }}>
                     <Select value={limit} onChange={(event, number) => handleLimitChange(event, number)}>
+                      <Option value={2}>2</Option>
                       <Option value={5}>5</Option>
                       <Option value={10}>10</Option>
                       <Option value={25}>25</Option>
@@ -197,16 +199,6 @@ export default function Home() {
                       Linhas por página
                     </Typography>
                   </FormControl>
-                  {/* <Pagination
-                    count={Math.ceil(totalCount/limit)}
-                    page={page}
-                    onChange={handleChangePage}
-                    size="small"
-                    shape="rounded"
-                    siblingCount={1}
-                    boundaryCount={1}
-                  /> */}
-                  {totalCount > 0 ?
                   <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                     {page > 1 && 
                     <IconButton
@@ -229,32 +221,13 @@ export default function Home() {
                     >
                       <KeyboardArrowRight />
                     </IconButton>}
-                  </Box> : <Typography>Nenhum registro encontrado</Typography>}
+                  </Box></> : <Typography>Nenhum registro encontrado</Typography>}
                 </Box>
               </td>
             </tr>
           </tfoot>
         </Table>
       </Sheet>
-      {/* <Box
-        sx={{
-          borderRadius: 'sm',
-          py: 2,
-          display: {
-            xs: 'none',
-            sm: 'flex',
-          },
-          flexWrap: 'wrap',
-          gap: 1.5,
-          '& > *': {
-            minWidth: {
-              xs: '120px',
-              md: '160px',
-            },
-          },
-        }}
-      >
-      </Box> */}
     </Content>
   );
 }
