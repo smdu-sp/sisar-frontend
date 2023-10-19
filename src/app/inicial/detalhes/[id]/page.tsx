@@ -98,7 +98,6 @@ export default function InicialDetalhes(props: any) {
 
     const setFormData = (data: IInicial) => {
         setValue('sei', data.sei);
-        setValue('num_sql', data.num_sql);
         setValue('decreto', data.decreto);
         console.log(data.decreto);
     }
@@ -199,6 +198,7 @@ export default function InicialDetalhes(props: any) {
                             <Tab variant="soft" >
                                 Dados iniciais
                             </Tab>
+                            { id && <>
                             <Tab variant="soft">
                                 Distribuição
                             </Tab>
@@ -213,7 +213,7 @@ export default function InicialDetalhes(props: any) {
                             </Tab>
                             <Tab variant="soft" >
                                 Conclusão
-                            </Tab>
+                            </Tab></>}
                         </TabList>
                         <TabPanel value={0} sx={{ 
                             flexGrow: 1,
@@ -231,87 +231,142 @@ export default function InicialDetalhes(props: any) {
                                     display: 'flex',
                                 }}
                             >
-                                <FormControl>
-                                    <FormLabel>SEI</FormLabel>
-                                    <Input
-                                        {...register("sei", { required: 'Campo SEI é obrigatório.' })}
-                                        id="sei"
-                                        name="sei"
-                                        placeholder="Número de SEI"
-                                        type="text"
-                                        required={id ? false : true}
-                                    />
-                                </FormControl>
-                                <FormControl>
-                                    <FormLabel>Tipo de requerimento</FormLabel>
-                                    <Input
-                                        {...register("tipo_requerimento", { required: 'Tipo Requerimento é obrigatório.' })}
-                                        id="tipo_requerimento"
-                                        name="tipo_requerimento"
-                                        placeholder="Requerimento"
-                                        type="text"
-                                        required={id ? false : true}
-                                    />
-                                </FormControl>
-                                <Card size='lg'>
-                                    <FormControl>
-                                        <FormLabel>Adicionar SQL</FormLabel>
-                                        <Input
-                                            id="nums_sql"
-                                            name="nums_sql"
-                                            placeholder="SQL"
-                                            onChange={(event) => setNum_sql_input(event.target.value)}
-                                            value={num_sql_input}
-                                            type="text"
-                                            endDecorator={
-                                                <IconButton 
-                                                    variant='solid'
-                                                    color='primary'
-                                                    onClick={handleAddSQL}
-                                                >
-                                                    <Add />
-                                                </IconButton>
-                                            }
-                                        />
-                                    </FormControl>
-                                    <Alert
-                                        variant="soft"
-                                        color={alertConfigs[addNumSQLStatus].color}
-                                        sx={{ display: addNumSQLStatusAlert ? 'flex' : 'none' }}
-                                        startDecorator={alertConfigs[addNumSQLStatus].icon}
-                                        endDecorator={
-                                            <Button size="sm" color={alertConfigs[addNumSQLStatus].color} onClick={() => setAddNumSQLStatusAlert(false)}>
-                                                Fechar
-                                            </Button>
-                                        }
-                                    >
-                                        {alertConfigs[addNumSQLStatus].message}
-                                    </Alert>
-                                    {nums_sql.length > 0 &&
-                                    <Table>
-                                        <thead style={{ width: '100%' }}>
-                                            <tr>
-                                                <th>SQL</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody style={{ width: '100%' }}>
-                                            {nums_sql?.map((num_sql, index) => (
-                                                <tr key={index}>
-                                                    <td>{num_sql}</td>
-                                                    <td style={{ textAlign: 'right' }}>
-                                                        <IconButton
-                                                            color='danger'
-                                                            onClick={() => {removeRegister(index)}}
+                                <Grid
+                                    container 
+                                    spacing={2}
+                                    direction='row'
+                                    alignItems='flex-start'
+                                >
+                                    <Grid container xs={12} sm={12} md={12}  lg={8}>
+                                        <Grid xs={12} sm={12} md={6} lg={4}>
+                                            <FormControl>
+                                                <FormLabel>SEI</FormLabel>
+                                                <Input
+                                                    {...register("sei", { required: 'Campo SEI é obrigatório.' })}
+                                                    id="sei"
+                                                    name="sei"
+                                                    placeholder="Número de SEI"
+                                                    type="text"
+                                                    required={id ? false : true}
+                                                />
+                                            </FormControl>
+
+                                        </Grid>
+                                        <Grid xs={12} sm={12} md={6} lg={4}>
+                                            <FormControl>
+                                                <FormLabel>Tipo de requerimento</FormLabel>
+                                                <Input
+                                                    {...register("tipo_requerimento", { required: 'Tipo Requerimento é obrigatório.' })}
+                                                    id="tipo_requerimento"
+                                                    name="tipo_requerimento"
+                                                    placeholder="Tipo Requerimento"
+                                                    type="text"
+                                                    required={id ? false : true}
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid xs={12} sm={12} md={6} lg={4}>
+                                            <FormControl>
+                                                <FormLabel>Requerimento</FormLabel>
+                                                <Input
+                                                    {...register("requerimento", { required: 'Requerimento é obrigatório.' })}
+                                                    id="requerimento"
+                                                    name="requerimento"
+                                                    placeholder="Requerimento"
+                                                    type="text"
+                                                    required={id ? false : true}
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid xs={12} sm={12} md={6} lg={4}>
+                                            <FormControl>
+                                                <FormLabel>Num. Aprova Digital</FormLabel>
+                                                <Input
+                                                    {...register("requerimento", { required: 'Requerimento é obrigatório.' })}
+                                                    id="requerimento"
+                                                    name="requerimento"
+                                                    placeholder="Requerimento"
+                                                    type="text"
+                                                    required={id ? false : true}
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid xs={12} sm={12} md={6} lg={4}>
+                                            <FormControl>
+                                                <FormLabel>Num. Processo Físico</FormLabel>
+                                                <Input
+                                                    {...register("requerimento", { required: 'Requerimento é obrigatório.' })}
+                                                    id="requerimento"
+                                                    name="requerimento"
+                                                    placeholder="Requerimento"
+                                                    type="text"
+                                                    required={id ? false : true}
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid xs={12} sm={12} md={12} lg={4}>
+                                        <Card size='lg'>
+                                            <FormControl>
+                                                <FormLabel>Adicionar SQL</FormLabel>
+                                                <Input
+                                                    id="nums_sql"
+                                                    name="nums_sql"
+                                                    placeholder="SQL"
+                                                    onChange={(event) => setNum_sql_input(event.target.value)}
+                                                    value={num_sql_input}
+                                                    type="text"
+                                                    endDecorator={
+                                                        <IconButton 
+                                                            variant='solid'
+                                                            color='primary'
+                                                            onClick={handleAddSQL}
                                                         >
-                                                            <Cancel />
+                                                            <Add />
                                                         </IconButton>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </Table>}
-                                </Card>
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <Alert
+                                                variant="soft"
+                                                color={alertConfigs[addNumSQLStatus].color}
+                                                sx={{ display: addNumSQLStatusAlert ? 'flex' : 'none' }}
+                                                startDecorator={alertConfigs[addNumSQLStatus].icon}
+                                                endDecorator={
+                                                    <Button size="sm" color={alertConfigs[addNumSQLStatus].color} onClick={() => setAddNumSQLStatusAlert(false)}>
+                                                        Fechar
+                                                    </Button>
+                                                }
+                                            >
+                                                {alertConfigs[addNumSQLStatus].message}
+                                            </Alert>
+                                            {nums_sql.length > 0 &&
+                                            <Table>
+                                                <thead style={{ width: '100%' }}>
+                                                    <tr>
+                                                        <th>SQL</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody style={{ width: '100%' }}>
+                                                    {nums_sql?.map((num_sql, index) => (
+                                                        <tr key={index}>
+                                                            <td>{num_sql}</td>
+                                                            <td style={{ textAlign: 'right' }}>
+                                                                <IconButton
+                                                                    color='danger'
+                                                                    onClick={() => {removeRegister(index)}}
+                                                                >
+                                                                    <Cancel />
+                                                                </IconButton>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </Table>}
+                                        </Card>
+                                    </Grid>
+                                </Grid>
                             </Card>
                             <Card
                                 variant='plain'

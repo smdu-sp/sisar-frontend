@@ -4,7 +4,6 @@ export const inicialSchema = z.object({
     id: z.number().int().optional(),
     decreto: z.boolean().default(false).optional(),
     sei: z.string(),
-    num_sql: z.string(),
     tipo_requerimento: z.string().default('1'),
     requerimento: z.string(),
     aprova_digital: z.string().optional(),

@@ -140,7 +140,6 @@ export default function Home() {
           <thead>
             <tr>
               <th style={{ padding: '8px' }}>Controle Interno</th>
-              <th style={{ padding: '8px' }}>SQL</th>
               <th style={{ padding: '8px' }}>SEI</th>
               <th style={{ padding: '8px' }}>Data Protocolo</th>
               <th style={{ padding: '8px' }}>Etapa</th>
@@ -153,9 +152,6 @@ export default function Home() {
               <tr key={row.id}>
                 <td>
                   <Typography level="body-xs">{row.id}</Typography>
-                </td>
-                <td>
-                  <Typography level="body-xs">{row.num_sql}</Typography>
                 </td>
                 <td>
                   <a href={`/inicial/detalhes/${row.id}`}><Typography level="body-xs">{row.sei}</Typography></a>
@@ -177,7 +173,7 @@ export default function Home() {
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={7}>
+              <td colSpan={6}>
                 <Box
                   sx={{
                     display: 'flex',
@@ -190,7 +186,6 @@ export default function Home() {
                   {totalCount > 0 ? <>
                   <FormControl orientation="horizontal" size="sm" sx={{ alignItems: 'center', gap: 2, }}>
                     <Select value={limit} onChange={(event, number) => handleLimitChange(event, number)}>
-                      <Option value={2}>2</Option>
                       <Option value={5}>5</Option>
                       <Option value={10}>10</Option>
                       <Option value={25}>25</Option>

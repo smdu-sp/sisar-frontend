@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link, ListItemButton, ListItemDecorator, ListItemContent, ListItem, ListSubheader, List, Sheet, Box } from '@mui/joy';
 import Image from 'next/image';
-import { AssignmentTurnedIn, PlayArrow } from '@mui/icons-material';
+import { AssignmentTurnedIn, PlayArrow, UploadFile } from '@mui/icons-material';
 import logo from '@/assets/logo.png';
 
 import { closeSidebar } from '../utils';
@@ -79,7 +79,7 @@ export default function SecondSidebar({
             Registros
           </ListSubheader>
           <Link 
-            href='inicial'
+            href='/inicial'
             underline='none'
           >
             <ListItem sx={{ width: '100%'}}>
@@ -92,7 +92,7 @@ export default function SecondSidebar({
             </ListItem>
           </Link>
           <Link 
-            href='admissibilidade'
+            href='/admissibilidade'
             underline='none'
           >
             <ListItem sx={{ width: '100%'}}>
@@ -101,6 +101,19 @@ export default function SecondSidebar({
                     <AssignmentTurnedIn />
                   </ListItemDecorator>
                   <ListItemContent>Admissibilidade</ListItemContent>
+                </ListItemButton>
+            </ListItem>
+          </Link>
+          <Link 
+            href='/importar'
+            underline='none'
+          >
+            <ListItem sx={{ width: '100%'}}>
+                <ListItemButton selected={pagina==='importar'}>
+                  <ListItemDecorator>
+                    <UploadFile />
+                  </ListItemDecorator>
+                  <ListItemContent>Importar</ListItemContent>
                 </ListItemButton>
             </ListItem>
           </Link>
