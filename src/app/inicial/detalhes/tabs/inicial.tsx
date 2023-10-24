@@ -6,12 +6,14 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form"
 import { inicialSchema } from "../[id]/schema";
 import InputMask from "react-input-mask";
+import { AlvaraTipoService, IAlvaraTipo } from "@/shared/services/alvara-tipo";
 
 export default function DadosIniciaisTab (props: {
     id: string;
 }) {
     const { id } = props;
     const [registerData, setRegisterData] = useState<IInicial>();
+    const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
     const [nums_sql, setNums_sql] = useState<string[]>([]);
     const [num_sql_input, setNum_sql_input] = useState<string>('');
     const [addNumSQLStatus, setAddNumSQLStatus] = useState<number>(0);
@@ -86,6 +88,16 @@ export default function DadosIniciaisTab (props: {
                 } else {
                     setRegisterData(result);
                     setFormData(result);
+                }
+            }
+        });
+
+        AlvaraTipoService.findAll().then((result: IAlvaraTipo[] | Error) => {
+            if (result) {
+                if (result instanceof Error){
+                    alert(result.message);
+                } else {
+                    setAlvaraTipos(result);
                 }
             }
         });
@@ -180,6 +192,23 @@ export default function DadosIniciaisTab (props: {
                                         <Select>
                                             <Option value={0}>Próprio de SMUL</Option>
                                             <Option value={1}>Múltiplas interfaces</Option>
+                                        </Select>
+                                    )}
+                                >
+                                </Controller>
+                            </FormControl>
+                        </Grid>
+                        <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
+                            <FormControl>
+                                <FormLabel>Tipo de alvará</FormLabel>
+                                <Controller
+                                    name='alvara_tipo_id'
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select>
+                                            {alvaraTipos.map((alvaraTipo) => (
+                                                <Option value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
+                                            ))}
                                         </Select>
                                     )}
                                 >
