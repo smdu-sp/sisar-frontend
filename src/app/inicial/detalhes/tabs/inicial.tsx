@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form"
 import { inicialSchema } from "../[id]/schema";
 import InputMask from "react-input-mask";
 import { AlvaraTipoService, IAlvaraTipo } from "@/shared/services/alvara-tipo";
+import InputSEI from "@/components/InputSEI";
 
 export default function DadosIniciaisTab (props: {
     id: string;
@@ -134,8 +135,9 @@ export default function DadosIniciaisTab (props: {
                         <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
                             <FormControl>
                                 <FormLabel>SEI</FormLabel>
-                                <Input
+                                <InputSEI
                                     {...register("sei", { required: 'Campo SEI é obrigatório.' })}
+                                    mask="0000.0000/0000000-0"
                                     id="sei"
                                     name="sei"
                                     placeholder="Número de SEI"
