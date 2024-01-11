@@ -6,6 +6,27 @@ import logo from '@/assets/logo.png';
 
 import { closeSidebar } from '../utils';
 
+const pages = [
+  {
+    title: 'Inicial',
+    href: '/inicial',
+    name: 'inicial',
+    icon: <PlayArrow />,
+  },
+  {
+    title: 'Admissibilidade',
+    href: '/admissibilidade',
+    name: 'admissibilidade',
+    icon: <AssignmentTurnedIn />,
+  },
+  {
+    title: 'Importar',
+    href: '/importar',
+    name: 'importar',
+    icon: <UploadFile />,
+  }
+];
+
 export default function SecondSidebar({
   pagina
 } : {
@@ -64,59 +85,21 @@ export default function SecondSidebar({
             '--List-gap': '6px',
           }}
         >
-          <ListItem>
-            <a href="/">
-              <ListItemButton selected={pagina==='/'} onClick={() => {}}>
-                <Image
-                  src={logo}
-                  alt="SISAR"
-                  width={160}
-                />
-              </ListItemButton>
-            </a>
-          </ListItem>
-          <ListSubheader role="presentation" sx={{ fontWeight: 'lg' }}>
-            Registros
-          </ListSubheader>
-          <Link 
-            href='/inicial'
-            underline='none'
-          >
-            <ListItem sx={{ width: '100%'}}>
-                <ListItemButton selected={pagina==='inicial'}>
-                  <ListItemDecorator>
-                    <PlayArrow />
-                  </ListItemDecorator>
-                  <ListItemContent>Inicial</ListItemContent>
-                </ListItemButton>
-            </ListItem>
-          </Link>
-          <Link 
-            href='/admissibilidade'
-            underline='none'
-          >
-            <ListItem sx={{ width: '100%'}}>
-                <ListItemButton selected={pagina==='admissibilidade'}>
-                  <ListItemDecorator>
-                    <AssignmentTurnedIn />
-                  </ListItemDecorator>
-                  <ListItemContent>Admissibilidade</ListItemContent>
-                </ListItemButton>
-            </ListItem>
-          </Link>
-          <Link 
-            href='/importar'
-            underline='none'
-          >
-            <ListItem sx={{ width: '100%'}}>
-                <ListItemButton selected={pagina==='importar'}>
-                  <ListItemDecorator>
-                    <UploadFile />
-                  </ListItemDecorator>
-                  <ListItemContent>Importar</ListItemContent>
-                </ListItemButton>
-            </ListItem>
-          </Link>
+          {pages.map((page) => (
+            <Link 
+              href={page.href}
+              underline='none'
+            >
+              <ListItem sx={{ width: '100%'}}>
+                  <ListItemButton selected={pagina===page.name}>
+                    <ListItemDecorator>
+                      {page.icon}
+                    </ListItemDecorator>
+                    <ListItemContent>{page.title}</ListItemContent>
+                  </ListItemButton>
+              </ListItem>
+            </Link>
+          ))}
         </List>
       </Sheet>
     </React.Fragment>
