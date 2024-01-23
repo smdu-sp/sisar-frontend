@@ -5,9 +5,8 @@ import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select,
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form"
 import { inicialSchema } from "../[id]/schema";
-import InputMask from "react-input-mask";
 import { AlvaraTipoService, IAlvaraTipo } from "@/shared/services/alvara-tipo";
-import InputSEI from "@/components/InputSEI";
+import MaskedInput from "@/components/MaskedInput";
 
 export default function DadosIniciaisTab (props: {
     id: string;
@@ -16,31 +15,13 @@ export default function DadosIniciaisTab (props: {
     const [registerData, setRegisterData] = useState<IInicial>();
     const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
     const [nums_sql, setNums_sql] = useState<string[]>([]);
-    const [num_sql_input, setNum_sql_input] = useState<string>('');
     const [addNumSQLStatus, setAddNumSQLStatus] = useState<number>(0);
     const [addNumSQLStatusAlert, setAddNumSQLStatusAlert] = useState<boolean>(false);
-    const {
-        control,
-        handleSubmit,
-        register,
-        setValue,
-        formState: { errors, isSubmitting, isDirty, isValid },
-    } = useForm<FormData>({
-      resolver: zodResolver(inicialSchema),
-      defaultValues: {
-        sei: '',
-        tipo_processo: '',
-      },
-    });
-
-    const setFormData = (data: IInicial) => {
-        setValue('sei', data.sei);
-        setValue('decreto', data.decreto);
-        console.log(data.decreto);
-    }
 
     const handleAddSQL = () => {
         setAddNumSQLStatusAlert(false);
+        const inputSql = document.getElementById('num_sql_input') as HTMLInputElement;
+        const num_sql_input = inputSql.value;
         if (num_sql_input != '') {
             if (nums_sql.includes(num_sql_input)){
                 setAddNumSQLStatus(1);
@@ -48,7 +29,7 @@ export default function DadosIniciaisTab (props: {
                 setAddNumSQLStatus(0);
                 setNums_sql([...nums_sql, num_sql_input]);
             }
-            setNum_sql_input('');
+            inputSql.value = '';
         }
         setAddNumSQLStatusAlert(true);
     }
@@ -61,7 +42,6 @@ export default function DadosIniciaisTab (props: {
     }
 
     const clearFields = () => {
-        setNum_sql_input('');
         setNums_sql([]);
         setAddNumSQLStatusAlert(false);
     }
@@ -135,8 +115,7 @@ export default function DadosIniciaisTab (props: {
                         <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
                             <FormControl>
                                 <FormLabel>SEI</FormLabel>
-                                <InputSEI
-                                    {...register("sei", { required: 'Campo SEI é obrigatório.' })}
+                                <MaskedInput
                                     mask="0000.0000/0000000-0"
                                     id="sei"
                                     name="sei"
@@ -150,7 +129,6 @@ export default function DadosIniciaisTab (props: {
                             <FormControl>
                                 <FormLabel>Tipo de requerimento</FormLabel>
                                 <Input
-                                    {...register("tipo_requerimento", { required: 'Tipo Requerimento é obrigatório.' })}
                                     id="tipo_requerimento"
                                     name="tipo_requerimento"
                                     placeholder="Tipo Requerimento"
@@ -163,7 +141,6 @@ export default function DadosIniciaisTab (props: {
                             <FormControl>
                                 <FormLabel>Requerimento</FormLabel>
                                 <Input
-                                    {...register("requerimento", { required: 'Requerimento é obrigatório.' })}
                                     id="requerimento"
                                     name="requerimento"
                                     placeholder="Requerimento"
@@ -176,7 +153,6 @@ export default function DadosIniciaisTab (props: {
                             <FormControl>
                                 <FormLabel>Num. Aprova Digital</FormLabel>
                                 <Input
-                                    {...register("aprova_digital")}
                                     id="aprova_digital"
                                     name="aprova_digital"
                                     placeholder="Aprova digital"
@@ -187,41 +163,26 @@ export default function DadosIniciaisTab (props: {
                         <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
                             <FormControl>
                                 <FormLabel>Tipo de processo</FormLabel>
-                                <Controller
-                                    name='tipo_processo'
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Select>
-                                            <Option value={0}>Próprio de SMUL</Option>
-                                            <Option value={1}>Múltiplas interfaces</Option>
-                                        </Select>
-                                    )}
-                                >
-                                </Controller>
+                                <Select>
+                                    <Option value={0}>Próprio de SMUL</Option>
+                                    <Option value={1}>Múltiplas interfaces</Option>
+                                </Select>
                             </FormControl>
                         </Grid>
                         <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
                             <FormControl>
                                 <FormLabel>Tipo de alvará</FormLabel>
-                                <Controller
-                                    name='alvara_tipo_id'
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Select>
-                                            {alvaraTipos.map((alvaraTipo) => (
-                                                <Option value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
-                                            ))}
-                                        </Select>
-                                    )}
-                                >
-                                </Controller>
+                                <Select>
+                                    {alvaraTipos.map((alvaraTipo) => (
+                                        <Option value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
+                                    ))}
+                                </Select>
                             </FormControl>
                         </Grid>
                         <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
                             <FormControl>
                                 <FormLabel>Num. Processo Físico</FormLabel>
                                 <Input
-                                    {...register("processo_fisico")}
                                     id="processo_fisico"
                                     name="processo_fisico"
                                     placeholder="Processo Físico"
@@ -234,7 +195,6 @@ export default function DadosIniciaisTab (props: {
                             <FormControl>
                                 <FormLabel>Num. Processo Físico</FormLabel>
                                 <Input
-                                    {...register("processo_fisico")}
                                     id="processo_fisico"
                                     name="processo_fisico"
                                     placeholder="Processo Físico"
@@ -247,7 +207,6 @@ export default function DadosIniciaisTab (props: {
                             <FormControl>
                                 <FormLabel>Num. Processo Físico</FormLabel>
                                 <Input
-                                    {...register("processo_fisico")}
                                     id="processo_fisico"
                                     name="processo_fisico"
                                     placeholder="Processo Físico"
@@ -260,7 +219,6 @@ export default function DadosIniciaisTab (props: {
                             <FormControl>
                                 <FormLabel>Num. Processo Físico</FormLabel>
                                 <Input
-                                    {...register("processo_fisico")}
                                     id="processo_fisico"
                                     name="processo_fisico"
                                     placeholder="Processo Físico"
@@ -286,12 +244,11 @@ export default function DadosIniciaisTab (props: {
                         <Grid xs={12}>
                             <FormControl>
                                 <FormLabel>Adicionar SQL</FormLabel>
-                                <Input
-                                    id="nums_sql"
-                                    name="nums_sql"
+                                <MaskedInput
+                                    mask="000.000.0000-0"
+                                    id="num_sql_input"
+                                    name="num_sql_input"
                                     placeholder="SQL"
-                                    onChange={(event) => setNum_sql_input(event.target.value)}
-                                    value={num_sql_input}
                                     type="text"
                                     endDecorator={
                                         <IconButton 

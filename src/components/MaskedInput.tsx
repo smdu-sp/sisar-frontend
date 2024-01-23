@@ -7,15 +7,17 @@ interface CustomProps {
     name: string;
 }
 
-export default function InputSEI({ ...props }): React.ReactElement {
-    const { mask, definitions, ...other } = props;
-    const MaskAdapter = React.forwardRef<HTMLElement, CustomProps>(
+export default function MaskedInput({ ...props }): React.ReactElement {
+    console.log(props);
+    const { mask, definitions, id, ...other } = props;
+    const MaskAdapter = React.forwardRef<HTMLInputElement, CustomProps>(
         function MaskAdapter(props, ref) {
             const { onChange, ...other } = props;
             return (
                 <IMaskInput
                     {...other}
                     mask={mask}
+                    id={id}
                     definitions={definitions}
                     inputRef={ref}
                     onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
