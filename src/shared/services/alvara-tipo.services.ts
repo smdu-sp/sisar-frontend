@@ -1,4 +1,7 @@
-import { Api } from "../api/axios-config";
+'use server'
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export interface IAlvaraTipo {
     id:                     string
@@ -8,6 +11,13 @@ export interface IAlvaraTipo {
     prazo_analise_smul2:    number
     prazo_analise_multi1:   number
     prazo_analise_multi2:   number
+}
+
+export interface IPaginadoAlvaraTipo {
+    data: IAlvaraTipo[]
+    total: number
+    pagina: number
+    limite: number
 }
 
 export interface IUpdateAlvaraTipo extends Partial<ICreateAlvaraTipo> {}
@@ -21,56 +31,37 @@ export interface ICreateAlvaraTipo {
     prazo_analise_multi2:   number
 }
 
-const entityUrl = '/alvara-tipo';
+const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
-const findAll = async (): Promise<IAlvaraTipo[] | Error> => {
-    throw new Error('Not implemented');
-    try {
-        const relative = `${entityUrl}`
-        const { data } = await Api.get(relative);
-        return data ? data : new Error('Erro ao buscar registros.');
-    } catch (error: any) {
-        return new Error(error.response ? error.response.data.message : error.request ? error.request : error.message || 'Erro ao buscar registros.');
-    }
+const buscarTudo = async (): Promise<IPaginadoAlvaraTipo> => {
+    const session = await getServerSession(authOptions);
+    const alvaraTipos = await fetch(`${baseURL}alvara-tipo/buscar-tudo`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        return response.json();
+    })
+    console.log(alvaraTipos);
+    return alvaraTipos;
 }
  
 const findOne = async (id: string): Promise<IAlvaraTipo | Error> => {
     throw new Error('Not implemented');
-    if (!id) throw new Error('Nenhum id informado.');
-    try {
-        const relative = `${entityUrl}/${id}`
-        const { data } = await Api.get(relative);
-        return data ? data : new Error('Erro ao buscar tipo de alvará pelo ID.');
-    } catch (error: any) {
-        return new Error(error.response ? error.response.data.message : error.request ? error.request : error.message || 'Erro ao buscar tipo de alvará pelo ID.');
-    }
 }
 
 const create = async (dataCreate: ICreateAlvaraTipo): Promise<IAlvaraTipo | Error> => {
     throw new Error('Not implemented');
-    try {
-        const relative = `${entityUrl}`
-        const { data } = await Api.post(relative, dataCreate);
-        return data ? data : new Error('Erro ao criar o tipo de alvará.');
-    } catch (error: any) {
-        return new Error(error.response ? error.response.data.message : error.request ? error.request : error.message || 'Erro ao criar o tipo de alvará.');
-    }
 }
 
 const update = async (id: string, dataUpdate: IUpdateAlvaraTipo): Promise<IAlvaraTipo | Error> => {
     throw new Error('Not implemented');
-    if (!id) throw new Error('Nenhum id informado.');
-    try {
-        const relative = `${entityUrl}/${id}`
-        const { data } = await Api.patch(relative, dataUpdate);
-        return data ? data : new Error('Erro ao atualizar o tipo de alvará.');
-    } catch (error: any) {
-        return new Error(error.response ? error.response.data.message : error.request ? error.request : error.message || 'Erro ao atualizar o tipo de alvará.');
-    }
 }
 
-export const AlvaraTipoService = {
-    findAll,
+export {
+    buscarTudo,
     findOne,
     create,
     update

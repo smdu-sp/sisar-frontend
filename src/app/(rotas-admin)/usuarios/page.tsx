@@ -4,7 +4,7 @@ import Content from '@/components/Content';
 import { useEffect, useState } from 'react';
 import * as usuarioServices from '@/shared/services/usuario.services';
 import { Chip, IconButton, Table, Tooltip } from '@mui/joy';
-import { Cancel, Edit } from '@mui/icons-material';
+import { Cancel, Check, Edit } from '@mui/icons-material';
 import { IPaginadoUsuario, IUsuario } from '@/shared/services/usuario.services';
 import { useRouter } from 'next/navigation';
 import { Pagination } from '@/components/Pagination';
@@ -26,6 +26,7 @@ export default function Usuarios() {
         setUsuarios(response.data);
       });
   }, []);
+
   const permissoes = {
     'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'primary' },
     'SUP': { label: 'Superusuario', value: 'SUP', color: 'info' },
@@ -66,6 +67,13 @@ export default function Usuarios() {
               </td>
               <td>
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                  {usuario.status === 3 && (
+                    <Tooltip title="Aprovar usuário novo" arrow placement="top">
+                      <IconButton size="sm" color="success">
+                        <Check />
+                      </IconButton>
+                    </Tooltip>                    
+                  )}
                   <Tooltip title="Detalhes" arrow placement="top">
                     <IconButton component="a" href={`/usuarios/detalhes/${usuario.id}`} size="sm" color="warning">
                       <Edit />
