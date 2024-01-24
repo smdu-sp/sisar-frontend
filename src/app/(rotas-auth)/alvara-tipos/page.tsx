@@ -9,7 +9,7 @@ import { IPaginadoUsuario, IUsuario } from '@/shared/services/usuario.services';
 import { useRouter } from 'next/navigation';
 import { Pagination } from '@/components/Pagination';
 
-export default function Usuarios() {
+export default function AlvaraTipos() {
   const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
   const [pagina, setPagina] = useState(2);
   const [limite, setLimite] = useState(10);
@@ -39,10 +39,10 @@ export default function Usuarios() {
   return (
     <Content
       breadcrumbs={[
-        { label: 'Usuários', href: '/usuarios' }
+        { label: 'Tipos de alvará', href: '/alvara-tipos' }
       ]}
-      titulo='Usuários'
-      pagina='/usuarios'
+      titulo='Tipos de alvará'
+      pagina='/alvara-tipos'
     >
       <Table hoverRow>
         <thead>
