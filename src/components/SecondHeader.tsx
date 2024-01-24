@@ -5,7 +5,7 @@ import { ChevronRightRounded, HomeRounded } from '@mui/icons-material';
 export default function SecondHeader({
   breadcrumbs
 } : {
-  breadcrumbs: {
+  breadcrumbs?: {
     label: string;
     href: string;
   }[];
@@ -15,21 +15,21 @@ export default function SecondHeader({
         <Breadcrumbs
             size="sm"
             aria-label="breadcrumbs"
-            separator={<ChevronRightRounded />}
+            separator={<ChevronRightRounded color='primary' />}
             sx={{ pl: 0 }}
         >
             <Link
               underline="none"
-              color="neutral"
+              color="primary"
               href="/"
               aria-label="Home"
             >
-            <HomeRounded />
+              <HomeRounded />
             </Link>
-            {breadcrumbs.map((item, index) => (
+            {breadcrumbs && breadcrumbs.map((item, index) => (
               <Link
                 underline="none"
-                color="neutral"
+                color="primary"
                 href={item.href}
                 aria-label={item.label}
                 key={index}

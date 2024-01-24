@@ -1,11 +1,8 @@
-import { IInicial, IniciaisService } from "@/shared/services/inicial";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Add, Cancel, Check, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
-import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Box, Grid } from "@mui/joy"
+import { IInicial, IniciaisService } from "@/shared/services/inicial.services";
+import { Add, Cancel, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
+import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid } from "@mui/joy"
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form"
-import { inicialSchema } from "../[id]/schema";
-import { AlvaraTipoService, IAlvaraTipo } from "@/shared/services/alvara-tipo";
+import { AlvaraTipoService, IAlvaraTipo } from "@/shared/services/alvara-tipo.services";
 import MaskedInput from "@/components/MaskedInput";
 
 export default function DadosIniciaisTab (props: {
@@ -68,7 +65,6 @@ export default function DadosIniciaisTab (props: {
                     window.location.href = '/inicial/detalhes';
                 } else {
                     setRegisterData(result);
-                    setFormData(result);
                 }
             }
         });

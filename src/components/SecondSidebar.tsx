@@ -1,39 +1,23 @@
-import * as React from 'react';
-import { Link, ListItemButton, ListItemDecorator, ListItemContent, ListItem, ListSubheader, List, Sheet, Box } from '@mui/joy';
-import Image from 'next/image';
-import { AssignmentTurnedIn, PlayArrow, UploadFile } from '@mui/icons-material';
-import logo from '@/assets/logo.png';
-
-import { closeSidebar } from '../utils';
-
-const pages = [
-  {
-    title: 'Inicial',
-    href: '/inicial',
-    name: 'inicial',
-    icon: <PlayArrow />,
-  },
-  {
-    title: 'Admissibilidade',
-    href: '/admissibilidade',
-    name: 'admissibilidade',
-    icon: <AssignmentTurnedIn />,
-  },
-  {
-    title: 'Importar',
-    href: '/importar',
-    name: 'importar',
-    icon: <UploadFile />,
-  }
-];
+import { useContext } from 'react';
+import { Link, ListItemButton, ListItemDecorator, ListItemContent, ListItem, List, Sheet, Box, SvgIcon } from '@mui/joy';
+import { menu } from '../app/menu';
+import { MenuContext } from '@/shared/contexts/MenuContext';
 
 export default function SecondSidebar({
-  pagina
+  pagina,
+  menuOverride,
 } : {
   pagina?: string;
+  menuOverride?: {
+    title: string;
+    href: string;
+    name: string;
+    icon: any;
+  }[];
 }) {
+  const { closeSidebar } = useContext(MenuContext);
   return (
-    <React.Fragment>
+    <>
       <Box
         className="SecondSidebar-overlay"
         sx={{
@@ -85,15 +69,33 @@ export default function SecondSidebar({
             '--List-gap': '6px',
           }}
         >
-          {pages.map((page) => (
+          {menuOverride ?
+            menuOverride.map((page) => (
+              <Link 
+                href={page.href}
+                underline='none'
+                key={page.name}
+              >
+                <ListItem sx={{width: '100%'}}>
+                    <ListItemButton selected={pagina===page.name}>
+                      <ListItemDecorator>
+                        <SvgIcon component={page.icon} />
+                      </ListItemDecorator>
+                      <ListItemContent>{page.title}</ListItemContent>
+                    </ListItemButton>
+                </ListItem>
+              </Link>
+            ))
+          : menu.map((page) => (
             <Link 
               href={page.href}
               underline='none'
+              key={page.name}
             >
-              <ListItem sx={{ width: '100%'}}>
-                  <ListItemButton selected={pagina===page.name}>
-                    <ListItemDecorator>
-                      {page.icon}
+              <ListItem sx={{width: '100%'}}>
+                  <ListItemButton variant={pagina===page.name ? 'solid' : 'plain'} color={pagina===page.name ? 'primary' : 'neutral'} >
+                    <ListItemDecorator >
+                      <SvgIcon component={page.icon} />
                     </ListItemDecorator>
                     <ListItemContent>{page.title}</ListItemContent>
                   </ListItemButton>
@@ -102,6 +104,6 @@ export default function SecondSidebar({
           ))}
         </List>
       </Sheet>
-    </React.Fragment>
+    </>
   );
 }

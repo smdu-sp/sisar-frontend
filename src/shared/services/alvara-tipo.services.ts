@@ -24,6 +24,7 @@ export interface ICreateAlvaraTipo {
 const entityUrl = '/alvara-tipo';
 
 const findAll = async (): Promise<IAlvaraTipo[] | Error> => {
+    throw new Error('Not implemented');
     try {
         const relative = `${entityUrl}`
         const { data } = await Api.get(relative);
@@ -34,6 +35,7 @@ const findAll = async (): Promise<IAlvaraTipo[] | Error> => {
 }
  
 const findOne = async (id: string): Promise<IAlvaraTipo | Error> => {
+    throw new Error('Not implemented');
     if (!id) throw new Error('Nenhum id informado.');
     try {
         const relative = `${entityUrl}/${id}`
@@ -45,6 +47,7 @@ const findOne = async (id: string): Promise<IAlvaraTipo | Error> => {
 }
 
 const create = async (dataCreate: ICreateAlvaraTipo): Promise<IAlvaraTipo | Error> => {
+    throw new Error('Not implemented');
     try {
         const relative = `${entityUrl}`
         const { data } = await Api.post(relative, dataCreate);
@@ -55,6 +58,7 @@ const create = async (dataCreate: ICreateAlvaraTipo): Promise<IAlvaraTipo | Erro
 }
 
 const update = async (id: string, dataUpdate: IUpdateAlvaraTipo): Promise<IAlvaraTipo | Error> => {
+    throw new Error('Not implemented');
     if (!id) throw new Error('Nenhum id informado.');
     try {
         const relative = `${entityUrl}/${id}`

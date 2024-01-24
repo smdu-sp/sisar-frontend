@@ -1,33 +1,42 @@
 'use client'
 
-import { FormEvent, useEffect, useState } from 'react';
-import { Button, Sheet, FormControl, Input } from '@mui/joy';
+import { FormEvent, SyntheticEvent, useContext, useEffect, useState } from 'react';
+import { Button, Sheet, FormControl, Input, Snackbar, Typography, Stack } from '@mui/joy';
 import Image from 'next/image';
 import logo from '@/assets/logo.png';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Key, Person } from '@mui/icons-material';
+import { Cancel, Key, Person } from '@mui/icons-material';
 import React from 'react';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { AlertsContext } from '@/providers/alertsProvider';
 
 function getWindowSize() {
   const {innerWidth, innerHeight} = window;
   return {innerWidth, innerHeight};
 }
 
-async function onSubmit(event: FormEvent<HTMLFormElement>) {
-  event.preventDefault()
-
-  const formData = new FormData(event.currentTarget)
-  console.log(formData);
-  // const response = await fetch('/api/submit', {
-  //   method: 'POST',
-  //   body: formData,
-  // })
-
-  // const data = await response.json()
-}
-
 export default function Login() {
+  const { setAlert, toggleAlert } = useContext(AlertsContext);
+  const [login, setLogin] = useState<string>('');
+  const [senha, setSenha] = useState<string>('');
+
+  const router = useRouter();
+  async function handleSubmit(event: SyntheticEvent) {
+    event.preventDefault();
+    const result = await signIn('credentials', {
+      login,
+      senha,
+      redirect: false
+    });
+    if (result?.error) {
+      setAlert('Credenciais incorretas!', 'Tente novamente!', 'danger', 5000, Cancel);
+      return;
+    }
+    setAlert('Login efetuado com sucesso', 'Bem-vindo!', 'success', 5000);
+    setTimeout(() => router.replace('/'), 3000);
+  }
   const [windowSize, setWindowSize] = useState(getWindowSize());
   useEffect(() => {
     function handleWindowResize() {setWindowSize(getWindowSize())}
@@ -56,7 +65,7 @@ export default function Login() {
       >
         <ThemeToggle />
       </Sheet>
-      <form onSubmit={onSubmit} method='post'>
+      <form onSubmit={handleSubmit} method='post'>
         <Sheet
           sx={{
             width: 300,
@@ -92,6 +101,7 @@ export default function Login() {
                 type="text"
                 placeholder="Usuário de rede"
                 title="Usuário de rede"
+                onChange={(e) => setLogin(e.target.value)}
               />
             </FormControl>
             <FormControl>
@@ -101,6 +111,7 @@ export default function Login() {
                 type="password"
                 placeholder="Senha de rede"
                 title="Senha de rede"
+                onChange={(e) => setSenha(e.target.value)}
               />
             </FormControl>
             <Button 

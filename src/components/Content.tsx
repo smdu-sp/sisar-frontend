@@ -4,27 +4,39 @@ import Header from '@/components/Header';
 import FirstSidebar from '@/components/FirstSidebar';
 import SecondSidebar from '@/components/SecondSidebar';
 import SecondHeader from '@/components/SecondHeader';
+import { useEffect } from 'react';
 
 export default function Content({
     children,
-    titulo,
+    titulo = 'Dashboard',
     pagina,
-    breadcrumbs
+    breadcrumbs,
+    menuOverride,
 } : {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     titulo?: string;
     pagina?: string;
-    breadcrumbs: {
+    breadcrumbs?: {
       label: string;
       href: string;
     }[];
+    menuOverride?: {
+      title: string;
+      href: string;
+      name: string;
+      icon: any;
+    }[];
 }) {
+  useEffect(() => {
+    document.title = titulo + ' | ' + (process.env.NEXT_PUBLIC_PROJECT_NAME || 'SISAR');
+  }, []);
   return (
     <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
         <Header />
         <FirstSidebar />
         <SecondSidebar
             pagina={pagina}
+            menuOverride={menuOverride}
         />
         <Box
           component="main"
@@ -53,7 +65,7 @@ export default function Content({
           }}
         >
           <SecondHeader
-            breadcrumbs={breadcrumbs}
+            breadcrumbs={breadcrumbs && breadcrumbs}
           />
           <Box
               sx={{
@@ -66,7 +78,7 @@ export default function Content({
                   justifyContent: 'space-between'
               }}
           >
-              <Typography level="h2">{titulo ? titulo : 'Dashboard'}</Typography>
+              <Typography level="h2">{titulo}</Typography>
           </Box>
           {children}
         </Box>

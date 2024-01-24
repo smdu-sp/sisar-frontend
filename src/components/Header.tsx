@@ -1,13 +1,14 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import GlobalStyles from '@mui/joy/GlobalStyles';
 import Sheet from '@mui/joy/Sheet';
 import IconButton from '@mui/joy/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 
 import ThemeToggle from './ThemeToggle';
-import { toggleSidebar } from '../utils';
+import { MenuContext } from '@/shared/contexts/MenuContext';
+import { Close, Menu } from '@mui/icons-material';
 
 export default function Header() {
+  const { sidebarStatus, toggleSidebar } = useContext(MenuContext);
   return (
     <Sheet
       sx={{
@@ -38,11 +39,10 @@ export default function Header() {
       />
       <IconButton
         onClick={() => toggleSidebar()}
-        variant="outlined"
-        color="neutral"
+        color="primary"
         size="sm"
       >
-        <MenuIcon />
+        {sidebarStatus ? <Menu sx={{ fontSize: 24 }} /> : <Close sx={{ fontSize: 24 }} />}
       </IconButton>
       <ThemeToggle />
     </Sheet>
