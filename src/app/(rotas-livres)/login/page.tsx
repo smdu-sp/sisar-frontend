@@ -31,6 +31,7 @@ export default function Login() {
       redirect: false
     });
     if (result?.error) {
+      console.log(result);
       setAlert('Credenciais incorretas!', 'Tente novamente!', 'danger', 5000, Cancel);
       return;
     }

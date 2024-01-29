@@ -25,9 +25,9 @@ export interface IPaginadoUsuario {
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
-async function buscarTudo(status: string): Promise<IPaginadoUsuario> {
+async function buscarTudo(status: number = 1, pagina: number = 1): Promise<IPaginadoUsuario> {
     const session = await getServerSession(authOptions);
-    const usuarios = await fetch(`${baseURL}usuario/buscar-tudo?status=${status}`, {
+    const usuarios = await fetch(`${baseURL}usuario/buscar-tudo?status=${status}&pagina=${pagina}&limite=3`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

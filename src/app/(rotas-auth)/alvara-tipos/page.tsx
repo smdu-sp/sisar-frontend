@@ -6,16 +6,19 @@ import * as usuarioServices from '@/shared/services/usuario.services';
 import { Button, Chip, IconButton, Table, Tooltip } from '@mui/joy';
 import { Cancel, Edit } from '@mui/icons-material';
 import { IPaginadoUsuario, IUsuario } from '@/shared/services/usuario.services';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Pagination } from '@/components/Pagination';
 import * as alvaraTipoService from '@/shared/services/alvara-tipo.services';
 import { IPaginadoAlvaraTipo, IAlvaraTipo } from '@/shared/services/alvara-tipo.services';
 
 export default function AlvaraTipos() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
-  const [pagina, setPagina] = useState(2);
-  const [limite, setLimite] = useState(10);
-  const [total, setTotal] = useState(100);
+  const [pagina, setPagina] = useState(1);
+  const [limite, setLimite] = useState(1);
+  const [total, setTotal] = useState(1);
 
   const router = useRouter();
 
@@ -58,7 +61,7 @@ export default function AlvaraTipos() {
           </tr>
         </thead>
         <tbody>
-          {alvaraTipos.map((alvaraTipo) => (
+          {alvaraTipos && alvaraTipos.map((alvaraTipo) => (
             <tr key={alvaraTipo.id} style={{ cursor: 'pointer' }} onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>
               <td>{alvaraTipo.nome}</td>
               <td>{alvaraTipo.prazo_admissibilidade}</td>
@@ -70,7 +73,12 @@ export default function AlvaraTipos() {
           ))}
         </tbody>
       </Table>
-      <Pagination />
+      {alvaraTipos && 
+      <Pagination
+        pagina={pagina}
+        limite={limite}
+        total={total}
+      />}
       <Button
         component="a"
         href="alvara-tipos/detalhes"

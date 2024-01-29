@@ -4,10 +4,17 @@ import { iconButtonClasses } from '@mui/joy/IconButton';
 import { ReactElement } from "react";
 
 export interface IPaginationProps extends ReactElement {
-    
+    pagina: number;
+    limite: number;
+    total: number;
+    paginaAnterior: () => void;
+    proximaPagina: () => void;
+    primeiraPagina: () => void;
+    ultimaPagina: () => void;
 }
 
-export function Pagination({}): IPaginationProps{
+export function Pagination({ pagina = 1, limite = 1, total = 1, paginaAnterior, proximaPagina, primeiraPagina, ultimaPagina, ...props }: IPaginationProps) {
+    const paginaUltimo = pagina * limite < total ? pagina * limite : total;
     return (
         <Box
             className="Pagination-laptopUp"
@@ -21,31 +28,35 @@ export function Pagination({}): IPaginationProps{
             },
             }}
         >
-            <Button
+            <IconButton
                 size="sm"
                 variant="outlined"
                 color="neutral"
-                startDecorator={<KeyboardDoubleArrowLeft />}
-            ></Button>
-            <Button
+                disabled={pagina === 1}
+                onClick={primeiraPagina}
+            ><KeyboardDoubleArrowLeft /></IconButton>
+            <IconButton
                 size="sm"
                 variant="outlined"
                 color="neutral"
-                startDecorator={<KeyboardArrowLeft />}
-            ></Button>
-            <Typography>1</Typography>
-            <Button
+                disabled={pagina === 1}
+                onClick={paginaAnterior}
+            ><KeyboardArrowLeft /></IconButton>
+            <Typography>{1*pagina} - {limite*pagina} de {total}</Typography>
+            <IconButton
                 size="sm"
                 variant="outlined"
                 color="neutral"
-                endDecorator={<KeyboardArrowRight />}
-            ></Button>
-            <Button
+                disabled={paginaUltimo === total}
+                onClick={proximaPagina}
+            ><KeyboardArrowRight /></IconButton>
+            <IconButton
                 size="sm"
                 variant="outlined"
                 color="neutral"
-                endDecorator={<KeyboardDoubleArrowRight />}
-            ></Button>
+                disabled={paginaUltimo === total}
+                onClick={ultimaPagina}
+            ><KeyboardDoubleArrowRight /></IconButton>
         </Box>
     )
 }

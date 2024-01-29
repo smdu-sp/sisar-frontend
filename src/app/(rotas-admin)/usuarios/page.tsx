@@ -1,30 +1,41 @@
 'use client'
 
 import Content from '@/components/Content';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import * as usuarioServices from '@/shared/services/usuario.services';
 import { Button, Chip, FormControl, FormLabel, IconButton, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
 import { Cancel, Check, Edit, Warning } from '@mui/icons-material';
 import { IPaginadoUsuario, IUsuario } from '@/shared/services/usuario.services';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Pagination } from '@/components/Pagination';
 import { AlertsContext } from '@/providers/alertsProvider';
 
 export default function Usuarios() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
-  const [pagina, setPagina] = useState(2);
-  const [limite, setLimite] = useState(10);
-  const [total, setTotal] = useState(100);
-  const [status, setStatus] = useState('1');
+  const [pagina, setPagina] = useState(searchParams.get('pagina') || 1);
+  const [limite, setLimite] = useState(searchParams.get('limite') || 1);
+  const [total, setTotal] = useState(searchParams.get('total') || 1);
+  const [status, setStatus] = useState(searchParams.get('status') || '1');
   const [confirmation, setConfirmation] = useState({ open: false, id: '' });
-  const { setAlert, toggleAlert } = useContext(AlertsContext);
-  const theme = useTheme();
+  const { setAlert } = useContext(AlertsContext);
 
+  const theme = useTheme();
   const router = useRouter();
 
   useEffect(() => {
     buscaUsuarios(status);
   }, [ status ]);
+  
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, value)
+      return params.toString()
+    },
+    [searchParams]
+  );
 
   const buscaUsuarios = async (status: string) => {
     usuarioServices.buscarTudo(status)
@@ -43,6 +54,11 @@ export default function Usuarios() {
     } else {
       setAlert('Tente novamente!', 'Não foi possível autorizar o usuário.', 'warning', 3000, Warning);
     }
+  }
+
+  const primeiraPagina = () => {
+    router.push(pathname + '?' + createQueryString('status', '1'));
+    setPagina(1);
   }
 
   const permissoes = {
@@ -98,7 +114,10 @@ export default function Usuarios() {
         <Select
           size="sm"
           value={status}
-          onChange={(event, newValue) => setStatus(newValue!)}
+          onChange={(event, newValue) => {
+            router.push(pathname + '?' + createQueryString('status', newValue!));
+            setStatus(newValue!);
+          }}
         >
           <Option value="1">Ativos</Option>
           <Option value="2">Inativos</Option>
@@ -151,7 +170,11 @@ export default function Usuarios() {
           ))}
         </tbody>
       </Table>
-      <Pagination />
+      <Pagination
+        pagina={pagina}
+        limite={limite}
+        total={total}
+      />
     </Content>
   );
 }

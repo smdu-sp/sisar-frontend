@@ -20,6 +20,7 @@ export const authOptions: NextAuthOptions = {
           });
           const usuario = response.json();
           if (usuario && response.ok) return usuario;
+          return response.json();
         }
         return null;
       }
