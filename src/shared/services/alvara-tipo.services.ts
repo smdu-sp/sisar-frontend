@@ -2,6 +2,7 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { signOut } from "next-auth/react";
 
 export interface IAlvaraTipo {
     id:                     string
@@ -42,27 +43,40 @@ const buscarTudo = async (): Promise<IPaginadoAlvaraTipo> => {
             "Authorization": `Bearer ${session?.access_token}`
         }
     }).then((response) => {
+        if (response.status === 401) signOut();
+        if (response.status !== 200) return;
         return response.json();
-    })
-    console.log(alvaraTipos);
+    });
     return alvaraTipos;
 }
  
-const findOne = async (id: string): Promise<IAlvaraTipo | Error> => {
+const buscarPorId = async (id: string): Promise<IAlvaraTipo> => {
+    const session = await getServerSession(authOptions);
+    const alvaraTipo = await fetch(`${baseURL}alvara-tipo/buscar-por-id/${id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) signOut();
+        if (response.status !== 200) return;
+        return response.json();
+    })
+    return alvaraTipo;
+}
+
+const criar = async (dataCreate: ICreateAlvaraTipo): Promise<IAlvaraTipo> => {
     throw new Error('Not implemented');
 }
 
-const create = async (dataCreate: ICreateAlvaraTipo): Promise<IAlvaraTipo | Error> => {
-    throw new Error('Not implemented');
-}
-
-const update = async (id: string, dataUpdate: IUpdateAlvaraTipo): Promise<IAlvaraTipo | Error> => {
+const atualizar = async (id: string, dataUpdate: IUpdateAlvaraTipo): Promise<IAlvaraTipo | Error> => {
     throw new Error('Not implemented');
 }
 
 export {
     buscarTudo,
-    findOne,
-    create,
-    update
+    buscarPorId,
+    criar,
+    atualizar
 }

@@ -77,19 +77,19 @@ export default function Inicial() {
           Conclusão
         </TabPanel>
       </Tabs>
-      <a href="/inicial/detalhes">
-        <Button
-          variant="solid"
-          size='lg'
-          sx={{
-            position: 'absolute',
-            bottom: 50,
-            right: 50,
-          }}
-        >
-          Novo
-        </Button>
-      </a>
+      <Button
+        component="a"
+        href="inicial/detalhes"
+        variant="solid"
+        size='lg'
+        sx={{
+          position: 'absolute',
+          bottom: 50,
+          right: 50,
+        }}
+      >
+        Novo
+      </Button>
     </Content>
   );
 }

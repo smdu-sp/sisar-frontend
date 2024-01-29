@@ -8,7 +8,7 @@ export const authOptions: NextAuthOptions = {
       name: "credentials",
       credentials: {
         login: { label: "Login", type: "text" },
-        senha: {  label: "Senha", type: "password" }
+        senha: { label: "Senha", type: "password" }
       },
       async authorize(credentials, req) {
         if (credentials?.login && credentials?.senha){

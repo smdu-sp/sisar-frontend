@@ -41,6 +41,7 @@ export default function AlertsProvider ({ ...props }) {
                 variant="solid"
                 color={alertType}
                 size="lg"
+                invertedColors={true}
                 autoHideDuration={duration}
                 open={open}
                 onClose={() => setOpen(false)}

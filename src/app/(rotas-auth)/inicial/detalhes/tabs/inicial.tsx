@@ -2,7 +2,8 @@ import { IInicial, IniciaisService } from "@/shared/services/inicial.services";
 import { Add, Cancel, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
 import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid } from "@mui/joy"
 import { useEffect, useState } from "react";
-import { AlvaraTipoService, IAlvaraTipo } from "@/shared/services/alvara-tipo.services";
+import { IAlvaraTipo, IPaginadoAlvaraTipo } from "@/shared/services/alvara-tipo.services";
+import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
 import MaskedInput from "@/components/MaskedInput";
 
 export default function DadosIniciaisTab (props: {
@@ -69,12 +70,12 @@ export default function DadosIniciaisTab (props: {
             }
         });
 
-        AlvaraTipoService.findAll().then((result: IAlvaraTipo[] | Error) => {
+        alvaraTiposService.buscarTudo().then((result: IPaginadoAlvaraTipo) => {
             if (result) {
                 if (result instanceof Error){
                     alert(result.message);
                 } else {
-                    setAlvaraTipos(result);
+                    setAlvaraTipos(result.data);
                 }
             }
         });

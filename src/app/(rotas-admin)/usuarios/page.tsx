@@ -1,37 +1,55 @@
 'use client'
 
 import Content from '@/components/Content';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import * as usuarioServices from '@/shared/services/usuario.services';
-import { Chip, IconButton, Table, Tooltip } from '@mui/joy';
-import { Cancel, Check, Edit } from '@mui/icons-material';
+import { Button, Chip, FormControl, FormLabel, IconButton, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
+import { Cancel, Check, Edit, Warning } from '@mui/icons-material';
 import { IPaginadoUsuario, IUsuario } from '@/shared/services/usuario.services';
 import { useRouter } from 'next/navigation';
 import { Pagination } from '@/components/Pagination';
+import { AlertsContext } from '@/providers/alertsProvider';
 
 export default function Usuarios() {
   const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
   const [pagina, setPagina] = useState(2);
   const [limite, setLimite] = useState(10);
   const [total, setTotal] = useState(100);
+  const [status, setStatus] = useState('1');
+  const [confirmation, setConfirmation] = useState({ open: false, id: '' });
+  const { setAlert, toggleAlert } = useContext(AlertsContext);
+  const theme = useTheme();
 
   const router = useRouter();
 
   useEffect(() => {
-    usuarioServices.buscarTudo()
+    buscaUsuarios(status);
+  }, [ status ]);
+
+  const buscaUsuarios = async (status: string) => {
+    usuarioServices.buscarTudo(status)
       .then((response: IPaginadoUsuario) => {
         setTotal(response.total);
         setPagina(response.pagina);
         setLimite(response.limite);
         setUsuarios(response.data);
-      });
-  }, []);
+      });    
+  }
+  const autorizaUsuario = async (id: string) => {
+    var resposta = await usuarioServices.autorizar(id);
+    if (resposta && resposta.autorizado){
+      setAlert('Usuário autorizado!', 'Esse usuário foi autorizado e já pode acessar o sistema.', 'success', 3000, Check);
+      buscaUsuarios(status);
+    } else {
+      setAlert('Tente novamente!', 'Não foi possível autorizar o usuário.', 'warning', 3000, Warning);
+    }
+  }
 
   const permissoes = {
     'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'primary' },
     'SUP': { label: 'Superusuario', value: 'SUP', color: 'info' },
     'ADM': { label: 'Administrador', value: 'ADM', color: 'success' },
-    'USR': { label: 'Usário', value: 'USR', color: 'warning' },
+    'USR': { label: 'Usuário', value: 'USR', color: 'warning' },
   }
   const cargos = {
     'ADM': { label: 'Administrativo', value: 'ADM', color: 'success' },
@@ -45,6 +63,49 @@ export default function Usuarios() {
       titulo='Usuários'
       pagina='/usuarios'
     >
+      <Snackbar
+        variant="solid"
+        color="primary"
+        size="lg"
+        invertedColors
+        open={confirmation.open}
+        onClose={() => setConfirmation({ ...confirmation, open: false })}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ maxWidth: 360 }}
+      >
+        <div>
+          <Typography level="title-lg">Autorizar usuário.</Typography>
+          <Typography sx={{ mt: 1, mb: 2 }} level="title-md">Tem certeza de que deseja autorizar esse usuário?</Typography>
+          <Stack direction="row" spacing={1}>
+            <Button variant="solid" color="primary" onClick={() => {
+              autorizaUsuario(confirmation.id);
+              setConfirmation({ ...confirmation, open: false });
+            }}>
+              Sim
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => setConfirmation({ ...confirmation, open: false })}
+            >
+              Não
+            </Button>
+          </Stack>
+        </div>
+      </Snackbar>
+      <FormControl orientation="horizontal" sx={{ mb: 2, ml: 1 }}>
+        <FormLabel>Status: </FormLabel>
+        <Select
+          size="sm"
+          value={status}
+          onChange={(event, newValue) => setStatus(newValue!)}
+        >
+          <Option value="1">Ativos</Option>
+          <Option value="2">Inativos</Option>
+          <Option value="3">Esperando autorização</Option>
+          <Option value="4">Todos</Option>
+        </Select>
+      </FormControl>
       <Table hoverRow>
         <thead>
           <tr>
@@ -55,8 +116,8 @@ export default function Usuarios() {
           </tr>
         </thead>
         <tbody>
-          {usuarios.map((usuario) => (
-            <tr key={usuario.id} style={{ cursor: 'pointer' }} onClick={() => router.push(`/usuarios/detalhes/${usuario.id}`)}>
+          {usuarios && usuarios.map((usuario) => (
+            <tr key={usuario.id} style={{ cursor: 'pointer', backgroundColor: usuario.status === 3 ? theme.vars.palette.warning.plainActiveBg : undefined }}>
               <td>{usuario.nome}</td>
               <td>{usuario.login}</td>
               <td>
@@ -69,7 +130,7 @@ export default function Usuarios() {
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                   {usuario.status === 3 && (
                     <Tooltip title="Aprovar usuário novo" arrow placement="top">
-                      <IconButton size="sm" color="success">
+                      <IconButton size="sm" color="success" onClick={() => setConfirmation({ open: true, id: usuario.id })}>
                         <Check />
                       </IconButton>
                     </Tooltip>                    

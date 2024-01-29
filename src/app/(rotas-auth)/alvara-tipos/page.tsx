@@ -3,7 +3,7 @@
 import Content from '@/components/Content';
 import { useEffect, useState } from 'react';
 import * as usuarioServices from '@/shared/services/usuario.services';
-import { Chip, IconButton, Table, Tooltip } from '@mui/joy';
+import { Button, Chip, IconButton, Table, Tooltip } from '@mui/joy';
 import { Cancel, Edit } from '@mui/icons-material';
 import { IPaginadoUsuario, IUsuario } from '@/shared/services/usuario.services';
 import { useRouter } from 'next/navigation';
@@ -71,6 +71,19 @@ export default function AlvaraTipos() {
         </tbody>
       </Table>
       <Pagination />
+      <Button
+        component="a"
+        href="alvara-tipos/detalhes"
+        variant="solid"
+        size='lg'
+        sx={{
+          position: 'absolute',
+          bottom: 50,
+          right: 50,
+        }}
+      >
+        Novo
+      </Button>
     </Content>
   );
 }
