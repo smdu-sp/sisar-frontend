@@ -14,7 +14,7 @@ export default function ThemeToggle({ ...props }) {
       }}
       {...props}
     >
-      {mode === 'light' ? <WbSunny /> : <Nightlight />}
+      {mode === 'light' ? <WbSunny fontSize="small" /> : <Nightlight fontSize="small" />}
     </IconButton>
   );
 }

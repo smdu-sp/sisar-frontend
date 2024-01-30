@@ -2,12 +2,8 @@
 
 import Content from '@/components/Content';
 import { useEffect, useState } from 'react';
-import * as usuarioServices from '@/shared/services/usuario.services';
-import { Button, Chip, IconButton, Table, Tooltip } from '@mui/joy';
-import { Cancel, Edit } from '@mui/icons-material';
-import { IPaginadoUsuario, IUsuario } from '@/shared/services/usuario.services';
+import { Button, Table } from '@mui/joy';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Pagination } from '@/components/Pagination';
 import * as alvaraTipoService from '@/shared/services/alvara-tipo.services';
 import { IPaginadoAlvaraTipo, IAlvaraTipo } from '@/shared/services/alvara-tipo.services';
 
@@ -73,12 +69,6 @@ export default function AlvaraTipos() {
           ))}
         </tbody>
       </Table>
-      {alvaraTipos && 
-      <Pagination
-        pagina={pagina}
-        limite={limite}
-        total={total}
-      />}
       <Button
         component="a"
         href="alvara-tipos/detalhes"

@@ -3,21 +3,22 @@
 import Content from '@/components/Content';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import * as usuarioServices from '@/shared/services/usuario.services';
-import { Button, Chip, FormControl, FormLabel, IconButton, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
-import { Cancel, Check, Edit, Warning } from '@mui/icons-material';
+import { Box, Button, Chip, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
+import { Cancel, Check, Edit, Search, Warning } from '@mui/icons-material';
 import { IPaginadoUsuario, IUsuario } from '@/shared/services/usuario.services';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Pagination } from '@/components/Pagination';
 import { AlertsContext } from '@/providers/alertsProvider';
+import { TablePagination } from '@mui/material';
 
 export default function Usuarios() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
-  const [pagina, setPagina] = useState(searchParams.get('pagina') || 1);
-  const [limite, setLimite] = useState(searchParams.get('limite') || 1);
-  const [total, setTotal] = useState(searchParams.get('total') || 1);
-  const [status, setStatus] = useState(searchParams.get('status') || '1');
+  const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
+  const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 1);
+  const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
+  const [status, setStatus] = useState(searchParams.get('status') ? Number(searchParams.get('status')) : 1);
+  const [busca, setBusca] = useState(searchParams.get('busca') || '');
   const [confirmation, setConfirmation] = useState({ open: false, id: '' });
   const { setAlert } = useContext(AlertsContext);
 
@@ -25,20 +26,20 @@ export default function Usuarios() {
   const router = useRouter();
 
   useEffect(() => {
-    buscaUsuarios(status);
-  }, [ status ]);
+    buscaUsuarios();
+  }, [ status, pagina, limite ]);
   
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
       params.set(name, value)
-      return params.toString()
+      return params.toString();
     },
     [searchParams]
   );
 
-  const buscaUsuarios = async (status: string) => {
-    usuarioServices.buscarTudo(status)
+  const buscaUsuarios = async () => {
+    usuarioServices.buscarTudo(status, pagina, limite, busca)
       .then((response: IPaginadoUsuario) => {
         setTotal(response.total);
         setPagina(response.pagina);
@@ -46,20 +47,32 @@ export default function Usuarios() {
         setUsuarios(response.data);
       });    
   }
+  
   const autorizaUsuario = async (id: string) => {
     var resposta = await usuarioServices.autorizar(id);
     if (resposta && resposta.autorizado){
       setAlert('Usuário autorizado!', 'Esse usuário foi autorizado e já pode acessar o sistema.', 'success', 3000, Check);
-      buscaUsuarios(status);
+      buscaUsuarios();
     } else {
       setAlert('Tente novamente!', 'Não foi possível autorizar o usuário.', 'warning', 3000, Warning);
     }
   }
 
-  const primeiraPagina = () => {
-    router.push(pathname + '?' + createQueryString('status', '1'));
+  const mudaPagina = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    novaPagina: number,
+  ) => {
+    router.push(pathname + '?' + createQueryString('pagina', String(novaPagina + 1)));
+    setPagina(novaPagina + 1);
+  };
+
+  const mudaLimite = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    router.push(pathname + '?' + createQueryString('limite', String(event.target.value)));
+    setLimite(parseInt(event.target.value, 10));
     setPagina(1);
-  }
+  };
 
   const permissoes = {
     'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'primary' },
@@ -109,22 +122,50 @@ export default function Usuarios() {
           </Stack>
         </div>
       </Snackbar>
-      <FormControl orientation="horizontal" sx={{ mb: 2, ml: 1 }}>
-        <FormLabel>Status: </FormLabel>
-        <Select
-          size="sm"
-          value={status}
-          onChange={(event, newValue) => {
-            router.push(pathname + '?' + createQueryString('status', newValue!));
-            setStatus(newValue!);
-          }}
-        >
-          <Option value="1">Ativos</Option>
-          <Option value="2">Inativos</Option>
-          <Option value="3">Esperando autorização</Option>
-          <Option value="4">Todos</Option>
-        </Select>
-      </FormControl>
+      <Box
+        className="SearchAndFilters-tabletUp"
+        sx={{
+          borderRadius: 'sm',
+          py: 2,
+          display: { xs: 'none', sm: 'flex' },
+          flexWrap: 'wrap',
+          gap: 1.5,
+          '& > *': {
+            minWidth: { xs: '120px', md: '160px' },
+          },
+        }}
+      >
+        <FormControl size="sm">
+          <FormLabel>Status: </FormLabel>
+          <Select
+            size="sm"
+            value={status}
+            onChange={(event, newValue) => {
+              router.push(pathname + '?' + createQueryString('status', String(newValue! || 1)));
+              setStatus(newValue! || 1);
+            }}
+          >
+            <Option value={1}>Ativos</Option>
+            <Option value={2}>Inativos</Option>
+            <Option value={3}>Esperando autorização</Option>
+            <Option value={4}>Todos</Option>
+          </Select>
+        </FormControl>
+        <FormControl sx={{ flex: 1 }} size="sm">
+          <FormLabel>Buscar: </FormLabel>
+          <Input
+            startDecorator={<Search fontSize='small' />}
+            value={busca}
+            onChange={(event) => setBusca(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                router.push(pathname + '?' + createQueryString('busca', busca));
+                buscaUsuarios();
+              }
+            }}
+          />
+        </FormControl>
+      </Box>
       <Table hoverRow>
         <thead>
           <tr>
@@ -135,7 +176,7 @@ export default function Usuarios() {
           </tr>
         </thead>
         <tbody>
-          {usuarios && usuarios.map((usuario) => (
+          {usuarios ? usuarios.map((usuario) => (
             <tr key={usuario.id} style={{ cursor: 'pointer', backgroundColor: usuario.status === 3 ? theme.vars.palette.warning.plainActiveBg : undefined }}>
               <td>{usuario.nome}</td>
               <td>{usuario.login}</td>
@@ -167,14 +208,20 @@ export default function Usuarios() {
                 </div>
               </td>
             </tr>
-          ))}
+          )) : <tr><td colSpan={4}>Nenhum usuário encontrado</td></tr>}
         </tbody>
       </Table>
-      <Pagination
-        pagina={pagina}
-        limite={limite}
-        total={total}
-      />
+      {total > 0 && <TablePagination
+        component="div"
+        count={total}
+        page={(pagina - 1)}
+        onPageChange={mudaPagina}
+        rowsPerPage={limite}
+        onRowsPerPageChange={mudaLimite}
+        rowsPerPageOptions={[10, 25, 50, 100]}
+        labelRowsPerPage="Linhas por página"
+        labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
+      />}
     </Content>
   );
 }

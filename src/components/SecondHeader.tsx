@@ -15,7 +15,7 @@ export default function SecondHeader({
         <Breadcrumbs
             size="sm"
             aria-label="breadcrumbs"
-            separator={<ChevronRightRounded color='primary' />}
+            separator={<ChevronRightRounded color='primary' fontSize='small'/>}
             sx={{ pl: 0 }}
         >
             <Link
@@ -24,7 +24,7 @@ export default function SecondHeader({
               href="/"
               aria-label="Home"
             >
-              <HomeRounded />
+              <HomeRounded fontSize='small' />
             </Link>
             {breadcrumbs && breadcrumbs.map((item, index) => (
               <Link
@@ -33,6 +33,7 @@ export default function SecondHeader({
                 href={item.href}
                 aria-label={item.label}
                 key={index}
+                fontSize='small'
               >
                 {item.label}
               </Link>

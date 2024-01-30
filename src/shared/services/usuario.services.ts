@@ -25,9 +25,9 @@ export interface IPaginadoUsuario {
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
-async function buscarTudo(status: number = 1, pagina: number = 1): Promise<IPaginadoUsuario> {
+async function buscarTudo(status: number = 1, pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginadoUsuario> {
     const session = await getServerSession(authOptions);
-    const usuarios = await fetch(`${baseURL}usuario/buscar-tudo?status=${status}&pagina=${pagina}&limite=3`, {
+    const usuarios = await fetch(`${baseURL}usuario/buscar-tudo?status=${status}&pagina=${pagina}&limite=${limite}&busca=${busca}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -72,8 +72,24 @@ async function autorizar(id: string): Promise<{ autorizado: boolean }> {
     return autorizado;
 }
 
+async function validaUsuario(): Promise<IUsuario> {
+    const session = await getServerSession(authOptions);
+    const usuario = await fetch(`${baseURL}usuario/valida-usuario`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) signOut();
+        return response.json();
+    })
+    return usuario;
+}
+
 export { 
     buscarTudo,
     buscarPorId,
-    autorizar
+    autorizar,
+    validaUsuario
 };

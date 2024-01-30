@@ -4,7 +4,14 @@ import AlertsProvider from '@/providers/alertsProvider';
 import AuthSessionProvider from '@/providers/sessionProvider';
 import MenuProvider from '@/shared/contexts/MenuContext';
 import { CssBaseline } from '@mui/joy';
-import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
+import {
+  experimental_extendTheme as materialExtendTheme,
+  Experimental_CssVarsProvider as MaterialCssVarsProvider,
+  THEME_ID as MATERIAL_THEME_ID,
+} from '@mui/material/styles';
+import { CssVarsProvider as JoyCssVarsProvider, extendTheme } from '@mui/joy/styles';
+
+const materialTheme = materialExtendTheme();
 
 const theme = extendTheme({
   fontFamily: {
@@ -49,26 +56,28 @@ const theme = extendTheme({
 
 export default function RootLayout({children}:{children: React.ReactNode}) {
   return (
-    <CssVarsProvider theme={theme} defaultMode='system'>
-      <CssBaseline />
-      <MenuProvider>
-        <html lang="pt-BR">
-          <head>
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" />
-            <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet" />
-            <link href="https://db.onlinewebfonts.com/c/56a82ed18dbcec3eaab8c012dea226cf?family=Pangram" rel="stylesheet" />
-            <title>{process.env.NEXT_PUBLIC_PROJECT_NAME}</title>
-          </head>
-          <body>
-            <AuthSessionProvider>
-              <AlertsProvider>
-                {children}
-              </AlertsProvider>
-            </AuthSessionProvider>
-          </body>
-        </html>
-      </MenuProvider>
-    </CssVarsProvider>
+    <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }}>
+      <JoyCssVarsProvider theme={theme} defaultMode='system'>
+        <CssBaseline />
+        <MenuProvider>
+          <html lang="pt-BR">
+            <head>
+              <link rel="preconnect" href="https://fonts.googleapis.com" />
+              <link rel="preconnect" href="https://fonts.gstatic.com" />
+              <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet" />
+              <link href="https://db.onlinewebfonts.com/c/56a82ed18dbcec3eaab8c012dea226cf?family=Pangram" rel="stylesheet" />
+              <title>{process.env.NEXT_PUBLIC_PROJECT_NAME}</title>
+            </head>
+            <body>
+              <AuthSessionProvider>
+                <AlertsProvider>
+                  {children}
+                </AlertsProvider>
+              </AuthSessionProvider>
+            </body>
+          </html>
+        </MenuProvider>
+      </JoyCssVarsProvider>
+    </MaterialCssVarsProvider>
   );
 }
