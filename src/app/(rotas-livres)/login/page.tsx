@@ -35,7 +35,7 @@ export default function Login() {
       setAlert('Credenciais incorretas!', 'Tente novamente!', 'danger', 5000, Cancel);
       return;
     }
-    setAlert('Login efetuado com sucesso', 'Bem-vindo!', 'success', 5000);
+    setAlert('Bem-vindo!', 'Login efetuado com sucesso', 'success', 5000);
     setTimeout(() => router.replace('/'), 3000);
   }
   const [windowSize, setWindowSize] = useState(getWindowSize());

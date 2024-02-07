@@ -4,7 +4,6 @@ import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select,
 import { useEffect, useState } from "react";
 import { IAlvaraTipo, IPaginadoAlvaraTipo } from "@/shared/services/alvara-tipo.services";
 import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
-import MaskedInput from "@/components/MaskedInput";
 
 export default function DadosIniciaisTab (props: {
     id: string;
@@ -12,22 +11,21 @@ export default function DadosIniciaisTab (props: {
     const { id } = props;
     const [registerData, setRegisterData] = useState<IInicial>();
     const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
+    const [num_sql, setNum_sql] = useState<string>('');
     const [nums_sql, setNums_sql] = useState<string[]>([]);
     const [addNumSQLStatus, setAddNumSQLStatus] = useState<number>(0);
     const [addNumSQLStatusAlert, setAddNumSQLStatusAlert] = useState<boolean>(false);
 
     const handleAddSQL = () => {
         setAddNumSQLStatusAlert(false);
-        const inputSql = document.getElementById('num_sql_input') as HTMLInputElement;
-        const num_sql_input = inputSql.value;
-        if (num_sql_input != '') {
-            if (nums_sql.includes(num_sql_input)){
+        if (num_sql != '') {
+            if (nums_sql.includes(num_sql)){
                 setAddNumSQLStatus(1);
             } else {
                 setAddNumSQLStatus(0);
-                setNums_sql([...nums_sql, num_sql_input]);
+                setNums_sql([...nums_sql, num_sql]);
+                setNum_sql('');
             }
-            inputSql.value = '';
         }
         setAddNumSQLStatusAlert(true);
     }
@@ -112,8 +110,7 @@ export default function DadosIniciaisTab (props: {
                         <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
                             <FormControl>
                                 <FormLabel>SEI</FormLabel>
-                                <MaskedInput
-                                    mask="0000.0000/0000000-0"
+                                <Input
                                     id="sei"
                                     name="sei"
                                     placeholder="Número de SEI"
@@ -241,12 +238,13 @@ export default function DadosIniciaisTab (props: {
                         <Grid xs={12}>
                             <FormControl>
                                 <FormLabel>Adicionar SQL</FormLabel>
-                                <MaskedInput
-                                    mask="000.000.0000-0"
+                                <Input
                                     id="num_sql_input"
                                     name="num_sql_input"
                                     placeholder="SQL"
                                     type="text"
+                                    value={num_sql}
+                                    onChange={(e) => setNum_sql(e.target.value)}
                                     endDecorator={
                                         <IconButton 
                                             variant='solid'

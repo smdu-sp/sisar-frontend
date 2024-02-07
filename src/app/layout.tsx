@@ -56,7 +56,7 @@ const theme = extendTheme({
 
 export default function RootLayout({children}:{children: React.ReactNode}) {
   return (
-    <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }}>
+    <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }} defaultMode='system'>
       <JoyCssVarsProvider theme={theme} defaultMode='system'>
         <CssBaseline />
         <MenuProvider>

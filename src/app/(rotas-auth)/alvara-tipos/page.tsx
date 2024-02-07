@@ -38,12 +38,13 @@ export default function AlvaraTipos() {
     'TEC': { label: 'Técnico', value: 'TEC', color: 'warning' },
   }
   return (
-    <Content
-      breadcrumbs={[
-        { label: 'Tipos de alvará', href: '/alvara-tipos' }
-      ]}
+    <Content 
       titulo='Tipos de alvará'
-      pagina='/alvara-tipos'
+      pagina='alvara-tipos'
+      breadcrumbs={[{
+        label: 'Tipos de alvará',
+        href: 'alvara-tipos'
+      }]}
     >
       <Table hoverRow>
         <thead>

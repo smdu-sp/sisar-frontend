@@ -15,11 +15,18 @@ export default function Usuarios() {
   const pathname = usePathname();
   const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
   const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
-  const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 1);
+  const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
   const [status, setStatus] = useState(searchParams.get('status') ? Number(searchParams.get('status')) : 1);
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
-  const [confirmation, setConfirmation] = useState({ open: false, id: '' });
+  const confirmaVazio = {
+    aberto: false,
+    confirmaOperacao: () => {},
+    titulo: '',
+    pergunta: '',
+    color: 'primary'
+  }
+  const [confirma, setConfirma] = useState(confirmaVazio);
   const { setAlert } = useContext(AlertsContext);
 
   const theme = useTheme();
@@ -56,6 +63,18 @@ export default function Usuarios() {
     } else {
       setAlert('Tente novamente!', 'Não foi possível autorizar o usuário.', 'warning', 3000, Warning);
     }
+    setConfirma(confirmaVazio);
+  }
+  
+  const desativaUsuario = async (id: string) => {
+    var resposta = await usuarioServices.desativar(id);
+    if (resposta){
+      setAlert('Usuário desativado!', 'Esse usuário foi desativado e não poderá acessar o sistema.', 'success', 3000, Check);
+      buscaUsuarios();
+    } else {
+      setAlert('Tente novamente!', 'Não foi possível desativar o usuário.', 'warning', 3000, Warning);
+    }
+    setConfirma(confirmaVazio);
   }
 
   const mudaPagina = (
@@ -73,6 +92,26 @@ export default function Usuarios() {
     setLimite(parseInt(event.target.value, 10));
     setPagina(1);
   };
+
+  const confirmaAutorizaUsuario = async (id: string) => {
+    setConfirma({ 
+      aberto: true,
+      confirmaOperacao: () => autorizaUsuario(id),
+      titulo: 'Autorizar usuário',
+      pergunta: 'Deseja autorizar este usuário?',
+      color: 'primary'
+    });
+  }
+
+  const confirmaDesativaUsuario = async (id: string) => {
+    setConfirma({ 
+      aberto: true,
+      confirmaOperacao: () => desativaUsuario(id),
+      titulo: 'Desativar usuário',
+      pergunta: 'Deseja desativar este usuário?',
+      color: 'warning'
+    });
+  }
 
   const permissoes = {
     'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'primary' },
@@ -94,28 +133,25 @@ export default function Usuarios() {
     >
       <Snackbar
         variant="solid"
-        color="primary"
+        color={confirma.color}
         size="lg"
         invertedColors
-        open={confirmation.open}
-        onClose={() => setConfirmation({ ...confirmation, open: false })}
+        open={confirma.aberto}
+        onClose={() => setConfirma({ ...confirma, aberto: false })}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         sx={{ maxWidth: 360 }}
       >
         <div>
-          <Typography level="title-lg">Autorizar usuário.</Typography>
-          <Typography sx={{ mt: 1, mb: 2 }} level="title-md">Tem certeza de que deseja autorizar esse usuário?</Typography>
+          <Typography level="title-lg">{confirma.titulo}</Typography>
+          <Typography sx={{ mt: 1, mb: 2 }} level="title-md">{confirma.pergunta}</Typography>
           <Stack direction="row" spacing={1}>
-            <Button variant="solid" color="primary" onClick={() => {
-              autorizaUsuario(confirmation.id);
-              setConfirmation({ ...confirmation, open: false });
-            }}>
+            <Button variant="solid" color="primary" onClick={() => confirma.confirmaOperacao()}>
               Sim
             </Button>
             <Button
               variant="outlined"
               color="primary"
-              onClick={() => setConfirmation({ ...confirmation, open: false })}
+              onClick={() => setConfirma(confirmaVazio)}
             >
               Não
             </Button>
@@ -177,7 +213,14 @@ export default function Usuarios() {
         </thead>
         <tbody>
           {usuarios ? usuarios.map((usuario) => (
-            <tr key={usuario.id} style={{ cursor: 'pointer', backgroundColor: usuario.status === 3 ? theme.vars.palette.warning.plainActiveBg : undefined }}>
+            <tr key={usuario.id} style={{
+              cursor: 'pointer',
+              backgroundColor: usuario.status === 3 ? 
+                theme.vars.palette.warning.plainActiveBg : 
+                usuario.status === 2 ? 
+                  theme.vars.palette.danger.plainActiveBg : 
+                  undefined
+            }}>
               <td>{usuario.nome}</td>
               <td>{usuario.login}</td>
               <td>
@@ -188,9 +231,9 @@ export default function Usuarios() {
               </td>
               <td>
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                  {usuario.status === 3 && (
+                  {usuario.status !== 1 && (
                     <Tooltip title="Aprovar usuário novo" arrow placement="top">
-                      <IconButton size="sm" color="success" onClick={() => setConfirmation({ open: true, id: usuario.id })}>
+                      <IconButton size="sm" color="success" onClick={() => confirmaAutorizaUsuario(usuario.id)}>
                         <Check />
                       </IconButton>
                     </Tooltip>                    
@@ -201,7 +244,7 @@ export default function Usuarios() {
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Desativar" arrow placement="top">
-                    <IconButton title="Desativar" size="sm" color="danger">
+                    <IconButton title="Desativar" size="sm" color="danger" onClick={() => confirmaDesativaUsuario(usuario.id)}>
                       <Cancel />
                     </IconButton>
                   </Tooltip>
@@ -211,7 +254,7 @@ export default function Usuarios() {
           )) : <tr><td colSpan={4}>Nenhum usuário encontrado</td></tr>}
         </tbody>
       </Table>
-      {total > 0 && <TablePagination
+      {(total && total > 0) ? <TablePagination
         component="div"
         count={total}
         page={(pagina - 1)}
@@ -219,9 +262,9 @@ export default function Usuarios() {
         rowsPerPage={limite}
         onRowsPerPageChange={mudaLimite}
         rowsPerPageOptions={[10, 25, 50, 100]}
-        labelRowsPerPage="Linhas por página"
+        labelRowsPerPage="Registros por página"
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
-      />}
+      /> : null}
     </Content>
   );
 }

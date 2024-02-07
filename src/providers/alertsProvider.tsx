@@ -22,7 +22,7 @@ export default function AlertsProvider ({ ...props }) {
     const [duration, setDuration] = useState(3000);
     const [icon, setIcon] = useState<any>(Check);
 
-    const setAlert = (message?: string, title?: string, alertType?: ColorPaletteProp, duration?: number, icon?: any): void => {
+    const setAlert = (title?: string, message?: string, alertType?: ColorPaletteProp, duration?: number, icon?: any): void => {
         setMessage(message || 'Mensagem');
         setTitle(title || 'Título');
         setAlertType(alertType || 'primary');
@@ -34,7 +34,6 @@ export default function AlertsProvider ({ ...props }) {
     const toggleAlert = (): void => {
         open ? setOpen(false) : setOpen(true);
     }
-
     return (
         <AlertsContext.Provider value={{ open, message, title, alertType, duration, icon, toggleAlert, setAlert }}>
             <Snackbar

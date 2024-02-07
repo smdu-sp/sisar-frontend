@@ -2,6 +2,8 @@ import { useContext } from 'react';
 import { Link, ListItemButton, ListItemDecorator, ListItemContent, ListItem, List, Sheet, Box, SvgIcon } from '@mui/joy';
 import { menu } from '../app/menu';
 import { MenuContext } from '@/shared/contexts/MenuContext';
+import { useRouter } from 'next/navigation';
+import Usuario from './Usuario';
 
 export default function SecondSidebar({
   pagina,
@@ -60,6 +62,7 @@ export default function SecondSidebar({
           gap: 2,
           borderRight: '1px solid',
           borderColor: 'divider',
+          maxWidth: 250,
         }}
       >
         <List
@@ -93,7 +96,7 @@ export default function SecondSidebar({
               key={page.name}
             >
               <ListItem sx={{width: '100%'}}>
-                  <ListItemButton variant={pagina===page.name ? 'solid' : 'plain'} color={pagina===page.name ? 'primary' : 'neutral'} >
+                  <ListItemButton selected={page.name === pagina}>
                     <ListItemDecorator >
                       <SvgIcon component={page.icon} />
                     </ListItemDecorator>
@@ -103,6 +106,7 @@ export default function SecondSidebar({
             </Link>
           ))}
         </List>
+        <Usuario />
       </Sheet>
     </>
   );

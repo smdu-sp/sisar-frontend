@@ -68,8 +68,23 @@ async function autorizar(id: string): Promise<{ autorizado: boolean }> {
         if (response.status !== 200) return;
         return response.json();
     })
-    console.log(autorizado);
     return autorizado;
+}
+
+async function desativar(id: string): Promise<{ autorizado: boolean }> {
+    const session = await getServerSession(authOptions);
+    const desativado = await fetch(`${baseURL}usuario/desativar/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) signOut();
+        if (response.status !== 200) return;
+        return response.json();
+    });
+    return desativado;
 }
 
 async function validaUsuario(): Promise<IUsuario> {
@@ -91,5 +106,6 @@ export {
     buscarTudo,
     buscarPorId,
     autorizar,
+    desativar,
     validaUsuario
 };
