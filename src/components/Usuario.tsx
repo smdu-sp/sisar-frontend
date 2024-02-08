@@ -39,7 +39,7 @@ export default function Usuario() {
             >{verificaNome(usuario.nome)}</Typography>
             <Typography level="body-xs">{usuario.email}</Typography>
             <Box sx={{ display: 'flex', gap: 0.5 }}>
-                <Chip color={cargos[usuario.cargo].color} size='sm'>{cargos[usuario.cargo].label}</Chip>            
+                {usuario.permissao === 'DEV' ? null : <Chip color={cargos[usuario.cargo].color} size='sm'>{cargos[usuario.cargo].label}</Chip>}         
                 <Chip color={permissoes[usuario.permissao].color} size='sm'>{permissoes[usuario.permissao].label}</Chip>
             </Box>
         </CardContent>
