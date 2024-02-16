@@ -6,6 +6,8 @@ import { Button, Table } from '@mui/joy';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import * as alvaraTipoService from '@/shared/services/alvara-tipo.services';
 import { IPaginadoAlvaraTipo, IAlvaraTipo } from '@/shared/services/alvara-tipo.services';
+import { Fab } from '@mui/material';
+import { Add } from '@mui/icons-material';
 
 export default function AlvaraTipos() {
   const searchParams = useSearchParams();
@@ -51,10 +53,10 @@ export default function AlvaraTipos() {
           <tr>
             <th>Nome</th>
             <th>Admissibilidade</th>
-            <th>1ª ANÁLISE PRÓPRIO DA SMUL</th>
-            <th>2ª ANÁLISE PRÓPRIO DA SMUL</th>
-            <th>1ª ANÁLISE MÚLTIPLAS</th>
-            <th>2ª ANÁLISE MÚLTIPLAS</th>
+            <th>1ª Análise SMUL</th>
+            <th>2ª Análise SMUL</th>
+            <th>1ª Análise Múltiplas</th>
+            <th>2ª Análise Múltiplas</th>
           </tr>
         </thead>
         <tbody>
@@ -70,19 +72,9 @@ export default function AlvaraTipos() {
           ))}
         </tbody>
       </Table>
-      <Button
-        component="a"
-        href="alvara-tipos/detalhes"
-        variant="solid"
-        size='lg'
-        sx={{
-          position: 'absolute',
-          bottom: 50,
-          right: 50,
-        }}
-      >
-        Novo
-      </Button>
+      <Fab color='primary' style={{ position: 'absolute', bottom: 20, right: 20 }}>
+        <Add />
+      </Fab>
     </Content>
   );
 }

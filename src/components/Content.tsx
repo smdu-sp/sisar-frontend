@@ -4,17 +4,19 @@ import Header from '@/components/Header';
 import FirstSidebar from '@/components/FirstSidebar';
 import SecondSidebar from '@/components/SecondSidebar';
 import SecondHeader from '@/components/SecondHeader';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 export default function Content({
     children,
     titulo = 'Dashboard',
+    tags = [],
     pagina,
     breadcrumbs,
     menuOverride,
 } : {
     children?: React.ReactNode;
     titulo?: string;
+    tags?: React.ReactNode;
     pagina?: string;
     breadcrumbs?: {
       label: string;
@@ -75,10 +77,10 @@ export default function Content({
                   flexDirection: { xs: 'column', sm: 'row' },
                   alignItems: { xs: 'start', sm: 'center' },
                   flexWrap: 'wrap',
-                  justifyContent: 'space-between'
               }}
           >
-              <Typography level="h2">{titulo}</Typography>
+            <Typography level="h2">{titulo}</Typography>
+            {tags ? tags : null}
           </Box>
           {children}
         </Box>

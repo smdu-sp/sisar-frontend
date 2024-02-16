@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 export interface IUsuario {
     id: string;
     nome: string;
+    email: string;
     login: string;
     permissao: string;
     cargo: string;
