@@ -1,16 +1,17 @@
 import { UsuarioToken } from "@/shared/interfaces/usuario-token";
-import { Avatar, Box, Card, CardContent, Chip, IconButton, SvgIcon, Typography } from "@mui/joy";
+import { Box, Card, CardContent, Chip, ChipPropsColorOverrides, ColorPaletteProp, Skeleton, Typography } from "@mui/joy";
+import { OverridableStringUnion } from '@mui/types';
 import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function Usuario() {
-    const permissoes = {
+    const permissoes: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
       'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'primary' },
-      'SUP': { label: 'Superusuario', value: 'SUP', color: 'info' },
+      'SUP': { label: 'Superusuario', value: 'SUP', color: 'neutral' },
       'ADM': { label: 'Administrador', value: 'ADM', color: 'success' },
       'USR': { label: 'Usuário', value: 'USR', color: 'warning' },
     }
-    const cargos = {
+    const cargos: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
       'ADM': { label: 'Administrativo', value: 'ADM', color: 'success' },
       'TEC': { label: 'Técnico', value: 'TEC', color: 'warning' },
     }
@@ -30,7 +31,7 @@ export default function Usuario() {
         return nome;
     }
     return (usuario ?
-    <Card sx={{ maxWidth: 250 }}>
+      <Card sx={{ maxWidth: 250 }}>
         <CardContent sx={{ alignItems: 'center', textAlign: 'center' }}>
             <Typography
                 level="title-lg"
@@ -44,5 +45,35 @@ export default function Usuario() {
             </Box>
         </CardContent>
       </Card>
-    : null);
+    : <Card sx={{ maxWidth: 250 }}>
+        <CardContent sx={{ alignItems: 'center', textAlign: 'center' }}>
+          <Typography
+            level="title-lg"
+            title="Nome do Usuário"
+            sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+          >
+            <Skeleton>
+              Nome do Usuário
+            </Skeleton>
+          </Typography>
+          <Typography level="body-xs">
+            <Skeleton>
+              emailusuario@prefeitura.sp.gov.br
+            </Skeleton>
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
+            <Typography level="body-xs">
+              <Skeleton>
+                Cargo
+              </Skeleton>
+            </Typography>
+            <Typography level="body-xs">
+              <Skeleton>
+                Permissao
+              </Skeleton>
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
+    );
 }

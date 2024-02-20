@@ -1,7 +1,8 @@
 import { IInicial, IniciaisService } from "@/shared/services/inicial.services";
 import { Add, Cancel, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
-import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid } from "@mui/joy"
-import { useEffect, useState } from "react";
+import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides } from "@mui/joy"
+import { OverridableStringUnion } from '@mui/types';
+import { ReactElement, ReactNode, useEffect, useState } from "react";
 import { IAlvaraTipo, IPaginadoAlvaraTipo } from "@/shared/services/alvara-tipo.services";
 import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
 
@@ -37,12 +38,7 @@ export default function DadosIniciaisTab (props: {
         setAddNumSQLStatusAlert(true);
     }
 
-    const clearFields = () => {
-        setNums_sql([]);
-        setAddNumSQLStatusAlert(false);
-    }
-
-    const alertConfigs = [{
+    const alertConfigs: { message: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides>, icon: ReactNode }[] = [{
         message: 'SQL adicionado com sucesso.',
         color: 'success',
         icon: <PlaylistAddCheckCircleRounded />
@@ -77,7 +73,7 @@ export default function DadosIniciaisTab (props: {
                 }
             }
         });
-    }, []);
+    }, [ id ]);
     return (
             <Card 
                 variant='plain'
@@ -168,7 +164,7 @@ export default function DadosIniciaisTab (props: {
                                 <FormLabel>Tipo de alvará</FormLabel>
                                 <Select>
                                     {alvaraTipos.map((alvaraTipo) => (
-                                        <Option value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
+                                        <Option key={alvaraTipo.id} value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
                                     ))}
                                 </Select>
                             </FormControl>

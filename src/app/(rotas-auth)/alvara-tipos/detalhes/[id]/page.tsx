@@ -16,7 +16,7 @@ export default function AlvaraTipoDetalhes(props: any) {
                     setAlvaraTipo(response);
                 });
         }
-    }, []);
+    }, [ id ]);
     return (
         <Content
             breadcrumbs={[

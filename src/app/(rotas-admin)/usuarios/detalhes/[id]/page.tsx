@@ -4,10 +4,10 @@ import Content from "@/components/Content";
 import { IUsuario } from "@/shared/services/usuario.services";
 import { useEffect, useState } from "react";
 import * as usuarioServices from "@/shared/services/usuario.services";
-import Form from "./form";
-import { AspectRatio, Box, Button, Card, CardActions, CardOverflow, Chip, Divider, FormControl, FormLabel, IconButton, Input, Option, Select, Stack, Typography } from "@mui/joy";
-import { EditRounded, EmailRounded } from "@mui/icons-material";
+import { Box, Button, Card, CardActions, CardOverflow, Chip, ChipPropsColorOverrides, ColorPaletteProp, Divider, FormControl, FormLabel, Input, Option, Select, Stack } from "@mui/joy";
+import { EmailRounded } from "@mui/icons-material";
 import { useRouter } from 'next/navigation';
+import { OverridableStringUnion } from '@mui/types';
 
 export default function UsuarioDetalhes(props: any) {
     const [usuario, setUsuario] = useState<IUsuario>();
@@ -16,13 +16,13 @@ export default function UsuarioDetalhes(props: any) {
     const [cargo, setCargo] = useState('');
     const [permissao, setPermissao] = useState('');
 
-    const permissoes = {
+    const permissoes: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
       'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'primary' },
-      'SUP': { label: 'Superusuario', value: 'SUP', color: 'info' },
+      'SUP': { label: 'Superusuario', value: 'SUP', color: 'neutral' },
       'ADM': { label: 'Administrador', value: 'ADM', color: 'success' },
       'USR': { label: 'Usuário', value: 'USR', color: 'warning' },
     }
-    const cargos = {
+    const cargos: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
       'ADM': { label: 'Administrativo', value: 'ADM', color: 'success' },
       'TEC': { label: 'Técnico', value: 'TEC', color: 'warning' },
     }
@@ -36,7 +36,8 @@ export default function UsuarioDetalhes(props: any) {
                     setPermissao(response.permissao);
                 });
         }
-    }, []);
+    }, [ id ]);
+
     return (
         <Content
             breadcrumbs={[
