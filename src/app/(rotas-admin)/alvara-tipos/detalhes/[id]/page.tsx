@@ -143,7 +143,6 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 </Select>
                             </FormControl>
                         </Stack>
-                        <Divider />
                     </Stack>
                     <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
                         <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
