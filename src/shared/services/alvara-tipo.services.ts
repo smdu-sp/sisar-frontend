@@ -38,7 +38,7 @@ const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
 const buscarTudo = async (pagina: number = 1, limite: number = 10): Promise<IPaginadoAlvaraTipo> => {
     const session = await getServerSession(authOptions);
-    const alvaraTipos = await fetch(`${baseURL}alvara-tipo/buscar-tudo?pagina=${pagina}&limite=${limite}`, {
+    const alvaraTipos = fetch(`${baseURL}alvara-tipo/buscar-tudo?pagina=${pagina}&limite=${limite}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -54,7 +54,7 @@ const buscarTudo = async (pagina: number = 1, limite: number = 10): Promise<IPag
  
 const buscarPorId = async (id: string): Promise<IAlvaraTipo> => {
     const session = await getServerSession(authOptions);
-    const alvaraTipo = await fetch(`${baseURL}alvara-tipo/buscar-por-id/${id}`, {
+    const alvaraTipo = fetch(`${baseURL}alvara-tipo/buscar-por-id/${id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -69,7 +69,20 @@ const buscarPorId = async (id: string): Promise<IAlvaraTipo> => {
 }
 
 const criar = async (dataCreate: ICreateAlvaraTipo): Promise<IAlvaraTipo> => {
-    throw new Error('Not implemented');
+    const session = await getServerSession(authOptions);
+    const alvaraTipo = fetch(`${baseURL}alvara-tipo/criar`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`            
+        },
+        body: JSON.stringify(dataCreate)
+    }).then((response) => {
+        if (response.status === 401) signOut();
+        if (response.status !== 201) return;
+        return response.json();
+    });
+    return alvaraTipo;
 }
 
 const atualizar = async (id: string, dataUpdate: IUpdateAlvaraTipo): Promise<IAlvaraTipo | Error> => {
