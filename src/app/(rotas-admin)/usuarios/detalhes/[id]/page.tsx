@@ -14,6 +14,7 @@ import { AlertsContext } from "@/providers/alertsProvider";
 export default function UsuarioDetalhes(props: any) {
     const [usuario, setUsuario] = useState<IUsuario>();
     const [permissao, setPermissao] = useState('USR');
+    const [cargo, setCargo] = useState('ADM');
     const [nome, setNome] = useState('');
     const [login, setLogin] = useState('');
     const [email, setEmail] = useState('');
@@ -52,7 +53,7 @@ export default function UsuarioDetalhes(props: any) {
         } else {
             if (novoUsuario){
                 usuarioServices.criar({
-                    nome, login, email, permissao
+                    nome, login, email, permissao, cargo
                 }).then((response) => {
                     if (response.id) {
                         setAlert('Usuário criado!', 'Dados inseridos com sucesso!', 'success', 3000, Check);
@@ -152,6 +153,17 @@ export default function UsuarioDetalhes(props: any) {
                                     <Option value="SUP">Superadmin</Option>
                                     <Option value="ADM">Administrador</Option>
                                     <Option value="USR">Usuário</Option>
+                                </Select>
+                            </FormControl>
+                        </Stack>
+                        <Divider />
+                        <Stack>
+                            <FormControl>
+                                <FormLabel>Cargo</FormLabel>
+                                <Select value={cargo ? cargo : 'ADM'} onChange={(_, value) => value && setCargo(value)}
+                                    startDecorator={<Badge />}>
+                                    <Option value="ADM">Administrativo</Option>
+                                    <Option value="TEC">Técnico</Option>
                                 </Select>
                             </FormControl>
                         </Stack>
