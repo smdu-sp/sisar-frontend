@@ -1,30 +1,32 @@
 'use client'
 
-import Content from "@/components/Content";
-import { IUsuario } from "@/shared/services/usuario.services";
-import { useEffect, useState } from "react";
-import * as usuarioServices from "@/shared/services/usuario.services";
-import { Box, Button, Card, CardActions, CardOverflow, Chip, ChipPropsColorOverrides, ColorPaletteProp, Divider, FormControl, FormLabel, Input, Option, Select, Stack } from "@mui/joy";
-import { EmailRounded } from "@mui/icons-material";
+import { useContext, useEffect, useState } from "react";
+import { Autocomplete, AutocompleteOption, Box, Button, Card, CardActions, CardOverflow, Chip, ChipPropsColorOverrides, ColorPaletteProp, Divider, FormControl, FormLabel, IconButton, Input, Option, Select, Stack } from "@mui/joy";
+import { Badge, Business, Check, Clear, EmailRounded, Warning } from "@mui/icons-material";
 import { useRouter } from 'next/navigation';
 import { OverridableStringUnion } from '@mui/types';
 
+import Content from "@/components/Content";
+import { IUsuario } from "@/shared/services/usuario.services";
+import * as usuarioServices from "@/shared/services/usuario.services";
+import { AlertsContext } from "@/providers/alertsProvider";
+
 export default function UsuarioDetalhes(props: any) {
     const [usuario, setUsuario] = useState<IUsuario>();
+    const [permissao, setPermissao] = useState('USR');
+    const [nome, setNome] = useState('');
+    const [login, setLogin] = useState('');
+    const [email, setEmail] = useState('');
+    const [novoUsuario, setNovoUsuario] = useState(false);
     const { id } = props.params;
     const router = useRouter();
-    const [cargo, setCargo] = useState('');
-    const [permissao, setPermissao] = useState('');
+    const { setAlert } = useContext(AlertsContext);
 
     const permissoes: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
-      'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'primary' },
-      'SUP': { label: 'Superusuario', value: 'SUP', color: 'neutral' },
-      'ADM': { label: 'Administrador', value: 'ADM', color: 'success' },
-      'USR': { label: 'Usuário', value: 'USR', color: 'warning' },
-    }
-    const cargos: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
-      'ADM': { label: 'Administrativo', value: 'ADM', color: 'success' },
-      'TEC': { label: 'Técnico', value: 'TEC', color: 'warning' },
+        'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'neutral' },
+        'SUP': { label: 'Superadmin', value: 'SUP', color: 'primary' },
+        'ADM': { label: 'Administrador', value: 'ADM', color: 'success' },
+        'USR': { label: 'Usuário', value: 'USR', color: 'warning' },
     }
 
     useEffect(() => {
@@ -32,22 +34,67 @@ export default function UsuarioDetalhes(props: any) {
             usuarioServices.buscarPorId(id)
                 .then((response: IUsuario) => {
                     setUsuario(response);
-                    setCargo(response.cargo);
                     setPermissao(response.permissao);
+                    setEmail(response.email);
                 });
         }
     }, [ id ]);
+
+    const submitData = () => {
+        if (usuario){
+            usuarioServices.atualizar(usuario.id, {
+                permissao
+            }).then((response) => {
+                if (response.id) {
+                    setAlert('Usuário alterado!', 'Dados atualizados com sucesso!', 'success', 3000, Check);              
+                }
+            })
+        } else {
+            if (novoUsuario){
+                usuarioServices.criar({
+                    nome, login, email, permissao
+                }).then((response) => {
+                    if (response.id) {
+                        setAlert('Usuário criado!', 'Dados inseridos com sucesso!', 'success', 3000, Check);
+                        router.push('/usuarios/detalhes/' + response.id);
+                    }
+                })
+            }
+        }
+    }
+
+    const buscarNovo = () => {
+        if (login)
+            usuarioServices.buscarNovo(login).then((response) => {
+                if (response.message) setAlert('Erro', response.message, 'warning', 3000, Warning);
+                if (response.id)
+                    router.push('/usuarios/detalhes/' + response.id);
+                else if (response.email) {
+                    setNome(response.nome ? response.nome : '');
+                    setLogin(response.login ? response.login : '');
+                    setEmail(response.email ? response.email : '');
+                    setNovoUsuario(true);
+                }
+            })
+    }
+
+    const limpaUsuario = () => {
+        setNovoUsuario(false);
+        setNome('');
+        setLogin('');
+        setEmail('');
+        setPermissao('USR');
+    }    
 
     return (
         <Content
             breadcrumbs={[
                 { label: 'Usuários', href: '/usuarios' },
-                { label: 'Detalhes', href: '/usuarios/detalhes/' + id },
+                { label: usuario ? usuario.nome : 'Novo', href: `/usuarios/detalhes/${id ? id : ''}` },
             ]}
             titulo={id ? usuario?.nome : 'Novo'}
             tags={
-                usuario ? <div style={{ display: 'flex', gap: '0.2rem' }}>
-                  <Chip color={cargos[usuario?.cargo].color} size='lg'>{cargos[usuario?.cargo].label}</Chip>            
+                usuario ? <div style={{ display: 'flex', gap: '0.2rem' }}>     
                   <Chip color={permissoes[usuario?.permissao].color} size='lg'>{permissoes[usuario?.permissao].label}</Chip>
                 </div> : null
             }
@@ -56,27 +103,53 @@ export default function UsuarioDetalhes(props: any) {
             <Box
                 sx={{
                     display: 'flex',
-                    maxWidth: '800px',
                     mx: 'auto',
+                    width: '90%',
+                    maxWidth: 800,
                     px: { xs: 2, md: 6 },
                     py: { xs: 2, md: 3 },
                 }}
             >
-                <Card>
-                    <Stack spacing={2} sx={{ flexGrow: 1 }}>
-                        <Stack direction="row" spacing={2}>
+                <Card sx={{ width: '100%' }}>
+                    <Stack spacing={2} >
+                        {!id ? 
+                        <><Stack>
                             <FormControl>
-                                <FormLabel>Cargo</FormLabel>
-                                <Select value={cargo ? cargo : 'ADM'} onChange={(event, value) => value && setCargo(value)}>
-                                    <Option value="ADM">Administrativo</Option>
-                                    <Option value="TEC">Técnico</Option>
-                                </Select>
+                                <FormLabel>Login de rede</FormLabel>
+                                <Input 
+                                    placeholder="Buscar por login de rede" 
+                                    value={login} 
+                                    onChange={e => setLogin(e.target.value)} 
+                                    onKeyDown={e => {
+                                        if (e.key === 'Enter') buscarNovo()
+                                    }}
+                                    endDecorator={
+                                    novoUsuario ? <IconButton onClick={limpaUsuario}><Clear /></IconButton> : <Button onClick={buscarNovo} variant="soft">Buscar</Button>}
+                                    readOnly={novoUsuario}
+                                />
                             </FormControl>
+                        </Stack>
+                        <Divider />
+                        <Stack>
+                            <FormControl>
+                                <FormLabel>Nome</FormLabel>
+                                <Input 
+                                    placeholder="Nome" 
+                                    value={nome} 
+                                    onChange={e => setNome(e.target.value)} 
+                                    readOnly={novoUsuario}
+                                />
+                            </FormControl>
+                        </Stack>
+                        <Divider />
+                        </> : null}
+                        <Stack>
                             <FormControl>
                                 <FormLabel>Permissao</FormLabel>
-                                <Select value={permissao ? permissao : 'USR'} onChange={(event, value) => value && setPermissao(value)}>
+                                <Select value={permissao ? permissao : 'USR'} onChange={(_, value) => value && setPermissao(value)}
+                                    startDecorator={<Badge />}>
                                     <Option value="DEV">Desenvolvedor</Option>
-                                    <Option value="SUP">Superusuário</Option>
+                                    <Option value="SUP">Superadmin</Option>
                                     <Option value="ADM">Administrador</Option>
                                     <Option value="USR">Usuário</Option>
                                 </Select>
@@ -87,31 +160,16 @@ export default function UsuarioDetalhes(props: any) {
                             <FormControl sx={{ flexGrow: 1 }}>
                                 <FormLabel>Email</FormLabel>
                                 <Input
-                                    value={usuario ? usuario?.email : 'USR'}
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
                                     size="sm"
                                     type="email"
                                     startDecorator={<EmailRounded />}
                                     placeholder="Email"
                                     sx={{ flexGrow: 1 }}
-                                    readOnly
+                                    readOnly={id ? true : (novoUsuario)}
                                 />
                             </FormControl>
-                        </Stack>
-                        <Divider />
-                        <Stack spacing={2}>
-                            <Box sx={{ alignSelf: 'center' }}>
-                                <Button size="sm" variant="solid">
-                                    Programar férias
-                                </Button>
-                            </Box>
-                        </Stack>
-                        <Divider />
-                        <Stack spacing={2}>
-                            <Box sx={{ alignSelf: 'center' }}>
-                                <Button size="sm" variant="solid">
-                                    Programar férias
-                                </Button>
-                            </Box>
                         </Stack>
                     </Stack>
                     <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
@@ -119,7 +177,7 @@ export default function UsuarioDetalhes(props: any) {
                         <Button size="sm" variant="outlined" color="neutral" onClick={() => router.back()}>
                             Cancelar
                         </Button>
-                        <Button size="sm" variant="solid">
+                        <Button size="sm" variant="solid" onClick={submitData}>
                             Salvar
                         </Button>
                         </CardActions>

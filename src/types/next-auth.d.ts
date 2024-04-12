@@ -8,8 +8,11 @@ declare module 'next-auth' {
 			login: string
 			email: string
 			permissao: string
-			cargo: string
+			status: number,
+			iat: number,
+			exp: number
 		},
-        access_token: string
+        access_token: string,
+		refresh_token: string
 	}
 }

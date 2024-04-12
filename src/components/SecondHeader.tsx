@@ -29,7 +29,7 @@ export default function SecondHeader({
             {breadcrumbs && breadcrumbs.map((item, index) => (
               <Link
                 underline="none"
-                color={ index === breadcrumbs.length - 1 ? 'primary' : 'neutral' }
+                color={index === breadcrumbs.length - 1 ? 'primary' : 'neutral'}
                 href={item.href}
                 aria-label={item.label}
                 key={index}

@@ -1,8 +1,9 @@
+'use client'
+
 import { useContext } from 'react';
 import GlobalStyles from '@mui/joy/GlobalStyles';
 import Sheet from '@mui/joy/Sheet';
 import IconButton from '@mui/joy/IconButton';
-
 import ThemeToggle from './ThemeToggle';
 import { MenuContext } from '@/shared/contexts/MenuContext';
 import { Close, Menu } from '@mui/icons-material';

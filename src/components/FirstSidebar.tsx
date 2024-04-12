@@ -1,24 +1,23 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import Image from 'next/image';
 import { Tooltip, GlobalStyles, List, ListItemButton, Sheet, IconButton, Button, Typography, Stack, Snackbar } from '@mui/joy';
-import { Close, Logout, Menu, Person } from '@mui/icons-material';
+import { Close, Logout, Menu } from '@mui/icons-material';
 
 import iconLogo from '@/assets/sis-icon.png';
 import { MenuContext } from '@/shared/contexts/MenuContext';
-import { getSession, signOut } from 'next-auth/react';
-import { UsuarioToken } from '@/shared/interfaces/usuario-token';
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
+
 export default function FirstSidebar() {
-  useEffect(() => {
-    getSession().catch((error) => console.log(error)).then((session) => {
-      if (session) setUsuario(session.usuario);
-    });    
-  }, []);
   const router = useRouter();
-  const [usuario, setUsuario] = useState<UsuarioToken>();
   const [open, setOpen] = useState(false);
   const { sidebarStatus, toggleSidebar } = useContext(MenuContext);
+
+  async function logout() {
+    await signOut({ redirect: false });
+    router.replace('/login');
+  }
 
   return (
     <Sheet
@@ -62,11 +61,7 @@ export default function FirstSidebar() {
           <Typography level="title-lg">Você está saindo.</Typography>
           <Typography sx={{ mt: 1, mb: 2 }} level="title-md">Tem certeza de que deseja sair?</Typography>
           <Stack direction="row" spacing={1}>
-            <Button variant="solid" color="primary" onClick={() => {
-              signOut({ redirect: false });
-              router.replace('/login');
-              setOpen(false);
-            }}>
+            <Button variant="solid" color="primary" onClick={() => logout()}>
               Sim
             </Button>
             <Button

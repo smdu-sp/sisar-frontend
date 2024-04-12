@@ -1,4 +1,8 @@
-import { Api } from "../api/axios-config";
+'use server'
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { IAlvaraTipo } from "./alvara-tipo.services";
 
 export interface IInicial {
     id: number
@@ -11,7 +15,8 @@ export interface IInicial {
     processo_fisico: string | null
     data_protocolo: Date
     envio_admissibilidade: Date | null
-    tipo_alvara: string
+    alvara_tipo_id: string
+    alvara_tipo: IAlvaraTipo
     tipo_processo: string
     obs: string | null
     status: string    
@@ -38,64 +43,31 @@ export interface ICreateInicial {
 
 export interface IPaginatedInicial {
     data: IInicial[];
-    totalCount: number;
+    total: number;
+    pagina: number;
+    limite: number;
 }
 
-const entityUrl = '/iniciais';
+const baseURL = 'http://localhost:3000/';
 
-const findAll = async (
-    page: number = 1, 
-    limit: number = 10,
-): Promise<IPaginatedInicial | Error> => {
-    throw new Error('Not implemented');
-    // try {
-    //     const relative = `${entityUrl}?page=${page}&limit=${limit}`
-    //     const { data } = await Api.get(relative);
-    //     return data ? data : new Error('Erro ao buscar registros.');
-    // } catch (error: any) {
-    //     return new Error(error.response ? error.response.data.message : error.request ? error.request : error.message || 'Erro ao buscar registros.');
-    // }
-}
- 
-const findOne = async (id: string): Promise<IInicial | Error> => {
-    throw new Error('Not implemented');
-    // if (!id) throw new Error('Nenhum id informado.');
-    // try {
-    //     const relative = `${entityUrl}/${id}`
-    //     const { data } = await Api.get(relative);
-    //     return data ? data : new Error('Erro ao buscar processo pelo ID.');
-    // } catch (error: any) {
-    //     return new Error(error.response ? error.response.data.message : error.request ? error.request : error.message || 'Erro ao buscar processo pelo ID.');
-    // }
+const buscarTudo = async (
+    pagina: number = 1,
+    limite: number = 10,
+): Promise<IPaginatedInicial> => {
+    const session = await getServerSession(authOptions);
+    const iniciais = await fetch(`${baseURL}iniciais/buscar-tudo?pagina=${pagina}&limite=${limite}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        // if (response.status === 401) Logout();
+        return response.json();
+    })
+    return iniciais;
 }
 
-const create = async (dataCreate: IUpdateInicial): Promise<IInicial | Error> => {
-    throw new Error('Not implemented');
-    // try {
-    //     const relative = `${entityUrl}`
-    //     const { data } = await Api.post(relative, dataCreate);
-    //     return data ? data : new Error('Erro ao criar o processo.');
-    // } catch (error: any) {
-    //     return new Error(error.response ? error.response.data.message : error.request ? error.request : error.message || 'Erro ao criar o processo.');
-    // }
-}
-
-const update = async (id: string, dataUpdate: IUpdateInicial): Promise<IInicial | Error> => {
-    throw new Error('Not implemented');
-    // if (!id) throw new Error('Nenhum id informado.');
-    // try {
-    //     const relative = `${entityUrl}/${id}`
-    //     const { data } = await Api.patch(relative, dataUpdate);
-    //     return data ? data : new Error('Erro ao atualizar o processo.');
-    // } catch (error: any) {
-    //     return new Error(error.response ? error.response.data.message : error.request ? error.request : error.message || 'Erro ao atualizar o processo.');
-    // }
-}
-
-export const IniciaisService = {
-    findAll,
-    findOne,
-    create,
-    update,
-    // deactivate,
+export {
+    buscarTudo,
 }

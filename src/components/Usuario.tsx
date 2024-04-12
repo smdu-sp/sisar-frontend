@@ -1,37 +1,45 @@
-import { UsuarioToken } from "@/shared/interfaces/usuario-token";
 import { Box, Card, CardContent, Chip, ChipPropsColorOverrides, ColorPaletteProp, Skeleton, Typography } from "@mui/joy";
 import { OverridableStringUnion } from '@mui/types';
-import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import * as usuarioServices from "@/shared/services/usuario.services";
+import { IUsuario } from "@/shared/services/usuario.services";
 
 export default function Usuario() {
+    const router = useRouter();
+    const pathname = usePathname();
+
     const permissoes: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
-      'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'primary' },
-      'SUP': { label: 'Superusuario', value: 'SUP', color: 'neutral' },
+      'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'neutral' },
+      'SUP': { label: 'Superadmin', value: 'SUP', color: 'primary' },
       'ADM': { label: 'Administrador', value: 'ADM', color: 'success' },
       'USR': { label: 'Usuário', value: 'USR', color: 'warning' },
     }
+
     const cargos: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
-      'ADM': { label: 'Administrativo', value: 'ADM', color: 'success' },
-      'TEC': { label: 'Técnico', value: 'TEC', color: 'warning' },
+      'ADM': { label: 'Administrativo', value: 'ADM', color: 'primary' },
+      'TEC': { label: 'Técnico', value: 'TEC', color: 'neutral' },
     }
 
     useEffect(() => {
-      getSession().catch((error) => console.log(error)).then((session) => {
-        if (session) setUsuario(session.usuario);
-      });    
+      usuarioServices.validaUsuario()
+          .then((response: IUsuario) => {
+              setUsuario(response);
+          });
     }, []);
-    const [usuario, setUsuario] = useState<UsuarioToken>();
+    const [usuario, setUsuario] = useState<IUsuario>();
     
     function verificaNome (nome: string) {
+        if (!nome) return 'Usuário';
         const nomes = nome.split(' ');
         if (nomes.length > 2) {
             return nomes[0] + ' ' + nomes[nomes.length - 1];
         }
         return nome;
     }
+
     return (usuario ?
-      <Card sx={{ maxWidth: 250 }}>
+    <Card sx={{ maxWidth: 250, ":hover": { opacity: '60%' }, cursor: 'pointer' }} variant={pathname === '/eu' ? 'soft' : undefined} onClick={() => {router.push('/eu')}}>
         <CardContent sx={{ alignItems: 'center', textAlign: 'center' }}>
             <Typography
                 level="title-lg"
@@ -40,8 +48,8 @@ export default function Usuario() {
             >{verificaNome(usuario.nome)}</Typography>
             <Typography level="body-xs">{usuario.email}</Typography>
             <Box sx={{ display: 'flex', gap: 0.5 }}>
-                {usuario.permissao === 'DEV' ? null : <Chip color={cargos[usuario.cargo].color} size='sm'>{cargos[usuario.cargo].label}</Chip>}         
-                <Chip color={permissoes[usuario.permissao].color} size='sm'>{permissoes[usuario.permissao].label}</Chip>
+              {usuario.permissao ? <Chip color={permissoes[usuario.permissao].color} size='sm'>{permissoes[usuario.permissao].label}</Chip> : null}
+              {usuario.cargo && usuario.permissao !== 'DEV' ? <Chip color={cargos[usuario.cargo].color} size='sm'>{cargos[usuario.cargo].label}</Chip> : null}
             </Box>
         </CardContent>
       </Card>
@@ -64,7 +72,7 @@ export default function Usuario() {
           <Box sx={{ display: 'flex', gap: 0.5 }}>
             <Typography level="body-xs">
               <Skeleton>
-                Cargo
+                Permissao
               </Skeleton>
             </Typography>
             <Typography level="body-xs">

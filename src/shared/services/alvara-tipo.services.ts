@@ -12,6 +12,7 @@ export interface IAlvaraTipo {
     prazo_analise_smul2:    number
     prazo_analise_multi1:   number
     prazo_analise_multi2:   number
+    status:                 boolean
 }
 
 export interface IPaginadoAlvaraTipo {
@@ -30,13 +31,14 @@ export interface ICreateAlvaraTipo {
     prazo_analise_smul2:    number
     prazo_analise_multi1:   number
     prazo_analise_multi2:   number
+    status?:                boolean
 }
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
-const buscarTudo = async (): Promise<IPaginadoAlvaraTipo> => {
+const buscarTudo = async (pagina: number = 1, limite: number = 10): Promise<IPaginadoAlvaraTipo> => {
     const session = await getServerSession(authOptions);
-    const alvaraTipos = await fetch(`${baseURL}alvara-tipo/buscar-tudo`, {
+    const alvaraTipos = await fetch(`${baseURL}alvara-tipo/buscar-tudo?pagina=${pagina}&limite=${limite}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

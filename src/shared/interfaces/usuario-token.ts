@@ -4,5 +4,5 @@ export interface UsuarioToken {
     login: string;
     email: string;
     permissao: string;
-    cargo: string;
+    status: number;
 }

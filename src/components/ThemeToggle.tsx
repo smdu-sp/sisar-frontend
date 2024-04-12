@@ -1,23 +1,22 @@
+'use client'
+
+import { ThemeContext } from "@/shared/contexts/ThemeContext";
 import { WbSunny, Nightlight } from "@mui/icons-material";
-import { IconButton, useColorScheme as joyColorScheme } from "@mui/joy";
-import { useColorScheme as materialColorScheme } from "@mui/material";
+import { IconButton, SvgIcon } from "@mui/joy";
+import { useContext } from "react";
 
 export default function ThemeToggle({ ...props }) {
-  const { mode, setMode } = joyColorScheme();
-  const { mode: materialMode, setMode: setMaterialMode } = materialColorScheme();
+  const { mode, toggleMode } = useContext(ThemeContext);
   return (
     <IconButton
       id="toggle-mode"
       size="sm"
       color="primary"
       sx={{ p: 0.5 }}
-      onClick={() => {
-        setMode(mode === 'light' ? 'dark' : 'light');
-        setMaterialMode(materialMode === 'light' ? 'dark' : 'light');
-      }}
+      onClick={() => toggleMode()}
       {...props}
     >
-      {mode === 'light' ? <WbSunny fontSize="small" /> : <Nightlight fontSize="small" />}
+      <SvgIcon component={mode === 'light' ? WbSunny : Nightlight} />
     </IconButton>
   );
 }
