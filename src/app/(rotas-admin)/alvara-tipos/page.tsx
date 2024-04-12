@@ -163,7 +163,7 @@ export default function AlvaraTipos() {
           </tr>
         </thead>
         <tbody>
-          {alvaraTipos && alvaraTipos.map((alvaraTipo) => (
+          {alvaraTipos ? alvaraTipos.map((alvaraTipo) => (
             <tr key={alvaraTipo.id} style={{ cursor: 'pointer' }} onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>
               <td>{alvaraTipo.nome}</td>
               <td>{alvaraTipo.prazo_admissibilidade}</td>
@@ -187,7 +187,7 @@ export default function AlvaraTipos() {
                 </div>
               </td>
             </tr>
-          ))}
+          )) : <tr><td colSpan={7}>Nenhum registro encontrado</td></tr>}
         </tbody>
       </Table>
       {(total && total > 0) ? <TablePagination
