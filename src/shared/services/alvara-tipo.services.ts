@@ -22,7 +22,16 @@ export interface IPaginadoAlvaraTipo {
     limite: number
 }
 
-export interface IUpdateAlvaraTipo extends Partial<ICreateAlvaraTipo> {}
+export interface IUpdateAlvaraTipo { 
+    id?:                     string
+    nome?:                   string
+    prazo_admissibilidade?:  number
+    prazo_analise_smul1?:    number
+    prazo_analise_smul2?:    number
+    prazo_analise_multi1?:   number
+    prazo_analise_multi2?:   number
+    status?:                 boolean
+}
 
 export interface ICreateAlvaraTipo {
     nome:                   string
@@ -85,8 +94,20 @@ const criar = async (dataCreate: ICreateAlvaraTipo): Promise<IAlvaraTipo> => {
     return alvaraTipo;
 }
 
-const atualizar = async (id: string, dataUpdate: IUpdateAlvaraTipo): Promise<IAlvaraTipo | Error> => {
-    throw new Error('Not implemented');
+const atualizar = async (id: string, data: IUpdateAlvaraTipo): Promise<IAlvaraTipo> => {
+    const session = await getServerSession(authOptions);
+    const alvaraTipo = await fetch(`${baseURL}alvara-tipo/atualizar/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }, body: JSON.stringify(data)
+    }).then((response) => {
+        if (response.status === 401) signOut();
+        if (response.status !== 200) return;
+        return response.json();
+    })
+    return alvaraTipo;
 }
 
 export {

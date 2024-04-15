@@ -1,11 +1,14 @@
 'use client'
 
 import Content from "@/components/Content";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
 import { IAlvaraTipo } from "@/shared/services/alvara-tipo.services";
-import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, FormLabel, Input, Option, Select, Stack } from "@mui/joy";
+import { Box, Button, Card,  CardActions, CardOverflow, Divider, FormControl, FormLabel, Input, Option, Select, Stack } from "@mui/joy";
+import { Check } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import { AlertsContext } from "@/providers/alertsProvider";
+
 
 export default function AlvaraTipoDetalhes(props: any) {
     const { id } = props.params;
@@ -18,6 +21,8 @@ export default function AlvaraTipoDetalhes(props: any) {
     const [prazo_analise_multi1, setPrazo_analise_multi1] = useState(0);
     const [prazo_analise_multi2, setPrazo_analise_multi2] = useState(0);
     const [status, setStatus] = useState(true);
+    const { setAlert } = useContext(AlertsContext);
+
 
 
     useEffect(() => {
@@ -25,15 +30,21 @@ export default function AlvaraTipoDetalhes(props: any) {
             alvaraTiposService.buscarPorId(id)
                 .then((response: IAlvaraTipo) => {
                     setNome(response.nome);
+                    setPrazo_admissibilidade(response.prazo_admissibilidade);
+                    setPrazo_analise_smul1(response.prazo_analise_smul1);
+                    setPrazo_analise_smul2(response.prazo_analise_smul2);
+                    setPrazo_analise_multi1(response.prazo_analise_multi1);
+                    setPrazo_analise_multi2(response.prazo_analise_multi2);
+                    setStatus(response.status);
                 });
         }
     }, [ id ]);
 
     const enviaDados = () => {
         if (id) {
-            alvaraTiposService.atualizar(id, { nome, prazo_admissibilidade, prazo_analise_smul1, prazo_analise_smul2, prazo_analise_multi1, prazo_analise_multi2, status })
+            alvaraTiposService.atualizar(id, { id, prazo_admissibilidade, nome, prazo_analise_smul1, prazo_analise_smul2, prazo_analise_multi1, prazo_analise_multi2, status })
                 .then(() => {
-                    router.push('/alvara-tipos');
+                        setAlert('Tipo de alvara alterado!', 'Dados atualizados com sucesso!', 'success', 3000, Check);              
                 });
         } else {
             alvaraTiposService.criar({ nome, prazo_admissibilidade, prazo_analise_smul1, prazo_analise_smul2, prazo_analise_multi1, prazo_analise_multi2, status })
@@ -70,6 +81,7 @@ export default function AlvaraTipoDetalhes(props: any) {
                                     placeholder="Nome" 
                                     value={nome} 
                                     onChange={e => setNome(e.target.value)}
+                                    required
                                 />
                             </FormControl>
                         </Stack>
@@ -82,6 +94,7 @@ export default function AlvaraTipoDetalhes(props: any) {
                                     value={prazo_admissibilidade}
                                     type="number"
                                     onChange={e => setPrazo_admissibilidade(parseInt(e.target.value))}
+                                    required
                                 />
                             </FormControl>
                         </Stack>
@@ -94,6 +107,7 @@ export default function AlvaraTipoDetalhes(props: any) {
                                     value={prazo_analise_smul1}
                                     type="number"
                                     onChange={e => setPrazo_analise_smul1(parseInt(e.target.value))}
+                                    required
                                 />
                             </FormControl>
                         </Stack>
@@ -106,6 +120,7 @@ export default function AlvaraTipoDetalhes(props: any) {
                                     value={prazo_analise_smul2}
                                     type="number"
                                     onChange={e => setPrazo_analise_smul2(parseInt(e.target.value))}
+                                    required
                                 />
                             </FormControl>
                         </Stack>
@@ -118,6 +133,7 @@ export default function AlvaraTipoDetalhes(props: any) {
                                     value={prazo_analise_multi1}
                                     type="number"
                                     onChange={e => setPrazo_analise_multi1(parseInt(e.target.value))}
+                                    required
                                 />
                             </FormControl>
                         </Stack>
@@ -130,6 +146,7 @@ export default function AlvaraTipoDetalhes(props: any) {
                                     value={prazo_analise_multi2}
                                     type="number"
                                     onChange={e => setPrazo_analise_multi2(parseInt(e.target.value))}
+                                    required
                                 />
                             </FormControl>
                         </Stack>
@@ -137,7 +154,7 @@ export default function AlvaraTipoDetalhes(props: any) {
                         <Stack>
                             <FormControl>
                                 <FormLabel>Status</FormLabel>
-                                <Select value={status} onChange={(_,v) => setStatus(v ? v : true)}>
+                                <Select value={status} onChange={(_,v) => setStatus(v ? v : true)} required>
                                     <Option value={true}>Ativo</Option>
                                     <Option value={false}>Inativo</Option>
                                 </Select>
