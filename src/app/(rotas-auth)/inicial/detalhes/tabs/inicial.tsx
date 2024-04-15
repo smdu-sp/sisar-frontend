@@ -1,11 +1,11 @@
 'use client'
 
 import * as inicialServices from "@/shared/services/inicial.services";
-import {IInicial, IniciaisService} from "@/shared/services/inicial.services";
+import { IInicial } from "@/shared/services/inicial.services";
 import { Add, Cancel, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
 import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, CardOverflow, CardActions } from "@mui/joy"
 import { OverridableStringUnion } from '@mui/types';
-import { ReactElement, ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { IAlvaraTipo, IPaginadoAlvaraTipo } from "@/shared/services/alvara-tipo.services";
 import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
 import { useRouter } from "next/navigation";
@@ -29,21 +29,21 @@ export default function DadosIniciaisTab(props: {
     const [tipo_requerimento, setTipo_requerimento] = useState<string>('');
     const [requerimento, setRequerimento] = useState<string>('');
     const [aprova_digital, setAprova_digital] = useState<string>('');
-    const [tipo_processo, setTipo_processo] = useState<string>('');
+    const [tipo_processo, setTipo_processo] = useState<number>(1);
     const [envio_admissibilidade, setEnvio_admissibilidade] = useState<Date>(new Date());
-    const [tipo_alvara_id, setTipo_alvara_id] = useState<string>('');
-    const [status, setStatus] = useState<string>('');
+    const [alvara_tipo_id, setAlvara_tipo_id] = useState<string>('');
+    const [status, setStatus] = useState<number>(1);
     const [processo_fisico, setProcesso_fisico] = useState<string>('');
     const [data_protocolo, setData_protocolo] = useState<Date>(new Date());
     const [obs, setObs] = useState<string>('');
     const decreto = true;
 
     const enviaDados = () => {
-        console.log(sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, tipo_alvara_id, status, processo_fisico, data_protocolo, obs);
+        console.log(sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, status, processo_fisico, data_protocolo, obs);
         
-        inicialServices.criar({ num_sql, decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, tipo_alvara_id, status, processo_fisico, data_protocolo, obs })
+        inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, status, processo_fisico, data_protocolo, obs })
             .then(() => {
-                router.push('/inicial');
+                // router.push('/inicial');
             });
     }
 
@@ -84,17 +84,6 @@ export default function DadosIniciaisTab(props: {
     }]
 
     useEffect(() => {
-        id && IniciaisService.findOne(id as string).then((result: IInicial | Error) => {
-            if (result) {
-                if (result instanceof Error) {
-                    alert(result.message);
-                    window.location.href = '/inicial/detalhes';
-                } else {
-                    setRegisterData(result);
-                }
-            }
-        });
-
         alvaraTiposService.buscarTudo().then((result: IPaginadoAlvaraTipo) => {
             if (result) {
                 if (result instanceof Error) {
@@ -192,16 +181,16 @@ export default function DadosIniciaisTab(props: {
                     <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
                         <FormControl>
                             <FormLabel>Tipo de processo</FormLabel>
-                            <Select value={tipo_processo} id='tipo_processo' name='tipo_processo' placeholder='Tipo de processo' onChange={(_, v) => setTipo_processo(v ? v : '')}>
-                                <Option value={0}>Próprio de SMUL</Option>
-                                <Option value={1}>Múltiplas interfaces</Option>
+                            <Select value={tipo_processo} id='tipo_processo' name='tipo_processo' placeholder='Tipo de processo' onChange={(_, v) => setTipo_processo(v ? v : 1)}>
+                                <Option value={1}>Próprio de SMUL</Option>
+                                <Option value={2}>Múltiplas interfaces</Option>
                             </Select>
                         </FormControl>
                     </Grid>
                     <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
                         <FormControl>
                             <FormLabel>Tipo de alvará</FormLabel>
-                            <Select value={tipo_alvara_id} id='id_alvara' name='id_alvara' placeholder='Tipo de alvara' onChange={(_, v) => setTipo_alvara_id(v ? v : '')}>
+                            <Select value={alvara_tipo_id} id='id_alvara' name='id_alvara' placeholder='Tipo de alvara' onChange={(_, v) => setAlvara_tipo_id(v ? v : '')}>
                                 {alvaraTipos.map((alvaraTipo) => (
                                     <Option key={alvaraTipo.id} value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
                                 ))}
@@ -253,7 +242,7 @@ export default function DadosIniciaisTab(props: {
                     <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
                         <FormControl>
                             <FormLabel>Status</FormLabel>
-                            <Select value={status} id='status' name='status' placeholder='Status' onChange={(_, v) => setStatus(v ? v : '0')}>
+                            <Select value={status} id='status' name='status' placeholder='Status' onChange={(_, v) => setStatus(v ? v : 1)}>
                                 <Option value={1}>Aberto</Option>
                                 <Option value={2}>Fechado</Option>
                             </Select>

@@ -9,7 +9,6 @@ export interface IInicial {
     id: number
     decreto: boolean
     sei: string
-    num_sql: string
     tipo_requerimento: string
     requerimento: string
     aprova_digital: string | null
@@ -18,9 +17,9 @@ export interface IInicial {
     envio_admissibilidade: Date | null
     alvara_tipo_id: string
     alvara_tipo: IAlvaraTipo
-    tipo_processo: string
+    tipo_processo: number
     obs: string | null
-    status: string    
+    status: number    
 }
 
 export interface IUpdateInicial extends Partial<ICreateInicial> {}
@@ -29,17 +28,16 @@ export interface ICreateInicial {
     id?: number
     decreto: boolean
     sei: string
-    num_sql: string
     tipo_requerimento: string
     requerimento: string
     aprova_digital: string | null
     processo_fisico: string | null
     data_protocolo: Date
     envio_admissibilidade: Date | null
-    tipo_alvara_id: string
-    tipo_processo: string
+    alvara_tipo_id: string
+    tipo_processo: number
     obs: string | null
-    status: string
+    status: number
 }
 
 export interface IPaginatedInicial {
