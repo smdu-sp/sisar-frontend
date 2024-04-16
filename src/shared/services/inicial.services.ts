@@ -67,6 +67,21 @@ const buscarTudo = async (
     return iniciais;
 }
 
+const buscarPorId = async (id: number): Promise<IInicial> => {
+    const session = await getServerSession(authOptions);
+    const iniciais = await fetch(`${baseURL}inicial/buscar-por-id/${id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        // if (response.status === 401) Logout();
+        return response.json();
+    })
+    return iniciais;
+}
+
 
 const criar = async (dataCreate: ICreateInicial): Promise<IInicial> => {
     const session = await getServerSession(authOptions);
@@ -90,5 +105,6 @@ const criar = async (dataCreate: ICreateInicial): Promise<IInicial> => {
 
 export {
     buscarTudo,
+    buscarPorId,
     criar
 }

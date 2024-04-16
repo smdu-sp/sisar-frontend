@@ -21,7 +21,7 @@ export default function DadosIniciaisTab(props: {
     const router = useRouter();
 
     const { id } = props;
-    const [registerData, setRegisterData] = useState<IInicial>();
+    const [inicial, setInicial] = useState<IInicial>();
     const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
     const [num_sql, setNum_sql] = useState<string>('');
     const [validoNum_sql, setValidoNum_sql] = useState<boolean>(false);
@@ -44,6 +44,9 @@ export default function DadosIniciaisTab(props: {
 
     const { setAlert } = useContext(AlertsContext);
 
+    useEffect(() => {
+        buscarDados();
+    }, [])
 
     const enviaDados = () => {
         inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, status, processo_fisico, data_protocolo, obs })
@@ -96,6 +99,25 @@ export default function DadosIniciaisTab(props: {
         }
         setValidoNum_sql(false);
       }
+
+    const buscarDados = () => {
+        if (id)
+            inicialServices.buscarPorId(parseInt(id)).then((response: IInicial) => {
+                setInicial(response);
+                // setNums_sql(response.nums_sql);
+                setTipo_requerimento(response.tipo_requerimento);
+                setSei(response.sei);
+                setRequerimento(response.requerimento);
+                setAprova_digital(response.aprova_digital || '');
+                setAlvara_tipo_id(response.alvara_tipo_id);
+                setStatus(response.status);
+                setData_protocolo(new Date(response.data_protocolo));
+                setObs(response.obs || '');
+                setProcesso_fisico(response.processo_fisico || '');
+                response.envio_admissibilidade && setEnvio_admissibilidade(new Date(response.envio_admissibilidade));
+                setTipo_processo(response.tipo_processo || 1);
+            })
+    }
 
     const handleAddSQL = () => {
         setAddNumSQLStatusAlert(false);

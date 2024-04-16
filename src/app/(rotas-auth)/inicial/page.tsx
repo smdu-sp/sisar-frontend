@@ -131,7 +131,7 @@ export default function Inicial() {
                     <td>{inicial.sei}</td>
                     <td>{inicial.tipo_requerimento}</td>
                     <td>{inicial.requerimento}</td>
-                    <td>{inicial.data_protocolo.toString().split('T')[0].split('-').reverse().join('/')}</td>
+                    <td>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
                     <td>{inicial.alvara_tipo.nome}</td>
                     <td>{inicial.tipo_processo}</td>
                     <td>{inicial.status}</td>
