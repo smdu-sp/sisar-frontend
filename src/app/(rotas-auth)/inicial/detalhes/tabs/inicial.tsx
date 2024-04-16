@@ -21,6 +21,7 @@ export default function DadosIniciaisTab(props: {
     const [registerData, setRegisterData] = useState<IInicial>();
     const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
     const [num_sql, setNum_sql] = useState<string>('');
+    const [validoNum_sql, setValidoNum_sql] = useState<boolean>(false);
     const [nums_sql, setNums_sql] = useState<string[]>([]);
     const [addNumSQLStatus, setAddNumSQLStatus] = useState<number>(0);
     const [addNumSQLStatusAlert, setAddNumSQLStatusAlert] = useState<boolean>(false);
@@ -39,18 +40,60 @@ export default function DadosIniciaisTab(props: {
     const decreto = true;
 
     const enviaDados = () => {
-        console.log(sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, status, processo_fisico, data_protocolo, obs);
-        
         inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, status, processo_fisico, data_protocolo, obs })
             .then(() => {
                 // router.push('/inicial');
             });
     }
 
+    function formatarSei(value: string): string {
+        //1111.1111/1111111-1
+        if (!value) return value;
+        const onlyNumbers = value.replace(/\D/g, '').substring(0, 16);
+        if (onlyNumbers.length <= 4)
+            return onlyNumbers.replace(/(\d{0,4})/, '$1');
+        if (onlyNumbers.length <= 8)
+            return onlyNumbers.replace(/(\d{0,4})(\d{0,4})/, '$1.$2');
+        if (onlyNumbers.length <= 15)
+            return onlyNumbers.replace(/(\d{0,4})(\d{0,4})(\d{0,7})/, '$1.$2/$3');
+        return onlyNumbers.replace(/(\d{0,4})(\d{0,4})(\d{0,7})(\d{0,1})/, '$1.$2/$3-$4');
+    }
+
+    function formatarSql(value: string): string {
+        //111.111.1111-1
+        if (!value) return value;
+        const onlyNumbers = value.replace(/\D/g, '').substring(0, 11);
+        validaDigitoSql(onlyNumbers);
+        if (onlyNumbers.length <= 3)
+            return onlyNumbers.replace(/(\d{0,3})/, '$1');
+        if (onlyNumbers.length <= 6)
+            return onlyNumbers.replace(/(\d{0,3})(\d{0,3})/, '$1.$2');
+        if (onlyNumbers.length <= 10)
+            return onlyNumbers.replace(/(\d{0,3})(\d{0,3})(\d{0,4})/, '$1.$2.$3');
+        return onlyNumbers.replace(/(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,1})/, '$1.$2.$3-$4');
+    }
+
+    function validaDigitoSql(sql: string): void {
+        if (sql.length > 11) sql = sql.slice(-11);
+        if (sql.length === 11) {
+            sql = sql.toString().trim();
+            var soma = 0;
+            const verificador = [1, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+            const digito = parseInt(sql[10]);
+            for (let i = 0; i < 10; i++)
+                soma += parseInt(sql[i]) * verificador[i];
+            soma = soma % 11;
+            if (soma === 10) soma = 1;
+            if (soma > 1 && soma < 10) soma = 11 - soma;
+            setValidoNum_sql(soma === digito);
+            return
+        }
+        setValidoNum_sql(false);
+      }
+
     const handleAddSQL = () => {
         setAddNumSQLStatusAlert(false);
-
-        if (num_sql != '') {
+        if (num_sql != '' && validoNum_sql) {
             if (nums_sql.includes(num_sql)) {
                 setAddNumSQLStatus(1);
             } else {
@@ -132,7 +175,11 @@ export default function DadosIniciaisTab(props: {
                                 placeholder="Número de SEI"
                                 type="text"
                                 value={sei}
-                                onChange={e => setSei(e.target.value)}
+                                onChange={(event) => {
+                                    var numSei = event.target.value;
+                                    if (numSei.length > 0) numSei = formatarSei(event.target.value);
+                                    setSei(numSei && numSei);
+                                }}
                                 required={id ? false : true}
                             />
                         </FormControl>
@@ -297,17 +344,23 @@ export default function DadosIniciaisTab(props: {
                                 placeholder="SQL"
                                 type="text"
                                 value={num_sql}
-                                onChange={(e) => setNum_sql(e.target.value)}
+                                onChange={(e) => {
+                                    var numSql = e.target.value;
+                                    if (numSql.length > 0) numSql = formatarSql(numSql);
+                                    setNum_sql(numSql && numSql);
+                                }}
                                 endDecorator={
                                     <IconButton
                                         variant='solid'
                                         color='primary'
                                         onClick={handleAddSQL}
+                                        disabled={!validoNum_sql}
                                     >
                                         <Add />
                                     </IconButton>
                                 }
                             />
+                            {(!validoNum_sql && num_sql.length > 13) && <FormLabel sx={{ color: 'red' }}>SQL inválido</FormLabel>}
                         </FormControl>
                     </Grid>
                     <Grid xs={12}>
