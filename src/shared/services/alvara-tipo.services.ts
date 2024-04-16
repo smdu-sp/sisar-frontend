@@ -31,7 +31,7 @@ export interface ICreateAlvaraTipo {
     prazo_analise_smul2:    number
     prazo_analise_multi1:   number
     prazo_analise_multi2:   number
-    status?:                boolean
+    status:                number
 }
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';

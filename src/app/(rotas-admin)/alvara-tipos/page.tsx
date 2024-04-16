@@ -19,7 +19,7 @@ export default function AlvaraTipos() {
     color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides>
   } = {
     aberto: false,
-    confirmaOperacao: () => {},
+    confirmaOperacao: () => { },
     titulo: '',
     pergunta: '',
     color: 'primary'
@@ -38,8 +38,8 @@ export default function AlvaraTipos() {
 
   useEffect(() => {
     buscaDados();
-  }, [ pagina, limite ]);
-  
+  }, [pagina, limite]);
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
@@ -84,7 +84,7 @@ export default function AlvaraTipos() {
   }
 
   return (
-    <Content 
+    <Content
       titulo='Tipos de alvará'
       pagina='alvara-tipos'
       breadcrumbs={[{
@@ -173,15 +173,15 @@ export default function AlvaraTipos() {
               <td>{alvaraTipo.prazo_analise_multi2}</td>
               <td>
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                  {!alvaraTipo.status ? (
+                  {alvaraTipo.status ? (
                     <Tooltip title="Ativar tipo de alvará" arrow placement="top">
-                      <IconButton size="sm" color="success" onClick={() => confirmaAtivaAlvaraTipo(alvaraTipo.id)}>
-                        <Check />
+                      <IconButton title="Desativar" size="sm" color="danger" onClick={() => confirmaDesativaAlvaraTipo(alvaraTipo.id)}>
+                        <Cancel />
                       </IconButton>
-                    </Tooltip>                    
+                    </Tooltip>
                   ) : (<Tooltip title="Desativar tipo de alvará" arrow placement="top">
-                    <IconButton title="Desativar" size="sm" color="danger" onClick={() => confirmaDesativaAlvaraTipo(alvaraTipo.id)}>
-                      <Cancel />
+                    <IconButton size="sm" color="success" onClick={() => confirmaAtivaAlvaraTipo(alvaraTipo.id)}>
+                      <Check />
                     </IconButton>
                   </Tooltip>)}
                 </div>
