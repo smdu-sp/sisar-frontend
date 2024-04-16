@@ -29,6 +29,7 @@ export default function DadosIniciaisTab(props: {
     const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
     const [num_sql, setNum_sql] = useState<string>('');
     const [validoNum_sql, setValidoNum_sql] = useState<boolean>(false);
+    const [validoNum_sei, setValidoNum_sei] = useState<boolean>(false);
     const [nums_sql, setNums_sql] = useState<string[]>([]);
     const [addNumSQLStatus, setAddNumSQLStatus] = useState<number>(0);
     const [addNumSQLStatusAlert, setAddNumSQLStatusAlert] = useState<boolean>(false);
@@ -48,10 +49,6 @@ export default function DadosIniciaisTab(props: {
 
     const { setAlert } = useContext(AlertsContext);
 
-    useEffect(() => {
-        buscarDados();
-    }, [])
-
     const enviaDados = () => {
         inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, status, processo_fisico, data_protocolo, obs })
             .then(() => {
@@ -63,6 +60,7 @@ export default function DadosIniciaisTab(props: {
         //1111.1111/1111111-1
         if (!value) return value;
         const onlyNumbers = value.replace(/\D/g, '').substring(0, 16);
+        validaDigitoSei(onlyNumbers);
         if (onlyNumbers.length <= 4)
             return onlyNumbers.replace(/(\d{0,4})/, '$1');
         if (onlyNumbers.length <= 8)
@@ -84,6 +82,28 @@ export default function DadosIniciaisTab(props: {
         if (onlyNumbers.length <= 10)
             return onlyNumbers.replace(/(\d{0,3})(\d{0,3})(\d{0,4})/, '$1.$2.$3');
         return onlyNumbers.replace(/(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,1})/, '$1.$2.$3-$4');
+    }
+
+    function validaDigitoSei(sei: string): void {
+        if (sei.length > 16) sei = sei.slice(-16);
+        if (sei.length === 16) {
+            sei = sei.toString().trim();
+            var soma = 0;
+            const verificador = [2, 3, 4, 5, 6, 7, 8, 9];
+            const digito = parseInt(sei[15]);
+            let j = 0;
+            for (let i = 14; i >= 0; i--){
+                if (j === 8) j = 0;
+                soma += parseInt(sei[i]) * verificador[j];
+                j++;
+            }
+            soma = soma % 11;
+            if (soma === 1) soma = 0;
+            soma = 11 - soma;
+            setValidoNum_sei(soma === digito);
+            return
+        }
+        setValidoNum_sei(false);
     }
 
     function validaDigitoSql(sql: string): void {
@@ -159,6 +179,7 @@ export default function DadosIniciaisTab(props: {
     }]
 
     useEffect(() => {
+        buscarDados();
         alvaraTiposService.buscarTudo().then((result: IPaginadoAlvaraTipo) => {
             if (result) {
                 if (result instanceof Error) {
@@ -169,6 +190,7 @@ export default function DadosIniciaisTab(props: {
             }
         });
     }, [id]);
+
     return (
         <Card
             variant='plain'
@@ -214,6 +236,7 @@ export default function DadosIniciaisTab(props: {
                                 }}
                                 required={id ? false : true}
                             />
+                            {(!validoNum_sei && sei.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
                         </FormControl>
                     </Grid>
                     <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
@@ -328,10 +351,10 @@ export default function DadosIniciaisTab(props: {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={12}>
+                    <Grid xs={12} sm={12} md={12} lg={12} xl={12}>
                         <FormLabel>Observação</FormLabel>
                         <Textarea
-                            placeholder="Type in here…"
+                            placeholder="Digite aqui..."
                             value={obs}
                             onChange={e => setObs(e.target.value)}
                             minRows={2}
@@ -344,16 +367,6 @@ export default function DadosIniciaisTab(props: {
                             sx={{ minWidth: 300 }}
                         />
                     </Grid>
-                    <CardOverflow sx={{ marginLeft: 'auto' }}>
-                        <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-                            <Button size="sm" variant="outlined" color="neutral" onClick={() => { }}>
-                                Cancelar
-                            </Button>
-                            <Button size="sm" variant="solid" onClick={enviaDados}>
-                                Salvar
-                            </Button>
-                        </CardActions>
-                    </CardOverflow>
                 </Grid>
                 <Grid
                     container
@@ -437,6 +450,16 @@ export default function DadosIniciaisTab(props: {
                             </Table>
                         </Grid>}
                 </Grid>
+                <CardOverflow sx={{ marginLeft: 'auto' }}>
+                    <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
+                        <Button size="sm" variant="outlined" color="neutral" onClick={() => { }}>
+                            Cancelar
+                        </Button>
+                        <Button size="sm" variant="solid" onClick={enviaDados} disabled={!validoNum_sei}>
+                            Salvar
+                        </Button>
+                    </CardActions>
+                </CardOverflow>
             </Grid>
         </Card>
     )
