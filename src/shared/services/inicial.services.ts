@@ -50,11 +50,11 @@ export interface IPaginatedInicial {
 const baseURL = 'http://localhost:3000/';
 
 const buscarTudo = async (
-    pagina: number = 1,
-    limite: number = 10,
+    pagina: number,
+    limite: number
 ): Promise<IPaginatedInicial> => {
     const session = await getServerSession(authOptions);
-    const iniciais = await fetch(`${baseURL}iniciais/buscar-tudo?pagina=${pagina}&limite=${limite}`, {
+    const iniciais = await fetch(`${baseURL}inicial/buscar-tudo?pagina=${pagina}&limite=${limite}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -67,9 +67,10 @@ const buscarTudo = async (
     return iniciais;
 }
 
+
 const criar = async (dataCreate: ICreateInicial): Promise<IInicial> => {
     const session = await getServerSession(authOptions);
-    console.log(dataCreate);
+
     // var teste = dataCreate.data_protocolo.toString().split('T')[0];
     
     const iniciais = await fetch(`${baseURL}inicial/criar`, {

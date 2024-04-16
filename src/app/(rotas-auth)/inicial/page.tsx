@@ -31,7 +31,7 @@ export default function Inicial() {
   );
 
   const buscaIniciais = async () => {
-    inicialServices.buscarTudo(limite, pagina)
+    inicialServices.buscarTudo(1, 10)
       .then((response: IPaginatedInicial) => {
         setTotal(response.total);
         setPagina(response.pagina);
@@ -131,7 +131,7 @@ export default function Inicial() {
                     <td>{inicial.sei}</td>
                     <td>{inicial.tipo_requerimento}</td>
                     <td>{inicial.requerimento}</td>
-                    <td></td>
+                    <td>{inicial.data_protocolo.toString().split('T')[0].split('-').reverse().join('/')}</td>
                     <td>{inicial.alvara_tipo.nome}</td>
                     <td>{inicial.tipo_processo}</td>
                     <td>{inicial.status}</td>
