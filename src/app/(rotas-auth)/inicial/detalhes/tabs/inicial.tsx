@@ -10,6 +10,10 @@ import { IAlvaraTipo, IPaginadoAlvaraTipo } from "@/shared/services/alvara-tipo.
 import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
 import { useRouter } from "next/navigation";
 import { AlertsContext } from "@/providers/alertsProvider";
+import * as React from 'react';
+import Textarea from '@mui/joy/Textarea';
+import Typography from '@mui/joy/Typography';
+
 
 
 
@@ -98,7 +102,7 @@ export default function DadosIniciaisTab(props: {
             return
         }
         setValidoNum_sql(false);
-      }
+    }
 
     const buscarDados = () => {
         if (id)
@@ -253,7 +257,7 @@ export default function DadosIniciaisTab(props: {
                             />
                         </FormControl>
                     </Grid>
-                    
+
                     <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
                         <FormControl>
                             <FormLabel>Tipo de processo</FormLabel>
@@ -325,20 +329,20 @@ export default function DadosIniciaisTab(props: {
                         </FormControl>
                     </Grid>
                     <Grid xs={12} sm={12} md={12} lg={6} xl={12}>
-                        <FormControl>
-                            <FormLabel>Observação</FormLabel>
-                            <Input
-                                id="obs"
-                                name="obs"
-                                placeholder=""
-                                value={obs}
-                                onChange={e => setObs(e.target.value)}
-                                type="textarea"
-                                required={true}
-                            />
-                            <FormLabel sx={{ color: 'red', display: 'none' }}>Campo obrigatório</FormLabel>
-                        </FormControl>
-
+                        <FormLabel>Observação</FormLabel>
+                        <Textarea
+                            placeholder="Type in here…"
+                            value={obs}
+                            onChange={e => setObs(e.target.value)}
+                            minRows={2}
+                            maxRows={4}
+                            endDecorator={
+                                <Typography level="body-xs" sx={{ ml: 'auto' }}>
+                                    {obs.length} caracteres
+                                </Typography>
+                            }
+                            sx={{ minWidth: 300 }}
+                        />
                     </Grid>
                     <CardOverflow sx={{ marginLeft: 'auto' }}>
                         <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
