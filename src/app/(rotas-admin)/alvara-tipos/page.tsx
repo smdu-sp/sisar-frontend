@@ -1,7 +1,7 @@
 'use client'
 
 import Content from '@/components/Content';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Snackbar, Stack, Table, Tooltip, Typography } from '@mui/joy';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import * as alvaraTipoService from '@/shared/services/alvara-tipo.services';
@@ -9,6 +9,7 @@ import { IPaginadoAlvaraTipo, IAlvaraTipo } from '@/shared/services/alvara-tipo.
 import { TablePagination } from '@mui/material';
 import { Add, Cancel, Check, Clear, Refresh, Search } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
+import { AlertsContext } from '@/providers/alertsProvider';
 
 export default function AlvaraTipos() {
   const confirmaVazio: {
@@ -31,14 +32,32 @@ export default function AlvaraTipos() {
 
   const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
   const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
+  const [notificacao, setNotificacao] = useState(searchParams.get('notification') ? Number(searchParams.get('notification')) : 1);
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
   const [busca, setBusca] = useState('');
   const [confirma, setConfirma] = useState(confirmaVazio);
+  const { setAlert } = useContext(AlertsContext);
 
   useEffect(() => {
     buscaDados();
+    showNotificacao();
+
   }, [pagina, limite]);
+
+  const showNotificacao = function () {
+    var notification = searchParams.get('notification');
+    if (notification) {
+      setNotificacao(notification ? parseInt(notification) : 0);
+      if (notificacao == 1) {
+        setAlert('Tipo alvará alterado!', 'Tipo alvará alterado com sucesso.', 'success', 3000, Check);
+      } else if (notificacao == 0) {
+        setAlert('Tipo alvará criado!', 'Tipo alvará criado com sucesso.', 'success', 3000, Check);
+      }
+      router.push(pathname);
+      buscaDados();
+    }
+  };
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
