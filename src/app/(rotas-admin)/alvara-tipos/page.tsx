@@ -49,11 +49,8 @@ export default function AlvaraTipos() {
     var notification = searchParams.get('notification');
     if (notification) {
       setNotificacao(notification ? parseInt(notification) : 0);
-      if (notificacao == 1) {
-        setAlert('Tipo alvará alterado!', 'Tipo alvará alterado com sucesso.', 'success', 3000, Check);
-      } else if (notificacao == 0) {
-        setAlert('Tipo alvará criado!', 'Tipo alvará criado com sucesso.', 'success', 3000, Check);
-      }
+      setAlert(notificacao == 1 ? 'Tipo alvará alterado!' : 'Tipo alvará criado!', 
+              notificacao == 1 ? 'Tipo alvará alterado com sucesso.' : 'Tipo alvará criado com sucesso.', 'success', 3000, Check);
       router.push(pathname);
       buscaDados();
     }
