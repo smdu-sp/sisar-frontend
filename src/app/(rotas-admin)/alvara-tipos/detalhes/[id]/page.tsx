@@ -87,105 +87,121 @@ export default function AlvaraTipoDetalhes(props: any) {
                             </FormControl>
                         </Stack>
                         <Divider />
-                        <Stack>
-                            <FormControl>
-                                <FormLabel>Prazo de admissibilidade</FormLabel>
-                                <Input
-                                    placeholder="Prazo de admissibilidade"
-                                    value={prazo_admissibilidade}
-                                    type="number"
-                                    slotProps={{
-                                        input: {
-                                            min: 0
-                                        },
-                                    }}
-                                    onChange={e => setPrazo_admissibilidade(parseInt(e.target.value))}
-                                    required
-                                />
-                            </FormControl>
+                        <Stack direction={{ xs: 'column', sm: 'row' }}
+                            spacing={{ xs: 1, sm: 1, md: 1 }}>
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+
+                                <FormControl>
+                                    <FormLabel>1ª Análise SMUL</FormLabel>
+                                    <Input
+                                        placeholder="1ª Análise SMUL"
+                                        value={prazo_analise_smul1}
+                                        type="number"
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        onChange={e => setPrazo_analise_smul1(parseInt(e.target.value))}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
+                            <Divider />
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+
+                                <FormControl>
+                                    <FormLabel>2ª Análise SMUL</FormLabel>
+                                    <Input
+                                        placeholder="2ª Análise SMUL"
+                                        value={prazo_analise_smul2}
+                                        type="number"
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        onChange={e => setPrazo_analise_smul2(parseInt(e.target.value))}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
                         </Stack>
                         <Divider />
-                        <Stack>
-                            <FormControl>
-                                <FormLabel>1ª Análise SMUL</FormLabel>
-                                <Input
-                                    placeholder="1ª Análise SMUL"
-                                    value={prazo_analise_smul1}
-                                    type="number"
-                                    slotProps={{
-                                        input: {
-                                            min: 0
-                                        },
-                                    }}
-                                    onChange={e => setPrazo_analise_smul1(parseInt(e.target.value))}
-                                    required
-                                />
-                            </FormControl>
+                        <Stack direction={{ xs: 'column', sm: 'row' }}
+                            spacing={{ xs: 1, sm: 1, md: 1 }}>
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+
+                                <FormControl>
+                                    <FormLabel>1ª Análise Múltiplas</FormLabel>
+                                    <Input
+                                        placeholder="1ª Análise Múltiplas"
+                                        value={prazo_analise_multi1}
+                                        type="number"
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        onChange={e => setPrazo_analise_multi1(parseInt(e.target.value))}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
+                            <Divider />
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+
+                                <FormControl>
+                                    <FormLabel>2ª Análise Múltiplas</FormLabel>
+                                    <Input
+                                        placeholder="2 Análise Múltiplas"
+                                        value={prazo_analise_multi2}
+                                        type="number"
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        onChange={e => setPrazo_analise_multi2(parseInt(e.target.value))}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
                         </Stack>
                         <Divider />
-                        <Stack>
-                            <FormControl>
-                                <FormLabel>2ª Análise SMUL</FormLabel>
-                                <Input
-                                    placeholder="2ª Análise SMUL"
-                                    value={prazo_analise_smul2}
-                                    type="number"
-                                    slotProps={{
-                                        input: {
-                                            min: 0
-                                        },
-                                    }}
-                                    onChange={e => setPrazo_analise_smul2(parseInt(e.target.value))}
-                                    required
-                                />
-                            </FormControl>
+                        <Stack direction={{ xs: 'column', sm: 'row' }}
+                            spacing={{ xs: 1, sm: 1, md: 1 }}>
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+                                <FormControl>
+                                    <FormLabel>Status</FormLabel>
+                                    <Select value={status} onChange={(_, v) => setStatus(v ? v : 0)} required>
+                                        <Option value={0}>Ativo</Option>
+                                        <Option value={1}>Inativo</Option>
+                                    </Select>
+                                </FormControl>
+                            </Stack>
+
+                            <Divider />
+
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+                                <FormControl>
+                                    <FormLabel>Prazo de admissibilidade</FormLabel>
+                                    <Input
+                                        placeholder="Prazo de admissibilidade"
+                                        value={prazo_admissibilidade}
+                                        type="number"
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        onChange={e => setPrazo_admissibilidade(parseInt(e.target.value))}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
                         </Stack>
-                        <Divider />
-                        <Stack>
-                            <FormControl>
-                                <FormLabel>1ª Análise Múltiplas</FormLabel>
-                                <Input
-                                    placeholder="1ª Análise Múltiplas"
-                                    value={prazo_analise_multi1}
-                                    type="number"
-                                    slotProps={{
-                                        input: {
-                                            min: 0
-                                        },
-                                    }}
-                                    onChange={e => setPrazo_analise_multi1(parseInt(e.target.value))}
-                                    required
-                                />
-                            </FormControl>
-                        </Stack>
-                        <Divider />
-                        <Stack>
-                            <FormControl>
-                                <FormLabel>2ª Análise Múltiplas</FormLabel>
-                                <Input
-                                    placeholder="2 Análise Múltiplas"
-                                    value={prazo_analise_multi2}
-                                    type="number"
-                                    slotProps={{
-                                        input: {
-                                            min: 0
-                                        },
-                                    }}
-                                    onChange={e => setPrazo_analise_multi2(parseInt(e.target.value))}
-                                    required
-                                />
-                            </FormControl>
-                        </Stack>
-                        <Divider />
-                        <Stack>
-                            <FormControl>
-                                <FormLabel>Status</FormLabel>
-                                <Select value={status} onChange={(_, v) => setStatus(v ? v : 0)} required>
-                                    <Option value={0}>Ativo</Option>
-                                    <Option value={1}>Inativo</Option>
-                                </Select>
-                            </FormControl>
-                        </Stack>
+
                     </Stack>
                     <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
                         <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
