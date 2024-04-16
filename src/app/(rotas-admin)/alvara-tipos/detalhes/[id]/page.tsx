@@ -20,7 +20,7 @@ export default function AlvaraTipoDetalhes(props: any) {
     const [prazo_analise_smul2, setPrazo_analise_smul2] = useState(0);
     const [prazo_analise_multi1, setPrazo_analise_multi1] = useState(0);
     const [prazo_analise_multi2, setPrazo_analise_multi2] = useState(0);
-    const [status, setStatus] = useState(true);
+    const [status, setStatus] = useState(1);
     const { setAlert } = useContext(AlertsContext);
 
 
@@ -35,19 +35,20 @@ export default function AlvaraTipoDetalhes(props: any) {
                     setPrazo_analise_smul2(response.prazo_analise_smul2);
                     setPrazo_analise_multi1(response.prazo_analise_multi1);
                     setPrazo_analise_multi2(response.prazo_analise_multi2);
-                    setStatus(response.status);
+                    setStatus(response.status ? 1 : 0);
                 });
         }
     }, [ id ]);
 
     const enviaDados = () => {
         if (id) {
-            alvaraTiposService.atualizar(id, { id, prazo_admissibilidade, nome, prazo_analise_smul1, prazo_analise_smul2, prazo_analise_multi1, prazo_analise_multi2, status })
+            alvaraTiposService.atualizar(id, { prazo_admissibilidade, nome, prazo_analise_smul1, prazo_analise_smul2, prazo_analise_multi1, prazo_analise_multi2, status: status === 1 })
                 .then(() => {
+                    console.log(status);
                         setAlert('Tipo de alvara alterado!', 'Dados atualizados com sucesso!', 'success', 3000, Check);              
                 });
         } else {
-            alvaraTiposService.criar({ nome, prazo_admissibilidade, prazo_analise_smul1, prazo_analise_smul2, prazo_analise_multi1, prazo_analise_multi2, status })
+            alvaraTiposService.criar({ nome, prazo_admissibilidade, prazo_analise_smul1, prazo_analise_smul2, prazo_analise_multi1, prazo_analise_multi2, status: status === 1 })
                 .then(() => {
                     router.push('/alvara-tipos');
                 });
@@ -154,9 +155,9 @@ export default function AlvaraTipoDetalhes(props: any) {
                         <Stack>
                             <FormControl>
                                 <FormLabel>Status</FormLabel>
-                                <Select value={status} onChange={(_,v) => setStatus(v ? v : true)} required>
-                                    <Option value={true}>Ativo</Option>
-                                    <Option value={false}>Inativo</Option>
+                                <Select value={status} onChange={(_,v) => setStatus(v ? v : 1)} required>
+                                    <Option value={0}>Ativo</Option>
+                                    <Option value={1}>Inativo</Option>
                                 </Select>
                             </FormControl>
                         </Stack>

@@ -2,13 +2,16 @@
 
 import * as inicialServices from "@/shared/services/inicial.services";
 import { IInicial } from "@/shared/services/inicial.services";
-import { Add, Cancel, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
+import { Add, Cancel, Check, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
 import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, CardOverflow, CardActions } from "@mui/joy"
 import { OverridableStringUnion } from '@mui/types';
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 import { IAlvaraTipo, IPaginadoAlvaraTipo } from "@/shared/services/alvara-tipo.services";
 import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
 import { useRouter } from "next/navigation";
+import { AlertsContext } from "@/providers/alertsProvider";
+
+
 
 
 export default function DadosIniciaisTab(props: {
@@ -39,10 +42,13 @@ export default function DadosIniciaisTab(props: {
     const [obs, setObs] = useState<string>('');
     const decreto = true;
 
+    const { setAlert } = useContext(AlertsContext);
+
+
     const enviaDados = () => {
         inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, status, processo_fisico, data_protocolo, obs })
             .then(() => {
-                // router.push('/inicial');
+                setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
             });
     }
 
@@ -166,7 +172,7 @@ export default function DadosIniciaisTab(props: {
                     spacing={2}
                     xs={12} sm={12} md={12} lg={8} xl={8}
                 >
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
+                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
                         <FormControl>
                             <FormLabel>SEI</FormLabel>
                             <Input
@@ -184,7 +190,20 @@ export default function DadosIniciaisTab(props: {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
+                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
+                        <FormControl>
+                            <FormLabel>Num. Aprova Digital</FormLabel>
+                            <Input
+                                id="aprova_digital"
+                                name="aprova_digital"
+                                placeholder="Aprova digital"
+                                value={aprova_digital}
+                                onChange={e => setAprova_digital(e.target.value)}
+                                type="text"
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
                         <FormControl>
                             <FormLabel>Tipo de requerimento</FormLabel>
                             <Input
@@ -198,7 +217,7 @@ export default function DadosIniciaisTab(props: {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
+                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
                         <FormControl>
                             <FormLabel>Requerimento</FormLabel>
                             <Input
@@ -212,19 +231,7 @@ export default function DadosIniciaisTab(props: {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
-                        <FormControl>
-                            <FormLabel>Num. Aprova Digital</FormLabel>
-                            <Input
-                                id="aprova_digital"
-                                name="aprova_digital"
-                                placeholder="Aprova digital"
-                                value={aprova_digital}
-                                onChange={e => setAprova_digital(e.target.value)}
-                                type="text"
-                            />
-                        </FormControl>
-                    </Grid>
+                    
                     <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
                         <FormControl>
                             <FormLabel>Tipo de processo</FormLabel>
@@ -295,7 +302,7 @@ export default function DadosIniciaisTab(props: {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={8}>
+                    <Grid xs={12} sm={12} md={12} lg={6} xl={12}>
                         <FormControl>
                             <FormLabel>Observação</FormLabel>
                             <Input
@@ -304,7 +311,7 @@ export default function DadosIniciaisTab(props: {
                                 placeholder=""
                                 value={obs}
                                 onChange={e => setObs(e.target.value)}
-                                type="text"
+                                type="textarea"
                                 required={true}
                             />
                             <FormLabel sx={{ color: 'red', display: 'none' }}>Campo obrigatório</FormLabel>
