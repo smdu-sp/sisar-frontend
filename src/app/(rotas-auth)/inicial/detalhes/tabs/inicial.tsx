@@ -50,10 +50,22 @@ export default function DadosIniciaisTab(props: {
     const { setAlert } = useContext(AlertsContext);
 
     const enviaDados = () => {
-        inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, status, processo_fisico, data_protocolo, obs })
-            .then(() => {
-                setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
-            });
+        if (!id)
+            inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, nums_sql })
+                .then((response: IInicial) => {
+                    if (response.id){
+                        setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
+                        router.push(`/inicial/detalhes/${response.id}`);
+                    }
+                });
+        if (id)
+            inicialServices.atualizar(parseInt(id), { decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs })
+                .then((response: IInicial) => {
+                    if (response.id){
+                        setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
+                        router.push(`/inicial/detalhes/${response.id}`);
+                    }
+                });
     }
 
     function formatarSei(value: string): string {
@@ -82,6 +94,19 @@ export default function DadosIniciaisTab(props: {
         if (onlyNumbers.length <= 10)
             return onlyNumbers.replace(/(\d{0,3})(\d{0,3})(\d{0,4})/, '$1.$2.$3');
         return onlyNumbers.replace(/(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,1})/, '$1.$2.$3-$4');
+    }
+
+    function formatarAprovaDigital(value: string): string {
+        if (!value) return value;
+        value = value.replaceAll('-', '').replaceAll('SP', '').substring(0, 13);
+        let numeros = value.substring(0, 10).replace(/\D/g, '');
+        let digitos = value.substring(10).replace(/(?![A-Z])./g, '');
+        value = `${numeros}${digitos}`;
+        if (value.length <= 8)
+            return value.replace(/(\d{0,8})/, '$1');
+        if (value.length <= 10)
+            return value.replace(/(\d{0,8})(\d{0,2})/, '$1-$2');
+        return value.replace(/(\d{0,8})(\d{0,2})(\d{0,3})/, '$1-$2-SP-$3');
     }
 
     function validaDigitoSei(sei: string): void {
@@ -130,9 +155,9 @@ export default function DadosIniciaisTab(props: {
                 setInicial(response);
                 // setNums_sql(response.nums_sql);
                 setTipo_requerimento(response.tipo_requerimento);
-                setSei(response.sei);
+                setSei(formatarSei(response.sei));
                 setRequerimento(response.requerimento);
-                setAprova_digital(response.aprova_digital || '');
+                response.aprova_digital && setAprova_digital(response.aprova_digital);
                 setAlvara_tipo_id(response.alvara_tipo_id);
                 setStatus(response.status);
                 setData_protocolo(new Date(response.data_protocolo));
@@ -140,6 +165,9 @@ export default function DadosIniciaisTab(props: {
                 setProcesso_fisico(response.processo_fisico || '');
                 response.envio_admissibilidade && setEnvio_admissibilidade(new Date(response.envio_admissibilidade));
                 setTipo_processo(response.tipo_processo || 1);
+                if (response.iniciais_sqls && response.iniciais_sqls.length > 0) {
+                    setNums_sql(response.iniciais_sqls.map(sql => sql.sql));
+                }
             })
     }
 
@@ -229,9 +257,9 @@ export default function DadosIniciaisTab(props: {
                                 placeholder="Número de SEI"
                                 type="text"
                                 value={sei}
-                                onChange={(event) => {
-                                    var numSei = event.target.value;
-                                    if (numSei.length > 0) numSei = formatarSei(event.target.value);
+                                onChange={(e) => {
+                                    var numSei = e.target.value;
+                                    if (numSei.length > 0) numSei = formatarSei(e.target.value);
                                     setSei(numSei && numSei);
                                 }}
                                 required={id ? false : true}
@@ -241,20 +269,17 @@ export default function DadosIniciaisTab(props: {
                     </Grid>
                     <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
                         <FormControl>
-                            <FormLabel>Num. Aprova Digital</FormLabel>
-                            <Input
-                                id="aprova_digital"
-                                name="aprova_digital"
-                                placeholder="Aprova digital"
-                                value={aprova_digital}
-                                onChange={e => setAprova_digital(e.target.value)}
-                                type="text"
-                            />
+                            <FormLabel>Tipo de alvará</FormLabel>
+                            <Select value={alvara_tipo_id} id='id_alvara' name='id_alvara' placeholder='Tipo de alvara' onChange={(_, v) => setAlvara_tipo_id(v ? v : '')}>
+                                {alvaraTipos.map((alvaraTipo) => (
+                                    <Option key={alvaraTipo.id} value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
+                                ))}
+                            </Select>
                         </FormControl>
                     </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
+                    <Grid xs={4} sm={4} md={4} lg={2} xl={2}>
                         <FormControl>
-                            <FormLabel>Tipo de requerimento</FormLabel>
+                            <FormLabel title='Tipo Requerimento' sx={{ whiteSpace: 'nowrap', overflowX: 'hidden', textOverflow: 'ellipsis' }}>Tipo de requerimento</FormLabel>
                             <Input
                                 id="tipo_requerimento"
                                 name="tipo_requerimento"
@@ -266,7 +291,7 @@ export default function DadosIniciaisTab(props: {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
+                    <Grid xs={8} sm={8} md={8} lg={5} xl={5}>
                         <FormControl>
                             <FormLabel>Requerimento</FormLabel>
                             <Input
@@ -281,7 +306,7 @@ export default function DadosIniciaisTab(props: {
                         </FormControl>
                     </Grid>
 
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
+                    <Grid xs={12} sm={12} md={12} lg={5} xl={5}>
                         <FormControl>
                             <FormLabel>Tipo de processo</FormLabel>
                             <Select value={tipo_processo} id='tipo_processo' name='tipo_processo' placeholder='Tipo de processo' onChange={(_, v) => setTipo_processo(v ? v : 1)}>
@@ -290,17 +315,24 @@ export default function DadosIniciaisTab(props: {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
+                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
                         <FormControl>
-                            <FormLabel>Tipo de alvará</FormLabel>
-                            <Select value={alvara_tipo_id} id='id_alvara' name='id_alvara' placeholder='Tipo de alvara' onChange={(_, v) => setAlvara_tipo_id(v ? v : '')}>
-                                {alvaraTipos.map((alvaraTipo) => (
-                                    <Option key={alvaraTipo.id} value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
-                                ))}
-                            </Select>
+                            <FormLabel>Num. Aprova Digital</FormLabel>
+                            <Input
+                                id="aprova_digital"
+                                name="aprova_digital"
+                                placeholder="Aprova digital"
+                                value={aprova_digital}
+                                onChange={e => {
+                                    var aprova = e.target.value;
+                                    if (aprova.length > 0) aprova = formatarAprovaDigital(e.target.value);
+                                    setAprova_digital(aprova && aprova);
+                                }}
+                                type="text"
+                            />
                         </FormControl>
                     </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
+                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
                         <FormControl>
                             <FormLabel>Num. Processo Físico</FormLabel>
                             <Input
@@ -314,7 +346,7 @@ export default function DadosIniciaisTab(props: {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
+                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
                         <FormControl>
                             <FormLabel>Data Protocolo</FormLabel>
                             <Input
@@ -328,7 +360,7 @@ export default function DadosIniciaisTab(props: {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
+                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
                         <FormControl>
                             <FormLabel>Envio Admissibilidade</FormLabel>
                             <Input
@@ -340,15 +372,6 @@ export default function DadosIniciaisTab(props: {
                                 onChange={e => setEnvio_admissibilidade(new Date(e.target.value))}
                                 required={id ? false : true}
                             />
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={4}>
-                        <FormControl>
-                            <FormLabel>Status</FormLabel>
-                            <Select value={status} id='status' name='status' placeholder='Status' onChange={(_, v) => setStatus(v ? v : 1)}>
-                                <Option value={1}>Aberto</Option>
-                                <Option value={2}>Fechado</Option>
-                            </Select>
                         </FormControl>
                     </Grid>
                     <Grid xs={12} sm={12} md={12} lg={12} xl={12}>
