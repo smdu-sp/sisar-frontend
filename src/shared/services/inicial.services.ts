@@ -6,9 +6,9 @@ import { IAlvaraTipo } from "./alvara-tipo.services";
 import { signOut } from "next-auth/react";
 
 export interface IInicial_Sqls {
+    id: string
     inicial_id: number
     sql: string
-    data_cadastro: Date
     criado_em: Date
     alterado_em: Date
 
@@ -126,8 +126,26 @@ const atualizar = async (id: number, dataUpdate: IUpdateInicial): Promise<IInici
     return iniciais;
 }
 
+const adicionaSql = async (id: number, sql: string): Promise<IInicial> => {
+    const session = await getServerSession(authOptions);
+    const iniciais = await fetch(`${baseURL}inicial/adiciona-sql/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({ sql })
+    }).then ((response) => {
+        if(response.status === 401) signOut();
+        if(response.status !== 200) return;
+        return response.json();
+    });
+    return iniciais;
+}
+
 export {
     atualizar,
+    adicionaSql,
     buscarTudo,
     buscarPorId,
     criar

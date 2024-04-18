@@ -153,7 +153,6 @@ export default function DadosIniciaisTab(props: {
         if (id)
             inicialServices.buscarPorId(parseInt(id)).then((response: IInicial) => {
                 setInicial(response);
-                // setNums_sql(response.nums_sql);
                 setTipo_requerimento(response.tipo_requerimento);
                 setSei(formatarSei(response.sei));
                 setRequerimento(response.requerimento);
@@ -178,8 +177,18 @@ export default function DadosIniciaisTab(props: {
                 setAddNumSQLStatus(1);
             } else {
                 setAddNumSQLStatus(0);
-                setNums_sql([...nums_sql, num_sql]);
-                setNum_sql('');
+                if (id) {
+                    inicialServices.adicionaSql(parseInt(id), num_sql).then((response: IInicial) => {
+                        if (response.id) {
+                            setNums_sql([...nums_sql, num_sql]);
+                            setNum_sql('');
+                        }
+                    })
+                }
+                if (!id) {
+                    setNums_sql([...nums_sql, num_sql]);
+                    setNum_sql('');
+                }
             }
         }
         setAddNumSQLStatusAlert(true);
