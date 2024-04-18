@@ -19,6 +19,22 @@ export interface IUsuario {
     status: number;
     criado_em: Date;
     atualizado_em: Date;
+    ferias?: IFerias[];
+}
+
+export interface IFerias {
+    id: string;
+    inicio: Date;
+    final: Date;
+    usuario_id: string;
+    usuario?: IUsuario;
+    criado_em: Date;
+    atualizado_em: Date;
+}
+
+export interface IAddFeriasUsuario {
+    inicio: Date;
+    final: Date;
 }
 
 export interface ICreateUsuario {
@@ -191,7 +207,24 @@ async function buscarNovo(login: string): Promise<{ id?: string, login?: string,
     return usuario;
 }
 
-export { 
+async function adicionaFerias(id: string, data: IAddFeriasUsuario): Promise<IFerias> {
+    const session = await getServerSession(authOptions);
+    const ferias = await fetch(`${baseURL}usuarios/adiciona-ferias/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }, body: JSON.stringify(data)
+    }).then((response) => {
+        if (response.status === 401) Logout();
+        if (response.status !== 200) return;
+        return response.json();
+    })
+    return ferias;
+}
+
+export {
+    adicionaFerias,
     atualizar,
     autorizar,
     buscarNovo,

@@ -1,7 +1,7 @@
 'use client'
 
 import { useContext, useEffect, useState } from "react";
-import { Box, Button, Card, CardActions, CardOverflow, Chip, ChipPropsColorOverrides, ColorPaletteProp, Divider, FormControl, FormLabel, IconButton, Input, Option, Select, Stack } from "@mui/joy";
+import { Box, Button, Card, CardActions, CardOverflow, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogTitle, Divider, FormControl, FormLabel, IconButton, Input, Modal, ModalDialog, Option, Select, Stack, Table } from "@mui/joy";
 import { Badge, Check, Clear, EmailRounded, Warning } from "@mui/icons-material";
 import { useRouter } from 'next/navigation';
 import { OverridableStringUnion } from '@mui/types';
@@ -13,6 +13,9 @@ import { AlertsContext } from "@/providers/alertsProvider";
 
 export default function UsuarioDetalhes(props: any) {
     const [usuario, setUsuario] = useState<IUsuario>();
+    const [adicionarFeriasModal, setAdicionarFeriasModal] = useState(false);
+    const [inicio, setInicio] = useState<Date>(new Date());
+    const [final, setFinal] = useState<Date>(new Date());
     const [permissao, setPermissao] = useState('USR');
     const [cargo, setCargo] = useState('ADM');
     const [nome, setNome] = useState('');
@@ -31,15 +34,17 @@ export default function UsuarioDetalhes(props: any) {
     }
 
     useEffect(() => {
-        if (id) {
-            usuarioServices.buscarPorId(id)
-                .then((response: IUsuario) => {
-                    setUsuario(response);
-                    setPermissao(response.permissao);
-                    setEmail(response.email);
-                });
-        }
+        if (id) carregaDados();
     }, [ id ]);
+
+    const carregaDados = () => {
+        usuarioServices.buscarPorId(id)
+            .then((response: IUsuario) => {
+                setUsuario(response);
+                setPermissao(response.permissao);
+                setEmail(response.email);
+            });        
+    }
 
     const submitData = () => {
         if (usuario){
@@ -87,6 +92,16 @@ export default function UsuarioDetalhes(props: any) {
         setPermissao('USR');
     }    
 
+    function handleAdicionarFerias(): void {
+        usuarioServices.adicionaFerias(id, { inicio, final }).then((response) => {
+            if (response && response.id) {
+                setAdicionarFeriasModal(false);
+                setAlert('Férias adicionada!', 'Férias adicionada com sucesso!', 'success', 3000, Check);
+                carregaDados();
+            }
+        })
+    }
+
     return (
         <Content
             breadcrumbs={[
@@ -101,6 +116,30 @@ export default function UsuarioDetalhes(props: any) {
             }
             pagina="usuarios"
         >
+            <Modal open={adicionarFeriasModal} sx={{ zIndex: 99 }} onClose={() => setAdicionarFeriasModal(false)}>
+                <ModalDialog>
+                    <DialogTitle>Adicionar férias</DialogTitle>
+                    <Stack spacing={2}>
+                        <FormControl>
+                            <FormLabel>Início de férias</FormLabel>
+                            <Input
+                                type="date"
+                                value={inicio.toISOString().split('T')[0]}
+                                onChange={e => setInicio(new Date(e.target.value))}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel>Final de férias</FormLabel>
+                            <Input
+                                type="date"
+                                value={final.toISOString().split('T')[0]}
+                                onChange={e => setFinal(new Date(e.target.value))}
+                            />
+                        </FormControl>
+                        <Button color="success" onClick={() => handleAdicionarFerias()}>Adicionar</Button>
+                    </Stack>
+                </ModalDialog>
+            </Modal>
             <Box
                 sx={{
                     display: 'flex',
@@ -182,6 +221,30 @@ export default function UsuarioDetalhes(props: any) {
                                     readOnly={id ? true : (novoUsuario)}
                                 />
                             </FormControl>
+                        </Stack>
+                        <Divider />
+                        <Stack direction="row" spacing={2} sx={{ justifyContent: 'center', flex: 1, flexDirection: 'column' }}>
+                            <Card>
+                                {(usuario?.ferias && usuario.ferias.length > 0) && (
+                                    <Table hoverRow sx={{ tableLayout: 'auto' }}>
+                                        <thead>
+                                            <tr>
+                                                <th>Inicio</th>
+                                                <th>Fim</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {usuario.ferias.map((item, index) => (
+                                                <tr key={index}>
+                                                    <td>{new Date(item.inicio).toLocaleDateString()}</td>
+                                                    <td>{new Date(item.final).toLocaleDateString()}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                )}
+                                <Button onClick={() => setAdicionarFeriasModal(true)}>Adicionar férias</Button>
+                            </Card>
                         </Stack>
                     </Stack>
                     <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>

@@ -180,22 +180,22 @@ export default function AlvaraTipos() {
         </thead>
         <tbody>
           {alvaraTipos ? alvaraTipos.map((alvaraTipo) => (
-            <tr key={alvaraTipo.id} style={{ cursor: 'pointer' }} onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>
-              <td>{alvaraTipo.nome}</td>
-              <td>{alvaraTipo.prazo_admissibilidade}</td>
-              <td>{alvaraTipo.prazo_analise_smul1}</td>
-              <td>{alvaraTipo.prazo_analise_smul2}</td>
-              <td>{alvaraTipo.prazo_analise_multi1}</td>
-              <td>{alvaraTipo.prazo_analise_multi2}</td>
+            <tr key={alvaraTipo.id} style={{ cursor: 'pointer' }}>
+              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.nome}</td>
+              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_admissibilidade}</td>
+              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_smul1}</td>
+              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_smul2}</td>
+              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_multi1}</td>
+              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_multi2}</td>
               <td>
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                   {alvaraTipo.status ? (
-                    <Tooltip title="Ativar tipo de alvará" arrow placement="top">
+                    <Tooltip title="Desativar tipo de alvará" arrow placement="top">
                       <IconButton title="Desativar" size="sm" color="danger" onClick={() => confirmaDesativaAlvaraTipo(alvaraTipo.id)}>
                         <Cancel />
                       </IconButton>
                     </Tooltip>
-                  ) : (<Tooltip title="Desativar tipo de alvará" arrow placement="top">
+                  ) : (<Tooltip title="Ativar tipo de alvará" arrow placement="top">
                     <IconButton size="sm" color="success" onClick={() => confirmaAtivaAlvaraTipo(alvaraTipo.id)}>
                       <Check />
                     </IconButton>

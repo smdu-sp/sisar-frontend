@@ -175,8 +175,8 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 <FormControl>
                                     <FormLabel>Status</FormLabel>
                                     <Select value={status} onChange={(_, v) => setStatus(v ? v : 0)} required>
-                                        <Option value={0}>Ativo</Option>
-                                        <Option value={1}>Inativo</Option>
+                                        <Option value={1}>Ativo</Option>
+                                        <Option value={0}>Inativo</Option>
                                     </Select>
                                 </FormControl>
                             </Stack>
