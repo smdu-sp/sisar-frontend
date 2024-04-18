@@ -126,7 +126,7 @@ export default function Inicial() {
               </thead>
               <tbody>
                 {iniciais && iniciais.length > 0 ? iniciais.map((inicial: IInicial) => (
-                  <tr key={inicial.id} style={{ cursor: 'pointer' }}>
+                  <tr onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)} key={inicial.id} style={{ cursor: 'pointer' }}>
                     <td>{inicial.id}</td>
                     <td>{inicial.sei}</td>
                     <td>{inicial.tipo_requerimento}</td>
