@@ -236,8 +236,8 @@ export default function UsuarioDetalhes(props: any) {
                                         <tbody>
                                             {usuario.ferias.map((item, index) => (
                                                 <tr key={index}>
-                                                    <td>{new Date(item.inicio).toDateString()}</td>
-                                                    <td>{new Date(item.final).toDateString()}</td>
+                                                    <td>{new Date(item.inicio).toLocaleDateString()}</td>
+                                                    <td>{new Date(item.final).toLocaleDateString()}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
