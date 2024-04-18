@@ -146,18 +146,19 @@ const adicionaSql = async (id: number, sql: string): Promise<IInicial> => {
     return iniciais;
 }
 
-const removeSql = async (id: String): Promise<IInicial> => {
+const removeSql = async (inicial_id: string, sql: string): Promise<boolean> => {
     const session = await getServerSession(authOptions);
-    const iniciais = await fetch(`${baseURL}/inicial/remove-sql/${id}`, {
+    const iniciais = await fetch(`${baseURL}inicial/remove-sql/${inicial_id}/${sql}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session?.access_token}`
         }
-    }).then ((response) => {
+    }).then (async (response) => {
         if(response.status === 401) signOut();
         if(response.status !== 200) return;
-        return response.json();
+        const resp = await response.json();
+        return resp;
     });
     return iniciais;
 }

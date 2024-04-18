@@ -197,15 +197,22 @@ export default function DadosIniciaisTab(props: {
         setAddNumSQLStatusAlert(true);
     }
 
-    const removeRegister = (index: number, idSql: string) => {
-        setAddNumSQLStatusAlert(false);
-        setNums_sql(nums_sql.filter((_, i) => i !== index));
-        setAddNumSQLStatus(2);
-        setAddNumSQLStatusAlert(true);
+    const removeRegister = (index: number, sql: string) => {
         if (id) {
-            inicialServices.removeSql(idSql).then((response: IInicial) => {
-                    console.log("removido");
+            inicialServices.removeSql(id, sql).then((response: boolean) => {
+                if (response) {
+                    setAddNumSQLStatusAlert(false);
+                    setNums_sql(nums_sql.filter((_, i) => i !== index));
+                    setAddNumSQLStatus(2);
+                    setAddNumSQLStatusAlert(true);
+                }
             })
+        }
+        if (!id) {
+            setAddNumSQLStatusAlert(false);
+            setNums_sql(nums_sql.filter((_, i) => i !== index));
+            setAddNumSQLStatus(2);
+            setAddNumSQLStatusAlert(true);
         }
     }
 
@@ -473,13 +480,13 @@ export default function DadosIniciaisTab(props: {
                                     </tr>
                                 </thead>
                                 <tbody style={{ width: '100%', backgroundColor: '' }}>
-                                    {nums_sql?.map((num_sql, index, id) => (
+                                    {nums_sql?.map((num_sql, index) => (
                                         <tr key={index}>
                                             <td>{num_sql}</td>
                                             <td style={{ textAlign: 'right' }}>
                                                 <IconButton
                                                     color='danger'
-                                                    onClick={() => { removeRegister(index, id_sql[index]) }}
+                                                    onClick={() => { removeRegister(index, num_sql) }}
                                                 >
                                                     <Cancel />
                                                 </IconButton>
