@@ -31,6 +31,7 @@ export default function DadosIniciaisTab(props: {
     const [validoNum_sql, setValidoNum_sql] = useState<boolean>(false);
     const [validoNum_sei, setValidoNum_sei] = useState<boolean>(false);
     const [nums_sql, setNums_sql] = useState<string[]>([]);
+    const [id_sql, setId_sql] = useState<string[]>([]);
     const [addNumSQLStatus, setAddNumSQLStatus] = useState<number>(0);
     const [addNumSQLStatusAlert, setAddNumSQLStatusAlert] = useState<boolean>(false);
 
@@ -51,9 +52,9 @@ export default function DadosIniciaisTab(props: {
 
     const enviaDados = () => {
         if (!id)
-            inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, nums_sql })
+            inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, nums_sql, status })
                 .then((response: IInicial) => {
-                    if (response.id){
+                    if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
                         router.push(`/inicial/detalhes/${response.id}`);
                     }
@@ -61,7 +62,7 @@ export default function DadosIniciaisTab(props: {
         if (id)
             inicialServices.atualizar(parseInt(id), { decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs })
                 .then((response: IInicial) => {
-                    if (response.id){
+                    if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
                         router.push(`/inicial/detalhes/${response.id}`);
                     }
@@ -117,7 +118,7 @@ export default function DadosIniciaisTab(props: {
             const verificador = [2, 3, 4, 5, 6, 7, 8, 9];
             const digito = parseInt(sei[15]);
             let j = 0;
-            for (let i = 14; i >= 0; i--){
+            for (let i = 14; i >= 0; i--) {
                 if (j === 8) j = 0;
                 soma += parseInt(sei[i]) * verificador[j];
                 j++;
@@ -165,7 +166,9 @@ export default function DadosIniciaisTab(props: {
                 response.envio_admissibilidade && setEnvio_admissibilidade(new Date(response.envio_admissibilidade));
                 setTipo_processo(response.tipo_processo || 1);
                 if (response.iniciais_sqls && response.iniciais_sqls.length > 0) {
-                    setNums_sql(response.iniciais_sqls.map(sql => sql.sql));
+                    setNums_sql(response.iniciais_sqls.map((sql) => sql.sql));
+                    setId_sql(response.iniciais_sqls.map((sql) => sql.id));
+                    console.log(id_sql);
                 }
             })
     }
@@ -194,11 +197,16 @@ export default function DadosIniciaisTab(props: {
         setAddNumSQLStatusAlert(true);
     }
 
-    const removeRegister = (index: number) => {
+    const removeRegister = (index: number, idSql: string) => {
         setAddNumSQLStatusAlert(false);
         setNums_sql(nums_sql.filter((_, i) => i !== index));
         setAddNumSQLStatus(2);
         setAddNumSQLStatusAlert(true);
+        if (id) {
+            inicialServices.removeSql(idSql).then((response: IInicial) => {
+                    console.log("removido");
+            })
+        }
     }
 
     const alertConfigs: { message: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides>, icon: ReactNode }[] = [{
@@ -465,13 +473,13 @@ export default function DadosIniciaisTab(props: {
                                     </tr>
                                 </thead>
                                 <tbody style={{ width: '100%', backgroundColor: '' }}>
-                                    {nums_sql?.map((num_sql, index) => (
+                                    {nums_sql?.map((num_sql, index, id) => (
                                         <tr key={index}>
                                             <td>{num_sql}</td>
                                             <td style={{ textAlign: 'right' }}>
                                                 <IconButton
                                                     color='danger'
-                                                    onClick={() => { removeRegister(index) }}
+                                                    onClick={() => { removeRegister(index, id_sql[index]) }}
                                                 >
                                                     <Cancel />
                                                 </IconButton>

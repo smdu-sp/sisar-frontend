@@ -29,6 +29,7 @@ export interface IInicial {
     obs?: string
     status: number
     iniciais_sqls?: IInicial_Sqls[]
+    
 }
 
 export interface IUpdateInicial extends Partial<ICreateInicial> {}
@@ -47,6 +48,7 @@ export interface ICreateInicial {
     tipo_processo: number
     obs?: string
     nums_sql?: string[]
+    status?: number
 }
 
 export interface IPaginatedInicial {
@@ -126,6 +128,7 @@ const atualizar = async (id: number, dataUpdate: IUpdateInicial): Promise<IInici
     return iniciais;
 }
 
+
 const adicionaSql = async (id: number, sql: string): Promise<IInicial> => {
     const session = await getServerSession(authOptions);
     const iniciais = await fetch(`${baseURL}inicial/adiciona-sql/${id}`, {
@@ -143,10 +146,27 @@ const adicionaSql = async (id: number, sql: string): Promise<IInicial> => {
     return iniciais;
 }
 
+const removeSql = async (id: String): Promise<IInicial> => {
+    const session = await getServerSession(authOptions);
+    const iniciais = await fetch(`${baseURL}/inicial/remove-sql/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then ((response) => {
+        if(response.status === 401) signOut();
+        if(response.status !== 200) return;
+        return response.json();
+    });
+    return iniciais;
+}
+
 export {
     atualizar,
     adicionaSql,
     buscarTudo,
     buscarPorId,
-    criar
+    criar,
+    removeSql
 }
