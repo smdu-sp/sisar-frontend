@@ -12,6 +12,7 @@ import { OverridableStringUnion } from '@mui/types';
 import { AlertsContext } from '@/providers/alertsProvider';
 import { sign } from 'crypto';
 import { signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
 export default function AlvaraTipos() {
   const confirmaVazio: {
@@ -42,11 +43,12 @@ export default function AlvaraTipos() {
   const { setAlert } = useContext(AlertsContext);
   const [open, setOpen] = useState(false);
   const [mensagemStatus, setMensagemStatus] = useState('');
+  const [id, setId] = useState('');
+  const [tipoStatus, setTipoStatus] = useState(true);
 
   useEffect(() => {
     buscaDados();
     showNotificacao();
-
   }, [pagina, limite]);
 
   const showNotificacao = function () {
@@ -61,9 +63,17 @@ export default function AlvaraTipos() {
   };
 
   const status = function () {
-    setAlert(mensagemStatus == 'ativar' ? 'Alvará ativado!' : 'Alvará inativado!',
-    mensagemStatus == 'ativar' ? 'Alvará ativado com sucesso.' : 'Alvará inativado com sucesso.', 'success', 3000, Check);
     setOpen(false);
+    var status = parseInt(tipoStatus.toString());
+    var teste = status == 1 ? 0 : 1;
+    alvaraTipoService.auterarStatus(id, teste)
+      .then(() => {
+        setAlert(mensagemStatus == 'ativar' ? 'Alvará ativado!' : 'Alvará inativado!',
+          mensagemStatus == 'ativar' ? 'Alvará ativado com sucesso.' : 'Alvará inativado com sucesso.', 'success', 3000, Check);
+        window.location.reload();
+      });
+    console.log(id);
+    console.log(tipoStatus);
   }
 
   const createQueryString = useCallback(
@@ -228,12 +238,12 @@ export default function AlvaraTipos() {
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                   {alvaraTipo.status ? (
                     <Tooltip title="Desativar tipo de alvará" arrow placement="top">
-                      <IconButton title="Desativar" size="sm" color="danger" onClick={() => { setOpen(true); setMensagemStatus('inativar'); }}>
+                      <IconButton title="Desativar" size="sm" color="danger" onClick={() => { setOpen(true); setMensagemStatus('inativar'); setId(alvaraTipo.id); setTipoStatus(alvaraTipo.status); }}>
                         <Cancel />
                       </IconButton>
                     </Tooltip>
                   ) : (<Tooltip title="Ativar tipo de alvará" arrow placement="top">
-                    <IconButton size="sm" color="success" onClick={() => { setOpen(true); setMensagemStatus('ativar'); }}>
+                    <IconButton size="sm" color="success" onClick={() => { setOpen(true); setMensagemStatus('ativar'); setId(alvaraTipo.id); setTipoStatus(alvaraTipo.status); }}>
                       <Check />
                     </IconButton>
                   </Tooltip>)}
