@@ -62,12 +62,11 @@ export default function AlvaraTipos() {
   const status = function () {
     setOpen(false);
     var status = parseInt(tipoStatus.toString());
-    var teste = status == 1 ? 0 : 1;
-    alvaraTipoService.alterarStatus(id, teste)
+    alvaraTipoService.alterarStatus(id, status === 1 ? 0 : 1)
       .then(() => {
         setAlert(mensagemStatus == 'ativar' ? 'Alvará ativado!' : 'Alvará inativado!',
-          mensagemStatus == 'ativar' ? 'Alvará ativado com sucesso.' : 'Alvará inativado com sucesso.', 'success', 3000, Check);
-        window.location.reload();
+          mensagemStatus == 'ativar' ? 'Alvará ativado com sucesso.' : 'Alvará inativado com sucesso.', status === 1 ? 'warning' : 'success', 3000, Check);
+          buscaDados();
       });
   }
 
@@ -125,7 +124,7 @@ export default function AlvaraTipos() {
     >
       <Snackbar
         variant="solid"
-        color="primary"
+        color={mensagemStatus === 'ativar' ? 'success' : 'warning'}
         size="lg"
         invertedColors
         open={open}
