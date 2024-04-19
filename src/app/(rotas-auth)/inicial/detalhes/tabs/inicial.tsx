@@ -232,12 +232,12 @@ export default function DadosIniciaisTab(props: {
 
     useEffect(() => {
         buscarDados();
-        alvaraTiposService.buscarTudo().then((result: IPaginadoAlvaraTipo) => {
+        alvaraTiposService.listaCompleta().then((result: IAlvaraTipo[]) => {
             if (result) {
                 if (result instanceof Error) {
                     alert(result.message);
                 } else {
-                    setAlvaraTipos(result.data);
+                    setAlvaraTipos(result);
                 }
             }
         });
