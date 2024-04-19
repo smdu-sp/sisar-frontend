@@ -499,7 +499,7 @@ export default function DadosIniciaisTab(props: {
                 </Grid>
                 <CardOverflow sx={{ marginLeft: 'auto' }}>
                     <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-                        <Button size="sm" variant="outlined" color="neutral" onClick={() => { }}>
+                        <Button size="sm" variant="outlined" color="neutral" onClick={() => {router.push(`/inicial`);}}>
                             Cancelar
                         </Button>
                         <Button size="sm" variant="solid" onClick={enviaDados} disabled={!validoNum_sei}>
