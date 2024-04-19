@@ -10,9 +10,6 @@ import { TablePagination } from '@mui/material';
 import { Add, Cancel, Check, Clear, Refresh, Search } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
 import { AlertsContext } from '@/providers/alertsProvider';
-import { sign } from 'crypto';
-import { signOut } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
 
 export default function AlvaraTipos() {
   const confirmaVazio: {
@@ -66,14 +63,12 @@ export default function AlvaraTipos() {
     setOpen(false);
     var status = parseInt(tipoStatus.toString());
     var teste = status == 1 ? 0 : 1;
-    alvaraTipoService.auterarStatus(id, teste)
+    alvaraTipoService.alterarStatus(id, teste)
       .then(() => {
         setAlert(mensagemStatus == 'ativar' ? 'Alvará ativado!' : 'Alvará inativado!',
           mensagemStatus == 'ativar' ? 'Alvará ativado com sucesso.' : 'Alvará inativado com sucesso.', 'success', 3000, Check);
         window.location.reload();
       });
-    console.log(id);
-    console.log(tipoStatus);
   }
 
   const createQueryString = useCallback(

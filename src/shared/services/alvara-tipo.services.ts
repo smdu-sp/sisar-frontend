@@ -122,7 +122,7 @@ const atualizar = async (id: string, data: IUpdateAlvaraTipo): Promise<IAlvaraTi
     return alvaraTipo;
 }
 
-const auterarStatus = async (id: string, status: number): Promise<IAlvaraTipo> => {
+const alterarStatus = async (id: string, status: number): Promise<IAlvaraTipo> => {
     const session = await getServerSession(authOptions);
     const alvaraTipo = fetch(`${baseURL}alvara-tipo/auterar-status/${id}`, {
         method: "PATCH",
@@ -139,9 +139,10 @@ const auterarStatus = async (id: string, status: number): Promise<IAlvaraTipo> =
 }
 
 export {
+    alterarStatus,
     atualizar,
     buscarPorId,
     buscarTudo,
     criar,
-    listaCompleta
+    listaCompleta,
 }
