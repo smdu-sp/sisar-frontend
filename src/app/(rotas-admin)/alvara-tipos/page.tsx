@@ -10,6 +10,9 @@ import { TablePagination } from '@mui/material';
 import { Add, Cancel, Check, Clear, Refresh, Search } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
 import { AlertsContext } from '@/providers/alertsProvider';
+import { sign } from 'crypto';
+import { signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
 export default function AlvaraTipos() {
   const confirmaVazio: {
@@ -38,23 +41,40 @@ export default function AlvaraTipos() {
   const [busca, setBusca] = useState('');
   const [confirma, setConfirma] = useState(confirmaVazio);
   const { setAlert } = useContext(AlertsContext);
+  const [open, setOpen] = useState(false);
+  const [mensagemStatus, setMensagemStatus] = useState('');
+  const [id, setId] = useState('');
+  const [tipoStatus, setTipoStatus] = useState(true);
 
   useEffect(() => {
     buscaDados();
     showNotificacao();
-
   }, [pagina, limite]);
 
   const showNotificacao = function () {
     var notification = searchParams.get('notification');
     if (notification) {
       setNotificacao(notification ? parseInt(notification) : 0);
-      setAlert(notificacao == 1 ? 'Tipo alvará alterado!' : 'Tipo alvará criado!', 
-              notificacao == 1 ? 'Tipo alvará alterado com sucesso.' : 'Tipo alvará criado com sucesso.', 'success', 3000, Check);
+      setAlert(notificacao == 1 ? 'Tipo alvará alterado!' : 'Tipo alvará criado!',
+        notificacao == 1 ? 'Tipo alvará alterado com sucesso.' : 'Tipo alvará criado com sucesso.', 'success', 3000, Check);
       router.push(pathname);
       buscaDados();
     }
   };
+
+  const status = function () {
+    setOpen(false);
+    var status = parseInt(tipoStatus.toString());
+    var teste = status == 1 ? 0 : 1;
+    alvaraTipoService.auterarStatus(id, teste)
+      .then(() => {
+        setAlert(mensagemStatus == 'ativar' ? 'Alvará ativado!' : 'Alvará inativado!',
+          mensagemStatus == 'ativar' ? 'Alvará ativado com sucesso.' : 'Alvará inativado com sucesso.', 'success', 3000, Check);
+        window.location.reload();
+      });
+    console.log(id);
+    console.log(tipoStatus);
+  }
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -110,6 +130,33 @@ export default function AlvaraTipos() {
     >
       <Snackbar
         variant="solid"
+        color="primary"
+        size="lg"
+        invertedColors
+        open={open}
+        onClose={() => setOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ maxWidth: 360 }}
+      >
+        <div>
+          <Typography level="title-lg">{mensagemStatus == 'ativar' ? 'Ativando' : 'Desativando'}</Typography>
+          <Typography sx={{ mt: 1, mb: 2 }} level="title-md">{mensagemStatus == 'ativar' ? 'Tem certeza de que deseja ativar?' : 'Tem certeza de que deseja desativar?'}</Typography>
+          <Stack direction="row" spacing={1}>
+            <Button variant="solid" color="primary" onClick={status}>
+              Sim
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => setOpen(false)}
+            >
+              Não
+            </Button>
+          </Stack>
+        </div>
+      </Snackbar>
+      <Snackbar
+        variant="solid"
         color={confirma.color}
         size="lg"
         invertedColors
@@ -122,7 +169,7 @@ export default function AlvaraTipos() {
           <Typography level="title-lg">{confirma.titulo}</Typography>
           <Typography sx={{ mt: 1, mb: 2 }} level="title-md">{confirma.pergunta}</Typography>
           <Stack direction="row" spacing={1}>
-            <Button variant="solid" color="primary" onClick={() => confirma.confirmaOperacao()}>
+            <Button variant="solid" color="primary" onClick={() => confirma.confirmaOperacao()} >
               Sim
             </Button>
             <Button
@@ -191,12 +238,12 @@ export default function AlvaraTipos() {
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                   {alvaraTipo.status ? (
                     <Tooltip title="Desativar tipo de alvará" arrow placement="top">
-                      <IconButton title="Desativar" size="sm" color="danger" onClick={() => confirmaDesativaAlvaraTipo(alvaraTipo.id)}>
+                      <IconButton title="Desativar" size="sm" color="danger" onClick={() => { setOpen(true); setMensagemStatus('inativar'); setId(alvaraTipo.id); setTipoStatus(alvaraTipo.status); }}>
                         <Cancel />
                       </IconButton>
                     </Tooltip>
                   ) : (<Tooltip title="Ativar tipo de alvará" arrow placement="top">
-                    <IconButton size="sm" color="success" onClick={() => confirmaAtivaAlvaraTipo(alvaraTipo.id)}>
+                    <IconButton size="sm" color="success" onClick={() => { setOpen(true); setMensagemStatus('ativar'); setId(alvaraTipo.id); setTipoStatus(alvaraTipo.status); }}>
                       <Check />
                     </IconButton>
                   </Tooltip>)}

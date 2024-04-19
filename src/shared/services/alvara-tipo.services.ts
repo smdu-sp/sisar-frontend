@@ -22,6 +22,11 @@ export interface IPaginadoAlvaraTipo {
     limite: number
 }
 
+export interface auterarStatus {
+    id: string
+    sataus: number
+}
+
 export interface IUpdateAlvaraTipo extends Partial<ICreateAlvaraTipo> {} {}
 
 export interface ICreateAlvaraTipo {
@@ -109,6 +114,22 @@ const atualizar = async (id: string, data: IUpdateAlvaraTipo): Promise<IAlvaraTi
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session?.access_token}`
         }, body: JSON.stringify(data)
+    }).then( async (response) => {
+        if (response.status === 401) signOut();
+        if (response.status !== 200) return;
+        return await response.json();
+    })
+    return alvaraTipo;
+}
+
+const auterarStatus = async (id: string, status: number): Promise<IAlvaraTipo> => {
+    const session = await getServerSession(authOptions);
+    const alvaraTipo = fetch(`${baseURL}alvara-tipo/auterar-status/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }, body: JSON.stringify({id, status})
     }).then( async (response) => {
         if (response.status === 401) signOut();
         if (response.status !== 200) return;
