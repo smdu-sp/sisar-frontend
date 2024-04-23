@@ -1,8 +1,8 @@
 'use client'
 
 import { useContext, useEffect, useState } from "react";
-import { Box, Button, Card, CardActions, CardOverflow, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogTitle, Divider, FormControl, FormLabel, IconButton, Input, Modal, ModalDialog, Option, Select, Stack, Table } from "@mui/joy";
-import { Badge, Check, Clear, EmailRounded, Warning } from "@mui/icons-material";
+import { Autocomplete, AutocompleteOption, Box, Button, Card, CardActions, CardOverflow, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogTitle, Divider, FormControl, FormLabel, IconButton, Input, Modal, ModalDialog, Option, Select, Stack, Table } from "@mui/joy";
+import { Badge, Business, Check, Clear, EmailRounded, Warning } from "@mui/icons-material";
 import { useRouter } from 'next/navigation';
 import { OverridableStringUnion } from '@mui/types';
 
@@ -10,6 +10,9 @@ import Content from "@/components/Content";
 import { IUsuario } from "@/shared/services/usuario.services";
 import * as usuarioServices from "@/shared/services/usuario.services";
 import { AlertsContext } from "@/providers/alertsProvider";
+import * as unidadeServices from "@/shared/services/unidade.services";
+import { IUnidade } from "@/shared/services/unidade.services";
+
 
 export default function UsuarioDetalhes(props: any) {
     const [usuario, setUsuario] = useState<IUsuario>();
@@ -25,6 +28,9 @@ export default function UsuarioDetalhes(props: any) {
     const { id } = props.params;
     const router = useRouter();
     const { setAlert } = useContext(AlertsContext);
+    const [unidades, setUnidades] = useState<IUnidade[]>([]);
+    const [unidade_id, setUnidade_id] = useState('');
+
 
     const permissoes: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
         'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'neutral' },
@@ -35,6 +41,10 @@ export default function UsuarioDetalhes(props: any) {
 
     useEffect(() => {
         if (id) carregaDados();
+        unidadeServices.listaCompleta()
+            .then((response: IUnidade[]) => {
+                setUnidades(response);
+            })
     }, [ id ]);
 
     const carregaDados = () => {
@@ -204,6 +214,33 @@ export default function UsuarioDetalhes(props: any) {
                                     <Option value="ADM">Administrativo</Option>
                                     <Option value="TEC">Técnico</Option>
                                 </Select>
+                            </FormControl>
+                        </Stack>
+                        <Divider />
+                        <Stack>
+                            <FormControl>
+                                <FormLabel>Unidade</FormLabel>
+                                <Autocomplete
+                                    startDecorator={<Business />}
+                                    options={unidades}
+                                    getOptionLabel={(option) => option && option.sigla}
+                                    renderOption={(props, option) => (
+                                      <AutocompleteOption {...props} key={option.id} value={option.id}>
+                                        {option.sigla}
+                                      </AutocompleteOption>
+                                    )}
+                                    placeholder="Unidade"
+                                    value={unidade_id && unidade_id !== '' ? unidades.find((unidade: IUnidade) => unidade.id === unidade_id) : null}
+                                    onChange={(_, value) => value  && setUnidade_id(value?.id)}
+                                    filterOptions={(options, { inputValue }) => {
+                                        if (unidades) return (options as IUnidade[]).filter((option) => (
+                                            (option).nome.toLowerCase().includes(inputValue.toLowerCase()) || 
+                                            (option).sigla.toLowerCase().includes(inputValue.toLowerCase())
+                                        ));
+                                        return [];
+                                    }}
+                                    noOptionsText="Nenhuma unidade encontrada"
+                                />
                             </FormControl>
                         </Stack>
                         <Divider />
