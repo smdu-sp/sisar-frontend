@@ -48,6 +48,12 @@ export const menu: IMenu = {
             icon: UploadFile,
         },
         {
+            title: 'Unidades',
+            href: '/unidades',
+            name: 'unidades',
+            icon: Business,
+        },
+        {
             title: 'Tipos de Alvará',
             href: '/alvara-tipos',
             name: 'alvara-tipos',
