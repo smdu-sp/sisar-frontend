@@ -20,6 +20,8 @@ export interface IUsuario {
     criado_em: Date;
     atualizado_em: Date;
     ferias?: IFerias[];
+    substitutos?: ISubstituto[]
+    usuarios?: ISubstituto[]
 }
 
 export interface IFerias {
@@ -30,6 +32,14 @@ export interface IFerias {
     usuario?: IUsuario;
     criado_em: Date;
     atualizado_em: Date;
+}
+
+export interface ISubstituto {
+    id: string;
+    usuario_id: Date;
+    usuario?: IUsuario;
+    substituto_id: string;
+    substituto?: IUsuario;
 }
 
 export interface IAddFeriasUsuario {
@@ -182,7 +192,6 @@ async function validaUsuario(): Promise<IUsuario> {
         if (response.status === 401) Logout();
         return response.json();
     }).catch((error) => {
-        console.log({error});
         Logout();
     })
     return usuario;
@@ -223,15 +232,67 @@ async function adicionaFerias(id: string, data: IAddFeriasUsuario): Promise<IFer
     return ferias;
 }
 
+async function adicionarSubstituto(usuario_id: string, substituto_id: string): Promise<ISubstituto> {
+    const session = await getServerSession(authOptions);
+    const substituto = await fetch(`${baseURL}usuarios/adicionar-substituto`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }, body: JSON.stringify({ usuario_id, substituto_id })
+    }).then((response) => {
+        if (response.status === 401) Logout();
+        if (response.status !== 201) return;
+        return response.json();
+    })
+    return substituto;
+}
+
+async function removerSubstituto(id: string): Promise<boolean> {
+    const session = await getServerSession(authOptions);
+    const substituto = await fetch(`${baseURL}usuarios/remover-substituto/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) Logout();
+        if (response.status !== 200) return;
+        return response.json();
+    })
+    return substituto;
+}
+
+async function buscarAdministrativos(): Promise<IUsuario[]> {
+    const session = await getServerSession(authOptions);
+    const administrativos = fetch(`${baseURL}usuarios/buscar-administrativos`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) Logout();
+        if (response.status !== 200) return;
+        return response.json();
+    })
+    return administrativos;
+}
+
 export {
     adicionaFerias,
+    adicionarSubstituto,
     atualizar,
     autorizar,
+    buscarAdministrativos,
     buscarNovo,
     buscarPorId,
     buscarTudo,
     criar,
     desativar,
     listaCompleta,
+    removerSubstituto,
     validaUsuario
 };
+

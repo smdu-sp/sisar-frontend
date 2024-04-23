@@ -168,7 +168,6 @@ export default function DadosIniciaisTab(props: {
                 if (response.iniciais_sqls && response.iniciais_sqls.length > 0) {
                     setNums_sql(response.iniciais_sqls.map((sql) => sql.sql));
                     setId_sql(response.iniciais_sqls.map((sql) => sql.id));
-                    console.log(id_sql);
                 }
             })
     }

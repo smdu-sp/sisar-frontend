@@ -44,7 +44,6 @@ export default function AlvaraTipoDetalhes(props: any) {
         if (id) {
             alvaraTiposService.atualizar(id, { prazo_admissibilidade, nome, prazo_analise_smul1, prazo_analise_smul2, prazo_analise_multi1, prazo_analise_multi2, status })
                 .then(() => {
-                    console.log(status);
                     router.push('/alvara-tipos?notification=1');
                 });
         } else {

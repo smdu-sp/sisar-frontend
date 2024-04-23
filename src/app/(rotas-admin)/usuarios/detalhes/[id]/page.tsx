@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { OverridableStringUnion } from '@mui/types';
 
 import Content from "@/components/Content";
-import { IUsuario } from "@/shared/services/usuario.services";
+import { ISubstituto, IUsuario } from "@/shared/services/usuario.services";
 import * as usuarioServices from "@/shared/services/usuario.services";
 import { AlertsContext } from "@/providers/alertsProvider";
 import * as unidadeServices from "@/shared/services/unidade.services";
@@ -16,7 +16,10 @@ import { IUnidade } from "@/shared/services/unidade.services";
 
 export default function UsuarioDetalhes(props: any) {
     const [usuario, setUsuario] = useState<IUsuario>();
+    const [administrativos, setAdministrativos] = useState<IUsuario[]>();
     const [adicionarFeriasModal, setAdicionarFeriasModal] = useState(false);
+    const [adicionarSubstitutoModal, setAdicionarSubstitutoModal] = useState(false);
+    const [substituto_id, setSubstituto_id] = useState('');
     const [inicio, setInicio] = useState<Date>(new Date());
     const [final, setFinal] = useState<Date>(new Date());
     const [permissao, setPermissao] = useState('USR');
@@ -53,7 +56,15 @@ export default function UsuarioDetalhes(props: any) {
                 setUsuario(response);
                 setPermissao(response.permissao);
                 setEmail(response.email);
-            });        
+            });
+        buscaAdministrativos();
+    }
+
+    const buscaAdministrativos = () => {
+        usuarioServices.buscarAdministrativos()
+            .then((response: IUsuario[]) => {
+                setAdministrativos(response);
+            });
     }
 
     const submitData = () => {
@@ -112,6 +123,30 @@ export default function UsuarioDetalhes(props: any) {
         })
     }
 
+    function removerSubstituto(id: string): void {
+        usuarioServices.removerSubstituto(id).then((response) => {
+
+            if (response) {
+                setAlert('Substituto removido!', 'Substituto removido com sucesso!', 'success', 3000, Check);
+                carregaDados();
+            } else {
+                setAlert('Erro', 'Erro ao remover substituto!', 'warning', 3000, Warning);
+            }
+        })
+    }
+
+    function adicionarSubstituto(): void {
+        if (usuario?.id)
+            usuarioServices.adicionarSubstituto(usuario?.id, substituto_id).then((response) => {
+                if (response.id) {
+                    setAlert('Substituto adicionado!', 'Substituto adicionado com sucesso!', 'success', 3000, Check);
+                    carregaDados();
+                } else {
+                    setAlert('Erro', 'Erro ao adicionar substituto!', 'warning', 3000, Warning);
+                }
+            })
+    }
+
     return (
         <Content
             breadcrumbs={[
@@ -146,7 +181,37 @@ export default function UsuarioDetalhes(props: any) {
                                 onChange={e => setFinal(new Date(e.target.value))}
                             />
                         </FormControl>
-                        <Button color="success" onClick={() => handleAdicionarFerias()}>Adicionar</Button>
+                        <FormControl sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row' }}>
+                            <Button color="neutral" variant="outlined" onClick={() => setAdicionarFeriasModal(false)}>Cancelar</Button>
+                            <Button color="success" onClick={() => handleAdicionarFerias()}>Adicionar</Button>
+                        </FormControl>
+                    </Stack>
+                </ModalDialog>
+            </Modal>
+            <Modal open={adicionarSubstitutoModal} sx={{ zIndex: 99 }} onClose={() => setAdicionarSubstitutoModal(false)}>
+                <ModalDialog>
+                    <DialogTitle>Adicionar substituto</DialogTitle>
+                    <Stack spacing={2}>
+                        <FormControl>
+                            <FormLabel>Substituto</FormLabel>
+                            <Select
+                                value={substituto_id}
+                                onChange={(_, value) => value && setSubstituto_id(value)}
+                            >
+                                {administrativos && administrativos.map((adm) => (
+                                    <Option
+                                        key={adm.id}
+                                        value={adm.id}
+                                    >
+                                        {adm.nome}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row' }}>
+                            <Button color="neutral" variant="outlined" onClick={() => setAdicionarFeriasModal(false)}>Cancelar</Button>
+                            <Button color="success" onClick={() => adicionarSubstituto()}>Adicionar</Button>
+                        </FormControl>
                     </Stack>
                 </ModalDialog>
             </Modal>
@@ -281,6 +346,34 @@ export default function UsuarioDetalhes(props: any) {
                                     </Table>
                                 )}
                                 <Button onClick={() => setAdicionarFeriasModal(true)}>Adicionar férias</Button>
+                            </Card>
+                        </Stack>
+                        <Divider />
+                        <Stack direction="row" spacing={2} sx={{ justifyContent: 'center', flex: 1, flexDirection: 'column' }}>
+                            <Card>
+                                {(usuario?.usuarios && usuario.usuarios.length > 0) && (
+                                    <Table hoverRow sx={{ tableLayout: 'auto' }}>
+                                        <thead>
+                                            <tr>
+                                                <th>Substituto</th>
+                                                <th style={{ textAlign: 'right' }}></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {usuario.usuarios.map((item, index) => item.substituto && (
+                                                <tr key={index}>
+                                                    <td>{item.substituto.nome}</td>
+                                                    <td style={{ textAlign: 'right' }}>
+                                                        <IconButton onClick={() => removerSubstituto(item.id)}>
+                                                            <Clear />
+                                                        </IconButton>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                )}
+                                <Button onClick={() => setAdicionarSubstitutoModal(true)}>Adicionar substituto</Button>
                             </Card>
                         </Stack>
                     </Stack>
