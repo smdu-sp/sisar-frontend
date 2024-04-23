@@ -125,7 +125,6 @@ export default function UsuarioDetalhes(props: any) {
 
     function removerSubstituto(id: string): void {
         usuarioServices.removerSubstituto(id).then((response) => {
-
             if (response) {
                 setAlert('Substituto removido!', 'Substituto removido com sucesso!', 'success', 3000, Check);
                 carregaDados();
@@ -145,6 +144,11 @@ export default function UsuarioDetalhes(props: any) {
                     setAlert('Erro', 'Erro ao adicionar substituto!', 'warning', 3000, Warning);
                 }
             })
+    }
+
+    const addHours = (date: Date, h: number) => {
+        date.setHours(date.getHours() + h);
+        return date;
     }
 
     return (
@@ -287,7 +291,7 @@ export default function UsuarioDetalhes(props: any) {
                                 <FormLabel>Unidade</FormLabel>
                                 <Autocomplete
                                     startDecorator={<Business />}
-                                    options={unidades}
+                                    options={unidades && unidades.length > 0 ? unidades : []}
                                     getOptionLabel={(option) => option && option.sigla}
                                     renderOption={(props, option) => (
                                       <AutocompleteOption {...props} key={option.id} value={option.id}>
@@ -338,8 +342,8 @@ export default function UsuarioDetalhes(props: any) {
                                         <tbody>
                                             {usuario.ferias.map((item, index) => (
                                                 <tr key={index}>
-                                                    <td>{new Date(item.inicio).toLocaleDateString()}</td>
-                                                    <td>{new Date(item.final).toLocaleDateString()}</td>
+                                                    <td>{addHours(new Date(item.inicio), 4).toLocaleDateString()}</td>
+                                                    <td>{addHours(new Date(item.final), 4).toLocaleDateString()}</td>
                                                 </tr>
                                             ))}
                                         </tbody>

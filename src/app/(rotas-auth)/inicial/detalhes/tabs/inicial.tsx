@@ -294,7 +294,7 @@ export default function DadosIniciaisTab(props: {
                         <FormControl>
                             <FormLabel>Tipo de alvará</FormLabel>
                             <Select value={alvara_tipo_id} id='id_alvara' name='id_alvara' placeholder='Tipo de alvara' onChange={(_, v) => setAlvara_tipo_id(v ? v : '')}>
-                                {alvaraTipos.map((alvaraTipo) => (
+                                {(alvaraTipos && alvaraTipos.length > 0) && alvaraTipos.map((alvaraTipo) => (
                                     <Option key={alvaraTipo.id} value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
                                 ))}
                             </Select>
