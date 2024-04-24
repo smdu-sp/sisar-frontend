@@ -12,7 +12,8 @@ import { OverridableStringUnion } from '@mui/types';
 import { IPaginadoSubprefeitura, ISubprefeitura } from '@/shared/services/subprefeitura.services';
 import subprefeituraDetalhes from './detalhes/[id]/page';
 
-export default function Unidades(){
+
+export default function Unidades() {
   return (
     <Suspense>
       <SearchUnidades />
@@ -30,6 +31,11 @@ function SearchUnidades() {
   const [status, setStatus] = useState<string>(searchParams.get('status') ? searchParams.get('status') + '' : 'true');
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
   const [notificacao, setNotificacao] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [mensagemStatus, setMensagemStatus] = useState(1);
+  const [id, setId] = useState('');
+  const [title, setTitle] = useState('');
+  const [message, setMessage] = useState('');
 
   const confirmaVazio: {
     aberto: boolean,
@@ -39,35 +45,31 @@ function SearchUnidades() {
     color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides>
   } = {
     aberto: false,
-    confirmaOperacao: () => {},
+    confirmaOperacao: () => { },
     titulo: '',
     pergunta: '',
     color: 'primary'
   }
-  const [confirma, setConfirma] = useState(confirmaVazio);
   const { setAlert } = useContext(AlertsContext);
-
-  const theme = useTheme();
   const router = useRouter();
 
   useEffect(() => {
-    console.log(notificacao);
     buscaSubprefeitura();
     showNotificacao();
-  }, [ status, pagina, limite ]);
+  }, [status, pagina, limite]);
 
   const showNotificacao = function () {
     var notification = searchParams.get('notification');
+
     if (notification) {
-      setNotificacao(notification ? parseInt(notification) : 0);
-      setAlert(notificacao == 1 ? 'Subprefeitura alterada!' : 'Subprefeitura criada!',
-        notificacao == 1 ? 'Subprefeitura alterada com sucesso.' : 'Subprefeitura criada com sucesso.', 
-        notificacao == 1 ?  'warning' : 'success', 3000, Check);
-      // router.push(pathname);
-      // buscaDados();
+      setAlert(notification == '1' ? 'Subprefeitura alterada!' : 'Subprefeitura criada!',
+      notification == '1' ? 'Subprefeitura alterada com sucesso.' : 'Subprefeitura criada com sucesso.',
+        notification == '1' ? 'warning' : 'success', 3000, Check);
+      router.push(pathname);
+      buscaSubprefeitura();
     }
   };
-  
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
@@ -86,17 +88,22 @@ function SearchUnidades() {
         setSubprefeitura(response.data);
       });
   }
-  
-  // const desativaUnidade = async (id: string) => {
-  //   var resposta = await unidadeServices.desativar(id);
-  //   if (resposta){
-  //     setAlert('Unidade desativada!', 'Essa unidade foi desativada e não será exibida para seleção.', 'success', 3000, Check);
-  //     buscaUnidades();
-  //   } else {
-  //     setAlert('Tente novamente!', 'Não foi possível desativar a unidade.', 'warning', 3000, Warning);
-  //   }
-  //   setConfirma(confirmaVazio);
-  // }
+
+  const atualizarStatus = (tipo: number) => {
+    if (tipo == 1) {
+      subprefeituraServices.ativar(id)
+        .then(() => {
+          setAlert('Subprefeitura ativada!', 'Essa subprefeitura foi autorizada e será visível para seleção.', 'success', 3000, Check);
+          buscaSubprefeitura();
+        })
+    } else if (tipo == 0) {
+      subprefeituraServices.desativar(id)
+        .then(() => {
+          setAlert('Subprefeitura desativada!', 'Essa subprefeitura foi autorizada e não será exibida para seleção.', 'success', 3000, Check);
+          buscaSubprefeitura();
+        })
+    }
+  }
 
   const mudaPagina = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -112,38 +119,9 @@ function SearchUnidades() {
     router.push(pathname + '?' + createQueryString('limite', String(event.target.value)));
     setLimite(parseInt(event.target.value, 10));
     setPagina(1);
+
   };
 
-  // const confirmaDesativaUnidade = async (id: string) => {
-  //   setConfirma({ 
-  //     aberto: true,
-  //     confirmaOperacao: () => desativaUnidade(id),
-  //     titulo: 'Desativar unidade',
-  //     pergunta: 'Deseja desativar esta unidade?',
-  //     color: 'warning'
-  //   });
-  // }
-
-  const ativaUnidade = async (id: string) => {
-    var resposta = await subprefeituraServices.ativar(id);
-    if (resposta){
-      setAlert('Unidade ativada!', 'Essa unidade foi autorizada e será visível para seleção.', 'success', 3000, Check);
-      buscaSubprefeitura();
-    } else {
-      setAlert('Tente novamente!', 'Não foi possível ativar unidade.', 'warning', 3000, Warning);
-    }
-    setConfirma(confirmaVazio);
-  }
-
-  const confirmaAtivaUnidade = async (id: string) => {
-    setConfirma({ 
-      aberto: true,
-      confirmaOperacao: () => ativaUnidade(id),
-      titulo: 'Ativar unidade',
-      pergunta: 'Deseja ativar esta unidade?',
-      color: 'primary'
-    });
-  }
 
   const limpaFitros = () => {
     setBusca('');
@@ -162,27 +140,28 @@ function SearchUnidades() {
       titulo='Subprefeitura'
       pagina='subprefeitura'
     >
+
       <Snackbar
         variant="solid"
-        color={confirma.color}
+        color={mensagemStatus === 1 ? 'success' : 'warning'}
         size="lg"
         invertedColors
-        open={confirma.aberto}
-        onClose={() => setConfirma({ ...confirma, aberto: false })}
+        open={open}
+        onClose={() => setOpen(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         sx={{ maxWidth: 360 }}
       >
         <div>
-          <Typography level="title-lg">{confirma.titulo}</Typography>
-          <Typography sx={{ mt: 1, mb: 2 }} level="title-md">{confirma.pergunta}</Typography>
+          <Typography level="title-lg">{title}</Typography>
+          <Typography sx={{ mt: 1, mb: 2 }} level="title-md">{message}</Typography>
           <Stack direction="row" spacing={1}>
-            <Button variant="solid" color="primary" onClick={() => confirma.confirmaOperacao()}>
+            <Button variant="solid" color="primary" onClick={() => (atualizarStatus(mensagemStatus), setOpen(false))}>
               Sim
             </Button>
             <Button
               variant="outlined"
               color="primary"
-              onClick={() => setConfirma(confirmaVazio)}
+              onClick={() => setOpen(false)}
             >
               Não
             </Button>
@@ -239,6 +218,7 @@ function SearchUnidades() {
         <thead>
           <tr>
             <th>Nome</th>
+            <th style={{ textAlign: 'right' }}></th>
           </tr>
         </thead>
         <tbody>
@@ -250,23 +230,23 @@ function SearchUnidades() {
               //     undefined
             }}>
               <td onClick={() => router.push('/subprefeitura/detalhes/' + subprefeitura.id)}>{subprefeitura.nome}</td>
-              {/* <td>
+              <td>
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                  {!unidade.status ? (
+                  {!subprefeitura.status ? (
                     <Tooltip title="Ativar Unidade" arrow placement="top">
-                      <IconButton size="sm" color="success" onClick={() => confirmaAtivaUnidade(unidade.id)}>
+                      <IconButton size="sm" color="success" onClick={() => (setTitle('Ativando!'), setMessage('Deseja ativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(1))}>
                         <Check />
                       </IconButton>
-                    </Tooltip>                    
+                    </Tooltip>
                   ) : (
                     <Tooltip title="Desativar" arrow placement="top">
-                      <IconButton title="Desativar" size="sm" color="danger" onClick={() => (unidade.id)}>
+                      <IconButton title="Desativar" size="sm" color="danger" onClick={() => (setTitle('Desativando!'), setMessage('Deseja desativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(0))}>
                         <Cancel />
                       </IconButton>
                     </Tooltip>
                   )}
                 </div>
-              </td> */}
+              </td>
             </tr>
           )) : <tr><td colSpan={4}>Nenhuma unidade encontrada</td></tr>}
         </tbody>

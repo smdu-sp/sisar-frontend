@@ -12,6 +12,7 @@ async function Logout() {
 export interface ISubprefeitura {
     id: string;
     nome: string;
+    status: boolean;
 }
 
 export interface IPaginadoSubprefeitura {
@@ -70,12 +71,13 @@ async function buscarPorId(id: string): Promise<ISubprefeitura> {
 
 async function desativar(id: string): Promise<{ autorizado: boolean }> {
     const session = await getServerSession(authOptions);
-    const desativado = await fetch(`${baseURL}subprefeitura/desativar/${id}`, {
-        method: "DELETE",
+    const desativado = await fetch(`${baseURL}subprefeitura/atualizar/${id}`, {
+        method: "PATCH",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session?.access_token}`
-        }
+        },
+        body: JSON.stringify({ status: 0 })
     }).then((response) => {
         if (response.status === 401) Logout();
         if (response.status !== 200) return;
@@ -130,7 +132,7 @@ async function ativar(id: string): Promise<ISubprefeitura> {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session?.access_token}`
         },
-        body: JSON.stringify({ status: true })
+        body: JSON.stringify({ status: 1 })
     }).then((response) => {
         if (response.status === 401) Logout();
         if (response.status !== 200) return;
