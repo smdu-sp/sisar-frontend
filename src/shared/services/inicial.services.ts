@@ -1,7 +1,7 @@
 'use server'
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/shared/auth/authOptions";
 import { IAlvaraTipo } from "./alvara-tipo.services";
 import { signOut } from "next-auth/react";
 
