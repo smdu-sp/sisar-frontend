@@ -1,5 +1,5 @@
 import { AssignmentTurnedIn, Business, Checklist, Handyman, Home, Person, PlayArrow, UploadFile } from '@mui/icons-material';
-
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 export interface IMenuOption {
     title:  string;
     href:   string;
@@ -54,10 +54,16 @@ export const menu: IMenu = {
             icon: Business,
         },
         {
+            title: 'Subprefeitura',
+            href: '/subprefeitura',
+            name: 'subprefeitura',
+            icon: AccountBalanceIcon,
+        },
+        {
             title: 'Tipos de Alvará',
             href: '/alvara-tipos',
             name: 'alvara-tipos',
             icon: Checklist,
-        }    
+        } 
     ]
 }
