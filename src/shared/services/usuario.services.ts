@@ -3,6 +3,7 @@
 import { authOptions } from "@/shared/auth/authOptions";
 import { getServerSession } from "next-auth";
 import { signOut } from "next-auth/react";
+import { IUnidade } from "./unidade.services";
 
 async function Logout() {
     await signOut({ redirect: false });
@@ -19,9 +20,11 @@ export interface IUsuario {
     status: number;
     criado_em: Date;
     atualizado_em: Date;
+    unidade_id?: string;
     ferias?: IFerias[];
-    substitutos?: ISubstituto[]
-    usuarios?: ISubstituto[]
+    substitutos?: ISubstituto[];
+    usuarios?: ISubstituto[];
+    unidade?: IUnidade;
 }
 
 export interface IFerias {
@@ -53,6 +56,7 @@ export interface ICreateUsuario {
     login: string;
     permissao: string;
     cargo: string;
+    unidade_id?: string;
 }
 
 export interface IUpdateUsuario {
@@ -60,6 +64,7 @@ export interface IUpdateUsuario {
     permissao?: string;
     cargo?: string;
     status?: number;
+    unidade_id?: string;
 }
 
 export interface IPaginadoUsuario {
@@ -208,7 +213,7 @@ async function buscarNovo(login: string): Promise<{ id?: string, login?: string,
     }).then((response) => {
         if (response.status === 401) Logout();
         if (response.status === 403) {
-            return { message: 'Usuário já cadastrado.'}
+            return { message: 'Usuário já cadastrado.' }
         }
         if (response.status !== 200) return;
         return response.json();

@@ -10,7 +10,7 @@ import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
 import { AlertsContext } from "@/providers/alertsProvider";
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
-export default function subprefeituraDetalhes(props: { params: { id: string } }) {
+export default function SubprefeituraDetalhes(props: { params: { id: string } }) {
     const [idSubprefeitura, setIdSubprefeitura] = useState<string>('');
     const [nome, setNome] = useState<string>('');
     const { id } = props.params;
