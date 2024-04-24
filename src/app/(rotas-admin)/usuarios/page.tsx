@@ -70,6 +70,7 @@ function SearchUsuarios() {
   const buscaUsuarios = async () => {
     usuarioServices.buscarTudo(status, pagina, limite, busca, permissao)
       .then((response: IPaginadoUsuario) => {
+        console.log(response);
         setTotal(response.total);
         setPagina(response.pagina);
         setLimite(response.limite);
@@ -153,6 +154,11 @@ function SearchUsuarios() {
     'SUP': { label: 'Superadmin', value: 'SUP', color: 'primary' },
     'ADM': { label: 'Administrador', value: 'ADM', color: 'success' },
     'USR': { label: 'Usuário', value: 'USR', color: 'warning' },
+  }
+
+  const cargos: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
+    'TEC': { label: 'Técnico', value: 'TEC', color: 'primary' },
+    'ADM': { label: 'Administrativo', value: 'ADM', color: 'success' },
   }
 
   return (
@@ -259,6 +265,7 @@ function SearchUsuarios() {
             <th>Nome</th>
             <th>E-mail</th>
             <th>Usuário</th>
+            <th>Unidade</th>
             <th></th>
             <th style={{ textAlign: 'right' }}></th>
           </tr>
@@ -273,9 +280,10 @@ function SearchUsuarios() {
                   theme.vars.palette.danger.plainActiveBg : 
                   undefined
             }}>
-              <td onClick={() => detalhes(usuario.id)}>{usuario.nome}</td>
+              <td onClick={() => detalhes(usuario.id)}>{usuario.nome} <Chip variant='outlined' color={cargos[usuario.cargo].color}>{cargos[usuario.cargo].label}</Chip></td>
               <td onClick={() => detalhes(usuario.id)}>{usuario.email}</td>
               <td onClick={() => detalhes(usuario.id)}>{usuario.login}</td>
+              <td onClick={() => detalhes(usuario.id)}>{usuario.unidade && <Chip variant='outlined' color='neutral'>{usuario.unidade?.sigla}</Chip>}</td>
               <td onClick={() => detalhes(usuario.id)}>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>         
                   <Chip onClick={() => {

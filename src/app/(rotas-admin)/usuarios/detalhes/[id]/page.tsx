@@ -56,6 +56,7 @@ export default function UsuarioDetalhes(props: any) {
                 setUsuario(response);
                 setPermissao(response.permissao);
                 setEmail(response.email);
+                response.unidade_id && setUnidade_id(response.unidade_id);
             });
         buscaAdministrativos();
     }
@@ -70,7 +71,7 @@ export default function UsuarioDetalhes(props: any) {
     const submitData = () => {
         if (usuario){
             usuarioServices.atualizar(usuario.id, {
-                permissao
+                permissao, unidade_id
             }).then((response) => {
                 if (response.id) {
                     setAlert('Usuário alterado!', 'Dados atualizados com sucesso!', 'success', 3000, Check);              
@@ -79,7 +80,7 @@ export default function UsuarioDetalhes(props: any) {
         } else {
             if (novoUsuario){
                 usuarioServices.criar({
-                    nome, login, email, permissao, cargo
+                    nome, login, email, permissao, cargo, unidade_id
                 }).then((response) => {
                     if (response.id) {
                         setAlert('Usuário criado!', 'Dados inseridos com sucesso!', 'success', 3000, Check);
@@ -100,6 +101,7 @@ export default function UsuarioDetalhes(props: any) {
                     setNome(response.nome ? response.nome : '');
                     setLogin(response.login ? response.login : '');
                     setEmail(response.email ? response.email : '');
+                    setUnidade_id(response.unidade_id ? response.unidade_id : '');
                     setNovoUsuario(true);
                 }
             })
