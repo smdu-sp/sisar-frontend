@@ -11,7 +11,7 @@ import { TablePagination } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
 import { IPaginadoUnidade, IUnidade } from '@/shared/services/unidade.services';
 
-export default function Unidades(){
+export default function Unidades() {
   return (
     <Suspense>
       <SearchUnidades />
@@ -37,7 +37,7 @@ function SearchUnidades() {
     color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides>
   } = {
     aberto: false,
-    confirmaOperacao: () => {},
+    confirmaOperacao: () => { },
     titulo: '',
     pergunta: '',
     color: 'primary'
@@ -51,9 +51,9 @@ function SearchUnidades() {
   useEffect(() => {
     buscaUnidades();
     not();
-  }, [ status, pagina, limite ]);
-  
-  
+  }, [status, pagina, limite]);
+
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
@@ -63,18 +63,18 @@ function SearchUnidades() {
     [searchParams]
   );
 
-  const not = function ()  {
+  const not = function () {
     const notificacao = searchParams.get('notification');
     if (notificacao) {
-        if (notificacao == '1') {
-            setAlert('Unidade alterada', 'Unidade alterada com sucesso', 'success', 3000, Check);
-        } else if (notificacao == '0') {
-            setAlert('Unidade criada', 'Unidade criada com sucesso', 'success', 3000, Check);
-        }
-        router.push(pathname);
-        buscaUnidades();
+      if (notificacao == '1') {
+        setAlert('Unidade alterada', 'Unidade alterada com sucesso', 'success', 3000, Check);
+      } else if (notificacao == '0') {
+        setAlert('Unidade criada', 'Unidade criada com sucesso', 'success', 3000, Check);
+      }
+      router.push(pathname);
+      buscaUnidades();
     }
-}
+  }
 
   const buscaUnidades = async () => {
     unidadeServices.buscarTudo(status, pagina, limite, busca)
@@ -85,10 +85,10 @@ function SearchUnidades() {
         setUnidades(response.data);
       });
   }
-  
+
   const desativaUnidade = async (id: string) => {
     var resposta = await unidadeServices.desativar(id);
-    if (resposta){
+    if (resposta) {
       setAlert('Unidade desativada!', 'Essa unidade foi desativada e não será exibida para seleção.', 'success', 3000, Check);
       buscaUnidades();
     } else {
@@ -114,7 +114,7 @@ function SearchUnidades() {
   };
 
   const confirmaDesativaUnidade = async (id: string) => {
-    setConfirma({ 
+    setConfirma({
       aberto: true,
       confirmaOperacao: () => desativaUnidade(id),
       titulo: 'Desativar unidade',
@@ -125,7 +125,7 @@ function SearchUnidades() {
 
   const ativaUnidade = async (id: string) => {
     var resposta = await unidadeServices.ativar(id);
-    if (resposta){
+    if (resposta) {
       setAlert('Unidade ativada!', 'Essa unidade foi autorizada e será visível para seleção.', 'success', 3000, Check);
       buscaUnidades();
     } else {
@@ -135,7 +135,7 @@ function SearchUnidades() {
   }
 
   const confirmaAtivaUnidade = async (id: string) => {
-    setConfirma({ 
+    setConfirma({
       aberto: true,
       confirmaOperacao: () => ativaUnidade(id),
       titulo: 'Ativar unidade',
@@ -248,8 +248,8 @@ function SearchUnidades() {
             <tr key={unidade.id} style={{
               cursor: 'pointer',
               backgroundColor: !unidade.status ?
-                  theme.vars.palette.danger.plainActiveBg : 
-                  undefined
+                theme.vars.palette.danger.plainActiveBg :
+                undefined
             }}>
               <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.codigo}</td>
               <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.sigla}</td>
@@ -261,7 +261,7 @@ function SearchUnidades() {
                       <IconButton size="sm" color="success" onClick={() => confirmaAtivaUnidade(unidade.id)}>
                         <Check />
                       </IconButton>
-                    </Tooltip>                    
+                    </Tooltip>
                   ) : (
                     <Tooltip title="Desativar" arrow placement="top">
                       <IconButton title="Desativar" size="sm" color="danger" onClick={() => confirmaDesativaUnidade(unidade.id)}>
