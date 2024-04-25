@@ -50,7 +50,9 @@ function SearchUnidades() {
 
   useEffect(() => {
     buscaUnidades();
+    not();
   }, [ status, pagina, limite ]);
+  
   
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -60,6 +62,19 @@ function SearchUnidades() {
     },
     [searchParams]
   );
+
+  const not = function ()  {
+    const notificacao = searchParams.get('notification');
+    if (notificacao) {
+        if (notificacao == '1') {
+            setAlert('Unidade alterada', 'Unidade alterada com sucesso', 'success', 3000, Check);
+        } else if (notificacao == '0') {
+            setAlert('Unidade criada', 'Unidade criada com sucesso', 'success', 3000, Check);
+        }
+        router.push(pathname);
+        buscaUnidades();
+    }
+}
 
   const buscaUnidades = async () => {
     unidadeServices.buscarTudo(status, pagina, limite, busca)

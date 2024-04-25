@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import * as unidadeServices from "@/shared/services/unidade.services";
 import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, FormLabel, Input, Option, Select, Stack } from "@mui/joy";
 import { Abc, Business, Check, Tag } from "@mui/icons-material";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { IUnidade } from "@/shared/services/unidade.services";
 import { AlertsContext } from "@/providers/alertsProvider";
 
@@ -14,22 +14,25 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
     const [status, setStatus] = useState<string>('true');
     const [nome, setNome] = useState<string>('');
     const [sigla, setSigla] = useState<string>('');
+    const searchParams = useSearchParams();
     const [codigo, setCodigo] = useState<string>('');
     const { id } = props.params;
     const { setAlert } = useContext(AlertsContext);
     const router = useRouter();
 
-    const submitForm = async () => {
+    const submitForm = () => {
         if (!id){
-            const criado: IUnidade = await unidadeServices.criar({
+            unidadeServices.criar({
                 nome, codigo, sigla, status
-            });
-            if (criado) router.push('/unidades/detalhes/' + criado.id);
+            })
+            .then(() => router.push('/unidades?notification=0'));
+            
         } else {
-            const alterado: IUnidade = await unidadeServices.atualizar({
+            unidadeServices.atualizar({
                 id, nome, codigo, sigla, status
-            });
-            if (alterado) setAlert('Unidade alterada!', 'Unidade alterada com sucesso!', 'success', 3000, Check);
+            })
+            .then(() => router.push('/unidades?notification=1'));
+
         }
     }
 
@@ -45,6 +48,7 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                 });
         }
     }, [ id ]);
+
 
     return (
         <Content
