@@ -14,7 +14,7 @@ export default function AdmissibilidadeTab({ inicial }: { inicial?: IInicial }) 
                         <Chip color="primary">Distribuição</Chip>
                     </Divider>
                 </Grid>
-                <Grid container xs={12}>
+                <Grid container xs={12} spacing={2} sx={{ p: 2, mb: 2 }}>
                     <Grid xs={12} lg={6}>
                         <FormControl>
                             <FormLabel>Administrativo responsável</FormLabel>
@@ -24,7 +24,7 @@ export default function AdmissibilidadeTab({ inicial }: { inicial?: IInicial }) 
                     <Grid xs={12} lg={6}>
                         <FormControl>
                             <FormLabel>Técnico responsável</FormLabel>
-                            <Input value={inicial.distribuicao.administrativo_responsavel?.nome} disabled />
+                            <Input value={inicial.distribuicao.tecnico_responsavel?.nome} disabled />
                         </FormControl>
                     </Grid>
                 </Grid>
