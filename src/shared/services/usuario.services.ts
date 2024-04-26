@@ -76,6 +76,11 @@ export interface IPaginadoUsuario {
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
+function formataNome(nome: string) {
+    const nomes = nome.split(' ');
+    return nomes[0] + ' ' + nomes[nomes.length - 1];
+}
+
 async function listaCompleta(): Promise<IUsuario[]> {
     const session = await getServerSession(authOptions);
     const usuarios = fetch(`${baseURL}usuarios/lista-completa`, {
@@ -297,6 +302,7 @@ export {
     buscarTudo,
     criar,
     desativar,
+    formataNome,
     listaCompleta,
     removerSubstituto,
     validaUsuario

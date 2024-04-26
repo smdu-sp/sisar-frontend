@@ -1,7 +1,7 @@
 'use client'
 
 import * as inicialServices from "@/shared/services/inicial.services";
-import { IInicial } from "@/shared/services/inicial.services";
+import { ICreateInterfaces, IInicial } from "@/shared/services/inicial.services";
 import { Add, Cancel, Check, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
 import { Alert, Button, Card, Checkbox, Divider, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, Box, Chip } from "@mui/joy"
 import { OverridableStringUnion } from '@mui/types';
@@ -50,8 +50,22 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const { setAlert } = useContext(AlertsContext);
 
     const enviaDados = () => {
+        const interfaces: ICreateInterfaces = {
+            inicial_id: inicial?.id,
+            interface_sehab,
+            num_sehab,
+            interface_siurb,
+            num_siurb,
+            interface_smc,
+            num_smc,
+            interface_smt,
+            num_smt,
+            interface_svma,
+            num_svma
+        };
+
         if (!inicial)
-            inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, nums_sql, status })
+            inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, nums_sql, status, interfaces })
                 .then((response: IInicial) => {
                     if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
@@ -59,7 +73,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                     }
                 });
         if (inicial)
-            inicialServices.atualizar(inicial.id, { decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs })
+            inicialServices.atualizar(inicial.id, { decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, interfaces })
                 .then((response: IInicial) => {
                     if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
@@ -164,6 +178,18 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
             setTipo_processo(inicial.tipo_processo || 1);
             if (inicial.iniciais_sqls && inicial.iniciais_sqls.length > 0) {
                 setNums_sql(inicial.iniciais_sqls.map((sql) => sql.sql));
+            }
+            if (inicial.interfaces) {
+                setInterface_sehab(inicial.interfaces.interface_sehab);
+                setInterface_siurb(inicial.interfaces.interface_siurb);
+                setInterface_smc(inicial.interfaces.interface_smc);
+                setInterface_smt(inicial.interfaces.interface_smt);
+                setInterface_svma(inicial.interfaces.interface_svma);
+                setNum_sehab(inicial.interfaces.num_sehab || '');
+                setNum_siurb(inicial.interfaces.num_siurb || '');
+                setNum_smc(inicial.interfaces.num_smc || '');
+                setNum_smt(inicial.interfaces.num_smt || '');
+                setNum_svma(inicial.interfaces.num_svma || '');
             }
         }
     }

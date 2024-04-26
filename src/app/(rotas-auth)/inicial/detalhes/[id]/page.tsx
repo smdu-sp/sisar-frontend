@@ -10,7 +10,7 @@ export default async function InicialDetalhes(props: any) {
     const inicial = id ? await inicialServices.buscarPorId(parseInt(id)) : undefined;
     return (
         <Content 
-            titulo={id ? 'Detalhes' : 'Novo'}
+            titulo={id ? `Processo #${id}` : 'Novo processo'}
             pagina='inicial'
             breadcrumbs={[{
                 label: 'Inicial',

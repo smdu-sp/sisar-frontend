@@ -71,7 +71,7 @@ function SearchUnidades() {
       } else if (notificacao == '0') {
         setAlert('Unidade criada', 'Unidade criada com sucesso', 'success', 3000, Check);
       }
-      router.push(pathname);
+      router.replace('/unidades');
       buscaUnidades();
     }
   }

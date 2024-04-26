@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/shared/auth/authOptions";
 import { IAlvaraTipo } from "./alvara-tipo.services";
 import { signOut } from "next-auth/react";
+import { IUsuario } from "./usuario.services";
 
 export interface IInicial_Sqls {
     id: string
@@ -30,6 +31,21 @@ export interface IInicial {
     status: number
     iniciais_sqls?: IInicial_Sqls[]
     interfaces?: IInterfaces
+    distribuicao?: IDistribuicao
+}
+
+export interface IDistribuicao {
+    inicial_id: number
+    tecnico_responsavel?: IUsuario
+    tecnico_responsavel_id?: string
+    administrativo_responsavel?: IUsuario
+    administrativo_responsavel_id: string
+    processo_relacionado_incomum?: string
+    assunto_processo_relacionado_incomum?: string
+    baixa_pagamento: boolean
+    obs?: string
+    criado_em: Date
+    alterado_em: Date
 }
 
 export interface IInterfaces {

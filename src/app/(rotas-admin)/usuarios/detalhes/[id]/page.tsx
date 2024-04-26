@@ -71,7 +71,7 @@ export default function UsuarioDetalhes(props: any) {
     const submitData = () => {
         if (usuario){
             usuarioServices.atualizar(usuario.id, {
-                permissao, unidade_id
+                permissao, unidade_id, cargo
             }).then((response) => {
                 if (response.id) {
                     setAlert('Usuário alterado!', 'Dados atualizados com sucesso!', 'success', 3000, Check);              

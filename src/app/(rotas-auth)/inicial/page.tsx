@@ -60,7 +60,14 @@ export default function Inicial() {
 
   const status: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
     { label: '-', color: 'primary' },
-    { label: 'Inicial', color: 'primary' },
+    { label: 'Inicial', color: 'neutral' },
+    { label: 'Admissibilidade', color: 'primary' },
+  ]
+
+  const processo: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
+    { label: '-', color: 'primary' },
+    { label: 'Próprio SMUL', color: 'neutral' },
+    { label: 'Múltiplas Interfaces', color: 'primary' },
   ]
 
   return (
@@ -101,21 +108,6 @@ export default function Inicial() {
           <Tab variant="soft" >
             Dados iniciais
           </Tab>
-          <Tab variant="soft">
-            Distribuição
-          </Tab>
-          <Tab variant="soft">
-            Admissibilidade
-          </Tab>
-          <Tab variant="soft">
-            Coord. SMUL
-          </Tab>
-          <Tab variant="soft">
-            Secretarias
-          </Tab>
-          <Tab variant="soft" >
-            Conclusão
-          </Tab>
         </TabList>
         <TabPanel value={0}>
             <Table hoverRow sx={{ tableLayout: 'auto' }}>
@@ -138,7 +130,7 @@ export default function Inicial() {
                     <td>{inicial.id}</td>
                     <td>
                       <Chip color={inicial.status > 1 ? status[0].color : status[inicial.status].color}>
-                        {inicial.status > 1 ? status[0].label : status[inicial.status].label}
+                        {inicial.status > 2 ? status[0].label : status[inicial.status].label}
                       </Chip>
                     </td>
                     <td>{inicial.sei}</td>
@@ -146,7 +138,11 @@ export default function Inicial() {
                     <td>{inicial.requerimento}</td>
                     <td>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
                     <td>{inicial.alvara_tipo.nome}</td>
-                    <td>{inicial.tipo_processo}</td>
+                    <td>
+                      <Chip color={processo[inicial.tipo_processo].color}>
+                        {processo[inicial.tipo_processo].label}
+                      </Chip>
+                    </td>
                     <td style={{ textAlign: 'right' }}></td>
                   </tr>
                 )) : <tr><td colSpan={9}>Nenhum cadastro inicial encontrado</td></tr>}
@@ -163,21 +159,6 @@ export default function Inicial() {
               labelRowsPerPage="Registros por página"
               labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
             /> : null}
-        </TabPanel>
-        <TabPanel value={1}>
-          Distribuição
-        </TabPanel>
-        <TabPanel value={2}>
-          Admissibilidade
-        </TabPanel>
-        <TabPanel value={3}>
-          Coord. SMUL
-        </TabPanel>
-        <TabPanel value={4}>
-          Secretarias
-        </TabPanel>
-        <TabPanel value={5}>
-          Conclusão
         </TabPanel>
       </Tabs>
       <IconButton component='a' href='/inicial/detalhes' color='primary' variant='soft' size='lg' sx={{
