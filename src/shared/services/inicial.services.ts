@@ -29,10 +29,40 @@ export interface IInicial {
     obs?: string
     status: number
     iniciais_sqls?: IInicial_Sqls[]
-    
+    interfaces?: IInterfaces
+}
+
+export interface IInterfaces {
+    inicial_id: number;
+    interface_sehab: boolean
+    num_sehab?: string
+    interface_siurb: boolean
+    num_siurb?: string
+    interface_smc: boolean
+    num_smc?: string
+    interface_smt: boolean
+    num_smt?: string
+    interface_svma: boolean
+    num_svma?: string
+    criado_em: Date
+    alterado_em: Date
 }
 
 export interface IUpdateInicial extends Partial<ICreateInicial> {}
+
+export interface ICreateInterfaces {
+    inicial_id?: number;
+    interface_sehab?: boolean
+    num_sehab?: string
+    interface_siurb?: boolean
+    num_siurb?: string
+    interface_smc?: boolean
+    num_smc?: string
+    interface_smt?: boolean
+    num_smt?: string
+    interface_svma?: boolean
+    num_svma?: string
+}
 
 export interface ICreateInicial {
     id?: number
@@ -49,6 +79,7 @@ export interface ICreateInicial {
     obs?: string
     nums_sql?: string[]
     status?: number
+    interfaces?: ICreateInterfaces
 }
 
 export interface IPaginatedInicial {

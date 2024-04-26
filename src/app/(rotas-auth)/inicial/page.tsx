@@ -1,12 +1,14 @@
 'use client'
 
 import Content from '@/components/Content';
-import { Button, Tab, TabList, TabPanel, Table, Tabs, tabClasses } from '@mui/joy';
+import { Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, IconButton, Tab, TabList, TabPanel, Table, Tabs, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
 import { useCallback, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Add } from '@mui/icons-material';
+import { OverridableStringUnion } from '@mui/types';
 
 export default function Inicial() {
   const searchParams = useSearchParams();
@@ -20,6 +22,7 @@ export default function Inicial() {
   useEffect(() => {
     buscaIniciais();
   }, [ pagina, limite ]);
+
   
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -54,6 +57,11 @@ export default function Inicial() {
     setLimite(parseInt(event.target.value, 10));
     setPagina(1);
   };
+
+  const status: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
+    { label: '-', color: 'primary' },
+    { label: 'Inicial', color: 'primary' },
+  ]
 
   return (
     <Content 
@@ -114,13 +122,13 @@ export default function Inicial() {
               <thead>
                 <tr>
                   <th>#</th>
+                  <th>Status</th>
                   <th>SEI</th>
-                  <th>Tipo Requerimento</th>
+                  <th title='Tipo de Requerimento'>Tipo Req.</th>
                   <th>Requerimento</th>
-                  <th>Data protocolo</th>
+                  <th>Protocolo</th>
                   <th>Tipo de Alvará</th>
                   <th>Tipo de Processo</th>
-                  <th>Status</th>
                   <th style={{ textAlign: 'right' }}></th>
                 </tr>
               </thead>
@@ -128,13 +136,17 @@ export default function Inicial() {
                 {iniciais && iniciais.length > 0 ? iniciais.map((inicial: IInicial) => (
                   <tr onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)} key={inicial.id} style={{ cursor: 'pointer' }}>
                     <td>{inicial.id}</td>
+                    <td>
+                      <Chip color={inicial.status > 1 ? status[0].color : status[inicial.status].color}>
+                        {inicial.status > 1 ? status[0].label : status[inicial.status].label}
+                      </Chip>
+                    </td>
                     <td>{inicial.sei}</td>
                     <td>{inicial.tipo_requerimento}</td>
                     <td>{inicial.requerimento}</td>
                     <td>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
                     <td>{inicial.alvara_tipo.nome}</td>
                     <td>{inicial.tipo_processo}</td>
-                    <td>{inicial.status}</td>
                     <td style={{ textAlign: 'right' }}></td>
                   </tr>
                 )) : <tr><td colSpan={9}>Nenhum cadastro inicial encontrado</td></tr>}
@@ -168,19 +180,11 @@ export default function Inicial() {
           Conclusão
         </TabPanel>
       </Tabs>
-      <Button
-        component="a"
-        href="inicial/detalhes"
-        variant="solid"
-        size='lg'
-        sx={{
-          position: 'absolute',
-          bottom: 50,
-          right: 50,
-        }}
-      >
-        Novo
-      </Button>
+      <IconButton component='a' href='/inicial/detalhes' color='primary' variant='soft' size='lg' sx={{
+        position: 'fixed',
+        bottom: '2rem',
+        right: '2rem',
+      }}><Add /></IconButton>
     </Content>
   );
 }
