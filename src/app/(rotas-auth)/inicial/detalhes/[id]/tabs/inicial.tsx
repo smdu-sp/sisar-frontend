@@ -3,10 +3,10 @@
 import * as inicialServices from "@/shared/services/inicial.services";
 import { IInicial } from "@/shared/services/inicial.services";
 import { Add, Cancel, Check, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
-import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, CardOverflow, CardActions } from "@mui/joy"
+import { Alert, Button, Card, Checkbox, Divider, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, Box, Chip } from "@mui/joy"
 import { OverridableStringUnion } from '@mui/types';
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { IAlvaraTipo, IPaginadoAlvaraTipo } from "@/shared/services/alvara-tipo.services";
+import { IAlvaraTipo } from "@/shared/services/alvara-tipo.services";
 import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
 import { useRouter } from "next/navigation";
 import { AlertsContext } from "@/providers/alertsProvider";
@@ -14,26 +14,25 @@ import * as React from 'react';
 import Textarea from '@mui/joy/Textarea';
 import Typography from '@mui/joy/Typography';
 
-
-
-
-
-export default function DadosIniciaisTab(props: {
-    id: string;
-}) {
-
+export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const router = useRouter();
-
-    const { id } = props;
-    const [inicial, setInicial] = useState<IInicial>();
     const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
     const [num_sql, setNum_sql] = useState<string>('');
     const [validoNum_sql, setValidoNum_sql] = useState<boolean>(false);
-    const [validoNum_sei, setValidoNum_sei] = useState<boolean>(false);
     const [nums_sql, setNums_sql] = useState<string[]>([]);
-    const [id_sql, setId_sql] = useState<string[]>([]);
     const [addNumSQLStatus, setAddNumSQLStatus] = useState<number>(0);
     const [addNumSQLStatusAlert, setAddNumSQLStatusAlert] = useState<boolean>(false);
+
+    const [interface_sehab, setInterface_sehab] = useState<boolean>(false);
+    const [num_sehab, setNum_sehab] = useState<string>('');
+    const [interface_siurb, setInterface_siurb] = useState<boolean>(false);
+    const [num_siurb, setNum_siurb] = useState<string>('');
+    const [interface_smc, setInterface_smc] = useState<boolean>(false);
+    const [num_smc, setNum_smc] = useState<string>('');
+    const [interface_smt, setInterface_smt] = useState<boolean>(false);
+    const [num_smt, setNum_smt] = useState<string>('');
+    const [interface_svma, setInterface_svma] = useState<boolean>(false);
+    const [num_svma, setNum_svma] = useState<string>('');
 
     const [sei, setSei] = useState<string>('');
     const [tipo_requerimento, setTipo_requerimento] = useState<string>('');
@@ -51,7 +50,7 @@ export default function DadosIniciaisTab(props: {
     const { setAlert } = useContext(AlertsContext);
 
     const enviaDados = () => {
-        if (!id)
+        if (!inicial)
             inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, nums_sql, status })
                 .then((response: IInicial) => {
                     if (response.id) {
@@ -59,8 +58,8 @@ export default function DadosIniciaisTab(props: {
                         router.push(`/inicial/detalhes/${response.id}`);
                     }
                 });
-        if (id)
-            inicialServices.atualizar(parseInt(id), { decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs })
+        if (inicial)
+            inicialServices.atualizar(inicial.id, { decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs })
                 .then((response: IInicial) => {
                     if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
@@ -73,7 +72,6 @@ export default function DadosIniciaisTab(props: {
         //1111.1111/1111111-1
         if (!value) return value;
         const onlyNumbers = value.replace(/\D/g, '').substring(0, 16);
-        validaDigitoSei(onlyNumbers);
         if (onlyNumbers.length <= 4)
             return onlyNumbers.replace(/(\d{0,4})/, '$1');
         if (onlyNumbers.length <= 8)
@@ -110,7 +108,9 @@ export default function DadosIniciaisTab(props: {
         return value.replace(/(\d{0,8})(\d{0,2})(\d{0,3})/, '$1-$2-SP-$3');
     }
 
-    function validaDigitoSei(sei: string): void {
+    function validaDigitoSei(sei: string): boolean {
+        var valido = false;
+        sei = sei.replace(/\D/g, '').substring(0, 16);
         if (sei.length > 16) sei = sei.slice(-16);
         if (sei.length === 16) {
             sei = sei.toString().trim();
@@ -126,10 +126,9 @@ export default function DadosIniciaisTab(props: {
             soma = soma % 11;
             if (soma === 1) soma = 0;
             soma = 11 - soma;
-            setValidoNum_sei(soma === digito);
-            return
+            valido = soma === digito;
         }
-        setValidoNum_sei(false);
+        return valido;
     }
 
     function validaDigitoSql(sql: string): void {
@@ -151,25 +150,22 @@ export default function DadosIniciaisTab(props: {
     }
 
     const buscarDados = () => {
-        if (id)
-            inicialServices.buscarPorId(parseInt(id)).then((response: IInicial) => {
-                setInicial(response);
-                setTipo_requerimento(response.tipo_requerimento);
-                setSei(formatarSei(response.sei));
-                setRequerimento(response.requerimento);
-                response.aprova_digital && setAprova_digital(response.aprova_digital);
-                setAlvara_tipo_id(response.alvara_tipo_id);
-                setStatus(response.status);
-                setData_protocolo(new Date(response.data_protocolo));
-                setObs(response.obs || '');
-                setProcesso_fisico(response.processo_fisico || '');
-                response.envio_admissibilidade && setEnvio_admissibilidade(new Date(response.envio_admissibilidade));
-                setTipo_processo(response.tipo_processo || 1);
-                if (response.iniciais_sqls && response.iniciais_sqls.length > 0) {
-                    setNums_sql(response.iniciais_sqls.map((sql) => sql.sql));
-                    setId_sql(response.iniciais_sqls.map((sql) => sql.id));
-                }
-            })
+        if (inicial) {
+            setTipo_requerimento(inicial.tipo_requerimento);
+            setSei(formatarSei(inicial.sei));
+            setRequerimento(inicial.requerimento);
+            inicial.aprova_digital && setAprova_digital(inicial.aprova_digital);
+            setAlvara_tipo_id(inicial.alvara_tipo_id);
+            setStatus(inicial.status);
+            setData_protocolo(new Date(inicial.data_protocolo));
+            setObs(inicial.obs || '');
+            setProcesso_fisico(inicial.processo_fisico || '');
+            inicial.envio_admissibilidade && setEnvio_admissibilidade(new Date(inicial.envio_admissibilidade));
+            setTipo_processo(inicial.tipo_processo || 1);
+            if (inicial.iniciais_sqls && inicial.iniciais_sqls.length > 0) {
+                setNums_sql(inicial.iniciais_sqls.map((sql) => sql.sql));
+            }
+        }
     }
 
     const handleAddSQL = () => {
@@ -179,15 +175,15 @@ export default function DadosIniciaisTab(props: {
                 setAddNumSQLStatus(1);
             } else {
                 setAddNumSQLStatus(0);
-                if (id) {
-                    inicialServices.adicionaSql(parseInt(id), num_sql).then((response: IInicial) => {
+                if (inicial) {
+                    inicialServices.adicionaSql(inicial.id, num_sql).then((response: IInicial) => {
                         if (response.id) {
                             setNums_sql([...nums_sql, num_sql]);
                             setNum_sql('');
                         }
                     })
                 }
-                if (!id) {
+                if (!inicial) {
                     setNums_sql([...nums_sql, num_sql]);
                     setNum_sql('');
                 }
@@ -197,8 +193,8 @@ export default function DadosIniciaisTab(props: {
     }
 
     const removeRegister = (index: number, sql: string) => {
-        if (id) {
-            inicialServices.removeSql(id, sql).then((response: boolean) => {
+        if (inicial) {
+            inicialServices.removeSql(inicial.id + '', sql).then((response: boolean) => {
                 if (response) {
                     setAddNumSQLStatusAlert(false);
                     setNums_sql(nums_sql.filter((_, i) => i !== index));
@@ -207,7 +203,7 @@ export default function DadosIniciaisTab(props: {
                 }
             })
         }
-        if (!id) {
+        if (!inicial) {
             setAddNumSQLStatusAlert(false);
             setNums_sql(nums_sql.filter((_, i) => i !== index));
             setAddNumSQLStatus(2);
@@ -240,36 +236,19 @@ export default function DadosIniciaisTab(props: {
                 }
             }
         });
-    }, [id]);
+    }, [inicial]);
 
     return (
-        <Card
-            variant='plain'
-        >
+        <Box sx={{ p: 2 }}>
             <Grid
                 container
-                direction='row'
-                alignItems='flex-start'
-                justifyContent='flex-start'
-                spacing={4}
-                display='flex'
-                sx={{
-                    '&::-webkit-scrollbar': {
-                        width: '0.5em',
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: 'var(--joy-palette-background-level1)',
-                        borderRadius: '10px',
-                    }
-                }}
+                spacing={2}
             >
                 <Grid
                     container
-                    direction='row'
-                    alignItems='flex-start'
-                    justifyContent='flex-start'
                     spacing={2}
                     xs={12} sm={12} md={12} lg={8} xl={8}
+                    sx={{ mb: 2 }}
                 >
                     <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
                         <FormControl>
@@ -283,11 +262,15 @@ export default function DadosIniciaisTab(props: {
                                 onChange={(e) => {
                                     var numSei = e.target.value;
                                     if (numSei.length > 0) numSei = formatarSei(e.target.value);
-                                    setSei(numSei && numSei);
+                                    if (numSei) {
+                                        setSei(numSei);
+                                    }
                                 }}
-                                required={id ? false : true}
+                                error={!validaDigitoSei(sei) && sei.length > 18}
+                                disabled={inicial ? true : false}
+                                required={inicial ? false : true}
                             />
-                            {(!validoNum_sei && sei.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
+                            {(!validaDigitoSei(sei) && sei.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
                         </FormControl>
                     </Grid>
                     <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
@@ -302,7 +285,7 @@ export default function DadosIniciaisTab(props: {
                     </Grid>
                     <Grid xs={4} sm={4} md={4} lg={2} xl={2}>
                         <FormControl>
-                            <FormLabel title='Tipo Requerimento' sx={{ whiteSpace: 'nowrap', overflowX: 'hidden', textOverflow: 'ellipsis' }}>Tipo de requerimento</FormLabel>
+                            <FormLabel title='Tipo de Requerimento' sx={{ whiteSpace: 'nowrap', overflowX: 'hidden', textOverflow: 'ellipsis' }}>Tipo Req.</FormLabel>
                             <Input
                                 id="tipo_requerimento"
                                 name="tipo_requerimento"
@@ -310,7 +293,7 @@ export default function DadosIniciaisTab(props: {
                                 type="text"
                                 value={tipo_requerimento}
                                 onChange={e => setTipo_requerimento(e.target.value)}
-                                required={id ? false : true}
+                                required={inicial ? false : true}
                             />
                         </FormControl>
                     </Grid>
@@ -324,11 +307,10 @@ export default function DadosIniciaisTab(props: {
                                 type="text"
                                 value={requerimento}
                                 onChange={e => setRequerimento(e.target.value)}
-                                required={id ? false : true}
+                                required={inicial ? false : true}
                             />
                         </FormControl>
                     </Grid>
-
                     <Grid xs={12} sm={12} md={12} lg={5} xl={5}>
                         <FormControl>
                             <FormLabel>Tipo de processo</FormLabel>
@@ -365,7 +347,7 @@ export default function DadosIniciaisTab(props: {
                                 type="text"
                                 value={processo_fisico}
                                 onChange={e => setProcesso_fisico(e.target.value)}
-                                required={id ? false : true}
+                                required={inicial ? false : true}
                             />
                         </FormControl>
                     </Grid>
@@ -379,7 +361,7 @@ export default function DadosIniciaisTab(props: {
                                 type="date"
                                 value={data_protocolo.toISOString().split('T')[0]}
                                 onChange={e => setData_protocolo(new Date(e.target.value))}
-                                required={id ? false : true}
+                                required={inicial ? false : true}
                             />
                         </FormControl>
                     </Grid>
@@ -393,7 +375,7 @@ export default function DadosIniciaisTab(props: {
                                 type="date"
                                 value={envio_admissibilidade.toISOString().split('T')[0]}
                                 onChange={e => setEnvio_admissibilidade(new Date(e.target.value))}
-                                required={id ? false : true}
+                                required={inicial ? false : true}
                             />
                         </FormControl>
                     </Grid>
@@ -410,67 +392,180 @@ export default function DadosIniciaisTab(props: {
                                     {obs.length} caracteres
                                 </Typography>
                             }
-                            sx={{ minWidth: 300 }}
                         />
                     </Grid>
+                    <Grid xs={12} container sx={{ display: tipo_processo === 1 ? 'none' : 'block' }}>
+                    <Grid xs={12}><Divider><Chip color="primary">Interfaces</Chip></Divider></Grid>
+                        <Grid xs={12} container>
+                            <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Checkbox
+                                    label="SEHAB"
+                                    checked={interface_sehab}
+                                    onChange={(e) => setInterface_sehab(e.target.checked)}
+                                />
+                            </Grid>
+                            <Grid xs={12} lg={8} xl={10} sx={!interface_sehab ? { display: 'none' } : {}}>
+                                <Input
+                                    id="num_sehab"
+                                    name="num_sehab"
+                                    placeholder="Processo SEHAB"
+                                    type="text"
+                                    value={num_sehab}
+                                    onChange={(e) => {
+                                        var sehab = e.target.value;
+                                        if (sehab.length > 0) sehab = formatarSei(e.target.value);
+                                        setNum_sehab(sehab && sehab);
+                                    }}
+                                    required={interface_sehab}
+                                    error={interface_sehab && !validaDigitoSei(num_sehab) && num_sehab.length > 18}
+                                    title={interface_sehab && !validaDigitoSei(num_sehab) && num_sehab.length > 18 ? 'SEI inválido' : ''}
+                                />
+                                {(!validaDigitoSei(sei) && sei.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
+                            </Grid>
+                        </Grid>
+                        <Grid xs={12} container>
+                            <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Checkbox
+                                    label="SIURB"
+                                    checked={interface_siurb}
+                                    onChange={(e) => setInterface_siurb(e.target.checked)}
+                                />
+                            </Grid>
+                            <Grid xs={12} lg={8} xl={10} sx={!interface_siurb ? { display: 'none' } : {}}>
+                                <Input
+                                    placeholder="Processo SIURB"
+                                    type="text"
+                                    value={num_siurb}
+                                    onChange={(e) => {
+                                        var siurb = e.target.value;
+                                        if (siurb.length > 0) siurb = formatarSei(e.target.value);
+                                        setNum_siurb(siurb && siurb);
+                                    }}
+                                    required={interface_siurb}
+                                    error={interface_siurb && !validaDigitoSei(num_siurb) && num_siurb.length > 18}
+                                    title={interface_siurb && !validaDigitoSei(num_siurb) && num_siurb.length > 18 ? 'SEI inválido' : ''}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid xs={12} container>
+                            <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Checkbox
+                                    label="SMC"
+                                    checked={interface_smc}
+                                    onChange={(e) => setInterface_smc(e.target.checked)}
+                                />
+                            </Grid>
+                            <Grid xs={12} lg={8} xl={10} sx={!interface_smc ? { display: 'none' } : {}}>
+                                <Input
+                                    placeholder="Processo SMC"
+                                    type="text"
+                                    value={num_smc}
+                                    onChange={(e) => {
+                                        var smc = e.target.value;
+                                        if (smc.length > 0) smc = formatarSei(e.target.value);
+                                        setNum_smc(smc && smc);
+                                    }}
+                                    required={interface_smc}
+                                    error={interface_smc && !validaDigitoSei(num_smc) && num_smc.length > 18}
+                                    title={interface_smc && !validaDigitoSei(num_smc) && num_smc.length > 18 ? 'SEI inválido' : ''}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid xs={12} container>
+                            <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Checkbox
+                                    label="SMT"
+                                    checked={interface_smt}
+                                    onChange={(e) => setInterface_smt(e.target.checked)}
+                                />
+                            </Grid>
+                            <Grid xs={12} lg={8} xl={10} sx={!interface_smt ? { display: 'none' } : {}}>
+                                <Input
+                                    placeholder="Processo SMT"
+                                    type="text"
+                                    value={num_smt}
+                                    onChange={(e) => {
+                                        var smt = e.target.value;
+                                        if (smt.length > 0) smt = formatarSei(e.target.value);
+                                        setNum_smt(smt && smt);
+                                    }}
+                                    required={interface_smt}
+                                    error={interface_smt && !validaDigitoSei(num_smt) && num_smt.length > 18}
+                                    title={interface_smt && !validaDigitoSei(num_smt) && num_smt.length > 18 ? 'SEI inválido' : ''}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid xs={12} container>
+                            <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Checkbox
+                                    label="SVMA"
+                                    checked={interface_svma}
+                                    onChange={(e) => setInterface_svma(e.target.checked)}
+                                />
+                            </Grid>
+                            <Grid xs={12} lg={8} xl={10} sx={!interface_svma ? { display: 'none' } : {}}>
+                                <Input
+                                    placeholder="Processo SVMA"
+                                    type="text"
+                                    value={num_svma}
+                                    onChange={(e) => {
+                                        var svma = e.target.value;
+                                        if (svma.length > 0) svma = formatarSei(e.target.value);
+                                        setNum_svma(svma && svma);
+                                    }}
+                                    required={interface_svma}
+                                    error={interface_svma && !validaDigitoSei(num_svma) && num_svma.length > 18}
+                                    title={interface_svma && !validaDigitoSei(num_svma) && num_svma.length > 18 ? 'SEI inválido' : ''}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </Grid>
-                <Grid
-                    container
-                    direction='row'
-                    alignItems='flex-start'
-                    justifyContent='center'
-                    sx={{
-                        backgroundColor: 'neutral.softBg',
-                        borderRadius: 'md',
-                    }}
-                    padding={2}
-                    spacing={1}
-                    xs={12} sm={12} md={12} lg={4} xl={4}
-                >
-                    <Grid xs={12}>
-                        <FormControl>
-                            <FormLabel>Adicionar SQL</FormLabel>
-                            <Input
-                                id="num_sql_input"
-                                name="num_sql_input"
-                                placeholder="SQL"
-                                type="text"
-                                value={num_sql}
-                                onChange={(e) => {
-                                    var numSql = e.target.value;
-                                    if (numSql.length > 0) numSql = formatarSql(numSql);
-                                    setNum_sql(numSql && numSql);
-                                }}
+                <Grid xs={12} sm={12} md={12} lg={4} xl={4}>
+                    <Card component={Grid} container variant="soft" sx={{ p: 3 }}>
+                        <Grid xs={12} direction='column'>
+                            <FormControl>
+                                <FormLabel>Adicionar SQL</FormLabel>
+                                <Input
+                                    id="num_sql_input"
+                                    name="num_sql_input"
+                                    placeholder="SQL"
+                                    type="text"
+                                    value={num_sql}
+                                    onChange={(e) => {
+                                        var numSql = e.target.value;
+                                        if (numSql.length > 0) numSql = formatarSql(numSql);
+                                        setNum_sql(numSql && numSql);
+                                    }}
+                                    endDecorator={
+                                        <IconButton
+                                            variant='solid'
+                                            color='primary'
+                                            onClick={handleAddSQL}
+                                            disabled={!validoNum_sql}
+                                        >
+                                            <Add />
+                                        </IconButton>
+                                    }
+                                />
+                                {(!validoNum_sql && num_sql.length > 13) && <FormLabel sx={{ color: 'red' }}>SQL inválido</FormLabel>}
+                            </FormControl>
+                        </Grid>
+                        <Grid xs={12} sx={{ display: addNumSQLStatusAlert ? 'block' : 'none' }}>
+                            <Alert
+                                variant="soft"
+                                color={alertConfigs[addNumSQLStatus].color}
+                                startDecorator={alertConfigs[addNumSQLStatus].icon}
                                 endDecorator={
-                                    <IconButton
-                                        variant='solid'
-                                        color='primary'
-                                        onClick={handleAddSQL}
-                                        disabled={!validoNum_sql}
-                                    >
-                                        <Add />
-                                    </IconButton>
+                                    <Button size="sm" color={alertConfigs[addNumSQLStatus].color} onClick={() => setAddNumSQLStatusAlert(false)}>
+                                        Fechar
+                                    </Button>
                                 }
-                            />
-                            {(!validoNum_sql && num_sql.length > 13) && <FormLabel sx={{ color: 'red' }}>SQL inválido</FormLabel>}
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={12}>
-                        <Alert
-                            variant="soft"
-                            color={alertConfigs[addNumSQLStatus].color}
-                            sx={{ display: addNumSQLStatusAlert ? 'flex' : 'none' }}
-                            startDecorator={alertConfigs[addNumSQLStatus].icon}
-                            endDecorator={
-                                <Button size="sm" color={alertConfigs[addNumSQLStatus].color} onClick={() => setAddNumSQLStatusAlert(false)}>
-                                    Fechar
-                                </Button>
-                            }
-                        >
-                            {alertConfigs[addNumSQLStatus].message}
-                        </Alert>
-                    </Grid>
-                    {nums_sql.length > 0 &&
+                            >
+                                {alertConfigs[addNumSQLStatus].message}
+                            </Alert>
+                        </Grid>
+                        {nums_sql.length > 0 &&
                         <Grid xs={12}>
                             <Table>
                                 <thead style={{ width: '100%' }}>
@@ -495,18 +590,18 @@ export default function DadosIniciaisTab(props: {
                                 </tbody>
                             </Table>
                         </Grid>}
+                    </Card>
+                    
                 </Grid>
-                <CardOverflow sx={{ marginLeft: 'auto' }}>
-                    <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-                        <Button size="sm" variant="outlined" color="neutral" onClick={() => {router.push(`/inicial`);}}>
-                            Cancelar
-                        </Button>
-                        <Button size="sm" variant="solid" onClick={enviaDados} disabled={!validoNum_sei}>
-                            Salvar
-                        </Button>
-                    </CardActions>
-                </CardOverflow>
             </Grid>
-        </Card>
+            <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                <Button size="sm" variant="outlined" color="neutral" onClick={() => {router.push(`/inicial`);}}>
+                    Cancelar
+                </Button>
+                <Button size="sm" variant="solid" onClick={enviaDados} disabled={!validaDigitoSei(sei)}>
+                    Salvar
+                </Button>
+            </Box>
+        </Box>
     )
 }

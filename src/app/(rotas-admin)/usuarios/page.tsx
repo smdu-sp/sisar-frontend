@@ -201,7 +201,7 @@ function SearchUsuarios() {
         sx={{
           borderRadius: 'sm',
           py: 2,
-          display: { xs: 'none', sm: 'flex' },
+          display: 'flex',
           flexWrap: 'wrap',
           gap: 1.5,
           '& > *': {

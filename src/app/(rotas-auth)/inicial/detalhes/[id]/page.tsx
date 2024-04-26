@@ -1,12 +1,13 @@
-'use client'
+import * as React from 'react';
+import Content from "@/components/Content";
+import { Tab, TabList, TabPanel, Tabs } from '@mui/joy';
+import InicialTab from './tabs/inicial';
+import * as inicialServices from '@/shared/services/inicial.services';
+import AdmissibilidadeTab from './tabs/admissibilidade';
 
-import Content from '@/components/Content';
-import { TabList, Tabs, tabClasses, Tab, TabPanel } from '@mui/joy';
-import React from 'react';
-import DadosIniciaisTab from '../tabs/inicial';
-
-export default function InicialDetalhes(props: any) {
+export default async function InicialDetalhes(props: any) {
     const { id } = props.params;
+    const inicial = id ? await inicialServices.buscarPorId(parseInt(id)) : undefined;
     return (
         <Content 
             titulo={id ? 'Detalhes' : 'Novo'}
@@ -19,88 +20,43 @@ export default function InicialDetalhes(props: any) {
                 href: '/inicial/detalhes'
             }]}
         >
-                    <Tabs
-                        defaultValue={0}
-                        sx={{
-                            borderRadius: 'lg',
-                            boxShadow: 'sm',
-                            overflow: 'auto',
-                            flexGrow: 1,
-                            '&::-webkit-scrollbar': {
-                                width: '0.5em',
-                            },
-                            '&::-webkit-scrollbar-thumb': {
-                                backgroundColor: 'var(--joy-palette-background-level1)',
-                                borderRadius: '10px',
-                            }
-                        }}
-                    >
-                        <TabList
-                            disableUnderline
-                            tabFlex={1}
-                            sticky='top'
-                            sx={{
-                                [`& .${tabClasses.root}`]: {
-                                    fontSize: 'sm',
-                                    fontWeight: 'lg',
-                                    [`&[aria-selected="true"]`]: {
-                                        color: 'primary.500',
-                                        bgcolor: 'background.surface',
-                                    },
-                                    [`&.${tabClasses.focusVisible}`]: {
-                                        outlineOffset: '-4px',
-                                    },
-                                },
-                            }}
-                        >
-                            <Tab variant="soft" >
-                                Dados iniciais
-                            </Tab>
-                            <Tab variant="soft">
-                                Distribuição
-                            </Tab>
-                            <Tab variant="soft">
-                                Admissibilidade
-                            </Tab>
-                            <Tab variant="soft">
-                                Coord. SMUL
-                            </Tab>
-                            <Tab variant="soft">
-                                Secretarias
-                            </Tab>
-                            <Tab variant="soft" >
-                                Conclusão
-                            </Tab>
-                        </TabList>
-                        <TabPanel value={0} sx={{ 
-                            flexGrow: 1,
-                            '&::-webkit-scrollbar': {
-                              width: '0.5em',
-                            },
-                            '&::-webkit-scrollbar-thumb': {
-                              backgroundColor: 'var(--joy-palette-background-level1)',
-                              borderRadius: '10px',
-                            }
-                        }}>
-                            <DadosIniciaisTab id={id} />
-                        </TabPanel>
-                        <TabPanel value={1}>
-                            Distribuição
-                        </TabPanel>
-                        <TabPanel value={2}>
-                            Admissibilidade
-                        </TabPanel>
-                        <TabPanel value={3}>
-                            Coord. SMUL
-                        </TabPanel>
-                        <TabPanel value={4}>
-                            Secretarias
-                        </TabPanel>
-                        <TabPanel value={5}>
-                            Conclusão
-                        </TabPanel>
-                    </Tabs>
-                    
+            <Tabs
+                defaultValue={0}
+                sx={{
+                    borderRadius: 'lg',
+                    boxShadow: 'sm',
+                    overflow: 'auto',
+                    flexGrow: 1,
+                }}
+            >
+                <TabList
+                    disableUnderline
+                    tabFlex={1}
+                    sticky='top'
+                >
+                    <Tab variant="soft" >
+                        Dados iniciais
+                    </Tab>
+                    {(inicial && inicial.status > 1) && <Tab variant="soft">
+                        Admissibilidade
+                    </Tab>}
+                </TabList>
+                <TabPanel value={0} sx={{ 
+                    flexGrow: 1,
+                    '&::-webkit-scrollbar': {
+                    width: '0.5em',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                    backgroundColor: 'var(--joy-palette-background-level1)',
+                    borderRadius: '10px',
+                    }
+                }}>
+                    <InicialTab inicial={inicial} />
+                </TabPanel>
+                {(inicial && inicial.status > 1) && <TabPanel value={1}>
+                    <AdmissibilidadeTab inicial={inicial} />
+                </TabPanel>}
+            </Tabs>
         </Content>
-    );
+    )
 }
