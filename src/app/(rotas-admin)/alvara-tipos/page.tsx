@@ -2,7 +2,7 @@
 
 import Content from '@/components/Content';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Snackbar, Stack, Table, Tooltip, Typography } from '@mui/joy';
+import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Tooltip, Typography } from '@mui/joy';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import * as alvaraTipoService from '@/shared/services/alvara-tipo.services';
 import { IPaginadoAlvaraTipo, IAlvaraTipo } from '@/shared/services/alvara-tipo.services';
@@ -35,6 +35,8 @@ export default function AlvaraTipos() {
   const [notificacao, setNotificacao] = useState(searchParams.get('notification') ? Number(searchParams.get('notification')) : 1);
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
+  const [statusSelect, setStatus] = useState<string>(searchParams.get('status') ? searchParams.get('status') + '' : 'true');
+
   const [busca, setBusca] = useState('');
   const [confirma, setConfirma] = useState(confirmaVazio);
   const { setAlert } = useContext(AlertsContext);
@@ -53,10 +55,12 @@ export default function AlvaraTipos() {
     if (notification) {
       setNotificacao(notification ? parseInt(notification) : 0);
       setAlert(notificacao == 1 ? 'Tipo alvará alterado!' : 'Tipo alvará criado!',
-        notificacao == 1 ? 'Tipo alvará alterado com sucesso.' : 'Tipo alvará criado com sucesso.', 'success', 3000, Check);
-      router.push(pathname);
-      buscaDados();
+        notificacao == 1 ? 'Tipo alvará alterado com sucesso.' : 'Tipo alvará criado com sucesso.', notificacao == 1 ? 'warning' : 'success', 3000, Check);
     }
+    const newUrl = `${window.location.pathname}`;
+    window.history.replaceState({}, '', newUrl);
+
+    buscaDados();
   };
 
   const status = function () {
@@ -66,7 +70,7 @@ export default function AlvaraTipos() {
       .then(() => {
         setAlert(mensagemStatus == 'ativar' ? 'Alvará ativado!' : 'Alvará inativado!',
           mensagemStatus == 'ativar' ? 'Alvará ativado com sucesso.' : 'Alvará inativado com sucesso.', status === 1 ? 'warning' : 'success', 3000, Check);
-          buscaDados();
+        buscaDados();
       });
   }
 
@@ -192,6 +196,21 @@ export default function AlvaraTipos() {
       >
         <IconButton size='sm' onClick={buscaDados}><Refresh /></IconButton>
         <IconButton size='sm' onClick={limpaFitros}><Clear /></IconButton>
+        <FormControl size="sm">
+          <FormLabel>Status: </FormLabel>
+          <Select
+            size="sm"
+            value={statusSelect}
+            onChange={(_, newValue) => {
+              router.push(pathname + '?' + createQueryString('status', String(newValue! || 'true')));
+              setStatus(newValue! || 'true');
+            }}
+          >
+            <Option value={'true'}>Ativos</Option>
+            <Option value={'false'}>Inativos</Option>
+            <Option value={'all'}>Todos</Option>
+          </Select>
+        </FormControl>
         <FormControl sx={{ flex: 1 }} size="sm">
           <FormLabel>Buscar: </FormLabel>
           <Input
@@ -221,29 +240,34 @@ export default function AlvaraTipos() {
         </thead>
         <tbody>
           {alvaraTipos ? alvaraTipos.map((alvaraTipo) => (
-            <tr key={alvaraTipo.id} style={{ cursor: 'pointer' }}>
-              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.nome}</td>
-              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_admissibilidade}</td>
-              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_smul1}</td>
-              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_smul2}</td>
-              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_multi1}</td>
-              <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_multi2}</td>
-              <td>
-                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                  {alvaraTipo.status ? (
-                    <Tooltip title="Desativar tipo de alvará" arrow placement="top">
-                      <IconButton title="Desativar" size="sm" color="danger" onClick={() => { setOpen(true); setMensagemStatus('inativar'); setId(alvaraTipo.id); setTipoStatus(alvaraTipo.status); }}>
-                        <Cancel />
+            parseInt(alvaraTipo.status.toString()) !==
+              (searchParams.get('status') ?
+                (searchParams.get('status') === 'true' ? 0 : searchParams.get('status') === 'false' ? 1 : 2)
+                : 0) ? (
+              <tr key={alvaraTipo.id} style={{ cursor: 'pointer' }}>
+                <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.nome}</td>
+                <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_admissibilidade}</td>
+                <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_smul1}</td>
+                <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_smul2}</td>
+                <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_multi1}</td>
+                <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_multi2}</td>
+                <td>
+                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    {alvaraTipo.status ? (
+                      <Tooltip title="Desativar tipo de alvará" arrow placement="top">
+                        <IconButton title="Desativar" size="sm" color="danger" onClick={() => { setOpen(true); setMensagemStatus('inativar'); setId(alvaraTipo.id); setTipoStatus(alvaraTipo.status); }}>
+                          <Cancel />
+                        </IconButton>
+                      </Tooltip>
+                    ) : (<Tooltip title="Ativar tipo de alvará" arrow placement="top">
+                      <IconButton size="sm" color="success" onClick={() => { setOpen(true); setMensagemStatus('ativar'); setId(alvaraTipo.id); setTipoStatus(alvaraTipo.status); }}>
+                        <Check />
                       </IconButton>
-                    </Tooltip>
-                  ) : (<Tooltip title="Ativar tipo de alvará" arrow placement="top">
-                    <IconButton size="sm" color="success" onClick={() => { setOpen(true); setMensagemStatus('ativar'); setId(alvaraTipo.id); setTipoStatus(alvaraTipo.status); }}>
-                      <Check />
-                    </IconButton>
-                  </Tooltip>)}
-                </div>
-              </td>
-            </tr>
+                    </Tooltip>)}
+                  </div>
+                </td>
+              </tr>
+            ) : null
           )) : <tr><td colSpan={7}>Nenhum registro encontrado</td></tr>}
         </tbody>
       </Table>

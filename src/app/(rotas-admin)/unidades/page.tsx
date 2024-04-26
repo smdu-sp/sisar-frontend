@@ -65,14 +65,19 @@ function SearchUnidades() {
 
   const not = function () {
     const notificacao = searchParams.get('notification');
+
     if (notificacao) {
       if (notificacao == '1') {
-        setAlert('Unidade alterada', 'Unidade alterada com sucesso', 'success', 3000, Check);
+        setAlert('Unidade alterada!', 'Unidade alterada com sucesso.', 'warning', 3000, Check);
       } else if (notificacao == '0') {
-        setAlert('Unidade criada', 'Unidade criada com sucesso', 'success', 3000, Check);
+        setAlert('Unidade criada!', 'Unidade criada com sucesso.', 'success', 3000, Check);
       }
-      router.push(pathname);
+
+      const newUrl = `${window.location.pathname}`;
+      window.history.replaceState({}, '', newUrl);
+
       buscaUnidades();
+
     }
   }
 

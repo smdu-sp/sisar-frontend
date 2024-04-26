@@ -64,9 +64,12 @@ function SearchUnidades() {
 
     if (notification) {
       setAlert(notification == '1' ? 'Subprefeitura alterada!' : 'Subprefeitura criada!',
-      notification == '1' ? 'Subprefeitura alterada com sucesso.' : 'Subprefeitura criada com sucesso.',
+        notification == '1' ? 'Subprefeitura alterada com sucesso.' : 'Subprefeitura criada com sucesso.',
         notification == '1' ? 'warning' : 'success', 3000, Check);
-      router.push(pathname);
+
+      const newUrl = `${window.location.pathname}`;
+      window.history.replaceState({}, '', newUrl);
+
       buscaSubprefeitura();
     }
   };
@@ -224,39 +227,39 @@ function SearchUnidades() {
         </thead>
         <tbody>
           {
-          subprefeitura ? subprefeitura.map((subprefeitura) => (
-            parseInt(subprefeitura.status.toString()) !== 
-            (searchParams.get('status') ? 
-            (searchParams.get('status') === 'true' ? 0 : searchParams.get('status') === 'false' ? 1 : 2)
-             : 0) ? (
-              <tr key={subprefeitura.id} style={{
-                cursor: 'pointer',
-                backgroundColor: !subprefeitura.status ?
-                    theme.vars.palette.danger.plainActiveBg : 
+            subprefeitura ? subprefeitura.map((subprefeitura) => (
+              parseInt(subprefeitura.status.toString()) !==
+                (searchParams.get('status') ?
+                  (searchParams.get('status') === 'true' ? 0 : searchParams.get('status') === 'false' ? 1 : 2)
+                  : 0) ? (
+                <tr key={subprefeitura.id} style={{
+                  cursor: 'pointer',
+                  backgroundColor: !subprefeitura.status ?
+                    theme.vars.palette.danger.plainActiveBg :
                     undefined
-              }}>
-                <td onClick={() => router.push('/subprefeitura/detalhes/' + subprefeitura.id)}>{subprefeitura.nome}</td>
-                <td>
-                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                    {!subprefeitura.status ? (
-                      <Tooltip title="Ativar Unidade" arrow placement="top">
-                        <IconButton size="sm" color="success" onClick={() => (setTitle('Ativando!'), setMessage('Deseja ativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(1))}>
-                          <Check />
-                        </IconButton>
-                      </Tooltip>
-                    ) : (
-                      <Tooltip title="Desativar" arrow placement="top">
-                        <IconButton title="Desativar" size="sm" color="danger" onClick={() => (setTitle('Desativando!'), setMessage('Deseja desativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(0))}>
-                          <Cancel />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ) : null
-            
-          )) : <tr><td colSpan={4}>Nenhuma unidade encontrada</td></tr>}
+                }}>
+                  <td onClick={() => router.push('/subprefeitura/detalhes/' + subprefeitura.id)}>{subprefeitura.nome}</td>
+                  <td>
+                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                      {!subprefeitura.status ? (
+                        <Tooltip title="Ativar Unidade" arrow placement="top">
+                          <IconButton size="sm" color="success" onClick={() => (setTitle('Ativando!'), setMessage('Deseja ativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(1))}>
+                            <Check />
+                          </IconButton>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title="Desativar" arrow placement="top">
+                          <IconButton title="Desativar" size="sm" color="danger" onClick={() => (setTitle('Desativando!'), setMessage('Deseja desativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(0))}>
+                            <Cancel />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ) : null
+
+            )) : <tr><td colSpan={4}>Nenhuma unidade encontrada</td></tr>}
         </tbody>
       </Table>
       {(total && total > 0) ? <TablePagination
