@@ -87,8 +87,10 @@ export default function Home() {
     tipo();
     setMes(data.month() + 1);
     setAno(data.year());
+    console.log(mes, ano);
+    
     busca();
-  }, []);
+  });
   var dias = [
     26,
     27,
@@ -109,8 +111,11 @@ export default function Home() {
   }
   
   const busca = () => {
+
+    
     reunioes.buscarPorMesAno(mes.toString(), ano.toString()).then((response) => {
         console.log(response);
+        
     })
   }
   const requestAbortController = React.useRef<AbortController | null>(null);
