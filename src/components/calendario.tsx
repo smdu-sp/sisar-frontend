@@ -18,7 +18,7 @@ import Card from '@mui/joy/Card';
 import CardActions from '@mui/joy/CardActions';
 import CardOverflow from '@mui/joy/CardOverflow';
 import Typography from '@mui/joy/Typography';
-import { Sheet } from '@mui/joy';
+import { Grid, Sheet } from '@mui/joy';
 import Router from 'next/router';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
@@ -208,19 +208,20 @@ export default function calendario() {
           {tipoData == 'reuniao' ? 'Hoje á reunião marcada!' : 'Sem Reunião nesta data'}
         </Typography>
 
-        <CardActions
-          orientation="vertical"
-          buttonFlex={1}
-          sx={{
-            '--Button-radius': '40px',
-            width: 'clamp(min(100%, 160px), 50%, min(100%, 200px))',
-          }}
-        >
-          <Button variant="solid" color="primary" disabled={tipoData != 'reuniao'} onClick={() => Router.push('inicial/detalhes/1')}>
-            Inicial
-          </Button>
-        </CardActions>
-      </Card>
-    </Sheet>
+          <CardActions
+            orientation="vertical"
+            buttonFlex={1}
+            sx={{
+              '--Button-radius': '40px',
+              width: 'clamp(min(100%, 160px), 50%, min(100%, 200px))',
+            }}
+          >
+            <Button variant="solid" color="primary" disabled={tipoData != 'reuniao'} onClick={() => Router.push('inicial/detalhes/1')}>
+              Inicial
+            </Button>
+          </CardActions>
+        </Card>
+      </Grid>
+    </Grid>
   );
 }
