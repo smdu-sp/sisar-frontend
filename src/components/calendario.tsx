@@ -18,7 +18,7 @@ import Card from '@mui/joy/Card';
 import CardActions from '@mui/joy/CardActions';
 import CardOverflow from '@mui/joy/CardOverflow';
 import Typography from '@mui/joy/Typography';
-import { Sheet } from '@mui/joy';
+import { Grid, Sheet } from '@mui/joy';
 import Router from 'next/router';
 
 
@@ -155,73 +155,73 @@ export default function Home() {
   };
 
   return (
-    <Sheet sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DateCalendar
-          defaultValue={initialValue}
-          loading={isLoading}
-          onMonthChange={handleMonthChange}
-          renderLoading={() => <DayCalendarSkeleton />}
-          onChange={(newDate) => setData(newDate)}
-          slots={{
-            day: ServerDay,
-          }}
-          slotProps={{
-            day: {
-              highlightedDays,
-            } as any,
-          }}
-        />
-      </LocalizationProvider>
-      <Card
-        data-resizable
-        sx={{
-          textAlign: 'center',
-          justifyContent: 'center',
-          display: 'flex',
-          alignItems: 'center',
-          width: '40%',
-          overflow: 'auto',
-          resize: 'horizontal',
-          '--icon-size': '100px',
-        }}
-      >
-        <CardOverflow variant="solid" sx={{ color: 'gray' }}>
-          <AspectRatio
-            variant="outlined"
-            ratio="1"
-            sx={{
-              m: 'auto',
-              transform: 'translateY(50%)',
-              borderRadius: '50%',
-              width: 'var(--icon-size)',
-              boxShadow: 'sm',
-              bgcolor: 'background.surface',
-              position: 'relative',
+    <Grid xs={12} container>
+      <Grid xs={12} sm={12} md={5} lg={3}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DateCalendar
+            defaultValue={initialValue}
+            loading={isLoading}
+            onMonthChange={handleMonthChange}
+            renderLoading={() => <DayCalendarSkeleton />}
+            onChange={(newDate) => setData(newDate)}
+            slots={{
+              day: ServerDay,
             }}
-          >
-            <div>
-              <SupervisedUserCircleIcon sx={{ fontSize: '4rem' }}/>
-            </div>
-          </AspectRatio>
-        </CardOverflow>
-        <Typography level="title-lg" sx={{ mt: 'calc(var(--icon-size) / 2)' }}>
-          {tipoData == 'reuniao' ? 'Hoje á reunião marcada!' : 'Sem Reunião nesta data'}
-        </Typography>
-
-        <CardActions
-          orientation="vertical"
-          buttonFlex={1}
+            slotProps={{
+              day: {
+                highlightedDays,
+              } as any,
+            }}
+          />
+        </LocalizationProvider>
+      </Grid>
+      <Grid xs={12} sm={12} md={7} lg={9}>
+        <Card
           sx={{
-            '--Button-radius': '40px',
-            width: 'clamp(min(100%, 160px), 50%, min(100%, 200px))',
+            textAlign: 'center',
+            justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            '--icon-size': '100px',
           }}
         >
-          <Button variant="solid" color="primary" disabled={tipoData != 'reuniao'} onClick={() => Router.push('inicial/detalhes/1')}>
-            Inicial
-          </Button>
-        </CardActions>
-      </Card>
-    </Sheet>
+          <CardOverflow variant="solid" sx={{ color: 'gray' }}>
+            <AspectRatio
+              variant="outlined"
+              ratio="1"
+              sx={{
+                m: 'auto',
+                transform: 'translateY(50%)',
+                borderRadius: '50%',
+                width: 'var(--icon-size)',
+                boxShadow: 'sm',
+                bgcolor: 'background.surface',
+                position: 'relative',
+              }}
+            >
+              <div>
+                <SupervisedUserCircleIcon sx={{ fontSize: '4rem' }}/>
+              </div>
+            </AspectRatio>
+          </CardOverflow>
+          <Typography level="title-lg" sx={{ mt: 'calc(var(--icon-size) / 2)' }}>
+            {tipoData == 'reuniao' ? 'Hoje á reunião marcada!' : 'Sem Reunião nesta data'}
+          </Typography>
+
+          <CardActions
+            orientation="vertical"
+            buttonFlex={1}
+            sx={{
+              '--Button-radius': '40px',
+              width: 'clamp(min(100%, 160px), 50%, min(100%, 200px))',
+            }}
+          >
+            <Button variant="solid" color="primary" disabled={tipoData != 'reuniao'} onClick={() => Router.push('inicial/detalhes/1')}>
+              Inicial
+            </Button>
+          </CardActions>
+        </Card>
+      </Grid>
+    </Grid>
   );
 }
