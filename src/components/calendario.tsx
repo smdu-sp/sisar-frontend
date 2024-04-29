@@ -20,113 +20,109 @@ import CardOverflow from '@mui/joy/CardOverflow';
 import Typography from '@mui/joy/Typography';
 import { Sheet } from '@mui/joy';
 import Router from 'next/router';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
-
-
-/**
- * Mimic fetch with abort controller https://developer.mozilla.org/en-US/docs/Web/API/AbortController/abort
- * ⚠️ No IE11 support
- */
-function fakeFetch(date: Dayjs, { signal }: { signal: AbortSignal }) {
-  return new Promise<{ daysToHighlight: number[] }>((resolve, reject) => {
-    var dias = [
-      26,
-      27,
-      28,
-      29,
-      10,
-    ]
-    const today = new Date();
-    const daysToHighlight = dias;
-
-    resolve({ daysToHighlight });
-
-    signal.onabort = () => {
-      reject(new DOMException('aborted', 'AbortError'));
-    };
-  });
-}
-const today = new Date();
-
-var data = today.toLocaleDateString('pt-BR').split('/').reverse().join('-');
-
-const initialValue = dayjs(data);
-
-function ServerDay(
-  props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }
-) {
-  const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
-
-  const isSelected =
-    !props.outsideCurrentMonth &&
-    highlightedDays.indexOf(props.day.date()) >= 0;
-
-  return (
-    <Badge
-      key={props.day.toString()}
-      overlap="circular"
-      badgeContent={isSelected ? <Icon component={SupervisedUserCircleIcon} /> : undefined}
-    >
-      <PickersDay
-        {...other}
-        outsideCurrentMonth={outsideCurrentMonth}
-        day={day}
-      />
-    </Badge>
-  );
-}
-
-export default function Home() {
-
-  const [data, setData] = useState(initialValue);
+export default function calendario() {
+  const today = new Date();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [data, setData] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
   const [tipoData, setTipoData] = useState('');
   const [mes, setMes] = useState(0);
   const [ano, setAno] = useState(0);
+  const [diass, setDias] = useState<number[]>([]);
+  const initialValue = dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-'));
 
-  useEffect(() => {
-    tipo();
+  const busca = () => {
     setMes(data.month() + 1);
     setAno(data.year());
-    console.log(mes, ano);
-    
-    busca();
-  });
-  var dias = [
-    26,
-    27,
-    28,
-    29,
-    10
-  ]
+
+    let mes = data.month() + 1
+
+    reunioes.buscarPorMesAno(mes.toString(), data.year().toString())
+      .then((response) => {
+        if (Array.isArray(response)) {
+          const diasArray = response
+            .map((meeting: any) => {
+              if (meeting.data_reuniao) {
+                const dia = parseInt(meeting.data_reuniao.split('T')[0].split('-')[2]);
+                return dia;
+              }
+              return null; // Se não houver data de reunião, retornamos null
+            })
+            .filter((dia: any): dia is number => dia !== null);
+          setDias(diasArray);
+          const diassString = diasArray.join(',');
+          router.push(`?anos=${diassString}`);
+        } else {
+          console.error("Response is not an array:", response);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+
+  };
+
+  const fakeFetch = (date: Dayjs, { signal }: { signal: AbortSignal }) => {
+    return new Promise<{ daysToHighlight: number[] }>((resolve, reject) => {
+      const d = searchParams.get('anos');
+      const dias = d?.split(',');
+      const daysToHighlight = [];
+      if (dias) {
+        for (let i = 0; i < dias.length; i++) {
+            daysToHighlight.push(parseInt(dias[i]));
+        }
+    }
+      resolve({ daysToHighlight });
+
+      const newUrl = `${window.location.pathname}`;
+      window.history.replaceState({}, '', newUrl);
+      signal.onabort = () => {
+        reject(new DOMException('aborted', 'AbortError'));
+      };
+    });
+  };
+
+  const ServerDay = (props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }) => {
+    const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
+    const isSelected = !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
+
+    return (
+      <Badge
+        key={props.day.toString()}
+        overlap="circular"
+        badgeContent={isSelected ? <Icon component={SupervisedUserCircleIcon} /> : undefined}
+      >
+        <PickersDay
+          {...other}
+          outsideCurrentMonth={outsideCurrentMonth}
+          day={day}
+        />
+      </Badge>
+    );
+  };
 
   const tipo = () => {
+    var dias = diass;
     for (let i = 0; i < dias.length; i++) {
-      if (dias[i] === data.date()) {
+      if (diass[i] === data.date()) {
         setTipoData('reuniao');
         return;
       }
     }
     setTipoData('');
+  };
 
-  }
-  
-  const busca = () => {
-
-    
-    reunioes.buscarPorMesAno(mes.toString(), ano.toString()).then((response) => {
-        console.log(response);
-        
-    })
-  }
   const requestAbortController = React.useRef<AbortController | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [highlightedDays, setHighlightedDays] = React.useState([1]);
 
   const fetchHighlightedDays = (date: Dayjs) => {
     const controller = new AbortController();
-    fakeFetch(date, {
-      signal: controller.signal,
-    })
+
+    fakeFetch(date, { signal: controller.signal })
       .then(({ daysToHighlight }) => {
         setHighlightedDays(daysToHighlight);
         setIsLoading(false);
@@ -139,11 +135,14 @@ export default function Home() {
 
     requestAbortController.current = controller;
   };
-
-  React.useEffect(() => {
+  useEffect(() => {
+    setMes(data.month() + 1);
+    setAno(data.year());
     fetchHighlightedDays(initialValue);
-    return () => requestAbortController.current?.abort();
-  }, []);
+    console.log(data);
+    tipo();
+    busca();
+  }, [data]);
 
   const handleMonthChange = (date: Dayjs) => {
     if (requestAbortController.current) {
@@ -201,7 +200,7 @@ export default function Home() {
             }}
           >
             <div>
-              <SupervisedUserCircleIcon sx={{ fontSize: '4rem' }}/>
+              <SupervisedUserCircleIcon sx={{ fontSize: '4rem' }} />
             </div>
           </AspectRatio>
         </CardOverflow>
