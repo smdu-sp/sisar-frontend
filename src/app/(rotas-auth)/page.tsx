@@ -1,7 +1,9 @@
 'use client'
 
 import Content from '@/components/Content';
-import { useSearchParams } from 'next/navigation';
+import * as React from 'react';
+import Calendario from '@/components/calendario';
+
 
 export default function Home() {
   return (
@@ -9,6 +11,7 @@ export default function Home() {
       titulo='Página Inicial'
       pagina='/'
     >
+      <Calendario/>
     </Content>
   );
 }
