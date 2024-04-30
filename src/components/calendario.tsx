@@ -6,7 +6,7 @@ import Badge from '@mui/material/Badge';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import { DateCalendar, DateCalendarProps } from '@mui/x-date-pickers/DateCalendar';
 import * as reunioes from '@/shared/services/reunioes.services';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import { useEffect, useState } from 'react';
@@ -22,6 +22,8 @@ import { Grid, Sheet } from '@mui/joy';
 import Router from 'next/router';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
+import ptBR from 'date-fns/locale/pt-BR';
+
 
 export default function calendario() {
   const today = new Date();
@@ -29,19 +31,18 @@ export default function calendario() {
   const searchParams = useSearchParams();
   const [data, setData] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
   const [tipoData, setTipoData] = useState('');
-  const [mes, setMes] = useState(0);
-  const [ano, setAno] = useState(0);
   const [diass, setDias] = useState<number[]>([]);
   const initialValue = dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-'));
+  const [monthh, setMonth] = useState(initialValue.month());
 
-  const busca = () => {
-    setMes(data.month() + 1);
-    setAno(data.year());
 
-    let mes = data.month() + 1
-
-    reunioes.buscarPorMesAno(mes.toString(), data.year().toString())
+  const busca = (testwe: any) => {
+    console.log(testwe);
+    let a = testwe;
+    reunioes.buscarPorMesAno(a.toString(), data.year().toString())
       .then((response) => {
+
+
         if (Array.isArray(response)) {
           const diasArray = response
             .map((meeting: any) => {
@@ -56,29 +57,21 @@ export default function calendario() {
           const diassString = diasArray.join(',');
           router.push(`?anos=${diassString}`);
         } else {
-          console.error("Response is not an array:", response);
+          setDias([0]);
         }
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
+        console.error("erro:", error);
       });
-
   };
 
   const fakeFetch = (date: Dayjs, { signal }: { signal: AbortSignal }) => {
     return new Promise<{ daysToHighlight: number[] }>((resolve, reject) => {
-      const d = searchParams.get('anos');
-      const dias = d?.split(',');
-      const daysToHighlight = [];
-      if (dias) {
-        for (let i = 0; i < dias.length; i++) {
-            daysToHighlight.push(parseInt(dias[i]));
-        }
-    }
+      const daysToHighlight = [0];
       resolve({ daysToHighlight });
 
-      const newUrl = `${window.location.pathname}`;
-      window.history.replaceState({}, '', newUrl);
+      // const newUrl = `${window.location.pathname}`;
+      // window.history.replaceState({}, '', newUrl);
       signal.onabort = () => {
         reject(new DOMException('aborted', 'AbortError'));
       };
@@ -117,14 +110,12 @@ export default function calendario() {
 
   const requestAbortController = React.useRef<AbortController | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [highlightedDays, setHighlightedDays] = React.useState([1]);
 
   const fetchHighlightedDays = (date: Dayjs) => {
     const controller = new AbortController();
 
     fakeFetch(date, { signal: controller.signal })
       .then(({ daysToHighlight }) => {
-        setHighlightedDays(daysToHighlight);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -136,12 +127,10 @@ export default function calendario() {
     requestAbortController.current = controller;
   };
   useEffect(() => {
-    setMes(data.month() + 1);
-    setAno(data.year());
     fetchHighlightedDays(initialValue);
     console.log(data);
     tipo();
-    busca();
+    busca(data.month() + 1);
   }, [data]);
 
   const handleMonthChange = (date: Dayjs) => {
@@ -149,25 +138,28 @@ export default function calendario() {
       requestAbortController.current.abort();
     }
     setIsLoading(true);
-    setHighlightedDays([]);
     fetchHighlightedDays(date);
-  };
 
+  };
   return (
     <Sheet sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DateCalendar
           defaultValue={initialValue}
           loading={isLoading}
-          onMonthChange={handleMonthChange}
+          onMonthChange={(newDate) => {
+            busca(newDate.month() + 1);
+            setTipoData('');
+          }}
           renderLoading={() => <DayCalendarSkeleton />}
+          value={data}
           onChange={(newDate) => setData(newDate)}
           slots={{
             day: ServerDay,
           }}
           slotProps={{
             day: {
-              highlightedDays,
+              highlightedDays: diass,
             } as any,
           }}
         />
@@ -208,19 +200,19 @@ export default function calendario() {
           {tipoData == 'reuniao' ? 'Hoje á reunião marcada!' : 'Sem Reunião nesta data'}
         </Typography>
 
-          <CardActions
-            orientation="vertical"
-            buttonFlex={1}
-            sx={{
-              '--Button-radius': '40px',
-              width: 'clamp(min(100%, 160px), 50%, min(100%, 200px))',
-            }}
-          >
-            <Button variant="solid" color="primary" disabled={tipoData != 'reuniao'} onClick={() => Router.push('inicial/detalhes/1')}>
-              Inicial
-            </Button>
-          </CardActions>
-        </Card>
+        <CardActions
+          orientation="vertical"
+          buttonFlex={1}
+          sx={{
+            '--Button-radius': '40px',
+            width: 'clamp(min(100%, 160px), 50%, min(100%, 200px))',
+          }}
+        >
+          <Button variant="solid" color="primary" disabled={tipoData != 'reuniao'} onClick={() => Router.push('inicial/detalhes/1')}>
+            Inicial
+          </Button>
+        </CardActions>
+      </Card>
     </Sheet>
   );
 }
