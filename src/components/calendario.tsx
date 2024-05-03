@@ -11,19 +11,20 @@ import * as reunioes from '@/shared/services/reunioes.services';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import { useEffect, useState } from 'react';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
-import Icon from '@mui/material/Icon';
-import AspectRatio from '@mui/joy/AspectRatio';
-import Button from '@mui/joy/Button';
-import Card from '@mui/joy/Card';
-import CardActions from '@mui/joy/CardActions';
-import CardOverflow from '@mui/joy/CardOverflow';
-import Typography from '@mui/joy/Typography';
+import Icon from '@mui/material/Icon';;
 import { Grid, Sheet } from '@mui/joy';
-import Router from 'next/router';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import ptBR from 'date-fns/locale/pt-BR';
-
+import Box from '@mui/joy/Box';
+import ListItemDecorator from '@mui/joy/ListItemDecorator';
+import Tabs from '@mui/joy/Tabs';
+import TabList from '@mui/joy/TabList';
+import Tab, { tabClasses } from '@mui/joy/Tab';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
+import { ClassNames } from '@emotion/react';
 
 export default function calendario() {
   const today = new Date();
@@ -33,16 +34,14 @@ export default function calendario() {
   const [tipoData, setTipoData] = useState('');
   const [diass, setDias] = useState<number[]>([]);
   const initialValue = dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-'));
-  const [monthh, setMonth] = useState(initialValue.month());
+  const [index, setIndex] = useState(3);
+  const colors = ['primary', 'warning', 'success', 'danger'] as const;
+  const [tipoLista, setTipoLista] = useState(0);
 
 
-  const busca = (testwe: any) => {
-    console.log(testwe);
-    let a = testwe;
-    reunioes.buscarPorMesAno(a.toString(), data.year().toString())
+  const busca = (mes: any) => {
+    reunioes.buscarPorMesAno(mes.toString(), data.year().toString())
       .then((response) => {
-
-
         if (Array.isArray(response)) {
           const diasArray = response
             .map((meeting: any) => {
@@ -50,7 +49,7 @@ export default function calendario() {
                 const dia = parseInt(meeting.data_reuniao.split('T')[0].split('-')[2]);
                 return dia;
               }
-              return null; // Se não houver data de reunião, retornamos null
+              return null;
             })
             .filter((dia: any): dia is number => dia !== null);
           setDias(diasArray);
@@ -70,8 +69,6 @@ export default function calendario() {
       const daysToHighlight = [0];
       resolve({ daysToHighlight });
 
-      // const newUrl = `${window.location.pathname}`;
-      // window.history.replaceState({}, '', newUrl);
       signal.onabort = () => {
         reject(new DOMException('aborted', 'AbortError'));
       };
@@ -126,23 +123,16 @@ export default function calendario() {
 
     requestAbortController.current = controller;
   };
+
   useEffect(() => {
     fetchHighlightedDays(initialValue);
-    console.log(data);
     tipo();
     busca(data.month() + 1);
-  }, [data]);
+    console.log(index);
+  }, [data, index]);
 
-  const handleMonthChange = (date: Dayjs) => {
-    if (requestAbortController.current) {
-      requestAbortController.current.abort();
-    }
-    setIsLoading(true);
-    fetchHighlightedDays(date);
-
-  };
   return (
-    <Sheet sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DateCalendar
           defaultValue={initialValue}
@@ -164,55 +154,80 @@ export default function calendario() {
           }}
         />
       </LocalizationProvider>
-      <Card
-        data-resizable
+
+
+
+      
+      <Box
         sx={{
-          textAlign: 'center',
-          justifyContent: 'center',
-          display: 'flex',
-          alignItems: 'center',
-          width: '40%',
-          overflow: 'auto',
-          resize: 'horizontal',
-          '--icon-size': '100px',
+          flexGrow: 1,
+          mx: 2,
+          borderTopLeftRadius: '12px',
+          borderTopRightRadius: '12px',
+          bgcolor: `${colors[index]}.500`,
+          maxWidth: '900px',
         }}
       >
-        <CardOverflow variant="solid" sx={{ color: 'gray' }}>
-          <AspectRatio
-            variant="outlined"
-            ratio="1"
-            sx={{
-              m: 'auto',
-              transform: 'translateY(50%)',
-              borderRadius: '50%',
-              width: 'var(--icon-size)',
-              boxShadow: 'sm',
-              bgcolor: 'background.surface',
-              position: 'relative',
-            }}
-          >
-            <div>
-              <SupervisedUserCircleIcon sx={{ fontSize: '4rem' }} />
-            </div>
-          </AspectRatio>
-        </CardOverflow>
-        <Typography level="title-lg" sx={{ mt: 'calc(var(--icon-size) / 2)' }}>
-          {tipoData == 'reuniao' ? 'Hoje á reunião marcada!' : 'Sem Reunião nesta data'}
-        </Typography>
-
-        <CardActions
-          orientation="vertical"
-          buttonFlex={1}
-          sx={{
-            '--Button-radius': '40px',
-            width: 'clamp(min(100%, 160px), 50%, min(100%, 200px))',
-          }}
+        <Tabs
+          size="lg"
+          aria-label="Bottom Navigation"
+          value={index}
+          onChange={(event, value) => setIndex(value as number)}
+          sx={(theme) => ({
+            p: 1,
+            borderRadius: 16,
+            maxWidth: 200,
+            mx: 'auto',
+            mt: 2,
+            boxShadow: theme.shadow.sm,
+            '--joy-shadowChannel': theme.vars.palette[colors[index]].darkChannel,
+            [`& .${tabClasses.root}`]: {
+              py: 1,
+              flex: 1,
+              transition: '0.3s',
+              fontWeight: 'md',
+              fontSize: 'md',
+              [`&:not(.${tabClasses.selected}):not(:hover)`]: {
+                opacity: 0.7,
+              },
+            },
+          })}
         >
-          <Button variant="solid" color="primary" disabled={tipoData != 'reuniao'} onClick={() => Router.push('inicial/detalhes/1')}>
-            Inicial
-          </Button>
-        </CardActions>
-      </Card>
-    </Sheet>
+          <TabList
+            variant="plain"
+            size="sm"
+            disableUnderline
+            sx={{ borderRadius: 'lg', p: 0 }}
+          >
+            <Tab
+              disableIndicator
+              orientation="vertical"
+              {...(index === 0 && { color: colors[0] })}
+              onChange={() => setTipoLista(1)}
+            >
+              <ListItemDecorator>
+                <PeopleAltIcon />
+              </ListItemDecorator>
+              Reuniões
+            </Tab>
+            <Tab
+              disableIndicator
+              orientation="vertical"
+              {...(index === 1 && { color: colors[1] })}
+              sx={{ ml: 2 }}
+              onChange={() => setTipoLista(2)}
+            >
+              <ListItemDecorator>
+                <PendingActionsIcon />
+              </ListItemDecorator>
+              Processos
+            </Tab>
+          </TabList>
+        </Tabs>
+        <Sheet sx={{ width: '100%', height: '70%', backgroundColor: 'danger.outlinedDisabledBorder', my: 2 }}>
+
+        </Sheet>
+      </Box>
+    </Box>
   );
 }
