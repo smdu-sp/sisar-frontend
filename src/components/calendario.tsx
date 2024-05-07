@@ -240,7 +240,7 @@ export default function calendario() {
             </Tab>
           </TabList>
         </Tabs>
-        {reuniao ? reuniao.map((reuniao: any) => (
+        {reuniao && reuniao.length > 0 ? reuniao.map((reuniao: any) => (
           index === 0 ?
             <Card
               variant="outlined"

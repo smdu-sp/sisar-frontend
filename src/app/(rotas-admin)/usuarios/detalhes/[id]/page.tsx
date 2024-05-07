@@ -204,7 +204,7 @@ export default function UsuarioDetalhes(props: any) {
                                 value={substituto_id}
                                 onChange={(_, value) => value && setSubstituto_id(value)}
                             >
-                                {administrativos && administrativos.map((adm) => (
+                                {(administrativos && administrativos.length > 0) && administrativos.map((adm) => (
                                     <Option
                                         key={adm.id}
                                         value={adm.id}

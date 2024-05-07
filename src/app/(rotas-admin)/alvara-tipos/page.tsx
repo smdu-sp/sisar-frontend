@@ -239,7 +239,7 @@ export default function AlvaraTipos() {
           </tr>
         </thead>
         <tbody>
-          {alvaraTipos ? alvaraTipos.map((alvaraTipo) => (
+          {alvaraTipos && alvaraTipos.length > 0 ? alvaraTipos.map((alvaraTipo) => (
             parseInt(alvaraTipo.status.toString()) !==
               (searchParams.get('status') ?
                 (searchParams.get('status') === 'true' ? 0 : searchParams.get('status') === 'false' ? 1 : 2)

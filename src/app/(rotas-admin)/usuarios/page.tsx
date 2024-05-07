@@ -271,7 +271,7 @@ function SearchUsuarios() {
           </tr>
         </thead>
         <tbody>
-          {usuarios ? usuarios.map((usuario) => (
+          {usuarios && usuarios.length > 0 ? usuarios.map((usuario) => (
             <tr key={usuario.id} style={{
               cursor: 'pointer',
               backgroundColor: usuario.status === 3 ? 

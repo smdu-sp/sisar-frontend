@@ -138,8 +138,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                 j++;
             }
             soma = soma % 11;
-            if (soma === 1) soma = 0;
-            soma = 11 - soma;
+            soma = soma === 1 || soma === 0 ? 0 : 11 - soma;
             valido = soma === digito;
         }
         return valido;

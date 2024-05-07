@@ -26,7 +26,7 @@ export default function SecondHeader({
             >
               <HomeRounded fontSize='small' />
             </Link>
-            {breadcrumbs && breadcrumbs.map((item, index) => (
+            {(breadcrumbs && breadcrumbs.length > 0) && breadcrumbs.map((item, index) => (
               <Link
                 underline="none"
                 color={index === breadcrumbs.length - 1 ? 'primary' : 'neutral'}

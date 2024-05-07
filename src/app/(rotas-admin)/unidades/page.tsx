@@ -249,7 +249,7 @@ function SearchUnidades() {
           </tr>
         </thead>
         <tbody>
-          {unidades ? unidades.map((unidade) => (
+          {unidades && unidades.length > 0 ? unidades.map((unidade) => (
             <tr key={unidade.id} style={{
               cursor: 'pointer',
               backgroundColor: !unidade.status ?

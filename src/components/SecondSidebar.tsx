@@ -27,7 +27,7 @@ const RenderMenu = (menu: IMenu, pagina?: string) => {
         }}
       >        
         <ListSubheader sx={{ lineHeight: 2, borderRadius: 2, backgroundColor: 'transparent' }}>Menu</ListSubheader>
-        {menu.userOptions.map((page) => (
+        {(menu.userOptions && menu.userOptions.length > 0) && menu.userOptions.map((page) => (
           <ListItem sx={{width: '100%'}} key={page.name}>
             <ListItemButton component={Link} underline="none" selected={pagina===page.name} href={page.href}>
               <ListItemDecorator>

@@ -226,8 +226,7 @@ function SearchUnidades() {
           </tr>
         </thead>
         <tbody>
-          {
-            subprefeitura ? subprefeitura.map((subprefeitura) => (
+          {subprefeitura && subprefeitura.length > 0 ? subprefeitura.map((subprefeitura) => (
               parseInt(subprefeitura.status.toString()) !==
                 (searchParams.get('status') ?
                   (searchParams.get('status') === 'true' ? 0 : searchParams.get('status') === 'false' ? 1 : 2)
