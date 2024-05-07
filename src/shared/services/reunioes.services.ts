@@ -32,4 +32,19 @@ async function buscarPorMesAno(mes: string, ano: string){
     return reunoes;
 }
 
-export { buscarPorMesAno }
+async function buscarPorData(data: string){
+    const session = await getServerSession(authOptions);
+    const reunoes = await fetch(`${baseURL}reunioes/buscar-data/${data}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) Logout();
+        return response.json();
+    })
+    return reunoes;
+}
+
+export { buscarPorMesAno, buscarPorData }
