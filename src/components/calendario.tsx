@@ -44,7 +44,7 @@ export default function calendario() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [data, setData] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
-  const [tipoData, setTipoData] = useState('');
+  const [dataCard, setDataCard] = useState('');
   const [diass, setDias] = useState<number[]>([]);
   const initialValue = dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-'));
   const [index, setIndex] = useState(3);
@@ -71,7 +71,6 @@ export default function calendario() {
             })
             .filter((dia: any): dia is number => dia !== null);
           setDias(diasArray);
-          setTipoData('reuniao');
         } else {
           setDias([0]);
         }
@@ -124,28 +123,37 @@ export default function calendario() {
           throw error;
         }
       });
-
     requestAbortController.current = controller;
   };
 
   const buscar_data = () => {
     reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
       .then((response) => {
-        console.log(response);
         setDataReuniao(response.data_reuniao);
         setInicialId(response.id_reuniao);
         setJustificativa(response.justificativa_remarcacao);
         setNovaData(response.nova_data_reuniao);
         setReuniao(response);
+        if (reuniao.length == 0) {
+          setIndex(3);
+        } else {
+          setIndex(0);
+        }
       });
   }
 
   useEffect(() => {
     fetchHighlightedDays(initialValue);
     busca(data.month() + 1);
-    console.log(data.year() + '-' + (data.month() + 1) + '-' + data.date());
+    var datacard = data.year() + '-' + (data.month() + 1) + '-' + data.date();
+    datacard = datacard.split('-').reverse().join('/');
+    setDataCard(datacard);
     buscar_data();
-  }, [data, index]);
+    console.log(dataCard);
+  }, [data, index, reuniao.length, dataCard]);
+
+
+
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -155,11 +163,10 @@ export default function calendario() {
           loading={isLoading}
           onMonthChange={(newDate) => {
             busca(newDate.month() + 1);
-            setTipoData('');
           }}
           renderLoading={() => <DayCalendarSkeleton />}
           value={data}
-          onChange={(newDate) => { setData(newDate); setIndex(0); }}
+          onChange={(newDate) => { setData(newDate); }}
           slots={{
             day: ServerDay,
           }}
@@ -176,11 +183,12 @@ export default function calendario() {
 
       <Box
         sx={{
+          position: 'relative',
           flexGrow: 1,
           mx: 2,
           borderRadius: '12px',
           transition: '0.2s',
-          bgcolor: index === 3 ? `background.level3` : `${colors[index]}.500`,
+          bgcolor: index === 3 || reuniao.length == 0 ? 'background.level3' : `${colors[index]}.500`,
           maxWidth: '900px',
         }}
       >
@@ -195,7 +203,8 @@ export default function calendario() {
             maxWidth: 200,
             mx: 'auto',
             mt: 2,
-            boxShadow: theme.shadow.sm,
+
+            boxShadow: index == 3 ? 'background.level3' : theme.shadow.sm,
             '--joy-shadowChannel': theme.vars.palette[colors[index]].darkChannel,
             [`& .${tabClasses.root}`]: {
               py: 1,
@@ -240,6 +249,11 @@ export default function calendario() {
             </Tab>
           </TabList>
         </Tabs>
+        <Chip sx={{ position: 'absolute', top: 20, left: 15, fontSize: '20px', px: 3, bg: 'primary' }}>
+          {
+            dataCard
+          }
+        </Chip>
         {reuniao && reuniao.length > 0 ? reuniao.map((reuniao: any) => (
           index === 0 ?
             <Card
@@ -250,7 +264,8 @@ export default function calendario() {
                 ml: 2,
                 mt: 2,
                 transition: '0.2s',
-                '&:hover': { boxShadow: 'md', borderColor: 'neutral.outlinedHoverBorder' },
+                '&:hover': { boxShadow: 'md' },
+                boxShadow: 'sm',
                 maxHeight: '60px',
                 paddingTop: 1,
               }}
@@ -287,6 +302,7 @@ export default function calendario() {
             : ""
         )) : ""}
       </Box>
+
     </Box>
   );
 }
