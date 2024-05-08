@@ -10,6 +10,7 @@ import { DateCalendar, DateCalendarProps } from '@mui/x-date-pickers/DateCalenda
 import * as reunioes from '@/shared/services/reunioes.services';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import { useState, useRef, useEffect } from 'react';
+import ListDecoration from './ListDecoration';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import Icon from '@mui/material/Icon';;
 import { AspectRatio, Card, CardContent, Chip, Grid, IconButton, Sheet, Typography } from '@mui/joy';
@@ -20,7 +21,8 @@ import ListItemDecorator from '@mui/joy/ListItemDecorator';
 import Tabs from '@mui/joy/Tabs';
 import TabList from '@mui/joy/TabList';
 import Tab, { tabClasses } from '@mui/joy/Tab';
-import CircleIcon from '@mui/icons-material/Circle';
+// import CircleIcon from '@mui/icons-material/Circle';
+import CircleIcon from '@mui/icons-material/RadioButtonCheckedRounded';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import Circles from './Circles';
@@ -39,10 +41,10 @@ interface Theme {
 }
 
 
+
 export default function calendario() {
+
   const today = new Date();
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [data, setData] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
   const [dataCard, setDataCard] = useState('');
   const [diass, setDias] = useState<number[]>([]);
@@ -50,10 +52,6 @@ export default function calendario() {
   const [index, setIndex] = useState(3);
   const colors = ['primary', 'warning', 'success', 'success'] as const;
   const [tipoLista, setTipoLista] = useState(0);
-  const [dataReuniao, setDataReuniao] = useState('');
-  const [icialId, setInicialId] = useState('');
-  const [justificativa, setJustificativa] = useState('');
-  const [novaData, setNovaData] = useState('');
   const [reuniao, setReuniao] = useState([]);
 
 
@@ -64,6 +62,7 @@ export default function calendario() {
           const diasArray = response
             .map((meeting: any) => {
               if (meeting.data_reuniao) {
+                // const dia = parseInt(meeting.data_reuniao.split('T')[0].split('-')[2] + '0001');
                 const dia = parseInt(meeting.data_reuniao.split('T')[0].split('-')[2]);
                 return dia;
               }
@@ -72,7 +71,7 @@ export default function calendario() {
             .filter((dia: any): dia is number => dia !== null);
           setDias(diasArray);
         } else {
-          setDias([0]);
+          setDias([]);
         }
       })
       .catch((error) => {
@@ -101,7 +100,7 @@ export default function calendario() {
       <Badge
         key={props.day.toString()}
         overlap="circular"
-        badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 12, height: 12, mr: 1, color: 'var(--joy-palette-primary-plainColor)' }} /> : undefined}
+        badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: 'var(--joy-palette-primary-plainColor)' }} /> : undefined}
       >
         <PickersDay
           {...other}
@@ -129,10 +128,6 @@ export default function calendario() {
   const buscar_data = () => {
     reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
       .then((response) => {
-        setDataReuniao(response.data_reuniao);
-        setInicialId(response.id_reuniao);
-        setJustificativa(response.justificativa_remarcacao);
-        setNovaData(response.nova_data_reuniao);
         setReuniao(response);
         if (reuniao.length == 0) {
           setIndex(3);
@@ -146,10 +141,9 @@ export default function calendario() {
     fetchHighlightedDays(initialValue);
     busca(data.month() + 1);
     var datacard = data.year() + '-' + (data.month() + 1) + '-' + data.date();
-    datacard = datacard.split('-').reverse().join('/');
+    datacard = new Date(datacard).toLocaleDateString('pt-BR');
     setDataCard(datacard);
     buscar_data();
-    console.log(dataCard);
   }, [data, index, reuniao.length, dataCard]);
 
 
@@ -196,7 +190,7 @@ export default function calendario() {
           size="lg"
           aria-label="Bottom Navigation"
           value={index}
-          onChange={(event, value) => setIndex(value as number)}
+          onChange={(event, value) => { setIndex(value as number) }}
           sx={(theme) => ({
             p: 1,
             borderRadius: 16,
@@ -224,15 +218,14 @@ export default function calendario() {
             disableUnderline
             sx={{ borderRadius: 'lg', p: 0 }}
           >
+
             <Tab
               disableIndicator
               orientation="vertical"
               {...(index === 0 && { color: colors[0] })}
               onChange={() => setTipoLista(1)}
             >
-              <ListItemDecorator>
-                <PeopleAltIcon />
-              </ListItemDecorator>
+              <ListDecoration valor={diass.length} tipo={1} />
               Reuniões
             </Tab>
             <Tab
@@ -242,9 +235,7 @@ export default function calendario() {
               sx={{ ml: 2 }}
               onChange={() => setTipoLista(2)}
             >
-              <ListItemDecorator>
-                <PendingActionsIcon />
-              </ListItemDecorator>
+              <ListDecoration valor={0} tipo={2} />
               Processos
             </Tab>
           </TabList>
@@ -254,55 +245,59 @@ export default function calendario() {
             dataCard
           }
         </Chip>
-        {reuniao && reuniao.length > 0 ? reuniao.map((reuniao: any) => (
-          index === 0 ?
-            <Card
-              variant="outlined"
-              orientation="horizontal"
-              sx={{
-                maxWidth: '45%',
-                ml: 2,
-                mt: 2,
-                transition: '0.2s',
-                '&:hover': { boxShadow: 'md' },
-                boxShadow: 'sm',
-                maxHeight: '60px',
-                paddingTop: 1,
-              }}
-            >
-              <CircleIcon sx={{ width: '20px', color: 'var(--joy-palette-primary-plainColor)' }} />
-              <CardContent sx={{ width: '100%', display: 'flex', flexDirection: 'row', gap: 12 }}>
-                <Sheet>
-                  <Typography level="title-lg" id="card-description" key={reuniao.id}>
-                    {reuniao.data_reuniao.split('T')[0].split('-')[2] + '/' + reuniao.data_reuniao.split('T')[0].split('-')[1] + '/' + reuniao.data_reuniao.split('T')[0].split('-')[0]}
-                  </Typography>
-                  <Typography level="body-sm" aria-describedby="card-description" mb={1}>
-
-                    California, USA
-
-                  </Typography>
-                </Sheet>
-                <Link
-                  overlay
-                  underline="none"
-                  href={'/inicial/detalhes/' + reuniao.inicial_id}
-                  sx={{ color: 'text.tertiary' }}
-                >
-                  <Chip
+        <Sheet sx={{ bgcolor: 'transparent', display: 'flex', flexDirection: 'column', height: '70%', alignItems: 'start' }}>
+          <Grid
+            container
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 2, sm: 8, md: 12 }}
+            sx={{ flexGrow: 1 }}
+          >
+            {reuniao && reuniao.length > 0 ? reuniao.map((reuniao: any) => (
+              index === 0 ?
+                <Grid key={index}>
+                  <Card
                     variant="outlined"
-                    color="primary"
-                    size="sm"
-                    sx={{ pointerEvents: 'none', mt: 1 }}
+                    orientation="horizontal"
+                    sx={{
+                      ml: 2,
+                      mt: 2,
+                      transition: '0s',
+                      '&:hover': { boxShadow: 'md' },
+                      boxShadow: 'sm',
+                      maxHeight: '60px',
+                      paddingTop: 1,
+                    }}
                   >
-                    Clique para ir ao inicial
-                  </Chip>
-                </Link>
-              </CardContent>
-            </Card>
-            : ""
-        )) : ""}
+                    <CircleIcon sx={{ width: '20px', color: 'var(--joy-palette-primary-plainColor)' }} />
+                    <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
+                      <Sheet>
+                        <Typography level="title-lg" id="card-description" key={reuniao.id}>
+                          {reuniao.inicial.sei ? reuniao.inicial.sei : reuniao.inicial.aprova_digital}
+                        </Typography>
+                        <Typography level="body-sm" aria-describedby="card-description" mb={1}>
+                          {reuniao.inicial.processo_fisico}
+                        </Typography>
+                      </Sheet>
+                      <Chip
+                        component={Link}
+                        underline='none'
+                        href={'/inicial/detalhes/' + reuniao.inicial_id}
+                        variant="outlined"
+                        color="primary"
+                        size="sm"
+                        sx={{ mt: 1 }}
+                      >
+                        Clique para ir ao inicial
+                      </Chip>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                : ""
+            )) : ""}
+          </Grid>
+        </Sheet>
       </Box>
 
-    </Box>
+    </Box >
   );
 }
