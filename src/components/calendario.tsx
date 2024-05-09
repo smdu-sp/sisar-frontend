@@ -6,30 +6,20 @@ import Badge from '@mui/material/Badge';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
-import { DateCalendar, DateCalendarProps } from '@mui/x-date-pickers/DateCalendar';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import * as reunioes from '@/shared/services/reunioes.services';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import { useState, useRef, useEffect } from 'react';
 import ListDecoration from './ListDecoration';
-import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import Icon from '@mui/material/Icon';;
-import { AspectRatio, Card, CardContent, Chip, Grid, IconButton, Sheet, Typography } from '@mui/joy';
-import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
+import { Card, CardContent, Chip, Grid, Sheet, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
-import ListItemDecorator from '@mui/joy/ListItemDecorator';
 import Tabs from '@mui/joy/Tabs';
 import TabList from '@mui/joy/TabList';
 import Tab, { tabClasses } from '@mui/joy/Tab';
 // import CircleIcon from '@mui/icons-material/Circle';
 import CircleIcon from '@mui/icons-material/RadioButtonCheckedRounded';
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import PendingActionsIcon from '@mui/icons-material/PendingActions';
-import Circles from './Circles';
-import { ClassNames } from '@emotion/react';
-import { Add } from '@mui/icons-material';
 import Link from '@mui/joy/Link';
-import { Avatar, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 interface Theme {
   vars: {
     palette: {
@@ -51,8 +41,9 @@ export default function calendario() {
   const initialValue = dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-'));
   const [index, setIndex] = useState(3);
   const colors = ['primary', 'warning', 'success', 'success'] as const;
-  const [tipoLista, setTipoLista] = useState(0);
   const [reuniao, setReuniao] = useState([]);
+  const [diasPocessos, setDiasPocessos] = useState([]);
+
 
 
   const busca = (mes: any) => {
@@ -223,9 +214,9 @@ export default function calendario() {
               disableIndicator
               orientation="vertical"
               {...(index === 0 && { color: colors[0] })}
-              onChange={() => setTipoLista(1)}
+              {...(index == 3 && { 'disabled': true })}
             >
-              <ListDecoration valor={diass.length} tipo={1} />
+              <ListDecoration valor={index == 0 ? reuniao.length : diass.length} tipo={1} />
               Reuniões
             </Tab>
             <Tab
@@ -233,7 +224,7 @@ export default function calendario() {
               orientation="vertical"
               {...(index === 1 && { color: colors[1] })}
               sx={{ ml: 2 }}
-              onChange={() => setTipoLista(2)}
+              {...(diasPocessos.length == 0 && { 'disabled': true })}
             >
               <ListDecoration valor={0} tipo={2} />
               Processos
@@ -245,7 +236,7 @@ export default function calendario() {
             dataCard
           }
         </Chip>
-        <Sheet sx={{ bgcolor: 'transparent', display: 'flex', flexDirection: 'column', height: '70%', alignItems: 'start' }}>
+        <Sheet sx={{ bgcolor: 'transparent', display: 'flex', flexDirection: 'column', height: '70%', alignItems: reuniao.length > 0 ? 'flex-start' : 'center' }}>
           <Grid
             container
             spacing={{ xs: 2, md: 3 }}
@@ -292,8 +283,13 @@ export default function calendario() {
                     </CardContent>
                   </Card>
                 </Grid>
-                : ""
-            )) : ""}
+                : ''
+            )) : 
+            <Grid key={index}>
+                <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color="primary" variant="plain" >
+                  SEM COMPROMISSOS
+                </Chip>
+            </Grid>}
           </Grid>
         </Sheet>
       </Box>
