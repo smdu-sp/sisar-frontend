@@ -12,7 +12,7 @@ import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import { useState, useRef, useEffect } from 'react';
 import ListDecoration from './ListDecoration';
 import Icon from '@mui/material/Icon';;
-import { Card, CardContent, Chip, Grid, Sheet, Typography } from '@mui/joy';
+import { Card, CardContent, Chip, Grid, Option, Select, Sheet, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Tabs from '@mui/joy/Tabs';
 import TabList from '@mui/joy/TabList';
@@ -43,6 +43,7 @@ export default function calendario() {
   const colors = ['primary', 'warning', 'success', 'success'] as const;
   const [reuniao, setReuniao] = useState([]);
   const [diasPocessos, setDiasPocessos] = useState([]);
+  const [tipoData, setTipoData] = useState(0);
 
 
 
@@ -53,7 +54,6 @@ export default function calendario() {
           const diasArray = response
             .map((meeting: any) => {
               if (meeting.data_reuniao) {
-                // const dia = parseInt(meeting.data_reuniao.split('T')[0].split('-')[2] + '0001');
                 const dia = parseInt(meeting.data_reuniao.split('T')[0].split('-')[2]);
                 return dia;
               }
@@ -83,26 +83,22 @@ export default function calendario() {
     });
   };
 
-  const ServerDay = (props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }) => {
+  const ServerDay = (props: PickersDayProps<Dayjs> & { highlightedDays?: number[], projetosDay?: number[] }) => {
     const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
     const isSelected = !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
-
-    for (let d = 0; d < diass.length; d++) {
-      const element = diass[d];
-      return (
-        <Badge
-          key={props.day.toString()}
-          overlap="circular"
-          badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: element === 10 ? 'var(--joy-palette-primary-plainColor)' : 'var(--joy-palette-warning-plainColor)' }} /> : undefined}
-        >
-          <PickersDay
-            {...other}
-            outsideCurrentMonth={outsideCurrentMonth}
-            day={day}
-          />
-        </Badge>
-      );
-    };
+    return (
+      <Badge
+        key={props.day.toString()}
+        overlap="circular"
+        badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: tipoData == 0 ? 'var(--joy-palette-warning-plainColor)' : 'var(--joy-palette-primary-plainColor)' }} /> : undefined}
+      >
+        <PickersDay
+          {...other}
+          outsideCurrentMonth={outsideCurrentMonth}
+          day={day}
+        />
+      </Badge>
+    );
   };
 
 
@@ -121,15 +117,28 @@ export default function calendario() {
   };
 
   const buscar_data = () => {
-    reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
-      .then((response) => {
-        setReuniao(response);
-        if (reuniao.length == 0) {
-          setIndex(3);
-        } else {
-          setIndex(0);
-        }
-      });
+    if (tipoData == 1) {
+      reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
+        .then((response) => {
+          setReuniao(response);
+          if (reuniao.length > 0) {
+            setIndex(0);
+          }else{
+            setIndex(3);
+          }
+        });
+    } else if (tipoData == 0) {
+      reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
+        .then((response) => {
+          setReuniao(response);
+          if (reuniao.length > 0) {
+            setIndex(1);
+          }else{
+            setIndex(3);
+          }
+        });
+    }
+
   }
 
   useEffect(() => {
@@ -147,24 +156,35 @@ export default function calendario() {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DateCalendar
-          defaultValue={initialValue}
-          loading={isLoading}
-          onMonthChange={(newDate) => {
-            busca(newDate.month() + 1);
-          }}
-          renderLoading={() => <DayCalendarSkeleton />}
-          value={data}
-          onChange={(newDate) => { setData(newDate); }}
-          slots={{
-            day: ServerDay,
-          }}
-          slotProps={{
-            day: {
-              highlightedDays: diass
-            } as any,
-          }}
-        />
+        <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'end' }}>
+          <DateCalendar
+            defaultValue={initialValue}
+            loading={isLoading}
+            onMonthChange={(newDate) => {
+              busca(newDate.month() + 1);
+            }}
+            renderLoading={() => <DayCalendarSkeleton />}
+            value={data}
+            onChange={(newDate) => { setData(newDate); }}
+            slots={{
+              day: ServerDay,
+            }}
+            slotProps={{
+              day: {
+                highlightedDays: diass
+              } as any,
+            }}
+          />
+          <Box sx={{ position: 'absolute', right: 18, bottom: 10, display: 'flex', flexDirection: 'row', alignItems: 'end', gap: 2, justifyContent: 'center' }}>
+            <Select value={tipoData} onChange={(_, v) => {setTipoData(v ? v : 0); setIndex(tipoData); buscar_data(); }} sx={{ minHeight: 20, fontSize: '14px', mb: 0.5 }} color={tipoData == 0 ? 'warning' : 'primary'}>
+              <Option value={0} sx={{ fontSize: '14px' }} color='warning'>Processos</Option>
+              <Option value={1} sx={{ fontSize: '14px' }} color='primary'>Reuniões</Option>
+            </Select>
+            <Typography level="body-sm" aria-describedby="card-description" mb={1}>
+              Reuniões: {diass.length}
+            </Typography>
+          </Box>
+        </Box>
       </LocalizationProvider>
 
 
@@ -218,9 +238,9 @@ export default function calendario() {
               disableIndicator
               orientation="vertical"
               {...(index === 0 && { color: colors[0] })}
-              {...(index == 3 && { 'disabled': true })}
+              {...(tipoData == 0 && { 'disabled': true })}
             >
-              <ListDecoration valor={index == 0 ? reuniao.length : 0} tipo={1} />
+              <ListDecoration valor={tipoData == 1 ? reuniao.length : 0} tipo={1} />
               Reuniões
             </Tab>
             <Tab
@@ -228,9 +248,9 @@ export default function calendario() {
               orientation="vertical"
               {...(index === 1 && { color: colors[1] })}
               sx={{ ml: 2 }}
-              {...(diasPocessos.length == 0 && { 'disabled': true })}
+              {...(tipoData == 1 && { 'disabled': true })}
             >
-              <ListDecoration valor={0} tipo={2} />
+              <ListDecoration valor={tipoData == 0 ? reuniao.length : 0} tipo={2} />
               Processos
             </Tab>
           </TabList>
@@ -248,7 +268,7 @@ export default function calendario() {
             sx={{ flexGrow: 1 }}
           >
             {reuniao && reuniao.length > 0 ? reuniao.map((reuniao: any) => (
-              index === 0 ?
+              index === 0  ?
                 <Grid key={index}>
                   <Card
                     variant="outlined"
@@ -287,7 +307,45 @@ export default function calendario() {
                     </CardContent>
                   </Card>
                 </Grid>
-                : ''
+                :
+                <Grid key={index}>
+                  <Card
+                    variant="outlined"
+                    orientation="horizontal"
+                    sx={{
+                      ml: 2,
+                      mt: 2,
+                      transition: '0s',
+                      '&:hover': { boxShadow: 'md' },
+                      boxShadow: 'sm',
+                      maxHeight: '60px',
+                      paddingTop: 1,
+                    }}
+                  >
+                    <CircleIcon sx={{ width: '20px', color: 'var(--joy-palette-warning-plainColor)' }} />
+                    <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
+                      <Sheet>
+                        <Typography level="title-lg" id="card-description" key={reuniao.id}>
+                          {reuniao.inicial.sei ? reuniao.inicial.sei : reuniao.inicial.aprova_digital}
+                        </Typography>
+                        <Typography level="body-sm" aria-describedby="card-description" mb={1}>
+                          {reuniao.inicial.processo_fisico}
+                        </Typography>
+                      </Sheet>
+                      <Chip
+                        component={Link}
+                        underline='none'
+                        href={'/inicial/detalhes/' + reuniao.inicial_id}
+                        variant="outlined"
+                        color="warning"
+                        size="sm"
+                        sx={{ mt: 1 }}
+                      >
+                        Clique para ir ao inicial
+                      </Chip>
+                    </CardContent>
+                  </Card>
+                </Grid>
             )) :
               <Grid key={index}>
                 <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color="primary" variant="plain" >
