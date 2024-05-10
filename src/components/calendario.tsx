@@ -87,20 +87,24 @@ export default function calendario() {
     const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
     const isSelected = !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
 
-    return (
-      <Badge
-        key={props.day.toString()}
-        overlap="circular"
-        badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: 'var(--joy-palette-primary-plainColor)' }} /> : undefined}
-      >
-        <PickersDay
-          {...other}
-          outsideCurrentMonth={outsideCurrentMonth}
-          day={day}
-        />
-      </Badge>
-    );
+    for (let d = 0; d < diass.length; d++) {
+      const element = diass[d];
+      return (
+        <Badge
+          key={props.day.toString()}
+          overlap="circular"
+          badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: element === 10 ? 'var(--joy-palette-primary-plainColor)' : 'var(--joy-palette-warning-plainColor)' }} /> : undefined}
+        >
+          <PickersDay
+            {...other}
+            outsideCurrentMonth={outsideCurrentMonth}
+            day={day}
+          />
+        </Badge>
+      );
+    };
   };
+
 
   const requestAbortController = useRef<AbortController | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -216,7 +220,7 @@ export default function calendario() {
               {...(index === 0 && { color: colors[0] })}
               {...(index == 3 && { 'disabled': true })}
             >
-              <ListDecoration valor={index == 0 ? reuniao.length : diass.length} tipo={1} />
+              <ListDecoration valor={index == 0 ? reuniao.length : 0} tipo={1} />
               Reuniões
             </Tab>
             <Tab
@@ -284,12 +288,12 @@ export default function calendario() {
                   </Card>
                 </Grid>
                 : ''
-            )) : 
-            <Grid key={index}>
+            )) :
+              <Grid key={index}>
                 <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color="primary" variant="plain" >
                   SEM COMPROMISSOS
                 </Chip>
-            </Grid>}
+              </Grid>}
           </Grid>
         </Sheet>
       </Box>
