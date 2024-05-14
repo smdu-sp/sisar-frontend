@@ -123,7 +123,7 @@ export default function calendario() {
           setReuniao(response);
           if (reuniao.length > 0) {
             setIndex(0);
-          }else{
+          } else {
             setIndex(3);
           }
         });
@@ -133,7 +133,7 @@ export default function calendario() {
           setReuniao(response);
           if (reuniao.length > 0) {
             setIndex(1);
-          }else{
+          } else {
             setIndex(3);
           }
         });
@@ -176,7 +176,7 @@ export default function calendario() {
             }}
           />
           <Box sx={{ position: 'absolute', right: 18, bottom: 10, display: 'flex', flexDirection: 'row', alignItems: 'end', gap: 2, justifyContent: 'center' }}>
-            <Select value={tipoData} onChange={(_, v) => {setTipoData(v ? v : 0); setIndex(tipoData); buscar_data(); }} sx={{ minHeight: 20, fontSize: '14px', mb: 0.5 }} color={tipoData == 0 ? 'warning' : 'primary'}>
+            <Select value={tipoData} onChange={(_, v) => { setTipoData(v ? v : 0); setIndex(tipoData); buscar_data(); }} sx={{ minHeight: 20, fontSize: '14px', mb: 0.5 }} color={tipoData == 0 ? 'warning' : 'primary'}>
               <Option value={0} sx={{ fontSize: '14px' }} color='warning'>Processos</Option>
               <Option value={1} sx={{ fontSize: '14px' }} color='primary'>Reuniões</Option>
             </Select>
@@ -186,10 +186,6 @@ export default function calendario() {
           </Box>
         </Box>
       </LocalizationProvider>
-
-
-
-
       <Box
         sx={{
           position: 'relative',
@@ -265,17 +261,18 @@ export default function calendario() {
             container
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 2, sm: 8, md: 12 }}
-            sx={{ flexGrow: 1 }}
+            sx={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 2 }}
           >
-            {reuniao && reuniao.length > 0 ? reuniao.map((reuniao: any) => (
-              index === 0  ?
-                <Grid key={index}>
+            <Grid key={index} sx={{ maxHeight: '60px', p: 0, mt: 3 }}>
+
+              {reuniao && reuniao.length > 0 ? reuniao.map((reuniao: any) => (
+                index === 0 ?
                   <Card
                     variant="outlined"
                     orientation="horizontal"
                     sx={{
-                      ml: 2,
-                      mt: 2,
+                      ml: 3.5,
+                      mt: 1.5,
                       transition: '0s',
                       '&:hover': { boxShadow: 'md' },
                       boxShadow: 'sm',
@@ -306,22 +303,22 @@ export default function calendario() {
                       </Chip>
                     </CardContent>
                   </Card>
-                </Grid>
-                :
-                <Grid key={index}>
+                  :
+
                   <Card
                     variant="outlined"
                     orientation="horizontal"
                     sx={{
-                      ml: 2,
-                      mt: 2,
-                      transition: '0s',
+                      ml: 3.5,
+                      mt: 1.5,
                       '&:hover': { boxShadow: 'md' },
                       boxShadow: 'sm',
                       maxHeight: '60px',
                       paddingTop: 1,
+                      
                     }}
                   >
+
                     <CircleIcon sx={{ width: '20px', color: 'var(--joy-palette-warning-plainColor)' }} />
                     <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
                       <Sheet>
@@ -345,13 +342,13 @@ export default function calendario() {
                       </Chip>
                     </CardContent>
                   </Card>
-                </Grid>
-            )) :
-              <Grid key={index}>
-                <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color="primary" variant="plain" >
-                  SEM COMPROMISSOS
-                </Chip>
-              </Grid>}
+              )) :
+                <Grid key={index}>
+                  <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color="primary" variant="plain" >
+                    SEM COMPROMISSOS
+                  </Chip>
+                </Grid>}
+            </Grid>
           </Grid>
         </Sheet>
       </Box>
