@@ -122,6 +122,21 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
         return value.replace(/(\d{0,8})(\d{0,2})(\d{0,3})/, '$1-$2-SP-$3');
     }
 
+    function formatarFisico(value: string): string {
+    // 1111-1-111-111-1
+    if (!value) return value;
+    const onlyNumbers = value.replace(/\D/g, '').substring(0, 12);
+    if (onlyNumbers.length <= 4)
+        return onlyNumbers.replace(/(\d{0,4})/, '$1');
+    if (onlyNumbers.length <= 5)
+        return onlyNumbers.replace(/(\d{0,4})(\d{0,1})/, '$1-$2');
+    if (onlyNumbers.length <= 8)
+        return onlyNumbers.replace(/(\d{0,4})(\d{0,1})(\d{0,3})/, '$1-$2.$3');
+    if (onlyNumbers.length <= 11)
+        return onlyNumbers.replace(/(\d{0,4})(\d{0,1})(\d{0,3})(\d{0,3})/, '$1-$2.$3.$4');
+    return onlyNumbers.replace(/(\d{0,4})(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,1})/, '$1-$2.$3.$4-$5');}
+
+
     function validaDigitoSei(sei: string): boolean {
         var valido = false;
         sei = sei.replace(/\D/g, '').substring(0, 16);
@@ -371,7 +386,11 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                 placeholder="Processo Físico"
                                 type="text"
                                 value={processo_fisico}
-                                onChange={e => setProcesso_fisico(e.target.value)}
+                                onChange={e => {
+                                    var fisico = e.target.value;
+                                    if (fisico.length > 0) fisico = formatarFisico(e.target.value);
+                                    setProcesso_fisico(fisico && fisico);                                    
+                                }}                                
                                 required={inicial ? false : true}
                             />
                         </FormControl>
