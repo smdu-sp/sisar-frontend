@@ -1,7 +1,7 @@
 'use client'
 
 import { SyntheticEvent, useContext, useEffect, useState } from 'react';
-import { Button, Sheet, FormControl, Input, SvgIcon, IconButton } from '@mui/joy';
+import { Button, Sheet, FormControl, Input, SvgIcon, IconButton, CircularProgress } from '@mui/joy';
 import Image from 'next/image';
 import logo from '@/assets/logo.png';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -21,6 +21,7 @@ export default function Login() {
   const { setAlert } = useContext(AlertsContext);
   const [login, setLogin] = useState<string>('');
   const [senha, setSenha] = useState<string>('');
+  const [loginSuccess, setLoginSuccess] = useState<boolean>(false);
   const [mostraSenha, setMostraSenha] = useState<boolean>(false);
 
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function Login() {
       redirect: false
     });
     if (result?.error) {
+      setLoginSuccess(false);
       setAlert('Credenciais incorretas!', 'Tente novamente!', 'danger', 5000, Cancel);
       return;
     }
@@ -122,10 +124,12 @@ export default function Login() {
               />
             </FormControl>
             <Button 
-              sx={{mt: 1}}
+              sx={{mt: 1, pl: loginSuccess == true ? 6.8 : 3}}
               size="lg"
               type='submit'
-            >Entrar</Button>
+              onClick={(e) => setLoginSuccess(true)}
+              endDecorator={loginSuccess === true ? <CircularProgress size="sm" /> : null}
+            >{loginSuccess === true ? 'Entrando...' : 'Entrar'}</Button>
         </Sheet>
       </form>
     </>
