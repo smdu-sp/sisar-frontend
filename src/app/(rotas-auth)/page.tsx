@@ -2,13 +2,13 @@
 
 import Content from '@/components/Content';
 import * as React from 'react';
-import { Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, IconButton, Tab, TabList, TabPanel, Table, Tabs, tabClasses } from '@mui/joy';
+import { Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormLabel, IconButton, Input, Modal, ModalDialog, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
 import { useCallback, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Add } from '@mui/icons-material';
+import { Add, Check } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
 import dayjs, { Dayjs } from 'dayjs';
 import Badge from '@mui/material/Badge';
@@ -24,6 +24,7 @@ import { Card, CardContent, Grid, Option, Select, Sheet, Typography } from '@mui
 import Box from '@mui/joy/Box';
 import CircleIcon from '@mui/icons-material/RadioButtonCheckedRounded';
 import Link from '@mui/joy/Link';
+import { AlertsContext } from '@/providers/alertsProvider';
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -41,22 +42,28 @@ export default function Home() {
   const colors = ['primary', 'warning', 'success', 'success'] as const;
   const [reuniao, setReuniao] = useState([]);
   const [tipoData, setTipoData] = useState(0);
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [inicial, setInicial] = useState('');
+  const [dataRemarcacao, setDataRemarcacao] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
+  const [motivo, setMotivo] = useState('');
   const router = useRouter();
+  const { setAlert } = React.useContext(AlertsContext);
+
+
 
   const busca = (mes: any) => {
     reunioes.buscarPorMesAno(mes.toString(), data.year().toString())
       .then((response) => {
         if (Array.isArray(response)) {
-          const diasArray = response
-            .map((meeting: any) => {
-              if (meeting.data_reuniao) {
-                const dia = parseInt(meeting.data_reuniao.split('T')[0].split('-')[2]);
-                return dia;
+          for (let i = 0; i < response.length; i++) {
+            setDias(prevDias => {
+              if (response[i].nova_data_reuniao != null) {
+                return [...prevDias, parseInt(response[i].nova_data_reuniao.toString().split("T")[0].split("-")[2])];
+              } else {
+                return [...prevDias, parseInt(response[i].data_reuniao.toString().split("T")[0].split("-")[2])];
               }
-              return null;
-            })
-            .filter((dia: any): dia is number => dia !== null);
-          setDias(diasArray);
+            });
+          }
         } else {
           setDias([]);
         }
@@ -117,21 +124,13 @@ export default function Home() {
       reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
         .then((response) => {
           setReuniao(response);
-          if (reuniao.length > 0) {
-            setIndex(0);
-          } else {
-            setIndex(3);
-          }
+          setIndex(0);
         });
     } else if (tipoData == 0) {
       reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
         .then((response) => {
           setReuniao(response);
-          if (reuniao.length > 0) {
-            setIndex(1);
-          } else {
-            setIndex(3);
-          }
+          setIndex(1);
         });
     }
 
@@ -146,6 +145,20 @@ export default function Home() {
     },
     [searchParams]
   );
+
+  const reagendarReuniao = (id: string) => {
+    const dataRemak = new Date(dataRemarcacao.valueOf());
+    reunioes.reagendarReuniao(id, dataRemak, motivo).then((response) => {
+      if (response) {
+        setOpen(false);
+        setMotivo('');
+        setDias([]);
+        setDataRemarcacao(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
+        busca(new Date(dataRemarcacao.valueOf()).toLocaleDateString('pt-BR').split('/')[1]);
+        setAlert('Reagendação feita', 'Reunião reagendada com sucesso!', 'success', 3000, Check);
+      }
+    })
+  }
 
   const buscaIniciais = async () => {
     inicialServices.buscarTudo(1, 10)
@@ -189,10 +202,13 @@ export default function Home() {
     buscaIniciais();
     fetchHighlightedDays(initialValue);
     busca(data.month() + 1);
+  }, [pagina, limite, index]);
+
+  useEffect(() => {
     var datacard = data.year() + '-' + (data.month() + 1) + '-' + data.date();
     setDataCard(new Date(datacard).toLocaleDateString('pt-BR'));
     buscar_data();
-  }, [pagina, limite, data, index, reuniao.length, dataCard]);
+  }, [data]);
 
   return (
     <Content
@@ -214,15 +230,17 @@ export default function Home() {
               onChange={(newDate) => { setData(newDate); }}
               slots={{
                 day: ServerDay,
+
               }}
+
               slotProps={{
                 day: {
-                  highlightedDays: diass
+                  highlightedDays: diass,
                 } as any,
               }}
             />
             <Box sx={{ position: 'absolute', right: 18, bottom: 10, display: 'flex', flexDirection: 'row', alignItems: 'end', gap: 2, justifyContent: 'center' }}>
-              <Select value={tipoData} onChange={(_, v) => { setTipoData(v ? v : 0); setIndex(tipoData); buscar_data(); }} sx={{ minHeight: 20, fontSize: '14px', mb: 0.5 }} color={tipoData == 0 ? 'warning' : 'primary'}>
+              <Select value={tipoData} onChange={(_, v) => { setTipoData(v ? v : 0); setIndex(tipoData); }} sx={{ minHeight: 20, fontSize: '14px', mb: 0.5 }} color={tipoData == 0 ? 'warning' : 'primary'}>
                 <Option value={0} sx={{ fontSize: '14px' }} color='warning'>Processos</Option>
                 <Option value={1} sx={{ fontSize: '14px' }} color='primary'>Reuniões</Option>
               </Select>
@@ -238,7 +256,6 @@ export default function Home() {
             flexGrow: 1,
             mx: 2,
             borderRadius: '12px',
-            transition: '0.2s',
             bgcolor: index === 3 || reuniao.length == 0 ? 'background.level3' : `${colors[index]}.500`,
             maxWidth: '900px',
           }}
@@ -260,7 +277,6 @@ export default function Home() {
               [`& .${tabClasses.root}`]: {
                 py: 1,
                 flex: 1,
-                transition: '0.3s',
                 fontWeight: 'md',
                 fontSize: 'md',
                 [`&:not(.${tabClasses.selected}):not(:hover)`]: {
@@ -318,7 +334,6 @@ export default function Home() {
                       sx={{
                         ml: 2,
                         mt: 2,
-                        transition: '0s',
                         '&:hover': { boxShadow: 'md' },
                         boxShadow: 'sm',
                         maxHeight: '60px',
@@ -326,7 +341,7 @@ export default function Home() {
                       }}
                     >
                       <CircleIcon sx={{ width: '20px', color: 'var(--joy-palette-primary-plainColor)' }} />
-                      <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
+                      <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                         <Sheet>
                           <Typography level="title-lg" id="card-description" key={reuniao.id}>
                             {reuniao.inicial.sei ? reuniao.inicial.sei : reuniao.inicial.aprova_digital}
@@ -342,10 +357,51 @@ export default function Home() {
                           variant="outlined"
                           color="primary"
                           size="sm"
+                          sx={{ mt: 1, ml: 3 }}
+                        >
+                          Ir ao inicial
+                        </Chip>
+                        <Chip
+                          component={Link}
+                          underline='none'
+                          onClick={() => { setOpen(true); setInicial(reuniao.inicial.sei); console.log(reuniao.id) }}
+                          variant="outlined"
+                          color="success"
+                          size="sm"
                           sx={{ mt: 1 }}
                         >
-                          Clique para ir ao inicial
+                          Reagendar
                         </Chip>
+                        <Modal open={open} onClose={() => setOpen(false)}>
+                          <ModalDialog>
+                            <DialogTitle>Reagendar Reunião</DialogTitle>
+                            <DialogContent>{inicial}</DialogContent>
+                            <form
+                              onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
+                                event.preventDefault();
+                                setOpen(false);
+                              }}
+                            >
+                              <Stack spacing={2}>
+                                <FormControl>
+                                  <FormLabel>Data Reunião</FormLabel>
+                                  <Chip color='primary' variant='soft' sx={{ fontSize: '19px', color: 'neutral.softActiveColor' }}>{dataCard}</Chip>
+                                </FormControl>
+                                <FormControl>
+                                  <FormLabel>Nova data</FormLabel>
+                                  <Input required type='date' value={dataRemarcacao.format('YYYY-MM-DD')} onChange={(e) => {
+                                    setDataRemarcacao(dayjs(e.target.value));
+                                  }} />
+                                </FormControl>
+                                <FormControl>
+                                  <FormLabel>Motivo</FormLabel>
+                                  <Textarea required minRows={2} maxRows={5} value={motivo} onChange={(e) => setMotivo(e.target.value)} />
+                                </FormControl>
+                                <Button onClick={() => reagendarReuniao(reuniao.id)}>Alterar</Button>
+                              </Stack>
+                            </form>
+                          </ModalDialog>
+                        </Modal>
                       </CardContent>
                     </Card>
                   </Grid>
@@ -357,7 +413,6 @@ export default function Home() {
                       sx={{
                         ml: 2,
                         mt: 2,
-                        transition: '0s',
                         '&:hover': { boxShadow: 'md' },
                         boxShadow: 'sm',
                         maxHeight: '60px',
@@ -365,7 +420,7 @@ export default function Home() {
                       }}
                     >
                       <CircleIcon sx={{ width: '20px', color: 'var(--joy-palette-warning-plainColor)' }} />
-                      <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
+                      <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                         <Sheet>
                           <Typography level="title-lg" id="card-description" key={reuniao.id}>
                             {reuniao.inicial.sei ? reuniao.inicial.sei : reuniao.inicial.aprova_digital}
@@ -381,13 +436,14 @@ export default function Home() {
                           variant="outlined"
                           color="warning"
                           size="sm"
-                          sx={{ mt: 1 }}
+                          sx={{ mt: 1, ml: 3 }}
                         >
-                          Clique para ir ao inicial
+                          Ir ao inicial
                         </Chip>
                       </CardContent>
                     </Card>
                   </Grid>
+
               )) :
                 <Grid key={index}>
                   <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color="primary" variant="plain" >

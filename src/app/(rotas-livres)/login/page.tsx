@@ -124,11 +124,11 @@ export default function Login() {
               />
             </FormControl>
             <Button 
-              sx={{mt: 1, pl: loginSuccess == true ? 6.8 : 3}}
+              sx={{mt: 1, pr: loginSuccess == true ? 6.8 : 3}}
               size="lg"
               type='submit'
               onClick={(e) => setLoginSuccess(true)}
-              endDecorator={loginSuccess === true ? <CircularProgress size="sm" /> : null}
+              startDecorator={loginSuccess === true ? <CircularProgress color="primary" size="sm" /> : null}
             >{loginSuccess === true ? 'Entrando...' : 'Entrar'}</Button>
         </Sheet>
       </form>

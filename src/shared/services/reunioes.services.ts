@@ -47,4 +47,23 @@ async function buscarPorData(data: string){
     return reunoes;
 }
 
-export { buscarPorMesAno, buscarPorData }
+async function reagendarReuniao(id: string, data: Date, motivo: string) {
+    const session = await getServerSession(authOptions);
+    const reunoes = await fetch(`${baseURL}reunioes/atualizar-data/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({
+            nova_data_reuniao: data,
+            justificativa_remarcacao: motivo
+        })
+    }).then((response) => {
+        if (response.status === 401) Logout();
+        return response.json();
+    })
+    return reunoes;
+}
+
+export { buscarPorMesAno, buscarPorData, reagendarReuniao }
