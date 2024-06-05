@@ -16,15 +16,20 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+
 import * as reunioes from '@/shared/services/reunioes.services';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import ListDecoration from '../../components/ListDecoration';
 import Icon from '@mui/material/Icon';;
 import { Card, CardContent, Grid, Option, Select, Sheet, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
+
 import CircleIcon from '@mui/icons-material/RadioButtonCheckedRounded';
 import Link from '@mui/joy/Link';
 import { AlertsContext } from '@/providers/alertsProvider';
+import 'dayjs/locale/pt-br'; // Importe a localização desejada
+
+dayjs.locale('pt-br');
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -48,7 +53,6 @@ export default function Home() {
   const [motivo, setMotivo] = useState('');
   const router = useRouter();
   const { setAlert } = React.useContext(AlertsContext);
-
 
 
   const busca = (mes: any) => {
@@ -89,11 +93,12 @@ export default function Home() {
   const ServerDay = (props: PickersDayProps<Dayjs> & { highlightedDays?: number[], projetosDay?: number[] }) => {
     const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
     const isSelected = !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
+    const color = 'success';
     return (
       <Badge
         key={props.day.toString()}
         overlap="circular"
-        badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: tipoData == 0 ? 'var(--joy-palette-warning-plainColor)' : 'var(--joy-palette-primary-plainColor)' }} /> : undefined}
+        badgeContent={isSelected ? <Icon component={CircleIcon}sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: tipoData == 0 ? 'var(--joy-palette-warning-plainColor)' : 'var(--joy-palette-primary-plainColor)' }} /> : undefined}
       >
         <PickersDay
           {...other}
@@ -218,7 +223,7 @@ export default function Home() {
     >
 
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <LocalizationProvider dateAdapter={AdapterDayjs} >
           <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'end' }}>
             <DateCalendar
               defaultValue={initialValue}
@@ -231,9 +236,8 @@ export default function Home() {
               onChange={(newDate) => { setData(newDate); }}
               slots={{
                 day: ServerDay,
-
               }}
-
+              reduceAnimations={false}
               slotProps={{
                 day: {
                   highlightedDays: diass,
