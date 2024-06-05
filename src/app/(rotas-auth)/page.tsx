@@ -41,7 +41,7 @@ export default function Home() {
   const [index, setIndex] = useState(3);
   const colors = ['primary', 'warning', 'success', 'success'] as const;
   const [reuniao, setReuniao] = useState([]);
-  const [tipoData, setTipoData] = useState(0);
+  const [tipoData, setTipoData] = useState(1);
   const [open, setOpen] = React.useState<boolean>(false);
   const [inicial, setInicial] = useState('');
   const [dataRemarcacao, setDataRemarcacao] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
@@ -153,6 +153,7 @@ export default function Home() {
         setOpen(false);
         setMotivo('');
         setDias([]);
+        buscar_data();
         setDataRemarcacao(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
         busca(new Date(dataRemarcacao.valueOf()).toLocaleDateString('pt-BR').split('/')[1]);
         setAlert('Reagendação feita', 'Reunião reagendada com sucesso!', 'success', 3000, Check);
@@ -241,8 +242,8 @@ export default function Home() {
             />
             <Box sx={{ position: 'absolute', right: 18, bottom: 10, display: 'flex', flexDirection: 'row', alignItems: 'end', gap: 2, justifyContent: 'center' }}>
               <Select value={tipoData} onChange={(_, v) => { setTipoData(v ? v : 0); setIndex(tipoData); }} sx={{ minHeight: 20, fontSize: '14px', mb: 0.5 }} color={tipoData == 0 ? 'warning' : 'primary'}>
-                <Option value={0} sx={{ fontSize: '14px' }} color='warning'>Processos</Option>
                 <Option value={1} sx={{ fontSize: '14px' }} color='primary'>Reuniões</Option>
+                <Option value={0} sx={{ fontSize: '14px' }} color='warning'>Processos</Option>
               </Select>
               <Typography level="body-sm" aria-describedby="card-description" mb={1}>
                 Reuniões: {diass.length}
