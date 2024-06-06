@@ -7,12 +7,13 @@ import { Abc, Business, Check, Tag } from "@mui/icons-material";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { IUnidade } from "@/shared/services/unidade.services";
 import { AlertsContext } from "@/providers/alertsProvider";
-import { buscarPorId } from "@/shared/services/alvara-tipo.services";
+import * as inicialService from "@/shared/services/inicial.services";
+import * as admissibilidadeService from "@/shared/services/admissibilidade.services";
 
 
 export default function UnidadeDetalhes(props: { params: { id: string } }) {
     const [idUnidade, setIdUnidade] = useState<string>('');
-    const [status, setStatus] = useState<string>('true');
+    const [status, setStatus] = useState<number>(0);
     const [processo, setProcesso] = useState('');
     const [sigla, setSigla] = useState<string>('');
     const searchParams = useSearchParams();
@@ -35,9 +36,19 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
     }
 
     const buscarDados = () => {
-        buscarPorId(id).then((res) => {
-            setProcesso(res.id);
+        admissibilidadeService.buscarId(id).then((res) => {
+            setProcesso(res.inicial_id.toString());
         })
+    }
+
+
+    const atualizar = () => {
+        admissibilidadeService.atualizarId(parseInt(processo), status)
+        .then((res) => {
+            console.log(res);
+            router.push('/admissibilidade');
+        })
+
     }
 
     useEffect(() => {
@@ -92,8 +103,8 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                                     placeholder="Status"
                                     startDecorator={<Business />}
                                 >
-                                    <Option value={'true'}>Ativo</Option>
-                                    <Option value={'false'}>Inativo</Option>
+                                    <Option value={0}>Adimitir</Option>
+                                    <Option value={2}>Inadimitir</Option>
                                 </Select>
                             </FormControl>
                         </Stack>
@@ -103,7 +114,7 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                             <Button size="sm" variant="outlined" color="neutral" onClick={() => router.back()}>
                                 Cancelar
                             </Button>
-                            <Button size="sm" variant="solid" color="primary">
+                            <Button size="sm" variant="solid" color="primary" onClick={atualizar}>
                                 Salvar
                             </Button>
                         </CardActions>

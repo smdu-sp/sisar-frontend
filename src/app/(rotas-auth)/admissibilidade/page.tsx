@@ -4,6 +4,8 @@ import Content from '@/components/Content';
 import { Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, IconButton, Tab, TabList, TabPanel, Table, Tabs, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
+import * as admissibilidadeServices from '@/shared/services/admissibilidade.services';
+import { IAdmissibilidade, IPaginadoAdmissibilidade } from '@/shared/services/admissibilidade.services';
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
 import { useCallback, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -12,7 +14,7 @@ import { OverridableStringUnion } from '@mui/types';
 export default function Admissibilidade() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const [iniciais, setIniciais] = useState<IInicial[]>([]);
+  const [admissibilidade, setAdmissibilidade] = useState<IAdmissibilidade[]>([]);
   const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
@@ -33,12 +35,12 @@ export default function Admissibilidade() {
   );
 
   const buscaIniciais = async () => {
-    inicialServices.buscarTudo(1, 10)
-      .then((response: IPaginatedInicial) => {
+    admissibilidadeServices.buscarTudo(1, 10)
+      .then((response: IPaginadoAdmissibilidade) => {
         setTotal(response.total);
         setPagina(response.pagina);
         setLimite(response.limite);
-        setIniciais(response.data);
+        setAdmissibilidade(response.data);
       });
   }
 
@@ -59,8 +61,8 @@ export default function Admissibilidade() {
 
   const status: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
     { label: 'Adimitido', color: 'success' },
-    { label: 'Inadimissível', color: 'danger' },
     { label: 'Aguardando', color: 'warning' },
+    { label: 'Inadimissível', color: 'danger' },
   ]
 
   const processo: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
@@ -114,37 +116,28 @@ export default function Admissibilidade() {
           <Table hoverRow sx={{ tableLayout: 'auto' }}>
             <thead>
               <tr>
-                <th>#</th>
-                <th>SEI</th>
-                <th title='Tipo de Requerimento'>Tipo Req.</th>
-                <th>Requerimento</th>
-                <th>Protocolo</th>
-                <th>Tipo de Alvará</th>
-                <th>Tipo de Processo</th>
-                <th style={{ textAlign: 'right' }}></th>
+                <th>Inicial ID</th>
+                <th>Data Envio</th>
+                <th>parecer</th>
+                <th>data criação</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {iniciais && iniciais.length > 0 ? iniciais.map((inicial: IInicial) => (
-                <tr onClick={() => router.push(`/admissibilidade/detalhes/${inicial.id}`)} key={inicial.id} style={{ cursor: 'pointer' }}>
-                  <td>{inicial.id}</td>
-                  <td>{inicial.sei}</td>
-                  <td>{inicial.tipo_requerimento}</td>
-                  <td>{inicial.requerimento}</td>
-                  <td>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
-                  <td>{inicial.alvara_tipo.nome}</td>
+              {admissibilidade && admissibilidade.length > 0 ? admissibilidade.map((admissibilidade: IAdmissibilidade) => (
+                <tr onClick={() => router.push(`/admissibilidade/detalhes/${admissibilidade.inicial_id}`)} key={admissibilidade.inicial_id} style={{ cursor: 'pointer' }}>
+                  <td>{admissibilidade.inicial_id}</td>
+                  <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
+                  <td>{admissibilidade.parecer === true ? 'true' : 'false'}</td>
+                  <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
                   <td>
-                    <Chip color={processo[inicial.tipo_processo].color}>
-                      {processo[inicial.tipo_processo].label}
-                    </Chip>
+                    {admissibilidade.status !== undefined && status[admissibilidade.status] && (
+                      <Chip color={status[admissibilidade.status].color}>
+                        {status[admissibilidade.status].label}
+                      </Chip>
+                    )}
                   </td>
-                  <td style={{ textAlign: 'right' }}></td>
-                  <td>
-                    <Chip color={status[inicial.status].color}>
-                      {status[inicial.status].label}
-                    </Chip>
-                  </td>
+
                 </tr>
               )) : <tr><td colSpan={9}>Nenhum cadastro inicial encontrado</td></tr>}
             </tbody>
@@ -165,40 +158,29 @@ export default function Admissibilidade() {
           <Table hoverRow sx={{ tableLayout: 'auto' }}>
             <thead>
               <tr>
-                <th>#</th>
-                <th>SEI</th>
-                <th title='Tipo de Requerimento'>Tipo Req.</th>
-                <th>Requerimento</th>
-                <th>Protocolo</th>
-                <th>Tipo de Alvará</th>
-                <th>Tipo de Processo</th>
-                <th style={{ textAlign: 'right' }}></th>
+                <th>Inicial ID</th>
+                <th>Data Envio</th>
+                <th>parecer</th>
+                <th>data criação</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {iniciais && iniciais.length > 0 ? iniciais.map((inicial: IInicial) => (
-                  inicial.status === 0 ?
-                    <tr onClick={() => router.push(`/admissibilidade/detalhes/${inicial.id}`)} key={inicial.id} style={{ cursor: 'pointer' }}>
-                      <td>{inicial.id}</td>
-                      <td>{inicial.sei}</td>
-                      <td>{inicial.tipo_requerimento}</td>
-                      <td>{inicial.requerimento}</td>
-                      <td>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
-                      <td>{inicial.alvara_tipo.nome}</td>
-                      <td>
-                        <Chip color={processo[inicial.tipo_processo].color}>
-                          {processo[inicial.tipo_processo].label}
-                        </Chip>
-                      </td>
-                      <td style={{ textAlign: 'right' }}></td>
-                      <td>
-                        <Chip color={status[inicial.status].color}>
-                          {status[inicial.status].label}
-                        </Chip>
-                      </td>
-                    </tr>
-                    : <tr><td colSpan={9}>Nenhum cadastro inicial encontrado</td></tr>
+              {admissibilidade && admissibilidade.length > 0 ? admissibilidade.map((admissibilidade: IAdmissibilidade) => (
+                <tr onClick={() => router.push(`/admissibilidade/detalhes/${admissibilidade.inicial_id}`)} key={admissibilidade.inicial_id} style={{ cursor: 'pointer' }}>
+                  <td>{admissibilidade.inicial_id}</td>
+                  <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
+                  <td>{admissibilidade.parecer === true ? 'Admitido' : 'Rejeitado'}</td>
+                  <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
+                  <td>
+                    {admissibilidade.status !== undefined && status[admissibilidade.status] && (
+                      <Chip color={status[admissibilidade.status].color}>
+                        {status[admissibilidade.status].label}
+                      </Chip>
+                    )}
+                  </td>
+
+                </tr>
               )) : <tr><td colSpan={9}>Nenhum cadastro inicial encontrado</td></tr>}
             </tbody>
           </Table>

@@ -1,6 +1,7 @@
 'use client'
 
 import * as inicialServices from "@/shared/services/inicial.services";
+import * as admissibilidadeServices from "@/shared/services/admissibilidade.services";
 import { ICreateInterfaces, IInicial } from "@/shared/services/inicial.services";
 import { Add, Cancel, Check, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
 import { Alert, Button, Card, Checkbox, Divider, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, Box, Chip } from "@mui/joy"
@@ -44,8 +45,11 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const [status, setStatus] = useState<number>(1);
     const [processo_fisico, setProcesso_fisico] = useState<string>('');
     const [data_protocolo, setData_protocolo] = useState<Date>(new Date());
+    const [inicial_id, setInicial_id] = useState<number>(inicial?.id || 0);
     const [obs, setObs] = useState<string>('');
     const decreto = true;
+    const parecer = true;
+
 
     const { setAlert } = useContext(AlertsContext);
 
@@ -70,8 +74,10 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                     if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
                         router.push(`/inicial/detalhes/${response.id}`);
+                        admissibilidadeServices.criar({ inicial_id: response.id, parecer, data_envio: response.envio_admissibilidade});
                     }
                 });
+
         if (inicial)
             inicialServices.atualizar(inicial.id, { decreto, sei, tipo_requerimento, requerimento, aprova_digital, tipo_processo, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, interfaces })
                 .then((response: IInicial) => {
@@ -123,18 +129,19 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     }
 
     function formatarFisico(value: string): string {
-    // 1111-1-111-111-1
-    if (!value) return value;
-    const onlyNumbers = value.replace(/\D/g, '').substring(0, 12);
-    if (onlyNumbers.length <= 4)
-        return onlyNumbers.replace(/(\d{0,4})/, '$1');
-    if (onlyNumbers.length <= 5)
-        return onlyNumbers.replace(/(\d{0,4})(\d{0,1})/, '$1-$2');
-    if (onlyNumbers.length <= 8)
-        return onlyNumbers.replace(/(\d{0,4})(\d{0,1})(\d{0,3})/, '$1-$2.$3');
-    if (onlyNumbers.length <= 11)
-        return onlyNumbers.replace(/(\d{0,4})(\d{0,1})(\d{0,3})(\d{0,3})/, '$1-$2.$3.$4');
-    return onlyNumbers.replace(/(\d{0,4})(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,1})/, '$1-$2.$3.$4-$5');}
+        // 1111-1-111-111-1
+        if (!value) return value;
+        const onlyNumbers = value.replace(/\D/g, '').substring(0, 12);
+        if (onlyNumbers.length <= 4)
+            return onlyNumbers.replace(/(\d{0,4})/, '$1');
+        if (onlyNumbers.length <= 5)
+            return onlyNumbers.replace(/(\d{0,4})(\d{0,1})/, '$1-$2');
+        if (onlyNumbers.length <= 8)
+            return onlyNumbers.replace(/(\d{0,4})(\d{0,1})(\d{0,3})/, '$1-$2.$3');
+        if (onlyNumbers.length <= 11)
+            return onlyNumbers.replace(/(\d{0,4})(\d{0,1})(\d{0,3})(\d{0,3})/, '$1-$2.$3.$4');
+        return onlyNumbers.replace(/(\d{0,4})(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,1})/, '$1-$2.$3.$4-$5');
+    }
 
 
     function validaDigitoSei(sei: string): boolean {
@@ -389,8 +396,8 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                 onChange={e => {
                                     var fisico = e.target.value;
                                     if (fisico.length > 0) fisico = formatarFisico(e.target.value);
-                                    setProcesso_fisico(fisico && fisico);                                    
-                                }}                                
+                                    setProcesso_fisico(fisico && fisico);
+                                }}
                                 required={inicial ? false : true}
                             />
                         </FormControl>
@@ -439,7 +446,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                         />
                     </Grid>
                     <Grid xs={12} container sx={{ display: tipo_processo === 1 ? 'none' : 'block' }}>
-                    <Grid xs={12}><Divider><Chip color="primary">Interfaces</Chip></Divider></Grid>
+                        <Grid xs={12}><Divider><Chip color="primary">Interfaces</Chip></Divider></Grid>
                         <Grid xs={12} container>
                             <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
                                 <Checkbox
@@ -610,36 +617,36 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                             </Alert>
                         </Grid>
                         {nums_sql.length > 0 &&
-                        <Grid xs={12}>
-                            <Table>
-                                <thead style={{ width: '100%' }}>
-                                    <tr>
-                                        <th colSpan={2} style={{ textAlign: 'center' }}>Nº SQL</th>
-                                    </tr>
-                                </thead>
-                                <tbody style={{ width: '100%', backgroundColor: '' }}>
-                                    {nums_sql?.map((num_sql, index) => (
-                                        <tr key={index}>
-                                            <td>{num_sql}</td>
-                                            <td style={{ textAlign: 'right' }}>
-                                                <IconButton
-                                                    color='danger'
-                                                    onClick={() => { removeRegister(index, num_sql) }}
-                                                >
-                                                    <Cancel />
-                                                </IconButton>
-                                            </td>
+                            <Grid xs={12}>
+                                <Table>
+                                    <thead style={{ width: '100%' }}>
+                                        <tr>
+                                            <th colSpan={2} style={{ textAlign: 'center' }}>Nº SQL</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
-                        </Grid>}
+                                    </thead>
+                                    <tbody style={{ width: '100%', backgroundColor: '' }}>
+                                        {nums_sql?.map((num_sql, index) => (
+                                            <tr key={index}>
+                                                <td>{num_sql}</td>
+                                                <td style={{ textAlign: 'right' }}>
+                                                    <IconButton
+                                                        color='danger'
+                                                        onClick={() => { removeRegister(index, num_sql) }}
+                                                    >
+                                                        <Cancel />
+                                                    </IconButton>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            </Grid>}
                     </Card>
-                    
+
                 </Grid>
             </Grid>
             <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                <Button size="sm" variant="outlined" color="neutral" onClick={() => {router.push(`/inicial`);}}>
+                <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/inicial`); }}>
                     Cancelar
                 </Button>
                 <Button size="sm" variant="solid" onClick={enviaDados} disabled={!validaDigitoSei(sei)}>
