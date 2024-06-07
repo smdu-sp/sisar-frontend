@@ -91,7 +91,7 @@ export interface ICreateInicial {
     data_protocolo: Date
     envio_admissibilidade?: Date
     alvara_tipo_id: string
-    tipo_processo: number
+    tipo_processo?: number
     obs?: string
     nums_sql?: string[]
     status?: number

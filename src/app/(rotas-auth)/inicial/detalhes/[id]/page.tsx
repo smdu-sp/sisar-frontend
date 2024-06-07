@@ -58,7 +58,7 @@ export default async function InicialDetalhes(props: any) {
                     <InicialTab inicial={inicial} />
                 </TabPanel>
                 {(inicial && inicial.status > 1) && <TabPanel value={1}>
-                    <AdmissibilidadeTab admissibilidade={admissibilidade} />
+                    <AdmissibilidadeTab inicial={inicial} admissibilidade={admissibilidade} />
                 </TabPanel>}
             </Tabs>
         </Content>
