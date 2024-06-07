@@ -7,6 +7,7 @@ import * as admissibilidadeServices from "@/shared/services/admissibilidade.serv
 import * as comum from "@/shared/services/comum.services";
 import { useRouter as useRouterNavigation } from "next/navigation";
 import { Box, Button, Checkbox, Chip, Divider, FormControl, FormLabel, Grid, Input, Option, Select } from "@mui/joy";
+import { Business } from "@mui/icons-material";
 
 
 export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inicial?: IInicial, admissibilidade?: IAdmissibilidade }) {
@@ -23,10 +24,22 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
     const [num_smt, setNum_smt] = useState<string>('');
     const [interface_svma, setInterface_svma] = useState<boolean>(false);
     const [num_svma, setNum_svma] = useState<string>('');
+    const [status, setStatus] = useState<number>(inicial?.status || 1);
+
+    const atualizar = () => {
+        if (admissibilidade) { // Check if admissibilidade is not undefined
+            admissibilidadeServices.atualizarId(admissibilidade.inicial_id, +status)
+                .then((res) => {
+                    console.log(res);
+                    router.push('/admissibilidade');
+                })
+        }
+    }
+
 
     return (
         <Box sx={{ p: 2 }}>
-            {admissibilidade &&(<>
+            {admissibilidade && (<>
                 <Grid xs={12}>
                     <Divider>
                         <Chip color="primary">Distribuição</Chip>
@@ -57,14 +70,31 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
 
                 </Grid>
             </>)}
-            <Grid xs={12}>
-                <FormControl>
-                    <FormLabel>Tipo de processo</FormLabel>
-                    <Select value={tipo_processo} id='tipo_processo' name='tipo_processo' placeholder='Tipo de processo' onChange={(_, v) => setTipo_processo(v ? v : 1)}>
-                        <Option value={1}>Próprio de SMUL</Option>
-                        <Option value={2}>Múltiplas interfaces</Option>
-                    </Select>
-                </FormControl>
+            <Grid xs={6}>
+                <Grid xs={6}>
+                    <FormControl>
+                        <FormLabel>Tipo de processo</FormLabel>
+                        <Select value={tipo_processo} id='tipo_processo' name='tipo_processo' placeholder='Tipo de processo' onChange={(_, v) => setTipo_processo(v ? v : 1)}>
+                            <Option value={1}>Próprio de SMUL</Option>
+                            <Option value={2}>Múltiplas interfaces</Option>
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid xs={6}>
+                    <FormControl sx={{ flexGrow: 1 }}>
+                        <FormLabel>Status</FormLabel>
+                        <Select
+                            value={status}
+                            onChange={(_, value) => value && setStatus(value)}
+                            size="sm"
+                            placeholder="Status"
+                        >
+                            <Option value='0'>Adimitir</Option>
+                            <Option value='2'>Inadimitir</Option>
+                            <Option value='3'>Em Reconseideração</Option>
+                        </Select>
+                    </FormControl>
+                </Grid>
             </Grid>
             <Grid xs={12} container sx={{ display: tipo_processo === 1 ? 'none' : 'block' }}>
                 <Grid xs={12}><Divider><Chip color="primary">Interfaces</Chip></Divider></Grid>
@@ -196,7 +226,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                 <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/admissibilidade`); }}>
                     Cancelar
                 </Button>
-                <Button size="sm" variant="solid">
+                <Button size="sm" variant="solid" onClick={() => { atualizar(); }}>
                     Salvar
                 </Button>
             </Grid>
