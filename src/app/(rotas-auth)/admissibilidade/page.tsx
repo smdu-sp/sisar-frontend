@@ -79,10 +79,10 @@ export default function Admissibilidade() {
   };
 
   const status: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
-    { label: 'Adimitidos', color: 'success' },
-    { label: 'Em adimissão', color: 'primary' },
-    { label: 'Inadimissível', color: 'danger' },
-    { label: 'Reconseideração', color: 'warning' },
+    { label: 'Admitido', color: 'success' },
+    { label: 'Em admissão', color: 'primary' },
+    { label: 'Inadmissível', color: 'danger' },
+    { label: 'Em Reconseideração', color: 'warning' },
   ]
 
   return (
