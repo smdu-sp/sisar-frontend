@@ -13,7 +13,7 @@ import * as admissibilidadeService from "@/shared/services/admissibilidade.servi
 
 export default function UnidadeDetalhes(props: { params: { id: string } }) {
     const [idUnidade, setIdUnidade] = useState<string>('');
-    const [status, setStatus] = useState<number>(0);
+    const [status, setStatus] = useState('0');
     const [processo, setProcesso] = useState('');
     const [sigla, setSigla] = useState<string>('');
     const searchParams = useSearchParams();
@@ -43,10 +43,10 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
 
 
     const atualizar = () => {
-        admissibilidadeService.atualizarId(parseInt(processo), status)
+        admissibilidadeService.atualizarId(parseInt(processo), +status)
         .then((res) => {
             console.log(res);
-            router.push('/admissibilidade');
+            router.push('/inicial/detalhes/1?admissibilidade=true');
         })
 
     }
@@ -103,8 +103,8 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                                     placeholder="Status"
                                     startDecorator={<Business />}
                                 >
-                                    <Option value={0}>Adimitir</Option>
-                                    <Option value={2}>Inadimitir</Option>
+                                    <Option value='0'>Adimitir</Option>
+                                    <Option value='2'>Inadimitir</Option>
                                 </Select>
                             </FormControl>
                         </Stack>

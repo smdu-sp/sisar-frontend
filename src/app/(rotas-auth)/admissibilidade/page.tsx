@@ -21,7 +21,7 @@ export default function Admissibilidade() {
   const router = useRouter();
 
   useEffect(() => {
-    buscaIniciais();
+    buscaAdimissibilidade();
   }, [pagina, limite]);
 
 
@@ -34,13 +34,14 @@ export default function Admissibilidade() {
     [searchParams]
   );
 
-  const buscaIniciais = async () => {
+  const buscaAdimissibilidade = async () => {
     admissibilidadeServices.buscarTudo(1, 10)
       .then((response: IPaginadoAdmissibilidade) => {
         setTotal(response.total);
         setPagina(response.pagina);
         setLimite(response.limite);
         setAdmissibilidade(response.data);
+        
       });
   }
 
@@ -125,7 +126,7 @@ export default function Admissibilidade() {
             </thead>
             <tbody>
               {admissibilidade && admissibilidade.length > 0 ? admissibilidade.map((admissibilidade: IAdmissibilidade) => (
-                <tr onClick={() => router.push(`/admissibilidade/detalhes/${admissibilidade.inicial_id}`)} key={admissibilidade.inicial_id} style={{ cursor: 'pointer' }}>
+                <tr onClick={() => router.push(`/inicial/detalhes/${admissibilidade.inicial_id}`)} key={admissibilidade.inicial_id} style={{ cursor: 'pointer' }}>
                   <td>{admissibilidade.inicial_id}</td>
                   <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
                   <td>{admissibilidade.parecer === true ? 'true' : 'false'}</td>
@@ -167,7 +168,7 @@ export default function Admissibilidade() {
             </thead>
             <tbody>
               {admissibilidade && admissibilidade.length > 0 ? admissibilidade.map((admissibilidade: IAdmissibilidade) => (
-                <tr onClick={() => router.push(`/admissibilidade/detalhes/${admissibilidade.inicial_id}`)} key={admissibilidade.inicial_id} style={{ cursor: 'pointer' }}>
+                <tr onClick={() => router.push(`/inicial/detalhes/${admissibilidade.inicial_id}`)} key={admissibilidade.inicial_id} style={{ cursor: 'pointer' }}>
                   <td>{admissibilidade.inicial_id}</td>
                   <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
                   <td>{admissibilidade.parecer === true ? 'Admitido' : 'Rejeitado'}</td>
