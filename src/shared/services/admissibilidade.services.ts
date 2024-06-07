@@ -135,10 +135,11 @@ const criar = async (dataCreate: ICreateAdmissibilidade) => {
 
 const buscarTudo = async (
     pagina: number,
-    limite: number
+    limite: number,
+    filtro: number
 ): Promise<IPaginadoAdmissibilidade> => {
     const session = await getServerSession(authOptions);
-    const admissibilidades = await fetch(`${baseURL}admissibilidade/buscar-tudo?pagina=${pagina}&limite=${limite}`, {
+    const admissibilidades = await fetch(`${baseURL}admissibilidade/buscar-tudo?pagina=${pagina}&limite=${limite}&filtro=${filtro}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
