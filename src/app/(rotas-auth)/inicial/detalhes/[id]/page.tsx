@@ -17,7 +17,7 @@ export default async function InicialDetalhes(props: any) {
             titulo={id ? `Processo #${id}` : 'Novo processo'}
             pagina='inicial'
             breadcrumbs={[{
-                label: 'Inicial',
+                label: 'Processos',
                 href: '/inicial'
             },{
                 label: 'Detalhes',
