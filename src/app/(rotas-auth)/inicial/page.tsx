@@ -72,10 +72,10 @@ export default function Inicial() {
 
   return (
     <Content 
-      titulo='Inicial'
+      titulo='Processos'
       pagina='inicial'
       breadcrumbs={[{
-        label: 'Inicial',
+        label: 'Processos',
         href: ''
       }]}
     >

@@ -22,7 +22,7 @@ export const menu: IMenu = {
             icon: Home,
         },
         {
-            title: 'Inicial',
+            title: 'Processos',
             href: '/inicial',
             name: 'inicial',
             icon: PlayArrow,
