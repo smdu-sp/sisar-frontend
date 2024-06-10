@@ -27,6 +27,7 @@ export interface IInicial {
     alvara_tipo_id: string
     alvara_tipo: IAlvaraTipo
     tipo_processo: number
+    pagamento: number
     obs?: string
     status: number
     iniciais_sqls?: IInicial_Sqls[]

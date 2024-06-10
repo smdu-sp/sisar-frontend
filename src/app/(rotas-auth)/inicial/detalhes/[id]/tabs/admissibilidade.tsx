@@ -13,7 +13,7 @@ import { Business } from "@mui/icons-material";
 export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inicial?: IInicial, admissibilidade?: IAdmissibilidade }) {
     const router = useRouterNavigation();
 
-    const [tipo_processo, setTipo_processo] = useState<number>(inicial?.tipo_processo || 1);
+    const [tipo_processo, setTipo_processo] = useState<number>(inicial?.tipo_processo || 0);
     const [interface_sehab, setInterface_sehab] = useState<boolean>(false);
     const [num_sehab, setNum_sehab] = useState<string>('');
     const [interface_siurb, setInterface_siurb] = useState<boolean>(false);
@@ -25,6 +25,15 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
     const [interface_svma, setInterface_svma] = useState<boolean>(false);
     const [num_svma, setNum_svma] = useState<string>('');
     const [status, setStatus] = useState<number>(inicial?.status || 1);
+    const [processoSei, setProcessoSei] = useState<string>('');
+    const [dataProtocolo, setDataProtocolo] = useState<Date>(new Date());
+    const [recebimento, setRecebimento] = useState<Date>(new Date());
+    const [tipoProcesso, setTipoProcesso] = useState<string>("0");
+    const [pagamento, setPagamento] = useState<string>('');
+    const [dataDecisao, setDataDecisao] = useState<Date>(new Date());
+    const [analise, setAnalise] = useState<string>('');
+    const [diasAnalise, setDiasAnalise] = useState<number>(0);
+    const [reuniao, setReuniao] = useState<Date>(new Date());
 
     const atualizar = () => {
         if (admissibilidade) { // Check if admissibilidade is not undefined
@@ -45,17 +54,39 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                         <Chip color="primary">Distribuição</Chip>
                     </Divider>
                 </Grid>
-                <Grid container xs={12} spacing={2} sx={{ p: 2, mb: 2 }}>
+                <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
                     <Grid xs={12} lg={6}>
                         <FormControl>
                             <FormLabel>Administrativo responsável</FormLabel>
-                            <Input value={admissibilidade.inicial_id} disabled />
+                            <Input value={admissibilidade.inicial_id} readOnly />
                         </FormControl>
                     </Grid>
                     <Grid xs={12} lg={6}>
                         <FormControl>
                             <FormLabel>Técnico responsável</FormLabel>
-                            <Input value={admissibilidade.inicial?.alvara_tipo_id} disabled />
+                            <Input value={admissibilidade.inicial?.alvara_tipo_id} readOnly />
+                        </FormControl>
+                    </Grid>
+                </Grid>
+                <Grid container xs={12} spacing={2} sx={{ p: 2, mb: 2 }}>
+                    <Grid xs={12} lg={6}>
+                        <FormControl>
+                            <FormLabel>Processo</FormLabel>
+                            <Input value={admissibilidade.inicial?.sei} readOnly />
+                        </FormControl>
+                    </Grid>
+                    <Grid xs={12} lg={6}>
+                        <FormControl sx={{ flexGrow: 1 }}>
+                            <FormLabel>Processo Sei</FormLabel>
+                            <Input value={processoSei} onChange={(e) => {
+                                var sehab = e.target.value;
+                                if (sehab.length > 0) sehab = comum.formatarSei(e.target.value);
+                                setProcessoSei(sehab && sehab);
+                            }}
+                                required={interface_sehab}
+                                error={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18}
+                                title={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18 ? 'SEI inválido' : ''}
+                            />
                         </FormControl>
                     </Grid>
                 </Grid>
@@ -70,17 +101,18 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
 
                 </Grid>
             </>)}
-            <Grid xs={6}>
-                <Grid xs={6}>
+
+            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
+                <Grid xs={12} lg={6}>
                     <FormControl>
-                        <FormLabel>Tipo de processo</FormLabel>
+                        <FormLabel>Multiplas interfaces</FormLabel>
                         <Select value={tipo_processo} id='tipo_processo' name='tipo_processo' placeholder='Tipo de processo' onChange={(_, v) => setTipo_processo(v ? v : 1)}>
                             <Option value={1}>Próprio de SMUL</Option>
                             <Option value={2}>Múltiplas interfaces</Option>
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid xs={6}>
+                <Grid xs={12} lg={6}>
                     <FormControl sx={{ flexGrow: 1 }}>
                         <FormLabel>Status</FormLabel>
                         <Select
@@ -96,9 +128,75 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                     </FormControl>
                 </Grid>
             </Grid>
+            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
+                <Grid xs={12} lg={6}>
+                </Grid>
+                <Grid xs={12} lg={6}>
+                    <FormControl>
+                        <FormLabel>Recebimento Processo</FormLabel>
+                        <Input type="date" value={recebimento?.toISOString()} onChange={(e) => setRecebimento(new Date(e.target.value))} />
+                    </FormControl>
+                </Grid>
+            </Grid>
+            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
+                <Grid xs={12} lg={6}>
+                </Grid>
+                <Grid xs={12} lg={6}>
+                    <FormControl>
+                        <FormLabel>Pagamento</FormLabel>
+                        <Select
+                            value={pagamento}
+                            onChange={(_, value) => value && setPagamento(value)}
+                            size="sm"
+                            placeholder="Status"
+                        >
+                            <Option value='0'>SIM</Option>
+                            <Option value='1'>NÂO</Option>
+                            <Option value='1'>SIM-VINCULADO</Option>
+                            <Option value='1'>ISENTO-VINCULADO</Option>
+                        </Select>
+                    </FormControl>
+                </Grid>
+            </Grid>
+            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
+                <Grid xs={12} lg={6}>
+                    <FormControl>
+                        <FormLabel>Data decisão</FormLabel>
+                        <Input type="date" value={dataDecisao?.toISOString()} onChange={(e) => setDataDecisao(new Date(e.target.value))} />
+                    </FormControl>
+                </Grid>
+                <Grid xs={12} lg={6}>
+                    <FormControl>
+                        <FormLabel>Análise Adminssibilidade</FormLabel>
+                        <Select
+                            value={analise}
+                            onChange={(_, value) => value && setAnalise(value)}
+                            size="sm"
+                            placeholder="Status"
+                        >
+                            <Option value='0'>Sem interação</Option>
+                            <Option value='1'>Com interação</Option>
+                        </Select>
+                    </FormControl>
+                </Grid>
+            </Grid>
+            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
+                <Grid xs={12} lg={6}>
+                    <FormControl>
+                        <FormLabel>Dias de Análise</FormLabel>
+                        <Input type="number" value={diasAnalise} onChange={(e) => setDiasAnalise(parseInt(e.target.value))} />
+                    </FormControl>
+                </Grid>
+                <Grid xs={12} lg={6}>
+                    <FormControl>
+                        <FormLabel>Reunião GRAPOEM</FormLabel>
+                        <Input type="date" value={reuniao?.toISOString()} onChange={(e) => setReuniao(new Date(e.target.value))} />
+                    </FormControl>
+                </Grid>
+            </Grid>
             <Grid xs={12} container sx={{ display: tipo_processo === 1 ? 'none' : 'block' }}>
                 <Grid xs={12}><Divider><Chip color="primary">Interfaces</Chip></Divider></Grid>
-                <Grid xs={12} container>
+                <Grid xs={12} container sx={{ py: 2 }}>
                     <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
                         <Checkbox
                             label="SEHAB"
@@ -106,7 +204,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                             onChange={(e) => setInterface_sehab(e.target.checked)}
                         />
                     </Grid>
-                    <Grid xs={12} lg={8} xl={10} sx={!interface_sehab ? { display: 'none' } : {}}>
+                    <Grid xs={12} lg={8} xl={10} sx={!interface_sehab ? { display: 'none'  } : {}}>
                         <Input
                             id="num_sehab"
                             name="num_sehab"
@@ -125,7 +223,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                         {(!comum.validaDigitoSei(num_sehab) && num_sehab.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
                     </Grid>
                 </Grid>
-                <Grid xs={12} container>
+                <Grid xs={12} container sx={{ py: 2 }}>
                     <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
                         <Checkbox
                             label="SIURB"
@@ -149,7 +247,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                         />
                     </Grid>
                 </Grid>
-                <Grid xs={12} container>
+                <Grid xs={12} container sx={{ py: 2 }}>
                     <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
                         <Checkbox
                             label="SMC"
@@ -173,7 +271,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                         />
                     </Grid>
                 </Grid>
-                <Grid xs={12} container>
+                <Grid xs={12} container sx={{ py: 2 }}>
                     <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
                         <Checkbox
                             label="SMT"
@@ -197,7 +295,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                         />
                     </Grid>
                 </Grid>
-                <Grid xs={12} container>
+                <Grid xs={12} container sx={{ py: 2 }}>
                     <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
                         <Checkbox
                             label="SVMA"

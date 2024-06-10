@@ -36,6 +36,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const [data_protocolo, setData_protocolo] = useState<Date>(new Date());
     const [inicial_id, setInicial_id] = useState<number>(inicial?.id || 0);
     const [obs, setObs] = useState<string>('');
+    const [pagamento, setPagamento] = useState(0);
     const decreto = true;
     const parecer = true;
 
@@ -49,7 +50,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                     if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
                         router.push(`/inicial/detalhes/${response.id}`);
-                        admissibilidadeServices.criar({ inicial_id: response.id, parecer, data_envio: response.envio_admissibilidade});
+                        admissibilidadeServices.criar({ inicial_id: response.id, parecer, data_envio: response.envio_admissibilidade });
                     }
                 });
 
@@ -224,6 +225,22 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                             />
                         </FormControl>
                     </Grid>
+                    <Grid xs={8} sm={8} md={8} lg={5} xl={5}>
+                        <FormControl>
+                            <FormLabel>Pagamento</FormLabel>
+                            <Select
+                                value={pagamento}
+                                onChange={(_, value) => value && setPagamento(value)}
+                                size="sm"
+                                placeholder="Status"
+                            >
+                                <Option value={0}>SIM</Option>
+                                <Option value={1}>NÂO</Option>
+                                <Option value={2}>SIM-VINCULADO</Option>
+                                <Option value={3}>ISENTO-VINCULADO</Option>
+                            </Select>
+                        </FormControl>
+                    </Grid>
                     <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
                         <FormControl>
                             <FormLabel>Num. Aprova Digital</FormLabel>
@@ -302,7 +319,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                             }
                         />
                     </Grid>
-                    
+
                 </Grid>
                 <Grid xs={12} sm={12} md={12} lg={4} xl={4}>
                     <Card component={Grid} container variant="soft" sx={{ p: 3 }}>
