@@ -4,10 +4,12 @@ import { IInicial } from "@/shared/services/inicial.services";
 import { IAdmissibilidade } from "@/shared/services/admissibilidade.services";
 import { useEffect, useState } from "react";
 import * as admissibilidadeServices from "@/shared/services/admissibilidade.services";
+import * as unidadeServices from "@/shared/services/unidade.services";
+import { IUnidade } from "@/shared/services/unidade.services";
 import * as comum from "@/shared/services/comum.services";
 import { useRouter as useRouterNavigation } from "next/navigation";
-import { Box, Button, Checkbox, Chip, Divider, FormControl, FormLabel, Grid, Input, Option, Select } from "@mui/joy";
-import { Business } from "@mui/icons-material";
+import { Autocomplete, AutocompleteOption, Box, Button, Checkbox, Chip, Divider, FormControl, FormLabel, Grid, Input, Option, Select } from "@mui/joy";
+import { Business, Today } from "@mui/icons-material";
 
 
 export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inicial?: IInicial, admissibilidade?: IAdmissibilidade }) {
@@ -24,16 +26,11 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
     const [num_smt, setNum_smt] = useState<string>('');
     const [interface_svma, setInterface_svma] = useState<boolean>(false);
     const [num_svma, setNum_svma] = useState<string>('');
-    const [status, setStatus] = useState<number>(inicial?.status || 1);
     const [processoSei, setProcessoSei] = useState<string>('');
-    const [dataProtocolo, setDataProtocolo] = useState<Date>(new Date());
-    const [recebimento, setRecebimento] = useState<Date>(new Date());
-    const [tipoProcesso, setTipoProcesso] = useState<string>("0");
-    const [pagamento, setPagamento] = useState<string>('');
     const [dataDecisao, setDataDecisao] = useState<Date>(new Date());
-    const [analise, setAnalise] = useState<string>('');
-    const [diasAnalise, setDiasAnalise] = useState<number>(0);
     const [reuniao, setReuniao] = useState<Date>(new Date());
+    const [unidades, setUnidades] = useState<IUnidade[]>([]);
+    const [unidade_id, setUnidade_id] = useState('');
 
     const atualizar = () => {
         if (admissibilidade) { // Check if admissibilidade is not undefined
@@ -45,7 +42,12 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
         }
     }
 
-
+    useEffect(() => {
+        unidadeServices.listaCompleta()
+            .then((response: IUnidade[]) => {
+                setUnidades(response);
+            })
+    }, [])
     return (
         <Box sx={{ p: 2 }}>
             {admissibilidade && (<>
@@ -101,7 +103,6 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
 
                 </Grid>
             </>)}
-
             <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
                 <Grid xs={12} lg={6}>
                     <FormControl>
@@ -112,49 +113,36 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid xs={12} lg={6}>
+                <Grid xs={12} lg={3}>
                     <FormControl sx={{ flexGrow: 1 }}>
                         <FormLabel>Status</FormLabel>
-                        <Select
-                            value={status}
-                            onChange={(_, value) => value && setStatus(value)}
-                            size="sm"
-                            placeholder="Status"
-                        >
-                            <Option value='0'>Adimitir</Option>
-                            <Option value='2'>Inadimitir</Option>
-                            <Option value='3'>Em Reconseideração</Option>
-                        </Select>
+                        <Input value="Adimissivel" readOnly />
                     </FormControl>
                 </Grid>
-            </Grid>
-            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
-                <Grid xs={12} lg={6}>
-                </Grid>
-                <Grid xs={12} lg={6}>
+                <Grid xs={12} lg={3}>
                     <FormControl>
-                        <FormLabel>Recebimento Processo</FormLabel>
-                        <Input type="date" value={recebimento?.toISOString()} onChange={(e) => setRecebimento(new Date(e.target.value))} />
-                    </FormControl>
-                </Grid>
-            </Grid>
-            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
-                <Grid xs={12} lg={6}>
-                </Grid>
-                <Grid xs={12} lg={6}>
-                    <FormControl>
-                        <FormLabel>Pagamento</FormLabel>
-                        <Select
-                            value={pagamento}
-                            onChange={(_, value) => value && setPagamento(value)}
-                            size="sm"
-                            placeholder="Status"
-                        >
-                            <Option value='0'>SIM</Option>
-                            <Option value='1'>NÂO</Option>
-                            <Option value='1'>SIM-VINCULADO</Option>
-                            <Option value='1'>ISENTO-VINCULADO</Option>
-                        </Select>
+                        <FormLabel>Unidade</FormLabel>
+                        <Autocomplete
+                            startDecorator={<Business />}
+                            options={unidades && unidades.length > 0 ? unidades : []}
+                            getOptionLabel={(option) => option && option.sigla}
+                            renderOption={(props, option) => (
+                                <AutocompleteOption {...props} key={option.id} value={option.id}>
+                                    {option.sigla}
+                                </AutocompleteOption>
+                            )}
+                            placeholder="Unidade"
+                            value={unidade_id && unidade_id !== '' ? unidades.find((unidade: IUnidade) => unidade.id === unidade_id) : null}
+                            onChange={(_, value) => value && setUnidade_id(value?.id)}
+                            filterOptions={(options, { inputValue }) => {
+                                if (unidades) return (options as IUnidade[]).filter((option) => (
+                                    (option).nome.toLowerCase().includes(inputValue.toLowerCase()) ||
+                                    (option).sigla.toLowerCase().includes(inputValue.toLowerCase())
+                                ));
+                                return [];
+                            }}
+                            noOptionsText="Nenhuma unidade encontrada"
+                        />
                     </FormControl>
                 </Grid>
             </Grid>
@@ -162,35 +150,13 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                 <Grid xs={12} lg={6}>
                     <FormControl>
                         <FormLabel>Data decisão</FormLabel>
-                        <Input type="date" value={dataDecisao?.toISOString()} onChange={(e) => setDataDecisao(new Date(e.target.value))} />
-                    </FormControl>
-                </Grid>
-                <Grid xs={12} lg={6}>
-                    <FormControl>
-                        <FormLabel>Análise Adminssibilidade</FormLabel>
-                        <Select
-                            value={analise}
-                            onChange={(_, value) => value && setAnalise(value)}
-                            size="sm"
-                            placeholder="Status"
-                        >
-                            <Option value='0'>Sem interação</Option>
-                            <Option value='1'>Com interação</Option>
-                        </Select>
-                    </FormControl>
-                </Grid>
-            </Grid>
-            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
-                <Grid xs={12} lg={6}>
-                    <FormControl>
-                        <FormLabel>Dias de Análise</FormLabel>
-                        <Input type="number" value={diasAnalise} onChange={(e) => setDiasAnalise(parseInt(e.target.value))} />
+                        <Input type="date" value={dataDecisao.toISOString().split('T')[0]} onChange={e => setDataDecisao(new Date(e.target.value))} />
                     </FormControl>
                 </Grid>
                 <Grid xs={12} lg={6}>
                     <FormControl>
                         <FormLabel>Reunião GRAPOEM</FormLabel>
-                        <Input type="date" value={reuniao?.toISOString()} onChange={(e) => setReuniao(new Date(e.target.value))} />
+                        <Input type="date" value={reuniao.toISOString().split('T')[0]} onChange={(e) => setReuniao(new Date(e.target.value))} />
                     </FormControl>
                 </Grid>
             </Grid>
@@ -204,7 +170,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                             onChange={(e) => setInterface_sehab(e.target.checked)}
                         />
                     </Grid>
-                    <Grid xs={12} lg={8} xl={10} sx={!interface_sehab ? { display: 'none'  } : {}}>
+                    <Grid xs={12} lg={8} xl={10} sx={!interface_sehab ? { display: 'none' } : {}}>
                         <Input
                             id="num_sehab"
                             name="num_sehab"
