@@ -291,6 +291,22 @@ async function buscarAdministrativos(): Promise<IUsuario[]> {
     return administrativos;
 }
 
+async function buscarFuncionarios(): Promise<{ administrativos: IUsuario[], tecnicos: IUsuario[] }> {
+    const session = await getServerSession(authOptions);
+    const funcionarios = fetch(`${baseURL}usuarios/buscar-funcionarios`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) Logout();
+        if (response.status !== 200) return;
+        return response.json();
+    })
+    return funcionarios;
+}
+
 export {
     adicionaFerias,
     adicionarSubstituto,
@@ -305,6 +321,6 @@ export {
     formataNome,
     listaCompleta,
     removerSubstituto,
-    validaUsuario
+    validaUsuario,
+    buscarFuncionarios
 };
-

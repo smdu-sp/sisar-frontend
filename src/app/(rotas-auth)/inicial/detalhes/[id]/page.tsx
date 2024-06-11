@@ -5,12 +5,14 @@ import { Tab, TabList, TabPanel, Tabs } from '@mui/joy';
 import InicialTab from './tabs/inicial';
 import * as inicialServices from '@/shared/services/inicial.services';
 import * as admissibilidadeServices from '@/shared/services/admissibilidade.services';
+import * as usuarioServices from '@/shared/services/usuario.services';
 import AdmissibilidadeTab from './tabs/admissibilidade';
 
 export default async function InicialDetalhes(props: any) {
     const { id } = props.params;
     const inicial = id ? await inicialServices.buscarPorId(parseInt(id)) : undefined;
     const admissibilidade = id ? await admissibilidadeServices.buscarId(id) : undefined;
+    const funcionarios = id ? await usuarioServices.buscarFuncionarios() : undefined;
 
     return (
         <Content 
@@ -58,7 +60,7 @@ export default async function InicialDetalhes(props: any) {
                     <InicialTab inicial={inicial} />
                 </TabPanel>
                 {(inicial && inicial.status > 1) && <TabPanel value={1}>
-                    <AdmissibilidadeTab inicial={inicial} admissibilidade={admissibilidade} />
+                    <AdmissibilidadeTab inicial={inicial} admissibilidade={admissibilidade} funcionarios={funcionarios} />
                 </TabPanel>}
             </Tabs>
         </Content>

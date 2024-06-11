@@ -8,9 +8,10 @@ import * as comum from "@/shared/services/comum.services";
 import { useRouter as useRouterNavigation } from "next/navigation";
 import { Box, Button, Checkbox, Chip, Divider, FormControl, FormLabel, Grid, Input, Option, Select } from "@mui/joy";
 import { Business } from "@mui/icons-material";
+import { IUsuario } from "@/shared/services/usuario.services";
 
 
-export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inicial?: IInicial, admissibilidade?: IAdmissibilidade }) {
+export default function AdmissibilidadeTab({ inicial, admissibilidade, funcionarios }: { inicial?: IInicial, admissibilidade?: IAdmissibilidade, funcionarios?: { administrativos: IUsuario[], tecnicos: IUsuario[] } }) {
     const router = useRouterNavigation();
 
     const [tipo_processo, setTipo_processo] = useState<number>(inicial?.tipo_processo || 0);
@@ -58,13 +59,21 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                     <Grid xs={12} lg={6}>
                         <FormControl>
                             <FormLabel>Administrativo responsável</FormLabel>
-                            <Input value={admissibilidade.inicial_id} readOnly />
+                            <Select>
+                                {funcionarios && funcionarios.administrativos && funcionarios.administrativos.map((adms) => (
+                                    <Option value={adms.id}>{adms.nome}</Option>
+                                ))}
+                            </Select>
                         </FormControl>
                     </Grid>
                     <Grid xs={12} lg={6}>
                         <FormControl>
                             <FormLabel>Técnico responsável</FormLabel>
-                            <Input value={admissibilidade.inicial?.alvara_tipo_id} readOnly />
+                            <Select>
+                                {funcionarios && funcionarios.tecnicos && funcionarios.tecnicos.map((tecs) => (
+                                    <Option value={tecs.id}>{tecs.nome}</Option>
+                                ))}
+                            </Select>
                         </FormControl>
                     </Grid>
                 </Grid>
