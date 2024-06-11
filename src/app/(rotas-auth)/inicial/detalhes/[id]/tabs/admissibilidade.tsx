@@ -5,7 +5,10 @@ import { IAdmissibilidade } from "@/shared/services/admissibilidade.services";
 import { useEffect, useState } from "react";
 import * as admissibilidadeServices from "@/shared/services/admissibilidade.services";
 import * as unidadeServices from "@/shared/services/unidade.services";
+import * as inicialServices from "@/shared/services/inicial.services";
+import * as subprefeituraServices from "@/shared/services/subprefeitura.services";
 import { IUnidade } from "@/shared/services/unidade.services";
+import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
 import * as comum from "@/shared/services/comum.services";
 import { useRouter as useRouterNavigation } from "next/navigation";
 import { Autocomplete, AutocompleteOption, Box, Button, Checkbox, Chip, Divider, FormControl, FormLabel, Grid, Input, Option, Select } from "@mui/joy";
@@ -31,14 +34,18 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
     const [reuniao, setReuniao] = useState<Date>(new Date());
     const [unidades, setUnidades] = useState<IUnidade[]>([]);
     const [unidade_id, setUnidade_id] = useState('');
+    const [subprefeitura, setSubprefeitura] = useState<ISubprefeitura[]>([]);
+    const [subprefeitura_id, setSubprefeitura_id] = useState('');
+    const status = 0;
 
     const atualizar = () => {
         if (admissibilidade) { // Check if admissibilidade is not undefined
-            admissibilidadeServices.atualizarId(admissibilidade.inicial_id, +status)
+            admissibilidadeServices.atualizarId(admissibilidade.inicial_id, status, unidade_id, dataDecisao, subprefeitura_id)
                 .then((res) => {
                     console.log(res);
                     router.push('/admissibilidade');
                 })
+                inicialServices.atualizar(admissibilidade.inicial_id, { tipo_processo })
         }
     }
 
@@ -46,6 +53,10 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
         unidadeServices.listaCompleta()
             .then((response: IUnidade[]) => {
                 setUnidades(response);
+            })
+        subprefeituraServices.listaCompleta()
+            .then((response: ISubprefeitura[]) => {
+                setSubprefeitura(response);
             })
     }, [])
     return (
@@ -113,13 +124,42 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid xs={12} lg={3}>
+                <Grid xs={12} lg={6}>
                     <FormControl sx={{ flexGrow: 1 }}>
                         <FormLabel>Status</FormLabel>
                         <Input value="Adimissivel" readOnly />
                     </FormControl>
                 </Grid>
-                <Grid xs={12} lg={3}>
+
+            </Grid>
+            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
+                <Grid xs={12} lg={6}>
+                    <FormControl>
+                        <FormLabel>Subprefeitura</FormLabel>
+                        <Autocomplete
+                            startDecorator={<Business />}
+                            options={subprefeitura && subprefeitura.length > 0 ? subprefeitura : []}
+                            getOptionLabel={(option) => option && option.nome}
+                            renderOption={(props, option) => (
+                                <AutocompleteOption {...props} key={option.id} value={option.id}>
+                                    {option.nome}
+                                </AutocompleteOption>
+                            )}
+                            placeholder="Unidade"
+                            value={subprefeitura_id && subprefeitura_id !== '' ? subprefeitura.find((subprefeitura: ISubprefeitura) => subprefeitura.id === subprefeitura_id) : null}
+                            onChange={(_, value) => value && setSubprefeitura_id(value?.id)}
+                            filterOptions={(options, { inputValue }) => {
+                                if (unidades) return (options as IUnidade[]).filter((option) => (
+                                    (option).nome.toLowerCase().includes(inputValue.toLowerCase()) ||
+                                    (option).sigla.toLowerCase().includes(inputValue.toLowerCase())
+                                ));
+                                return [];
+                            }}
+                            noOptionsText="Nenhuma unidade encontrada"
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid xs={12} lg={6}>
                     <FormControl>
                         <FormLabel>Unidade</FormLabel>
                         <Autocomplete
