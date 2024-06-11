@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import Content from "@/components/Content";
 import { Tab, TabList, TabPanel, Tabs } from '@mui/joy';
@@ -13,19 +12,19 @@ export default async function InicialDetalhes(props: any) {
     const admissibilidade = id ? await admissibilidadeServices.buscarId(id) : undefined;
 
     return (
-        <Content 
+        <Content
             titulo={id ? `Processo #${id}` : 'Novo processo'}
             pagina='inicial'
             breadcrumbs={[{
                 label: 'Processos',
                 href: '/inicial'
-            },{
+            }, {
                 label: 'Detalhes',
                 href: '/inicial/detalhes'
             }]}
         >
             <Tabs
-                defaultValue={1}
+                defaultValue={0}
                 sx={{
                     borderRadius: 'lg',
                     boxShadow: 'sm',
@@ -45,14 +44,14 @@ export default async function InicialDetalhes(props: any) {
                         Admissibilidade
                     </Tab>}
                 </TabList>
-                <TabPanel value={0} sx={{ 
+                <TabPanel value={0} sx={{
                     flexGrow: 1,
                     '&::-webkit-scrollbar': {
-                    width: '0.5em',
+                        width: '0.5em',
                     },
                     '&::-webkit-scrollbar-thumb': {
-                    backgroundColor: 'var(--joy-palette-background-level1)',
-                    borderRadius: '10px',
+                        backgroundColor: 'var(--joy-palette-background-level1)',
+                        borderRadius: '10px',
                     }
                 }}>
                     <InicialTab inicial={inicial} />
