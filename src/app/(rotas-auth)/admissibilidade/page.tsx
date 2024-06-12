@@ -64,6 +64,7 @@ export default function Admissibilidade() {
     buscaAdmissibilidade();
     setAlert('Status atualizado!', `O Status foi para ${status[statusModal].label}`, 'warning', 3000, Check);
     setStatusModal(0)
+    setMotivo('')
   }
 
 
@@ -223,7 +224,7 @@ export default function Admissibilidade() {
                 <th>Inicial ID</th>
                 <th>Sei</th>
                 <th>Data Envio</th>
-                <th>Parecer</th>
+                {/* <th>Parecer</th> */}
                 <th>Data Criação</th>
                 <th>Status</th>
                 <th></th>
@@ -236,7 +237,7 @@ export default function Admissibilidade() {
                     <td>{admissibilidade.inicial_id}</td>
                     <td>{admissibilidade.inicial?.sei}</td>
                     <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
-                    <td>{admissibilidade.parecer === true ? 'true' : 'false'}</td>
+                    {/* <td>{admissibilidade.parecer === true ? 'true' : 'false'}</td> */}
                     <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
                     <td>
                       {admissibilidade.status !== undefined && status[admissibilidade.status] && (
