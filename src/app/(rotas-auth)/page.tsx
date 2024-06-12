@@ -56,6 +56,7 @@ export default function Home() {
 
 
   const busca = (mes: any) => {
+    setDias([]);
     reunioes.buscarPorMesAno(mes.toString(), data.year().toString())
       .then((response) => {
         if (Array.isArray(response)) {
