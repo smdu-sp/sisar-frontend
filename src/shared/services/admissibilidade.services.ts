@@ -166,7 +166,7 @@ const buscarId = async (id: string): Promise<IAdmissibilidade> => {
     return admissibilidades;
 }
 
-const atualizarId = async (id: number, status: number): Promise<IAdmissibilidade> => {
+const atualizarId = async (id: number, status: number, unidade_id: string, data_decisao: Date, subprefeitura_id: string): Promise<IAdmissibilidade> => {
     const session = await getServerSession(authOptions);
     const admissibilidades = await fetch(`${baseURL}admissibilidade/atualizar-id/${id}`, {
         method: "PATCH",
@@ -174,7 +174,7 @@ const atualizarId = async (id: number, status: number): Promise<IAdmissibilidade
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session?.access_token}`
         },
-        body: JSON.stringify({ status: status })
+        body: JSON.stringify({ status: status, unidade_id: unidade_id, data_decisao_interlocutoria: data_decisao, subprefeitura_id: subprefeitura_id })
     }).then((response) => {
         if (response.status === 401) Logout();
         return response.json();
