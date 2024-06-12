@@ -126,6 +126,21 @@ const buscarTudo = async (
     return iniciais;
 }
 
+async function buscarPorMesAno(mes: string, ano: string){
+    const session = await getServerSession(authOptions);
+    const reunoes = await fetch(`${baseURL}inicial/buscar/${mes}/${ano}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) signOut();
+        return response.json();
+    })
+    return reunoes;
+}
+
 const buscarPorId = async (id: number): Promise<IInicial> => {
     const session = await getServerSession(authOptions);
     const iniciais = await fetch(`${baseURL}inicial/buscar-por-id/${id}`, {
@@ -217,5 +232,6 @@ export {
     buscarTudo,
     buscarPorId,
     criar,
-    removeSql
+    removeSql,
+    buscarPorMesAno
 }

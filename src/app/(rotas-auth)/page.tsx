@@ -57,25 +57,44 @@ export default function Home() {
 
   const busca = (mes: any) => {
     setDias([]);
-    reunioes.buscarPorMesAno(mes.toString(), data.year().toString())
-      .then((response) => {
-        if (Array.isArray(response)) {
-          for (let i = 0; i < response.length; i++) {
-            setDias(prevDias => {
-              if (response[i].nova_data_reuniao != null) {
-                return [...prevDias, parseInt(response[i].nova_data_reuniao.toString().split("T")[0].split("-")[2])];
-              } else {
-                return [...prevDias, parseInt(response[i].data_reuniao.toString().split("T")[0].split("-")[2])];
-              }
-            });
+    if (tipoData == 1) {
+      reunioes.buscarPorMesAno(mes.toString(), data.year().toString())
+        .then((response) => {
+          if (Array.isArray(response)) {
+            for (let i = 0; i < response.length; i++) {
+              setDias(prevDias => {
+                if (response[i].nova_data_reuniao != null) {
+                  return [...prevDias, parseInt(response[i].nova_data_reuniao.toString().split("T")[0].split("-")[2])];
+                } else {
+                  return [...prevDias, parseInt(response[i].data_reuniao.toString().split("T")[0].split("-")[2])];
+                }
+              });
+            }
+          } else {
+            setDias([]);
           }
-        } else {
-          setDias([]);
-        }
-      })
-      .catch((error) => {
-        console.error("erro:", error);
-      });
+        })
+        .catch((error) => {
+          console.error("erro:", error);
+        });
+    } else if (tipoData == 0) {
+      inicialServices.buscarPorMesAno(mes.toString(), data.year().toString())
+        .then((response) => {
+          if (Array.isArray(response)) {
+            for (let i = 0; i < response.length; i++) {
+              setDias(prevDias => {
+                return [...prevDias, parseInt(response[i].toString().split("T")[0].split("-")[2])];
+              });
+            }
+          } else {
+            setDias([]);
+          }
+        })
+        .catch((error) => {
+          console.error("erro:", error);
+        });
+    }
+
   };
 
 
@@ -99,7 +118,7 @@ export default function Home() {
       <Badge
         key={props.day.toString()}
         overlap="circular"
-        badgeContent={isSelected ? <Icon component={CircleIcon}sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: tipoData == 0 ? 'var(--joy-palette-warning-plainColor)' : 'var(--joy-palette-primary-plainColor)' }} /> : undefined}
+        badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: tipoData == 0 ? 'var(--joy-palette-warning-plainColor)' : 'var(--joy-palette-primary-plainColor)' }} /> : undefined}
       >
         <PickersDay
           {...other}
