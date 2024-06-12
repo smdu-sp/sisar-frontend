@@ -38,9 +38,6 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const [obs, setObs] = useState<string>('');
     const [pagamento, setPagamento] = useState(0);
     const decreto = true;
-    const parecer = true;
-
-
     const { setAlert } = useContext(AlertsContext);
 
     const enviaDados = () => {
@@ -50,7 +47,6 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                     if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
                         router.push(`/inicial/detalhes/${response.id}`);
-                        admissibilidadeServices.criar({ inicial_id: response.id, parecer, data_envio: response.envio_admissibilidade });
                     }
                 });
 

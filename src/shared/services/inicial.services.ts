@@ -5,6 +5,7 @@ import { authOptions } from "@/shared/auth/authOptions";
 import { IAlvaraTipo } from "./alvara-tipo.services";
 import { signOut } from "next-auth/react";
 import { IUsuario } from "./usuario.services";
+import { IAdmissibilidade } from "./admissibilidade.services";
 
 export interface IInicial_Sqls {
     id: string
@@ -33,6 +34,7 @@ export interface IInicial {
     iniciais_sqls?: IInicial_Sqls[]
     interfaces?: IInterfaces
     distribuicao?: IDistribuicao
+    admissibilidade?: IAdmissibilidade
 }
 
 export interface IDistribuicao {
@@ -48,6 +50,16 @@ export interface IDistribuicao {
     criado_em: Date
     alterado_em: Date
 }
+
+export interface ICreateDistribuicao {
+    inicial_id: number
+    tecnico_responsavel_id: string
+    administrativo_responsavel_id: string
+    assunto_processo_relacionado_incomum?: string
+    baixa_pagamento?: boolean
+    obs?: string
+}
+export interface IUpdateDistribuicao extends Partial<ICreateDistribuicao> {}
 
 export interface IInterfaces {
     inicial_id: number;
@@ -211,8 +223,29 @@ const removeSql = async (inicial_id: string, sql: string): Promise<boolean> => {
     return iniciais;
 }
 
+const atualizarDistribuicao = async (inicial_id: number, dataUpdate: IUpdateDistribuicao): Promise<IDistribuicao> => {
+    console.log({ inicial_id, dataUpdate })
+    const session = await getServerSession(authOptions);
+    console.log(baseURL);
+    const iniciais = await fetch(`${baseURL}distribuicao/atualizar/${inicial_id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify(dataUpdate)
+    }).then ((response) => {
+        const result = response.json();
+        if(response.status === 401) signOut();
+        if(response.status !== 200) return;
+        return result;
+    });
+    return iniciais;
+}
+
 export {
     atualizar,
+    atualizarDistribuicao,
     adicionaSql,
     buscarTudo,
     buscarPorId,

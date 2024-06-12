@@ -16,7 +16,7 @@ import { Business, Today } from "@mui/icons-material";
 import { IUsuario } from "@/shared/services/usuario.services";
 
 
-export default function AdmissibilidadeTab({ inicial, admissibilidade, funcionarios }: { inicial?: IInicial, admissibilidade?: IAdmissibilidade, funcionarios?: { administrativos: IUsuario[], tecnicos: IUsuario[] } }) {
+export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inicial?: IInicial, admissibilidade?: IAdmissibilidade }) {
     const router = useRouterNavigation();
 
     const [tipo_processo, setTipo_processo] = useState<number>(inicial?.tipo_processo || 0);
@@ -63,33 +63,6 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade, funcionar
     return (
         <Box sx={{ p: 2 }}>
             {admissibilidade && (<>
-                <Grid xs={12}>
-                    <Divider>
-                        <Chip color="primary">Distribuição</Chip>
-                    </Divider>
-                </Grid>
-                <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
-                    <Grid xs={12} lg={6}>
-                        <FormControl>
-                            <FormLabel>Administrativo responsável</FormLabel>
-                            <Select>
-                                {funcionarios && funcionarios.administrativos && funcionarios.administrativos.map((adms) => (
-                                    <Option value={adms.id}>{adms.nome}</Option>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={12} lg={6}>
-                        <FormControl>
-                            <FormLabel>Técnico responsável</FormLabel>
-                            <Select>
-                                {funcionarios && funcionarios.tecnicos && funcionarios.tecnicos.map((tecs) => (
-                                    <Option value={tecs.id}>{tecs.nome}</Option>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                </Grid>
                 <Grid container xs={12} spacing={2} sx={{ p: 2, mb: 2 }}>
                     <Grid xs={12} lg={6}>
                         <FormControl>
