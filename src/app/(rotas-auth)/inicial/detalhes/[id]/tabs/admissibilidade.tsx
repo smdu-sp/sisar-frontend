@@ -31,7 +31,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade, funcionar
     const [interface_svma, setInterface_svma] = useState<boolean>(false);
     const [num_svma, setNum_svma] = useState<string>('');
     const [processoSei, setProcessoSei] = useState<string>('');
-    const [dataDecisao, setDataDecisao] = useState<Date>(new Date());
+    const [data_decisao_interlocutoria, setDataDecisao] = useState<Date>(new Date());
     const [reuniao, setReuniao] = useState<Date>(new Date());
     const [unidades, setUnidades] = useState<IUnidade[]>([]);
     const [unidade_id, setUnidade_id] = useState('');
@@ -41,7 +41,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade, funcionar
 
     const atualizar = () => {
         if (admissibilidade) { // Check if admissibilidade is not undefined
-            admissibilidadeServices.atualizarId(admissibilidade.inicial_id, status, unidade_id, dataDecisao, subprefeitura_id)
+            admissibilidadeServices.atualizarId(admissibilidade.inicial_id, {status, unidade_id, data_decisao_interlocutoria, subprefeitura_id})
                 .then((res) => {
                     console.log(res);
                     router.push('/admissibilidade');
@@ -199,7 +199,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade, funcionar
                 <Grid xs={12} lg={6}>
                     <FormControl>
                         <FormLabel>Data decisão</FormLabel>
-                        <Input type="date" value={dataDecisao.toISOString().split('T')[0]} onChange={e => setDataDecisao(new Date(e.target.value))} />
+                        <Input type="date" value={data_decisao_interlocutoria.toISOString().split('T')[0]} onChange={e => setDataDecisao(new Date(e.target.value))} />
                     </FormControl>
                 </Grid>
                 <Grid xs={12} lg={6}>

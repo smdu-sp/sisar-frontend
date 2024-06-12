@@ -1,7 +1,7 @@
 'use client'
 
 import Content from '@/components/Content';
-import { Box, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Tab, TabList, TabPanel, Table, Tabs, Typography, tabClasses } from '@mui/joy';
+import { Box, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, Tooltip, Typography, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
 import * as admissibilidadeServices from '@/shared/services/admissibilidade.services';
@@ -9,18 +9,32 @@ import { IAdmissibilidade, IPaginadoAdmissibilidade } from '@/shared/services/ad
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Add, Clear, Refresh, Search } from '@mui/icons-material';
+import { Add, Check, Clear, Refresh, Search } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
 import { buscarAdministrativos } from '@/shared/services/usuario.services';
 import { AlertsContext } from '@/providers/alertsProvider';
+import BackHandIcon from '@mui/icons-material/BackHand';
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import * as React from 'react';
+import Modal from '@mui/joy/Modal';
+import ModalDialog from '@mui/joy/ModalDialog';
+import DialogTitle from '@mui/joy/DialogTitle';
+import DialogContent from '@mui/joy/DialogContent';
+
+
+
 export default function Admissibilidade() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const [open, setOpen] = React.useState<boolean>(false);
   const [admissibilidade, setAdmissibilidade] = useState<IAdmissibilidade[]>([]);
   const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
+  const [statusModal, setStatusModal] = useState(0);
+  const [motivo, setMotivo] = useState("");
+  const [modal, setModal] = useState<any>([]);
 
   const [statusFiltro, setStatusFiltro] = useState(-1);
   const router = useRouter();
@@ -42,6 +56,15 @@ export default function Admissibilidade() {
   useEffect(() => {
     buscaAdmissibilidade();
   }, [pagina, limite, statusFiltro]);
+
+  const atualizar = async () => {
+    var reconsiderado = modal[1] === 3 ? true : false;
+    await admissibilidadeServices.atualizarId(modal[2], { status: statusModal, motivo, reconsiderado })
+    setOpen(false)
+    buscaAdmissibilidade();
+    setAlert('Status atualizado!', `O Status foi para ${status[statusModal].label}`, 'warning', 3000, Check);
+    setStatusModal(0)
+  }
 
 
   const buscaAdmissibilidade = () => {
@@ -79,7 +102,7 @@ export default function Admissibilidade() {
   };
 
   const status: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
-    { label: 'Admitido', color: 'success' },
+    { label: 'Admissivel', color: 'success' },
     { label: 'Em admissão', color: 'primary' },
     { label: 'Inadmissível', color: 'danger' },
     { label: 'Em Reconseideração', color: 'warning' },
@@ -135,7 +158,7 @@ export default function Admissibilidade() {
           alignItems: 'end',
         }}
       >
-        <IconButton size='sm' onClick={() => {buscaAdmissibilidade();}}><Refresh /></IconButton>
+        <IconButton size='sm' onClick={() => { buscaAdmissibilidade(); }}><Refresh /></IconButton>
         <IconButton size='sm' ><Clear /></IconButton>
         <Select
           size="sm"
@@ -203,25 +226,31 @@ export default function Admissibilidade() {
                 <th>Parecer</th>
                 <th>Data Criação</th>
                 <th>Status</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {admissibilidade && admissibilidade.length > 0 ? admissibilidade.map((admissibilidade: IAdmissibilidade) => (
-                <tr onClick={() => router.push(`/inicial/detalhes/${admissibilidade.inicial_id}`)} key={admissibilidade.inicial_id} style={{ cursor: 'pointer' }}>
-                  <td>{admissibilidade.inicial_id}</td>
-                  <td>{admissibilidade.inicial?.sei}</td>
-                  <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
-                  <td>{admissibilidade.parecer === true ? 'true' : 'false'}</td>
-                  <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
-                  <td>
-                    {admissibilidade.status !== undefined && status[admissibilidade.status] && (
-                      <Chip color={status[admissibilidade.status].color}>
-                        {status[admissibilidade.status].label}
-                      </Chip>
-                    )}
-                  </td>
-
-                </tr>
+                <Tooltip title={admissibilidade.motivo} followCursor>
+                  <tr key={admissibilidade.inicial_id} style={{ cursor: 'default' }}>
+                    <td>{admissibilidade.inicial_id}</td>
+                    <td>{admissibilidade.inicial?.sei}</td>
+                    <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
+                    <td>{admissibilidade.parecer === true ? 'true' : 'false'}</td>
+                    <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
+                    <td>
+                      {admissibilidade.status !== undefined && status[admissibilidade.status] && (
+                        <Chip color={status[admissibilidade.status].color}>
+                          {status[admissibilidade.status].label}
+                        </Chip>
+                      )}
+                    </td>
+                    <td>{admissibilidade.status != 0 && admissibilidade.reconsiderado != true ? <Stack sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+                      <Tooltip title="Inadimitir" variant='outlined'><IconButton color='warning' variant='soft' onClick={() => { setOpen(true); setModal([admissibilidade.inicial?.sei, admissibilidade.status, admissibilidade.inicial_id]) }}><BackHandIcon /></IconButton></Tooltip>
+                      {admissibilidade.status != 2 ? <Tooltip title="Admissivel" variant='outlined'><IconButton color='success' variant='soft' onClick={() => router.push(`/inicial/detalhes/${admissibilidade.inicial_id}?tipo=1`)}><PostAddIcon /></IconButton></Tooltip> : null}
+                    </Stack> : null}</td>
+                  </tr>
+                </Tooltip>
               )) : <tr><td colSpan={9}>Nenhum cadastro inicial encontrado</td></tr>}
             </tbody>
           </Table>
@@ -239,11 +268,44 @@ export default function Admissibilidade() {
         </TabPanel>
       </Tabs>
 
-      <IconButton component='a' href='/inicial/detalhes' color='primary' variant='soft' size='lg' sx={{
-        position: 'fixed',
-        bottom: '2rem',
-        right: '2rem',
-      }}><Add /></IconButton>
+      <React.Fragment>
+        <Modal open={open} onClose={() => setOpen(false)}>
+          <ModalDialog>
+            <DialogTitle>Create new project</DialogTitle>
+            <DialogContent>Fill in the information of the project.</DialogContent>
+            <form
+              onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
+                event.preventDefault();
+                setOpen(false);
+              }}
+            >
+              <Stack spacing={2}>
+                <FormControl>
+                  <FormLabel>Sei</FormLabel>
+                  <Input value={modal[0]} required />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    size="sm"
+                    value={statusModal}
+                    placeholder="Status"
+                    onChange={(_, value) => { setStatusModal(value as number); }}
+                  >
+                    <Option value={2}>Inadimitir</Option>
+                    <Option value={3}>Reconsideração</Option>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Motivo</FormLabel>
+                  <Textarea value={motivo} minRows={5} onChange={(e) => setMotivo(e.target.value)} required />
+                </FormControl>
+                <Button onClick={() => atualizar()} >Submit</Button>
+              </Stack>
+            </form>
+          </ModalDialog>
+        </Modal>
+      </React.Fragment>
     </Content>
   );
 }
