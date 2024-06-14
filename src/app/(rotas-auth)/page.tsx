@@ -16,7 +16,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
-
+import AddAlertIcon from '@mui/icons-material/AddAlert';
 import * as reunioes from '@/shared/services/reunioes.services';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import ListDecoration from '../../components/ListDecoration';
@@ -43,21 +43,23 @@ export default function Home() {
   const [dataCard, setDataCard] = useState('');
   const [diass, setDias] = useState<number[]>([]);
   const initialValue = dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-'));
-  const [index, setIndex] = useState(3);
   const colors = ['primary', 'warning', 'success', 'success'] as const;
   const [reuniao, setReuniao] = useState([]);
-  const [tipoData, setTipoData] = useState(1);
+  const [processos, setProcessos] = useState([]);
+  const [tipoData, setTipoData] = useState(0);
   const [open, setOpen] = React.useState<boolean>(false);
+  const [openNotf, setOpenNotf] = React.useState<boolean>(false);
   const [inicial, setInicial] = useState('');
   const [dataRemarcacao, setDataRemarcacao] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
   const [motivo, setMotivo] = useState('');
+  const [dados, setDados] = useState([]);
   const router = useRouter();
   const { setAlert } = React.useContext(AlertsContext);
 
 
   const busca = (mes: any) => {
     setDias([]);
-    if (tipoData == 1) {
+    if (tipoData == 0) {
       reunioes.buscarPorMesAno(mes.toString(), data.year().toString())
         .then((response) => {
           if (Array.isArray(response)) {
@@ -77,7 +79,7 @@ export default function Home() {
         .catch((error) => {
           console.error("erro:", error);
         });
-    } else if (tipoData == 0) {
+    } else if (tipoData == 1) {
       inicialServices.buscarPorMesAno(mes.toString(), data.year().toString())
         .then((response) => {
           if (Array.isArray(response)) {
@@ -97,28 +99,15 @@ export default function Home() {
 
   };
 
-
-
-  const fakeFetch = (date: Dayjs, { signal }: { signal: AbortSignal }) => {
-    return new Promise<{ daysToHighlight: number[] }>((resolve, reject) => {
-      const daysToHighlight = [0];
-      resolve({ daysToHighlight });
-
-      signal.onabort = () => {
-        reject(new DOMException('aborted', 'AbortError'));
-      };
-    });
-  };
-
   const ServerDay = (props: PickersDayProps<Dayjs> & { highlightedDays?: number[], projetosDay?: number[] }) => {
     const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
     const isSelected = !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
-    const color = 'success';
     return (
       <Badge
         key={props.day.toString()}
         overlap="circular"
-        badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: tipoData == 0 ? 'var(--joy-palette-warning-plainColor)' : 'var(--joy-palette-primary-plainColor)' }} /> : undefined}
+        badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: tipoData == 1 ? 'var(--joy-palette-warning-plainColor)' : 'var(--joy-palette-primary-plainColor)' }} /> : undefined}
+
       >
         <PickersDay
           {...other}
@@ -133,29 +122,18 @@ export default function Home() {
   const requestAbortController = React.useRef<AbortController | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchHighlightedDays = (date: Dayjs) => {
-    const controller = new AbortController();
-    fakeFetch(date, { signal: controller.signal })
-      .catch((error) => {
-        if (error.name !== 'AbortError') {
-          throw error;
-        }
-      });
-    requestAbortController.current = controller;
-  };
 
   const buscar_data = () => {
-    if (tipoData == 1) {
+    if (tipoData == 0) {
       reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
         .then((response) => {
-          setReuniao(response);
-          setIndex(0);
+          setDados(response);
         });
-    } else if (tipoData == 0) {
-      reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
+    } else if (tipoData == 1) {
+      inicialServices.buscarPorDataProcesso(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
         .then((response) => {
-          setReuniao(response);
-          setIndex(1);
+          console.log(response);
+          setDados(response);
         });
     }
 
@@ -226,9 +204,8 @@ export default function Home() {
 
   useEffect(() => {
     buscaIniciais();
-    fetchHighlightedDays(initialValue);
     busca(data.month() + 1);
-  }, [pagina, limite, index]);
+  }, [pagina, limite, tipoData]);
 
   useEffect(() => {
     var datacard = data.year() + '-' + (data.month() + 1) + '-' + data.date();
@@ -265,9 +242,10 @@ export default function Home() {
               }}
             />
             <Box sx={{ position: 'absolute', right: 18, bottom: 10, display: 'flex', flexDirection: 'row', alignItems: 'end', gap: 2, justifyContent: 'center' }}>
-              <Select value={tipoData} onChange={(_, v) => { setTipoData(v ? v : 0); setIndex(tipoData); }} sx={{ minHeight: 20, fontSize: '14px', mb: 0.5 }} color={tipoData == 0 ? 'warning' : 'primary'}>
-                <Option value={1} sx={{ fontSize: '14px' }} color='primary'>Reuniões</Option>
-                <Option value={0} sx={{ fontSize: '14px' }} color='warning'>Processos</Option>
+              <Select value={tipoData} onChange={(_, v) => { setTipoData(v ? v : 0); setDados([]); }} sx={{ minHeight: 20, minWidth: 120, fontSize: '14px', mb: 0.5 }} color={colors[tipoData]}>
+                <Option value={0} sx={{ fontSize: '14px' }} color='primary'>Reuniões</Option>
+                <Option value={1} sx={{ fontSize: '14px' }} color='warning'>Processos</Option>
+                <Option value={2} sx={{ fontSize: '14px' }} color='success'>Avisos</Option>
               </Select>
               <Typography level="body-sm" aria-describedby="card-description" mb={1}>
                 Reuniões: {diass.length}
@@ -281,24 +259,24 @@ export default function Home() {
             flexGrow: 1,
             mx: 2,
             borderRadius: '12px',
-            bgcolor: index === 3 || reuniao.length == 0 ? 'background.level3' : `${colors[index]}.500`,
+            bgcolor: tipoData === 3 || reuniao.length == 0 ? 'background.level3' : `${colors[tipoData]}.500`,
             maxWidth: '900px',
           }}
         >
           <Tabs
             size="lg"
             aria-label="Bottom Navigation"
-            value={index}
-            onChange={(event, value) => { setIndex(value as number) }}
+            value={tipoData}
+            onChange={(event, value) => { setTipoData(value as number) }}
             sx={(theme) => ({
               p: 1,
               borderRadius: 16,
-              maxWidth: 200,
+              maxWidth: 400,
               mx: 'auto',
               mt: 2,
 
-              boxShadow: index == 3 ? 'background.level3' : theme.shadow.sm,
-              '--joy-shadowChannel': theme.vars.palette[colors[index]].darkChannel,
+              boxShadow: tipoData == 3 ? 'background.level3' : theme.shadow.sm,
+              '--joy-shadowChannel': theme.vars.palette[colors[tipoData]].darkChannel,
               [`& .${tabClasses.root}`]: {
                 py: 1,
                 flex: 1,
@@ -314,27 +292,38 @@ export default function Home() {
               variant="plain"
               size="sm"
               disableUnderline
-              sx={{ borderRadius: 'lg', p: 0 }}
+              sx={{ borderRadius: 'lg', p: 0, gap: 2 }}
             >
 
               <Tab
                 disableIndicator
                 orientation="vertical"
-                {...(index === 0 && { color: colors[0] })}
-                {...(tipoData == 0 && { 'disabled': true })}
+                variant='soft'
+                {...(tipoData === 1 && { color: colors[0] })}
+                disabled={tipoData == 2 || tipoData == 1 ? true : false}
               >
-                <ListDecoration valor={tipoData == 1 ? reuniao.length : 0} tipo={1} />
+                <ListDecoration valor={tipoData == 0 ? reuniao.length : 0} tipo={1} />
                 Reuniões
               </Tab>
               <Tab
                 disableIndicator
                 orientation="vertical"
-                {...(index === 1 && { color: colors[1] })}
-                sx={{ ml: 2 }}
-                {...(tipoData == 1 && { 'disabled': true })}
+                variant='soft'
+                {...(tipoData === 0 && { color: colors[1] })}
+                disabled={tipoData == 2 || tipoData == 0 ? true : false}
               >
-                <ListDecoration valor={tipoData == 0 ? reuniao.length : 0} tipo={2} />
+                <ListDecoration valor={tipoData == 1 ? reuniao.length : 0} tipo={0} />
                 Processos
+              </Tab>
+              <Tab
+                disableIndicator
+                orientation="vertical"
+                variant='soft'
+                {...(tipoData === 2 && { color: colors[2] })}
+                disabled={tipoData == 0 || tipoData == 1 ? true : false}
+              >
+                <ListDecoration valor='10' tipo={2} />
+                Avisos
               </Tab>
             </TabList>
           </Tabs>
@@ -343,6 +332,37 @@ export default function Home() {
               dataCard
             }
           </Chip>
+          {tipoData == 2 ?
+            <IconButton sx={{ position: 'absolute', top: 20, right: 15, py: 0.5, fontSize: '40px', bg: 'primary' }} color='success' onClick={() => setOpenNotf(true)}>
+              <AddAlertIcon sx={{ fontSize: '35px' }} />
+            </IconButton>
+            : null
+          }
+          <Modal open={openNotf} onClose={() => setOpenNotf(false)}>
+            <ModalDialog>
+              <DialogTitle>Create new project</DialogTitle>
+              <DialogContent>Fill in the information of the project.</DialogContent>
+              <form
+                onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
+                  event.preventDefault();
+                  setOpenNotf(false);
+                }}
+              >
+                <Stack spacing={2}>
+                  <FormControl>
+                    <FormLabel>Titulo</FormLabel>
+                    <Input autoFocus required />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Descrição</FormLabel>
+                    <Textarea required minRows={5} />
+                  </FormControl>
+                  <Button type="submit">Salvar</Button>
+                </Stack>
+              </form>
+            </ModalDialog>
+          </Modal>
+
           <Sheet sx={{ bgcolor: 'transparent', display: 'flex', flexDirection: 'column', height: '70%', alignItems: reuniao.length > 0 ? 'flex-start' : 'center' }}>
             <Grid
               container
@@ -350,9 +370,9 @@ export default function Home() {
               columns={{ xs: 2, sm: 8, md: 12 }}
               sx={{ flexGrow: 1 }}
             >
-              {reuniao && reuniao.length > 0 ? reuniao.map((reuniao: any) => (
-                index === 0 ?
-                  <Grid key={index}>
+              {
+                dados && dados.length > 0 ? dados.map((data: any) => (
+                  <Grid key={tipoData}>
                     <Card
                       variant="outlined"
                       orientation="horizontal"
@@ -368,17 +388,18 @@ export default function Home() {
                       <CircleIcon sx={{ width: '20px', color: 'var(--joy-palette-primary-plainColor)' }} />
                       <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                         <Sheet>
-                          <Typography level="title-lg" id="card-description" key={reuniao.id}>
-                            {reuniao.inicial.sei ? reuniao.inicial.sei : reuniao.inicial.aprova_digital}
+                          <Typography level="title-lg" id="card-description" key={data.id}>
+                            {tipoData === 0 ? data.inicial.sei ? data.inicial.sei : data.inicial.aprova_digital :
+                              tipoData === 1 ? data.sei ? data.sei : data.aprova_digital : null}
                           </Typography>
                           <Typography level="body-sm" aria-describedby="card-description" mb={1}>
-                            {reuniao.inicial.processo_fisico}
+                            {tipoData === 0 ? data.inicial.processo_fisico : tipoData === 1 ? data.processo_fisico : null}
                           </Typography>
                         </Sheet>
                         <Chip
                           component={Link}
                           underline='none'
-                          href={'/inicial/detalhes/' + reuniao.inicial_id}
+                          href={'/inicial/detalhes/' + data.inicial_id}
                           variant="outlined"
                           color="primary"
                           size="sm"
@@ -386,17 +407,19 @@ export default function Home() {
                         >
                           Ir ao inicial
                         </Chip>
-                        <Chip
-                          component={Link}
-                          underline='none'
-                          onClick={() => { setOpen(true); setInicial(reuniao.inicial.sei); console.log(reuniao.id) }}
-                          variant="outlined"
-                          color="success"
-                          size="sm"
-                          sx={{ mt: 1 }}
-                        >
-                          Reagendar
-                        </Chip>
+                        {tipoData === 0 ?
+                          <Chip
+                            component={Link}
+                            underline='none'
+                            onClick={() => { setOpen(true); setInicial(data.inicial.sei); }}
+                            variant="outlined"
+                            color="success"
+                            size="sm"
+                            sx={{ mt: 1 }}
+                          >
+                            Reagendar
+                          </Chip>
+                          : null}
                         <Modal open={open} onClose={() => setOpen(false)}>
                           <ModalDialog>
                             <DialogTitle>Reagendar Reunião</DialogTitle>
@@ -412,6 +435,7 @@ export default function Home() {
                                   <FormLabel>Data Reunião</FormLabel>
                                   <Chip color='primary' variant='soft' sx={{ fontSize: '19px', color: 'neutral.softActiveColor' }}>{dataCard}</Chip>
                                 </FormControl>
+
                                 <FormControl>
                                   <FormLabel>Nova data</FormLabel>
                                   <Input required type='date' value={dataRemarcacao.format('YYYY-MM-DD')} onChange={(e) => {
@@ -422,7 +446,7 @@ export default function Home() {
                                   <FormLabel>Motivo</FormLabel>
                                   <Textarea required minRows={2} maxRows={5} value={motivo} onChange={(e) => setMotivo(e.target.value)} />
                                 </FormControl>
-                                <Button onClick={() => reagendarReuniao(reuniao.id)}>Alterar</Button>
+                                <Button onClick={() => reagendarReuniao(data.id)}>Alterar</Button>
                               </Stack>
                             </form>
                           </ModalDialog>
@@ -430,51 +454,15 @@ export default function Home() {
                       </CardContent>
                     </Card>
                   </Grid>
-                  :
-                  <Grid key={index}>
-                    <Card
-                      variant="outlined"
-                      orientation="horizontal"
-                      sx={{
-                        ml: 2,
-                        mt: 2,
-                        '&:hover': { boxShadow: 'md' },
-                        boxShadow: 'sm',
-                        maxHeight: '60px',
-                        paddingTop: 1,
-                      }}
-                    >
-                      <CircleIcon sx={{ width: '20px', color: 'var(--joy-palette-warning-plainColor)' }} />
-                      <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-                        <Sheet>
-                          <Typography level="title-lg" id="card-description" key={reuniao.id}>
-                            {reuniao.inicial.sei ? reuniao.inicial.sei : reuniao.inicial.aprova_digital}
-                          </Typography>
-                          <Typography level="body-sm" aria-describedby="card-description" mb={1}>
-                            {reuniao.inicial.processo_fisico}
-                          </Typography>
-                        </Sheet>
-                        <Chip
-                          component={Link}
-                          underline='none'
-                          href={'/inicial/detalhes/' + reuniao.inicial_id}
-                          variant="outlined"
-                          color="warning"
-                          size="sm"
-                          sx={{ mt: 1, ml: 3 }}
-                        >
-                          Ir ao inicial
-                        </Chip>
-                      </CardContent>
-                    </Card>
+                )) :
+                  <Grid key={tipoData}>
+                    <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color={colors[tipoData]} variant="plain" >
+                      {
+                        tipoData === 1 || tipoData === 0 ? 'SEM COMPROMISSOS' : 'SEM NOTIFICAÇÕES'
+                      }
+                    </Chip>
                   </Grid>
-
-              )) :
-                <Grid key={index}>
-                  <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color="primary" variant="plain" >
-                    SEM COMPROMISSOS
-                  </Chip>
-                </Grid>}
+              }
             </Grid>
           </Sheet>
         </Box>
