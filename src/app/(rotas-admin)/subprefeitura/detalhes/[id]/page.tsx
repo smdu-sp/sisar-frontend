@@ -31,9 +31,7 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
         }
     }
 
-    useEffect(() => {
-        console.log(id);
-        
+    useEffect(() => {  
         if (id) {
             subprefeituraServices.buscarPorId(id)
                 .then((response: ISubprefeitura) => {

@@ -1,6 +1,7 @@
 'use client'
 
 import Content from '@/components/Content';
+import CardAviso from '@/components/CardAviso';
 import * as React from 'react';
 import { Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormLabel, IconButton, Input, Modal, ModalDialog, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
@@ -23,7 +24,8 @@ import ListDecoration from '../../components/ListDecoration';
 import Icon from '@mui/material/Icon';;
 import { Card, CardContent, Grid, Option, Select, Sheet, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
-
+import * as avisos from '@/shared/services/avisos.services'
+import { ICreateAvisos } from '@/shared/services/avisos.services'
 import CircleIcon from '@mui/icons-material/RadioButtonCheckedRounded';
 import Link from '@mui/joy/Link';
 import { AlertsContext } from '@/providers/alertsProvider';
@@ -53,6 +55,9 @@ export default function Home() {
   const [dataRemarcacao, setDataRemarcacao] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
   const [motivo, setMotivo] = useState('');
   const [dados, setDados] = useState([]);
+  const [descricao, setDescricao] = useState('');
+  const [titulo, setTitulo] = useState('');
+  const [dataAviso, setDataAviso] = useState<Date>(new Date());
   const router = useRouter();
   const { setAlert } = React.useContext(AlertsContext);
 
@@ -95,6 +100,26 @@ export default function Home() {
         .catch((error) => {
           console.error("erro:", error);
         });
+    } else if (tipoData == 2) {
+      avisos.buscarPorMesAno(mes.toString(), data.year().toString())
+        .then((response) => {
+          if (Array.isArray(response)) {
+            for (let i = 0; i < response.length; i++) {
+              setDias(prevDias => {
+                if (response[i].nova_data_reuniao != null) {
+                  return [...prevDias, parseInt(response[i].data.toString().split("T")[0].split("-")[2])];
+                } else {
+                  return [...prevDias, parseInt(response[i].data.toString().split("T")[0].split("-")[2])];
+                }
+              });
+            }
+          } else {
+            setDias([]);
+          }
+        })
+        .catch((error) => {
+          console.error("erro:", error);
+        });
     }
 
   };
@@ -106,8 +131,7 @@ export default function Home() {
       <Badge
         key={props.day.toString()}
         overlap="circular"
-        badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1, color: tipoData == 1 ? 'var(--joy-palette-warning-plainColor)' : 'var(--joy-palette-primary-plainColor)' }} /> : undefined}
-
+        badgeContent={isSelected ? <Icon component={CircleIcon} sx={{ width: 13, height: 13, fontWeight: 'bold', mr: 1 }} color={colors[tipoData]} /> : undefined}
       >
         <PickersDay
           {...other}
@@ -118,8 +142,6 @@ export default function Home() {
     );
   };
 
-
-  const requestAbortController = React.useRef<AbortController | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
 
@@ -127,6 +149,7 @@ export default function Home() {
     if (tipoData == 0) {
       reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
         .then((response) => {
+          console.log(response);
           setDados(response);
         });
     } else if (tipoData == 1) {
@@ -135,8 +158,26 @@ export default function Home() {
           console.log(response);
           setDados(response);
         });
+    } else if (tipoData == 2) {
+      avisos.buscarDia(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
+        .then((response) => {
+          console.log(response);
+          setDados(response);
+        });
     }
+  }
 
+  const criarAvisos = () => {
+    avisos.criar({ titulo, descricao, data: dataAviso })
+      .then((response: avisos.IAvisos) => {
+        if (response) {
+          setAlert('Aviso criado', 'Aviso criado com sucesso!', 'success', 3000, Check);
+          setOpenNotf(false)
+          setTitulo('');
+          setDescricao('');
+          setDataAviso(today)
+        }
+      })
   }
 
 
@@ -351,13 +392,17 @@ export default function Home() {
                 <Stack spacing={2}>
                   <FormControl>
                     <FormLabel>Titulo</FormLabel>
-                    <Input autoFocus required />
+                    <Input autoFocus required value={titulo} onChange={(e) => setTitulo(e.target.value)} />
                   </FormControl>
                   <FormControl>
                     <FormLabel>Descrição</FormLabel>
-                    <Textarea required minRows={5} />
+                    <Textarea required minRows={5} value={descricao} onChange={(e) => setDescricao(e.target.value)} />
                   </FormControl>
-                  <Button type="submit">Salvar</Button>
+                  <FormControl>
+                    <FormLabel>Data</FormLabel>
+                    <Input type='date' required value={dataAviso.toISOString().split('T')[0]} onChange={(e) => { setDataAviso(new Date(e.target.value)) }} />
+                  </FormControl>
+                  <Button onClick={() => { criarAvisos(); }}>Salvar</Button>
                 </Stack>
               </form>
             </ModalDialog>
@@ -372,6 +417,7 @@ export default function Home() {
             >
               {
                 dados && dados.length > 0 ? dados.map((data: any) => (
+                  tipoData != 2 ?
                   <Grid key={tipoData}>
                     <Card
                       variant="outlined"
@@ -454,6 +500,7 @@ export default function Home() {
                       </CardContent>
                     </Card>
                   </Grid>
+                  : <CardAviso titulo={data.titulo} descricao={data.descricao} id={data.id}/>
                 )) :
                   <Grid key={tipoData}>
                     <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color={colors[tipoData]} variant="plain" >
