@@ -14,17 +14,17 @@ import SvgIcon from '@mui/joy/SvgIcon';
 import { Input, Textarea } from '@mui/joy';
 import { BorderAll, Style } from '@mui/icons-material';
 import * as avisos from "@/shared/services/avisos.services"
-import {IAvisos}from "@/shared/services/avisos.services"
+import { IAvisos } from "@/shared/services/avisos.services"
 
 export default function BioCard(props: any) {
-    const [edit, setEdit] = React.useState(false)
+    const [edit, setEdit] = React.useState(true)
     const [titulo, setTitulo] = React.useState(props.titulo ? props.titulo : "")
     const [descricao, setDescricao] = React.useState(props.descricao ? props.descricao : "")
 
     const atualizar = () => {
-        avisos.atualizar(props.id, { titulo, descricao })
+        avisos.atualizar(props.id, titulo, descricao)
             .then((response: IAvisos) => {
-                console.log(response);
+                setEdit(true);
             });
     }
 
@@ -39,45 +39,68 @@ export default function BioCard(props: any) {
                 maxWidth: '100%',
                 boxShadow: 'lg',
                 mt: 3,
-                mb: 3
+                mb: 3,
+                mx: 1
             }}
+            key={props.id}
         >
             <CardContent sx={{ alignItems: 'center' }}>
-                <Input
-                    type='text'
-                    value={titulo}
-                    onChange={(e) => setTitulo(e.target.value)}
-                    sx={{
-                        border: edit ? "none" : null,
-                        boxShadow: edit ? "none" : null,
-                        fontWeight: edit ? "bold" : null,
-                        fontSize: 20,
-                        mb: 1
-                    }}
-                    readOnly={edit ? true : false}
-                />
+                {edit === true ?
+                    <Typography
+                        sx={{
+                            border: edit ? "none" : null,
+                            boxShadow: edit ? "none" : null,
+                            fontWeight: "bold",
+                            fontSize: 20,
+                            width: "100%",
+                            mb: 1,
+                            textAlign: 'center'
+                        }}
+                    >
+                        {titulo}
+                    </Typography>
+                    :
+                    <Input
+                        type='text'
+                        value={titulo}
+                        onChange={(e) => setTitulo(e.target.value)}
+                        sx={{
+                            border: edit ? "none" : null,
+                            boxShadow: edit ? "none" : null,
+                            fontWeight: "bold",
+                            fontSize: 20,
+                            width: "100%",
+                            mb: 1
+                        }}
+                        readOnly={edit ? true : false}
+                    />
 
+                }
                 <Textarea
                     variant="outlined"
                     value={descricao}
                     onChange={(e) => setDescricao(e.target.value)}
-                    minRows={1}
+                    minRows={4}
                     maxRows={4}
                     sx={{
                         border: edit ? "none" : null,
                         boxShadow: edit ? "none" : null,
-                        fontSize: 20,
-                        mb: 1
+                        fontSize: 15,
+                        mb: 1,
+                        width: "100%",
+                        display: 'flex',
+                        justifyContent: 'center',
+                        textAlign: 'center',
                     }}
                     readOnly={edit ? true : false}
                 />
             </CardContent>
             <CardOverflow sx={{ bgcolor: 'background.level1' }}>
                 <CardActions buttonFlex="1">
-                    <ButtonGroup variant="outlined" sx={{ gap: 1 }}>
-                        <Button onClick={() => { setEdit(!edit); }}>Editar</Button>
-                        <Button color={edit ? 'danger' : 'success'} onClick={() => {edit ? deletar() : atualizar()}}>{edit ? "Deletar" : "Salvar"}</Button>
-                    </ButtonGroup>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button variant='solid' color={edit ? 'primary' : 'danger'} onClick={() => { setEdit(!edit); }}>{edit ? "Editar" : "Cancelar"}</Button>
+                        <Button variant='solid' color={edit ? 'danger' : 'success'} onClick={() => { edit ? deletar() : atualizar() }}>{edit ? "Deletar" : "Salvar"}</Button>
+                    </Box>
                 </CardActions>
             </CardOverflow>
         </Card>

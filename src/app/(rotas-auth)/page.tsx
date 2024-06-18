@@ -161,7 +161,6 @@ export default function Home() {
     } else if (tipoData == 2) {
       avisos.buscarDia(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
         .then((response) => {
-          console.log(response);
           setDados(response);
         });
     }
@@ -172,6 +171,7 @@ export default function Home() {
       .then((response: avisos.IAvisos) => {
         if (response) {
           setAlert('Aviso criado', 'Aviso criado com sucesso!', 'success', 3000, Check);
+          busca(dataAviso.getMonth() + 1);
           setOpenNotf(false)
           setTitulo('');
           setDescricao('');
@@ -340,20 +340,20 @@ export default function Home() {
                 disableIndicator
                 orientation="vertical"
                 variant='soft'
-                {...(tipoData === 1 && { color: colors[0] })}
+                color='primary'
                 disabled={tipoData == 2 || tipoData == 1 ? true : false}
               >
-                <ListDecoration valor={tipoData == 0 ? reuniao.length : 0} tipo={1} />
+                <ListDecoration valor={tipoData == 0 ? dados.length : 0} tipo={1} />
                 Reuniões
               </Tab>
               <Tab
                 disableIndicator
                 orientation="vertical"
                 variant='soft'
-                {...(tipoData === 0 && { color: colors[1] })}
+                color='warning'
                 disabled={tipoData == 2 || tipoData == 0 ? true : false}
               >
-                <ListDecoration valor={tipoData == 1 ? reuniao.length : 0} tipo={0} />
+                <ListDecoration valor={tipoData == 1 ? dados.length : 0} tipo={0} />
                 Processos
               </Tab>
               <Tab
@@ -363,7 +363,7 @@ export default function Home() {
                 {...(tipoData === 2 && { color: colors[2] })}
                 disabled={tipoData == 0 || tipoData == 1 ? true : false}
               >
-                <ListDecoration valor='10' tipo={2} />
+                <ListDecoration valor={tipoData == 2 ? dados.length : 0} tipo={2} />
                 Avisos
               </Tab>
             </TabList>
@@ -500,7 +500,7 @@ export default function Home() {
                       </CardContent>
                     </Card>
                   </Grid>
-                  : <CardAviso titulo={data.titulo} descricao={data.descricao} id={data.id}/>
+                  : <CardAviso titulo={data.titulo} descricao={data.descricao} id={data.id} key={data.id}/>
                 )) :
                   <Grid key={tipoData}>
                     <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color={colors[tipoData]} variant="plain" >

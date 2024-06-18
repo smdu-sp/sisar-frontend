@@ -9,12 +9,14 @@ export interface IAvisos {
     titulo: string
     descricao: string
     data?: Date
+    inicial_id?: number
 }
 
 export interface ICreateAvisos{
     titulo: string
     descricao: string
     data?: Date
+    inicial_id?: number
 }
 
 export interface IUpdateAvisos extends Partial<ICreateAvisos> {}
@@ -68,7 +70,7 @@ async function buscarPorMesAno(mes: string, ano: string){
     return reunoes;
 }
 
-async function atualizar(id: string, dataUpdate: IUpdateAvisos): Promise<IAvisos> {
+async function atualizar(id: string, titulo: string, descricao: string, data?: Date, inicial_id?: number): Promise<IAvisos> {
     const session = await getServerSession(authOptions);
     const atualizado = await fetch(`${baseURL}avisos/atualizar/${id}`, {
         method: "PATCH",
@@ -77,7 +79,7 @@ async function atualizar(id: string, dataUpdate: IUpdateAvisos): Promise<IAvisos
             "Authorization": `Bearer ${session?.access_token}`
         },
         body: JSON.stringify({
-            dataUpdate,
+            titulo, descricao, data, inicial_id
         })
     }).then((response) => {
         if (response.status === 401) signOut();

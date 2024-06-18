@@ -6,7 +6,7 @@ import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 export default function ListDecoration(props: any) {
     return (
         <ListItemDecorator>
-        <Badge badgeContent={props.valor} color="success" max={9}>
+        <Badge badgeContent={props.valor} color={props.tipo == 1 ? "primary" : props.tipo == 0 ? "warning" : "success"} max={9}>
           { props.tipo == 1 ? <PeopleAltIcon /> : props.tipo == 0 ? <PendingActionsIcon /> : <NotificationsActiveIcon />}
         </Badge>
       </ListItemDecorator>
