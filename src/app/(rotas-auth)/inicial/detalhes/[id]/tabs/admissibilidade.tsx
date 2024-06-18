@@ -192,7 +192,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                             onChange={(e) => setInterface_sehab(e.target.checked)}
                         />
                     </Grid>
-                    <Grid xs={12} lg={8} xl={10} sx={!interface_sehab ? { display: 'none' } : {}}>
+                    <Grid xs={12} lg={8} xl={10}>
                         <Input
                             id="num_sehab"
                             name="num_sehab"
@@ -219,7 +219,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                             onChange={(e) => setInterface_siurb(e.target.checked)}
                         />
                     </Grid>
-                    <Grid xs={12} lg={8} xl={10} sx={!interface_siurb ? { display: 'none' } : {}}>
+                    <Grid xs={12} lg={8} xl={10}>
                         <Input
                             placeholder="Processo SIURB"
                             type="text"
@@ -243,7 +243,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                             onChange={(e) => setInterface_smc(e.target.checked)}
                         />
                     </Grid>
-                    <Grid xs={12} lg={8} xl={10} sx={!interface_smc ? { display: 'none' } : {}}>
+                    <Grid xs={12} lg={8} xl={10}>
                         <Input
                             placeholder="Processo SMC"
                             type="text"
@@ -267,7 +267,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                             onChange={(e) => setInterface_smt(e.target.checked)}
                         />
                     </Grid>
-                    <Grid xs={12} lg={8} xl={10} sx={!interface_smt ? { display: 'none' } : {}}>
+                    <Grid xs={12} lg={8} xl={10}>
                         <Input
                             placeholder="Processo SMT"
                             type="text"
@@ -291,7 +291,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                             onChange={(e) => setInterface_svma(e.target.checked)}
                         />
                     </Grid>
-                    <Grid xs={12} lg={8} xl={10} sx={!interface_svma ? { display: 'none' } : {}}>
+                    <Grid xs={12} lg={8} xl={10}>
                         <Input
                             placeholder="Processo SVMA"
                             type="text"
