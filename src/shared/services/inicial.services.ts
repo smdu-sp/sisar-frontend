@@ -153,6 +153,21 @@ async function buscarPorMesAno(mes: string, ano: string){
     return reunoes;
 }
 
+async function buscarPorDataProcesso(data: string){
+    const session = await getServerSession(authOptions);
+    const reunoes = await fetch(`${baseURL}inicial/buscar-data-processo/${data}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) signOut();
+        return response.json();
+    })
+    return reunoes;
+}
+
 const buscarPorId = async (id: number): Promise<IInicial> => {
     const session = await getServerSession(authOptions);
     const iniciais = await fetch(`${baseURL}inicial/buscar-por-id/${id}`, {
@@ -266,5 +281,6 @@ export {
     buscarPorId,
     criar,
     removeSql,
-    buscarPorMesAno
+    buscarPorMesAno,
+    buscarPorDataProcesso
 }
