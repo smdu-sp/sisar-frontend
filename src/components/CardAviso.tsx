@@ -11,25 +11,34 @@ import CardActions from '@mui/joy/CardActions';
 import IconButton from '@mui/joy/IconButton';
 import Typography from '@mui/joy/Typography';
 import SvgIcon from '@mui/joy/SvgIcon';
-import { Input, Textarea } from '@mui/joy';
+import { Input, Snackbar, Stack, Textarea } from '@mui/joy';
 import { BorderAll, Style } from '@mui/icons-material';
 import * as avisos from "@/shared/services/avisos.services"
 import { IAvisos } from "@/shared/services/avisos.services"
+import { Interface } from 'readline';
 
-export default function BioCard(props: any) {
+interface ICardAviso {
+    id: string,
+    titulo: string,
+    descricao: string,
+    func: any
+}
+
+export default function BioCard(props: ICardAviso) {
     const [edit, setEdit] = React.useState(true)
     const [titulo, setTitulo] = React.useState(props.titulo ? props.titulo : "")
     const [descricao, setDescricao] = React.useState(props.descricao ? props.descricao : "")
+    const [message, setMessage] = React.useState("")
+    const [open, setOpen] = React.useState(false)
 
     const atualizar = () => {
         avisos.atualizar(props.id, titulo, descricao)
-            .then((response: IAvisos) => {
+            .then(() => {
                 setEdit(true);
             });
     }
-
     const deletar = () => {
-        console.log("Não feito");
+        avisos.excluir(props.id)
     }
 
     return (
@@ -99,10 +108,37 @@ export default function BioCard(props: any) {
                 <CardActions buttonFlex="1">
                     <Box sx={{ display: 'flex', gap: 1 }}>
                         <Button variant='solid' color={edit ? 'primary' : 'danger'} onClick={() => { setEdit(!edit); }}>{edit ? "Editar" : "Cancelar"}</Button>
-                        <Button variant='solid' color={edit ? 'danger' : 'success'} onClick={() => { edit ? deletar() : atualizar() }}>{edit ? "Deletar" : "Salvar"}</Button>
+                        <Button variant='solid' color={edit ? 'danger' : 'success'} onClick={() => { edit ? setOpen(true) : atualizar(); setMessage("Tem certeza que deseja deletar?") }}>{edit ? "Deletar" : "Salvar"}</Button>
                     </Box>
                 </CardActions>
             </CardOverflow>
+            <Snackbar
+                variant="solid"
+                color='danger'
+                size="lg"
+                invertedColors
+                open={open}
+                onClose={() => setOpen(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                sx={{ maxWidth: 360 }}
+            >
+                <div>
+                    <Typography level="title-lg">{titulo}</Typography>
+                    <Typography sx={{ mt: 1, mb: 2 }} level="title-md">{message}</Typography>
+                    <Stack direction="row" spacing={1}>
+                        <Button variant="solid" color="primary" onClick={() => (setOpen(false), deletar(), props.func())}>
+                            Sim
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => setOpen(false)}
+                        >
+                            Não
+                        </Button>
+                    </Stack>
+                </div>
+            </Snackbar>
         </Card>
     );
 }

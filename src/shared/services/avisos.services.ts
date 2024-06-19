@@ -88,4 +88,19 @@ async function atualizar(id: string, titulo: string, descricao: string, data?: D
     return atualizado;
 }
 
-export {criar, buscarDia, buscarPorMesAno, atualizar}
+async function excluir(id: string){
+    const session = await getServerSession(authOptions);
+    const atualizado = await fetch(`${baseURL}avisos/excluir/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) signOut();
+        return response.json();
+    });
+    return atualizado;
+}
+
+export {criar, buscarDia, buscarPorMesAno, atualizar, excluir}

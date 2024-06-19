@@ -6,6 +6,7 @@ import { IAlvaraTipo } from "./alvara-tipo.services";
 import { signOut } from "next-auth/react";
 import { IUsuario } from "./usuario.services";
 import { IAdmissibilidade } from "./admissibilidade.services";
+import { Interface } from "readline";
 
 export interface IInicial_Sqls {
     id: string
@@ -91,6 +92,12 @@ export interface ICreateInterfaces {
     num_smt?: string
     interface_svma?: boolean
     num_svma?: string
+}
+
+export interface IProcessosAvisos {
+    id: string;
+    sei?: string;
+    aprova_digital?: string;
 }
 
 export interface ICreateInicial {
@@ -273,6 +280,21 @@ const atualizarDistribuicao = async (inicial_id: number, dataUpdate: IUpdateDist
     return iniciais;
 }
 
+const processosAvisos = async (): Promise<IProcessosAvisos[]> => {
+    const session = await getServerSession(authOptions);
+    const iniciais = await fetch(`${baseURL}inicial/busca-processos`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        // if (response.status === 401) Logout();
+        return response.json();
+    })
+    return iniciais;
+}
+
 export {
     atualizar,
     atualizarDistribuicao,
@@ -282,5 +304,6 @@ export {
     criar,
     removeSql,
     buscarPorMesAno,
-    buscarPorDataProcesso
+    buscarPorDataProcesso,
+    processosAvisos
 }

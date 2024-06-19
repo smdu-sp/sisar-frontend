@@ -3,13 +3,13 @@
 import Content from '@/components/Content';
 import CardAviso from '@/components/CardAviso';
 import * as React from 'react';
-import { Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormLabel, IconButton, Input, Modal, ModalDialog, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, tabClasses } from '@mui/joy';
+import { Autocomplete, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormLabel, IconButton, Input, Modal, ModalDialog, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
 import { useCallback, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Add, Check } from '@mui/icons-material';
+import { Add, Check, Key } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
 import dayjs, { Dayjs } from 'dayjs';
 import Badge from '@mui/material/Badge';
@@ -17,7 +17,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
-import AddAlertIcon from '@mui/icons-material/AddAlert';
+import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import * as reunioes from '@/shared/services/reunioes.services';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import ListDecoration from '../../components/ListDecoration';
@@ -30,6 +30,7 @@ import CircleIcon from '@mui/icons-material/RadioButtonCheckedRounded';
 import Link from '@mui/joy/Link';
 import { AlertsContext } from '@/providers/alertsProvider';
 import 'dayjs/locale/pt-br'; // Importe a localização desejada
+import { atualizar } from '@/shared/services/unidade.services';
 
 dayjs.locale('pt-br');
 
@@ -57,7 +58,12 @@ export default function Home() {
   const [dados, setDados] = useState([]);
   const [descricao, setDescricao] = useState('');
   const [titulo, setTitulo] = useState('');
+  const [lemTabId, setLemTabId] = useState(0);
+  const [dadosTab, setDadosTab] = useState<any>([]);
+  const [lemTab, setLemTab] = useState<boolean>(true);
   const [dataAviso, setDataAviso] = useState<Date>(new Date());
+  const [processosAvisos, setProcessosAvisos] = useState<inicialServices.IProcessosAvisos[]>([]);
+  const [processoCard, setProcessoCard] = useState(0);
   const router = useRouter();
   const { setAlert } = React.useContext(AlertsContext);
 
@@ -81,9 +87,6 @@ export default function Home() {
             setDias([]);
           }
         })
-        .catch((error) => {
-          console.error("erro:", error);
-        });
     } else if (tipoData == 1) {
       inicialServices.buscarPorMesAno(mes.toString(), data.year().toString())
         .then((response) => {
@@ -97,9 +100,6 @@ export default function Home() {
             setDias([]);
           }
         })
-        .catch((error) => {
-          console.error("erro:", error);
-        });
     } else if (tipoData == 2) {
       avisos.buscarPorMesAno(mes.toString(), data.year().toString())
         .then((response) => {
@@ -117,9 +117,6 @@ export default function Home() {
             setDias([]);
           }
         })
-        .catch((error) => {
-          console.error("erro:", error);
-        });
     }
 
   };
@@ -144,18 +141,15 @@ export default function Home() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-
   const buscar_data = () => {
     if (tipoData == 0) {
       reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
         .then((response) => {
-          console.log(response);
           setDados(response);
         });
     } else if (tipoData == 1) {
       inicialServices.buscarPorDataProcesso(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
         .then((response) => {
-          console.log(response);
           setDados(response);
         });
     } else if (tipoData == 2) {
@@ -167,7 +161,7 @@ export default function Home() {
   }
 
   const criarAvisos = () => {
-    avisos.criar({ titulo, descricao, data: dataAviso })
+    avisos.criar({ titulo, descricao, data: dataAviso, inicial_id: lemTab ? 1 : dadosTab[0] })
       .then((response: avisos.IAvisos) => {
         if (response) {
           setAlert('Aviso criado', 'Aviso criado com sucesso!', 'success', 3000, Check);
@@ -180,6 +174,10 @@ export default function Home() {
       })
   }
 
+  const atualizarAvisos = () => {
+    busca(dataAviso.getMonth() + 1);
+    buscar_data();
+  }
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -215,6 +213,18 @@ export default function Home() {
       });
   }
 
+  useEffect(() => {
+    inicialServices.processosAvisos()
+      .then((response: inicialServices.IProcessosAvisos[]) => {
+        setProcessosAvisos(response);
+      });
+  }, []);
+
+  const options = processosAvisos.map((processo) => ({
+    label: processo.sei,
+    value: parseInt(processo.id)
+  }));
+
   const mudaPagina = (
     _: React.MouseEvent<HTMLButtonElement> | null, novaPagina: number,
   ) => {
@@ -241,7 +251,6 @@ export default function Home() {
     { label: 'Próprio SMUL', color: 'neutral' },
     { label: 'Múltiplas Interfaces', color: 'primary' },
   ]
-
 
   useEffect(() => {
     buscaIniciais();
@@ -286,10 +295,10 @@ export default function Home() {
               <Select value={tipoData} onChange={(_, v) => { setTipoData(v ? v : 0); setDados([]); }} sx={{ minHeight: 20, minWidth: 120, fontSize: '14px', mb: 0.5 }} color={colors[tipoData]}>
                 <Option value={0} sx={{ fontSize: '14px' }} color='primary'>Reuniões</Option>
                 <Option value={1} sx={{ fontSize: '14px' }} color='warning'>Processos</Option>
-                <Option value={2} sx={{ fontSize: '14px' }} color='success'>Avisos</Option>
+                <Option value={2} sx={{ fontSize: '14px' }} color='success'>Lembretes</Option>
               </Select>
               <Typography level="body-sm" aria-describedby="card-description" mb={1}>
-                Reuniões: {diass.length}
+                {tipoData == 0 ? 'Reuniões: ' : tipoData == 1 ? 'Processos: ' : 'Lembretes:'} {diass.length}
               </Typography>
             </Box>
           </Box>
@@ -364,7 +373,7 @@ export default function Home() {
                 disabled={tipoData == 0 || tipoData == 1 ? true : false}
               >
                 <ListDecoration valor={tipoData == 2 ? dados.length : 0} tipo={2} />
-                Avisos
+                Lembretes
               </Tab>
             </TabList>
           </Tabs>
@@ -374,8 +383,8 @@ export default function Home() {
             }
           </Chip>
           {tipoData == 2 ?
-            <IconButton sx={{ position: 'absolute', top: 20, right: 15, py: 0.5, fontSize: '40px', bg: 'primary' }} color='success' onClick={() => setOpenNotf(true)}>
-              <AddAlertIcon sx={{ fontSize: '35px' }} />
+            <IconButton sx={{ position: 'absolute', top: 20, right: 15, py: 0.5, fontSize: '40px', bg: 'primary' }} color='success' onClick={() => {setOpenNotf(true); setLemTab(true)}}>
+              <NotificationAddIcon sx={{ fontSize: '35px' }} />
             </IconButton>
             : null
           }
@@ -402,7 +411,23 @@ export default function Home() {
                     <FormLabel>Data</FormLabel>
                     <Input type='date' required value={dataAviso.toISOString().split('T')[0]} onChange={(e) => { setDataAviso(new Date(e.target.value)) }} />
                   </FormControl>
-                  <Button onClick={() => { criarAvisos(); }}>Salvar</Button>
+                  <FormControl>
+                    <FormLabel>Processos</FormLabel>
+                    {
+                      lemTab ?
+                        <Autocomplete
+                          key={processoCard}
+                          required
+                          placeholder="Selecione"
+                          options={options}
+                          value={options.find((value: any) => value.value == processoCard)}
+                          sx={{ width: 300 }}
+                        />
+                        :
+                        <Input type='text' sx={{ color: 'grey' }} required readOnly value={dadosTab[1]} />
+                    }
+                  </FormControl>
+                  <Button type='submit' onClick={() => { criarAvisos(); }}>Salvar</Button>
                 </Stack>
               </form>
             </ModalDialog>
@@ -418,89 +443,89 @@ export default function Home() {
               {
                 dados && dados.length > 0 ? dados.map((data: any) => (
                   tipoData != 2 ?
-                  <Grid key={tipoData}>
-                    <Card
-                      variant="outlined"
-                      orientation="horizontal"
-                      sx={{
-                        ml: 2,
-                        mt: 2,
-                        '&:hover': { boxShadow: 'md' },
-                        boxShadow: 'sm',
-                        maxHeight: '60px',
-                        paddingTop: 1,
-                      }}
-                    >
-                      <CircleIcon sx={{ width: '20px', color: 'var(--joy-palette-primary-plainColor)' }} />
-                      <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-                        <Sheet>
-                          <Typography level="title-lg" id="card-description" key={data.id}>
-                            {tipoData === 0 ? data.inicial.sei ? data.inicial.sei : data.inicial.aprova_digital :
-                              tipoData === 1 ? data.sei ? data.sei : data.aprova_digital : null}
-                          </Typography>
-                          <Typography level="body-sm" aria-describedby="card-description" mb={1}>
-                            {tipoData === 0 ? data.inicial.processo_fisico : tipoData === 1 ? data.processo_fisico : null}
-                          </Typography>
-                        </Sheet>
-                        <Chip
-                          component={Link}
-                          underline='none'
-                          href={'/inicial/detalhes/' + data.inicial_id}
-                          variant="outlined"
-                          color="primary"
-                          size="sm"
-                          sx={{ mt: 1, ml: 3 }}
-                        >
-                          Ir ao inicial
-                        </Chip>
-                        {tipoData === 0 ?
+                    <Grid key={tipoData}>
+                      <Card
+                        variant="outlined"
+                        orientation="horizontal"
+                        sx={{
+                          ml: 2,
+                          mt: 2,
+                          '&:hover': { boxShadow: 'md' },
+                          boxShadow: 'sm',
+                          maxHeight: '60px',
+                          paddingTop: 1,
+                        }}
+                      >
+                        <CircleIcon sx={{ width: '20px', color: 'var(--joy-palette-primary-plainColor)' }} />
+                        <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                          <Sheet>
+                            <Typography level="title-lg" id="card-description" key={data.id}>
+                              {tipoData === 0 ? data.inicial.sei ? data.inicial.sei : data.inicial.aprova_digital :
+                                tipoData === 1 ? data.sei ? data.sei : data.aprova_digital : null}
+                            </Typography>
+                            <Typography level="body-sm" aria-describedby="card-description" mb={1}>
+                              {tipoData === 0 ? data.inicial.processo_fisico : tipoData === 1 ? data.processo_fisico : null}
+                            </Typography>
+                          </Sheet>
                           <Chip
                             component={Link}
                             underline='none'
-                            onClick={() => { setOpen(true); setInicial(data.inicial.sei); }}
+                            href={'/inicial/detalhes/' + data.inicial_id}
                             variant="outlined"
-                            color="success"
+                            color="primary"
                             size="sm"
-                            sx={{ mt: 1 }}
+                            sx={{ mt: 1, ml: 3 }}
                           >
-                            Reagendar
+                            Ir ao inicial
                           </Chip>
-                          : null}
-                        <Modal open={open} onClose={() => setOpen(false)}>
-                          <ModalDialog>
-                            <DialogTitle>Reagendar Reunião</DialogTitle>
-                            <DialogContent>{inicial}</DialogContent>
-                            <form
-                              onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
-                                event.preventDefault();
-                                setOpen(false);
-                              }}
+                          {tipoData === 0 ?
+                            <Chip
+                              component={Link}
+                              underline='none'
+                              onClick={() => { setOpen(true); setInicial(data.inicial.sei); }}
+                              variant="outlined"
+                              color="success"
+                              size="sm"
+                              sx={{ mt: 1 }}
                             >
-                              <Stack spacing={2}>
-                                <FormControl>
-                                  <FormLabel>Data Reunião</FormLabel>
-                                  <Chip color='primary' variant='soft' sx={{ fontSize: '19px', color: 'neutral.softActiveColor' }}>{dataCard}</Chip>
-                                </FormControl>
+                              Reagendar
+                            </Chip>
+                            : null}
+                          <Modal open={open} onClose={() => setOpen(false)}>
+                            <ModalDialog>
+                              <DialogTitle>Reagendar Reunião</DialogTitle>
+                              <DialogContent>{inicial}</DialogContent>
+                              <form
+                                onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
+                                  event.preventDefault();
+                                  setOpen(false);
+                                }}
+                              >
+                                <Stack spacing={2}>
+                                  <FormControl>
+                                    <FormLabel>Data Reunião</FormLabel>
+                                    <Chip color='primary' variant='soft' sx={{ fontSize: '19px', color: 'neutral.softActiveColor' }}>{dataCard}</Chip>
+                                  </FormControl>
 
-                                <FormControl>
-                                  <FormLabel>Nova data</FormLabel>
-                                  <Input required type='date' value={dataRemarcacao.format('YYYY-MM-DD')} onChange={(e) => {
-                                    setDataRemarcacao(dayjs(e.target.value));
-                                  }} />
-                                </FormControl>
-                                <FormControl>
-                                  <FormLabel>Motivo</FormLabel>
-                                  <Textarea required minRows={2} maxRows={5} value={motivo} onChange={(e) => setMotivo(e.target.value)} />
-                                </FormControl>
-                                <Button onClick={() => reagendarReuniao(data.id)}>Alterar</Button>
-                              </Stack>
-                            </form>
-                          </ModalDialog>
-                        </Modal>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                  : <CardAviso titulo={data.titulo} descricao={data.descricao} id={data.id} key={data.id}/>
+                                  <FormControl>
+                                    <FormLabel>Nova data</FormLabel>
+                                    <Input required type='date' value={dataRemarcacao.format('YYYY-MM-DD')} onChange={(e) => {
+                                      setDataRemarcacao(dayjs(e.target.value));
+                                    }} />
+                                  </FormControl>
+                                  <FormControl>
+                                    <FormLabel>Motivo</FormLabel>
+                                    <Textarea required minRows={2} maxRows={5} value={motivo} onChange={(e) => setMotivo(e.target.value)} />
+                                  </FormControl>
+                                  <Button onClick={() => reagendarReuniao(data.id)}>Alterar</Button>
+                                </Stack>
+                              </form>
+                            </ModalDialog>
+                          </Modal>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    : <CardAviso titulo={data.titulo} descricao={data.descricao} id={data.id} key={data.id} func={atualizarAvisos} />
                 )) :
                   <Grid key={tipoData}>
                     <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color={colors[tipoData]} variant="plain" >
@@ -528,26 +553,34 @@ export default function Home() {
                 <th>Tipo de Alvará</th>
                 <th>Tipo de Processo</th>
                 <th style={{ textAlign: 'right' }}></th>
+                <th style={{ textAlign: 'right' }}></th>
               </tr>
             </thead>
             <tbody>
               {iniciais && iniciais.length > 0 ? iniciais.map((inicial: IInicial) => (
-                <tr onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)} key={inicial.id} style={{ cursor: 'pointer' }}>
-                  <td>{inicial.id}</td>
-                  <td>
+                <tr key={inicial.id} style={{ cursor: 'pointer' }}>
+                  <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>{inicial.id}</td>
+                  <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>
                     <Chip color={inicial.status > 1 ? status[0].color : status[inicial.status].color}>
                       {inicial.status > 2 ? status[0].label : status[inicial.status].label}
                     </Chip>
                   </td>
-                  <td>{inicial.sei}</td>
-                  <td>{inicial.tipo_requerimento}</td>
-                  <td>{inicial.requerimento}</td>
-                  <td>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
-                  <td>{inicial.alvara_tipo.nome}</td>
-                  <td>
+                  <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>{inicial.sei}</td>
+                  <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>{inicial.tipo_requerimento}</td>
+                  <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>{inicial.requerimento}</td>
+                  <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
+                  <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>{inicial.alvara_tipo.nome}</td>
+                  <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>
                     <Chip color={processo[inicial.tipo_processo].color}>
                       {processo[inicial.tipo_processo].label}
                     </Chip>
+                  </td>
+                  <td>
+                    <IconButton color='success' onClick={() => {
+                      setLemTab(false); setOpenNotf(true); setDadosTab([inicial.id, inicial.sei]);
+                    }}>
+                      <NotificationAddIcon sx={{ fontSize: '25px' }} />
+                    </IconButton>
                   </td>
                   <td style={{ textAlign: 'right' }}></td>
                 </tr>
