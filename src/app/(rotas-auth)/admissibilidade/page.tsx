@@ -232,7 +232,7 @@ export default function Admissibilidade() {
             </thead>
             <tbody>
               {admissibilidade && admissibilidade.length > 0 ? admissibilidade.map((admissibilidade: IAdmissibilidade) => (
-                <Tooltip title={admissibilidade.motivo} followCursor>
+                <Tooltip key={admissibilidade.inicial_id} title={admissibilidade.motivo} followCursor>
                   <tr key={admissibilidade.inicial_id} style={{ cursor: 'default' }}>
                     <td>{admissibilidade.inicial_id}</td>
                     <td>{admissibilidade.inicial?.sei}</td>
