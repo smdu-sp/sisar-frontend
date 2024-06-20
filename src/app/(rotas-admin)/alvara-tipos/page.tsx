@@ -43,7 +43,7 @@ export default function AlvaraTipos() {
   const [open, setOpen] = useState(false);
   const [mensagemStatus, setMensagemStatus] = useState('');
   const [id, setId] = useState('');
-  const [tipoStatus, setTipoStatus] = useState(true);
+  const [tipoStatus, setTipoStatus] = useState(1);
 
   useEffect(() => {
     buscaDados();
@@ -246,7 +246,7 @@ export default function AlvaraTipos() {
                 : 0) ? (
               <tr key={alvaraTipo.id} style={{ cursor: 'pointer' }}>
                 <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.nome}</td>
-                <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_admissibilidade}</td>
+                <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_admissibilidade_smul}</td>
                 <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_smul1}</td>
                 <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_smul2}</td>
                 <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_multi1}</td>

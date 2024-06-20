@@ -15,11 +15,22 @@ export default function AlvaraTipoDetalhes(props: any) {
     const router = useRouter();
 
     const [nome, setNome] = useState('');
-    const [prazo_admissibilidade, setPrazo_admissibilidade] = useState(0);
+    const [prazo_admissibilidade_smul, setPrazo_admissibilidade_smul] = useState(0);
+    const [reconsideracao_smul, setReconsideracao_smul] = useState(0);
+    const [reconsideracao_smul_tipo, setReconsideracao_smul_tipo] = useState(1);
+    const [analise_reconsideracao_smul, setAnalise_reconsideracao_smul] = useState(0);
     const [prazo_analise_smul1, setPrazo_analise_smul1] = useState(0);
     const [prazo_analise_smul2, setPrazo_analise_smul2] = useState(0);
+    const [prazo_emissao_alvara_smul, setPrazo_emissao_alvara_smul] = useState(0);
+    const [prazo_admissibilidade_multi, setPrazo_admissibilidade_multi] = useState(0);
+    const [reconsideracao_multi, setReconsideracao_multi] = useState(0);
+    const [reconsideracao_multi_tipo, setReconsideracao_multi_tipo] = useState(1);
+    const [analise_reconsideracao_multi, setAnalise_reconsideracao_multi] = useState(0);
     const [prazo_analise_multi1, setPrazo_analise_multi1] = useState(0);
     const [prazo_analise_multi2, setPrazo_analise_multi2] = useState(0);
+    const [prazo_emissao_alvara_multi, setPrazo_emissao_alvara_multi] = useState(0);
+    const [prazo_comunique_se, setPrazo_comunique_se] = useState(0);
+    const [prazo_encaminhar_coord, setPrazo_encaminhar_coord] = useState(0);
     const [status, setStatus] = useState(0);
     const { setAlert } = useContext(AlertsContext);
 
@@ -30,27 +41,76 @@ export default function AlvaraTipoDetalhes(props: any) {
             alvaraTiposService.buscarPorId(id)
                 .then((response: IAlvaraTipo) => {
                     setNome(response.nome);
-                    setPrazo_admissibilidade(response.prazo_admissibilidade);
+                    setStatus(response.status ? 1 : 0);
+                    setPrazo_comunique_se(response.prazo_comunique_se);
+                    setPrazo_encaminhar_coord(response.prazo_encaminhar_coord);
+                    setPrazo_admissibilidade_smul(response.prazo_admissibilidade_smul);
+                    setReconsideracao_smul(response.reconsideracao_smul);
+                    setReconsideracao_smul_tipo(response.reconsideracao_smul_tipo);
+                    setAnalise_reconsideracao_smul(response.analise_reconsideracao_smul);
                     setPrazo_analise_smul1(response.prazo_analise_smul1);
                     setPrazo_analise_smul2(response.prazo_analise_smul2);
+                    setPrazo_emissao_alvara_smul(response.prazo_emissao_alvara_smul);
+                    setPrazo_admissibilidade_multi(response.prazo_admissibilidade_multi);
+                    setReconsideracao_multi(response.reconsideracao_multi);
+                    setReconsideracao_multi_tipo(response.reconsideracao_multi_tipo);
+                    setAnalise_reconsideracao_multi(response.analise_reconsideracao_multi);
                     setPrazo_analise_multi1(response.prazo_analise_multi1);
                     setPrazo_analise_multi2(response.prazo_analise_multi2);
-                    setStatus(response.status ? 1 : 0);
+                    setPrazo_emissao_alvara_multi(response.prazo_emissao_alvara_multi);
                 });
         }
     }, [id]);
 
     const enviaDados = () => {
         if (id) {
-            alvaraTiposService.atualizar(id, { prazo_admissibilidade, nome, prazo_analise_smul1, prazo_analise_smul2, prazo_analise_multi1, prazo_analise_multi2, status })
-                .then(() => {
-                    router.push('/alvara-tipos?notification=1');
-                });
+            alvaraTiposService.atualizar(id, {
+                nome,
+                prazo_admissibilidade_smul,
+                reconsideracao_smul,
+                reconsideracao_smul_tipo,
+                analise_reconsideracao_smul,
+                prazo_analise_smul1,
+                prazo_analise_smul2,
+                prazo_emissao_alvara_smul,
+                prazo_admissibilidade_multi,
+                analise_reconsideracao_multi,
+                reconsideracao_multi,
+                reconsideracao_multi_tipo,
+                prazo_analise_multi1,
+                prazo_analise_multi2,
+                prazo_emissao_alvara_multi,
+                prazo_comunique_se,
+                prazo_encaminhar_coord,
+                status
+            })
+            .then(() => {
+                router.push('/alvara-tipos?notification=1');
+            });
         } else {
-            alvaraTiposService.criar({ nome, prazo_admissibilidade, prazo_analise_smul1, prazo_analise_smul2, prazo_analise_multi1, prazo_analise_multi2, status })
-                .then(() => {
-                    router.push('/alvara-tipos?notification=0');
-                });
+            alvaraTiposService.criar({
+                nome,
+                prazo_admissibilidade_smul,
+                reconsideracao_smul,
+                reconsideracao_smul_tipo,
+                analise_reconsideracao_smul,
+                prazo_analise_smul1,
+                prazo_analise_smul2,
+                prazo_emissao_alvara_smul,
+                prazo_admissibilidade_multi,
+                analise_reconsideracao_multi,
+                reconsideracao_multi,
+                reconsideracao_multi_tipo,
+                prazo_analise_multi1,
+                prazo_analise_multi2,
+                prazo_emissao_alvara_multi,
+                prazo_comunique_se,
+                prazo_encaminhar_coord,
+                status
+            })
+            .then(() => {
+                router.push('/alvara-tipos?notification=0');
+            });
         }
     }
     return (
@@ -65,6 +125,8 @@ export default function AlvaraTipoDetalhes(props: any) {
             <Box
                 sx={{
                     display: 'flex',
+                    flexDirection: 'column',
+                    gap: 2,
                     mx: 'auto',
                     width: '90%',
                     maxWidth: 800,
@@ -74,16 +136,170 @@ export default function AlvaraTipoDetalhes(props: any) {
             >
                 <Card sx={{ width: '100%' }}>
                     <Stack spacing={2} >
-                        <Stack>
-                            <FormControl>
-                                <FormLabel>Nome</FormLabel>
-                                <Input
-                                    placeholder="Nome"
-                                    value={nome}
-                                    onChange={e => setNome(e.target.value)}
-                                    required
-                                />
-                            </FormControl>
+                        <Stack direction={{ xs: 'column', sm: 'row' }}
+                            spacing={{ xs: 1, sm: 1, md: 1 }}>
+                            <Stack width={{ xs: '100%', sm: '70%', md: '70%' }}>
+                                <FormControl>
+                                    <FormLabel>Nome</FormLabel>
+                                    <Input
+                                        placeholder="Nome"
+                                        value={nome}
+                                        onChange={e => setNome(e.target.value)}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>      
+                            <Divider />                      
+                            <Stack width={{ xs: '100%', sm: '30%', md: '30%' }}>
+                                <FormControl>
+                                    <FormLabel>Status</FormLabel>
+                                    <Select value={status} onChange={(_, v) => setStatus(v ? v : 0)} required>
+                                        <Option value={1}>Ativo</Option>
+                                        <Option value={0}>Inativo</Option>
+                                    </Select>
+                                </FormControl>
+                            </Stack>
+                        </Stack>
+                        <Divider />
+                        <Stack direction={{ xs: 'column', sm: 'row' }}
+                            spacing={{ xs: 1, sm: 1, md: 1 }}>
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+                                <FormControl>
+                                    <FormLabel>Prazo comunique-se</FormLabel>
+                                    <Input
+                                        placeholder="Prazo comunique-se"
+                                        value={prazo_comunique_se}
+                                        type="number"
+                                        onChange={e => setPrazo_comunique_se(parseInt(e.target.value))}
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>      
+                            <Divider />                      
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+                                <FormControl>
+                                    <FormLabel>Encaminhamento para coordenadoria</FormLabel>
+                                    <Input
+                                        placeholder="Encaminhamento para coordenadoria"
+                                        value={prazo_encaminhar_coord}
+                                        type="number"
+                                        onChange={e => setPrazo_encaminhar_coord(parseInt(e.target.value))}
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
+                            <Divider />
+                        </Stack>
+                    </Stack>
+                </Card>
+                <Card sx={{ width: '100%' }}>
+                    <Stack spacing={2} >
+                        <Stack direction={{ xs: 'column', sm: 'row' }}
+                            spacing={{ xs: 1, sm: 1, md: 1 }}>
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+                                <FormControl>
+                                    <FormLabel>Prazo admissibilidade SMUL</FormLabel>
+                                    <Input
+                                        placeholder="Admissibilidade SMUL"
+                                        value={prazo_admissibilidade_smul}
+                                        type="number"
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        onChange={e => setPrazo_admissibilidade_smul(parseInt(e.target.value))}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
+                            <Divider />
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+                                <FormControl>
+                                    <FormLabel>Emissão de alvará SMUL</FormLabel>
+                                    <Input
+                                        placeholder="Emissão de alvará SMUL"
+                                        value={prazo_emissao_alvara_smul}
+                                        type="number"
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        onChange={e => setPrazo_emissao_alvara_smul(parseInt(e.target.value))}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
+                        </Stack>
+                        <Divider />
+                        <Stack direction={{ xs: 'column', sm: 'row' }}
+                            spacing={{ xs: 1, sm: 1, md: 1 }}>
+                            <Stack width={{ xs: '100%', sm: '60%', md: '60%' }}>
+                                <FormControl>
+                                    <FormLabel>Reconsideração SMUL</FormLabel>
+                                    <Box sx={{ display: 'flex', flexGrow: 1 }}>
+                                        <Input
+                                            placeholder="Reconsideração SMUL"
+                                            value={reconsideracao_smul}
+                                            type="number"
+                                            slotProps={{
+                                                input: {
+                                                    min: 0
+                                                },
+                                            }}
+                                            sx={{ 
+                                                flexGrow: 0.3,
+                                                borderTopRightRadius: 0,
+                                                borderBottomRightRadius: 0,
+                                            }}
+                                            onChange={e => setReconsideracao_smul(parseInt(e.target.value))}
+                                            required
+                                        />
+                                        <Select
+                                            sx={{ 
+                                                flexGrow: 0.7,
+                                                borderTopLeftRadius: 0,
+                                                borderBottomLeftRadius: 0,
+                                            }}
+                                            required
+                                            value={reconsideracao_smul_tipo}
+                                            onChange={(_, v) => v && setReconsideracao_smul_tipo(v)}
+                                        >
+                                            <Option value={1}>dias úteis</Option>
+                                            <Option value={2}>dias corridos</Option>
+                                        </Select>
+                                    </Box>
+                                </FormControl>
+                            </Stack>
+                            <Divider />
+                            <Stack width={{ xs: '100%', sm: '40%', md: '40%' }}>
+                                <FormControl>
+                                    <FormLabel>Análise de reconsideração SMUL</FormLabel>
+                                    <Input
+                                        placeholder="Análise de reconsideração SMUL"
+                                        value={analise_reconsideracao_smul}
+                                        type="number"
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        onChange={e => setAnalise_reconsideracao_smul(parseInt(e.target.value))}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
                         </Stack>
                         <Divider />
                         <Stack direction={{ xs: 'column', sm: 'row' }}
@@ -108,7 +324,6 @@ export default function AlvaraTipoDetalhes(props: any) {
                             </Stack>
                             <Divider />
                             <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
-
                                 <FormControl>
                                     <FormLabel>2ª Análise SMUL</FormLabel>
                                     <Input
@@ -126,15 +341,117 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 </FormControl>
                             </Stack>
                         </Stack>
+                    </Stack>
+                </Card>                
+                <Card sx={{ width: '100%' }}>
+                    <Stack spacing={2} >
+                        <Stack direction={{ xs: 'column', sm: 'row' }}
+                            spacing={{ xs: 1, sm: 1, md: 1 }}>
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+
+                                <FormControl>
+                                    <FormLabel>Prazo admissibilidade Múlt. Interfaces</FormLabel>
+                                    <Input
+                                        placeholder="Admissibilidade Múlt. Interfaces"
+                                        value={prazo_admissibilidade_multi}
+                                        type="number"
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        onChange={e => setPrazo_admissibilidade_multi(parseInt(e.target.value))}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
+                            <Divider />
+                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
+                                <FormControl>
+                                    <FormLabel>Emissão de alvará Múlt. Interfaces</FormLabel>
+                                    <Input
+                                        placeholder="Emissão de alvará Múlt. Interfaces"
+                                        value={prazo_emissao_alvara_multi}
+                                        type="number"
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        onChange={e => setPrazo_emissao_alvara_multi(parseInt(e.target.value))}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
+                        </Stack>
+                        <Divider />
+                        <Stack direction={{ xs: 'column', sm: 'row' }}
+                            spacing={{ xs: 1, sm: 1, md: 1 }}>
+                            <Stack width={{ xs: '100%', sm: '60%', md: '60%' }}>
+                                <FormControl>
+                                    <FormLabel>Reconsideração Múlt. Interfaces</FormLabel>
+                                    <Box sx={{ display: 'flex', flexGrow: 1 }}>
+                                        <Input
+                                            placeholder="Reconsideração Múlt. Interfaces"
+                                            value={reconsideracao_multi}
+                                            type="number"
+                                            slotProps={{
+                                                input: {
+                                                    min: 0
+                                                },
+                                            }}
+                                            sx={{ 
+                                                flexGrow: 0.3,
+                                                borderTopRightRadius: 0,
+                                                borderBottomRightRadius: 0,
+                                            }}
+                                            onChange={e => setReconsideracao_multi(parseInt(e.target.value))}
+                                            required
+                                        />
+                                        <Select
+                                            sx={{ 
+                                                flexGrow: 0.7,
+                                                borderTopLeftRadius: 0,
+                                                borderBottomLeftRadius: 0,
+                                            }}
+                                            required
+                                            value={reconsideracao_multi_tipo}
+                                            onChange={(_, v) => v && setReconsideracao_multi_tipo(v)}
+                                        >
+                                            <Option value={1}>dias úteis</Option>
+                                            <Option value={2}>dias corridos</Option>
+                                        </Select>
+                                    </Box>
+                                </FormControl>
+                            </Stack>
+                            <Divider />
+                            <Stack width={{ xs: '100%', sm: '40%', md: '40%' }}>
+                                <FormControl>
+                                    <FormLabel>Análise de reconsideração Múlt. Interfaces</FormLabel>
+                                    <Input
+                                        placeholder="Análise de reconsideração Múlt. Interfaces"
+                                        value={analise_reconsideracao_multi}
+                                        type="number"
+                                        slotProps={{
+                                            input: {
+                                                min: 0
+                                            },
+                                        }}
+                                        onChange={e => setAnalise_reconsideracao_multi(parseInt(e.target.value))}
+                                        required
+                                    />
+                                </FormControl>
+                            </Stack>
+                        </Stack>
                         <Divider />
                         <Stack direction={{ xs: 'column', sm: 'row' }}
                             spacing={{ xs: 1, sm: 1, md: 1 }}>
                             <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
 
                                 <FormControl>
-                                    <FormLabel>1ª Análise Múltiplas</FormLabel>
+                                    <FormLabel>1ª Análise Múlt. Interfaces</FormLabel>
                                     <Input
-                                        placeholder="1ª Análise Múltiplas"
+                                        placeholder="1ª Análise Múlt. Interfaces"
                                         value={prazo_analise_multi1}
                                         type="number"
                                         slotProps={{
@@ -149,11 +466,10 @@ export default function AlvaraTipoDetalhes(props: any) {
                             </Stack>
                             <Divider />
                             <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
-
                                 <FormControl>
-                                    <FormLabel>2ª Análise Múltiplas</FormLabel>
+                                    <FormLabel>2ª Análise Múlt. Interfaces</FormLabel>
                                     <Input
-                                        placeholder="2 Análise Múltiplas"
+                                        placeholder="2ª Análise Múlt. Interfaces"
                                         value={prazo_analise_multi2}
                                         type="number"
                                         slotProps={{
@@ -167,40 +483,6 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 </FormControl>
                             </Stack>
                         </Stack>
-                        <Divider />
-                        <Stack direction={{ xs: 'column', sm: 'row' }}
-                            spacing={{ xs: 1, sm: 1, md: 1 }}>
-                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
-                                <FormControl>
-                                    <FormLabel>Status</FormLabel>
-                                    <Select value={status} onChange={(_, v) => setStatus(v ? v : 0)} required>
-                                        <Option value={1}>Ativo</Option>
-                                        <Option value={0}>Inativo</Option>
-                                    </Select>
-                                </FormControl>
-                            </Stack>
-
-                            <Divider />
-
-                            <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
-                                <FormControl>
-                                    <FormLabel>Prazo de admissibilidade</FormLabel>
-                                    <Input
-                                        placeholder="Prazo de admissibilidade"
-                                        value={prazo_admissibilidade}
-                                        type="number"
-                                        slotProps={{
-                                            input: {
-                                                min: 0
-                                            },
-                                        }}
-                                        onChange={e => setPrazo_admissibilidade(parseInt(e.target.value))}
-                                        required
-                                    />
-                                </FormControl>
-                            </Stack>
-                        </Stack>
-
                     </Stack>
                     <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
                         <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
