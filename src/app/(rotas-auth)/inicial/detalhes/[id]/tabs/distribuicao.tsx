@@ -41,7 +41,7 @@ export default function DistribuicaoTab({ distribuicao, funcionarios }: { distri
                             <FormLabel>Administrativo responsável</FormLabel>
                             <Select onChange={(_, value) => value && atualizaAdministrativo(value)} value={distribuicao.administrativo_responsavel_id}>
                                 {funcionarios && funcionarios.administrativos && funcionarios.administrativos.map((adms) => (
-                                    <Option value={adms.id}>{adms.nome}</Option>
+                                    <Option key={adms.id} value={adms.id}>{adms.nome}</Option>
                                 ))}
                             </Select>
                         </FormControl>
@@ -51,7 +51,7 @@ export default function DistribuicaoTab({ distribuicao, funcionarios }: { distri
                             <FormLabel>Técnico responsável</FormLabel>
                             <Select onChange={(_, value) => value && atualizaTecnico(value)} value={distribuicao.tecnico_responsavel_id}>
                                 {funcionarios && funcionarios.tecnicos && funcionarios.tecnicos.map((tecs) => (
-                                    <Option value={tecs.id}>{tecs.nome}</Option>
+                                    <Option key={tecs.id} value={tecs.id}>{tecs.nome}</Option>
                                 ))}
                             </Select>
                         </FormControl>

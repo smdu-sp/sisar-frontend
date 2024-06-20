@@ -198,7 +198,6 @@ export default function AlvaraTipoDetalhes(props: any) {
                                     />
                                 </FormControl>
                             </Stack>
-                            <Divider />
                         </Stack>
                     </Stack>
                 </Card>

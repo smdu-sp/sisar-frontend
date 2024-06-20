@@ -1,5 +1,3 @@
-'use client'
-
 import InicialDetalhes from './[id]/page';
 
 export const dynamicParams = true
