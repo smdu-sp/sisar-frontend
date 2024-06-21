@@ -21,7 +21,8 @@ interface ICardAviso {
     id: string,
     titulo: string,
     descricao: string,
-    func: any
+    func: any,
+    processo?: string
 }
 
 export default function BioCard(props: ICardAviso) {
@@ -44,7 +45,7 @@ export default function BioCard(props: ICardAviso) {
     return (
         <Card
             sx={{
-                width: 320,
+                minWidth: 320,
                 maxWidth: '100%',
                 boxShadow: 'lg',
                 mt: 3,
@@ -53,6 +54,7 @@ export default function BioCard(props: ICardAviso) {
             }}
             key={props.id}
         >
+            <Chip color='success' sx={{ position: 'absolute', top: 10, right: 10 }}>{props.processo}</Chip>
             <CardContent sx={{ alignItems: 'center' }}>
                 {edit === true ?
                     <Typography
@@ -63,6 +65,7 @@ export default function BioCard(props: ICardAviso) {
                             fontSize: 20,
                             width: "100%",
                             mb: 1,
+                            mt: 3,
                             textAlign: 'center'
                         }}
                     >
@@ -74,6 +77,7 @@ export default function BioCard(props: ICardAviso) {
                         value={titulo}
                         onChange={(e) => setTitulo(e.target.value)}
                         sx={{
+                            mt: 3,
                             border: edit ? "none" : null,
                             boxShadow: edit ? "none" : null,
                             fontWeight: "bold",

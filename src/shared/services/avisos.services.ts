@@ -5,12 +5,7 @@ import { authOptions } from "@/shared/auth/authOptions";
 import { signOut } from "next-auth/react";
 import { promises } from "dns";
 
-export interface IAvisos {
-    titulo: string
-    descricao: string
-    data?: Date
-    inicial_id?: number
-}
+
 
 export interface ICreateAvisos{
     titulo: string
@@ -21,6 +16,30 @@ export interface ICreateAvisos{
 
 export interface IUpdateAvisos extends Partial<ICreateAvisos> {}
 
+export interface IInicial {
+    id: number
+    decreto: boolean
+    sei: string
+    tipo_requerimento: string
+    requerimento: string
+    aprova_digital?: string
+    processo_fisico?: string
+    data_protocolo: Date
+    envio_admissibilidade?: Date
+    alvara_tipo_id: string
+    tipo_processo: number
+    pagamento: number
+    obs?: string
+    status: number
+}
+
+export interface IAvisos {
+    titulo: string
+    descricao: string
+    data?: Date
+    inicial_id?: number
+    iniciais?: IInicial[]
+}
 const baseURL = 'http://localhost:3000/';
 
 const criar = async (dataCreate: ICreateAvisos): Promise<IAvisos> => {

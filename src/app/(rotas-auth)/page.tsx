@@ -47,8 +47,6 @@ export default function Home() {
   const [diass, setDias] = useState<number[]>([]);
   const initialValue = dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-'));
   const colors = ['primary', 'warning', 'success', 'success'] as const;
-  const [reuniao, setReuniao] = useState([]);
-  const [processos, setProcessos] = useState([]);
   const [tipoData, setTipoData] = useState(0);
   const [open, setOpen] = React.useState<boolean>(false);
   const [openNotf, setOpenNotf] = React.useState<boolean>(false);
@@ -58,10 +56,12 @@ export default function Home() {
   const [dados, setDados] = useState([]);
   const [descricao, setDescricao] = useState('');
   const [titulo, setTitulo] = useState('');
-  const [lemTabId, setLemTabId] = useState(0);
   const [dadosTab, setDadosTab] = useState<any>([]);
   const [lemTab, setLemTab] = useState<boolean>(true);
-  const [dataAviso, setDataAviso] = useState<Date>(new Date());
+  const [dataAviso, setDataAviso] = useState<Date>(() => {
+    const dateString = new Date(today).toISOString().split("T")[0];
+    return new Date(dateString);
+  });
   const [processosAvisos, setProcessosAvisos] = useState<inicialServices.IProcessosAvisos[]>([]);
   const [processoCard, setProcessoCard] = useState(0);
   const router = useRouter();
@@ -166,6 +166,7 @@ export default function Home() {
         if (response) {
           setAlert('Aviso criado', 'Aviso criado com sucesso!', 'success', 3000, Check);
           busca(dataAviso.getMonth() + 1);
+          setDataAviso(dataAviso);
           setOpenNotf(false)
           setTitulo('');
           setDescricao('');
@@ -309,7 +310,7 @@ export default function Home() {
             flexGrow: 1,
             mx: 2,
             borderRadius: '12px',
-            bgcolor: tipoData === 3 || reuniao.length == 0 ? 'background.level3' : `${colors[tipoData]}.500`,
+            bgcolor: 'background.level3',
             maxWidth: '900px',
           }}
         >
@@ -383,7 +384,7 @@ export default function Home() {
             }
           </Chip>
           {tipoData == 2 ?
-            <IconButton sx={{ position: 'absolute', top: 20, right: 15, py: 0.5, fontSize: '40px', bg: 'primary' }} color='success' onClick={() => {setOpenNotf(true); setLemTab(true)}}>
+            <IconButton sx={{ position: 'absolute', top: 20, right: 15, py: 0.5, fontSize: '40px', bg: 'primary' }} color='success' onClick={() => { setOpenNotf(true); setLemTab(true) }}>
               <NotificationAddIcon sx={{ fontSize: '35px' }} />
             </IconButton>
             : null
@@ -433,12 +434,32 @@ export default function Home() {
             </ModalDialog>
           </Modal>
 
-          <Sheet sx={{ bgcolor: 'transparent', display: 'flex', flexDirection: 'column', height: '70%', alignItems: reuniao.length > 0 ? 'flex-start' : 'center' }}>
-            <Grid
-              container
-              spacing={{ xs: 2, md: 3 }}
-              columns={{ xs: 2, sm: 8, md: 12 }}
-              sx={{ flexGrow: 1 }}
+          <Sheet sx={{
+            bgcolor: 'transparent',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '70%',
+            px: 2,
+          }}>
+            <Sheet
+              // spacing={{ xs: 2, md: 3 }}
+              // columns={{ xs: 2, sm: 8, md: 12 }}
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: dados.length > 0 ? 'flex-start' : 'center',
+                overflowX: 'auto',
+                width: "100%",
+                bgcolor: 'transparent',
+                overflowY: 'hidden',
+                '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none' },
+                '&::-webkit-scrollbar-thumb': {
+                  borderRadius: 8,
+                  border: '1px solid',
+                  backgroundColor: "neutral.plainColor"
+                },
+              }}
             >
               {
                 dados && dados.length > 0 ? dados.map((data: any) => (
@@ -525,7 +546,7 @@ export default function Home() {
                         </CardContent>
                       </Card>
                     </Grid>
-                    : <CardAviso titulo={data.titulo} descricao={data.descricao} id={data.id} key={data.id} func={atualizarAvisos} />
+                    : <CardAviso titulo={data.titulo} descricao={data.descricao} id={data.id} key={data.id} processo={data.inicial.sei} func={atualizarAvisos} />
                 )) :
                   <Grid key={tipoData}>
                     <Chip sx={{ fontSize: '18px', px: 3, mt: 4 }} color={colors[tipoData]} variant="plain" >
@@ -535,7 +556,7 @@ export default function Home() {
                     </Chip>
                   </Grid>
               }
-            </Grid>
+            </Sheet>
           </Sheet>
         </Box>
       </Box >

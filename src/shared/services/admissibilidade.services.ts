@@ -90,6 +90,7 @@ export interface IAdmissibilidade {
     inicial?: IInicial;
     reconsiderado: boolean
     motivo: string
+    criado_em?: Date
 }
 
 export interface ICreateAdmissibilidade {

@@ -238,7 +238,7 @@ export default function Admissibilidade() {
                     <td>{admissibilidade.inicial?.sei}</td>
                     <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
                     {/* <td>{admissibilidade.parecer === true ? 'true' : 'false'}</td> */}
-                    <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
+                    <td>{admissibilidade.criado_em ? new Date(admissibilidade.criado_em).toLocaleDateString('pt-BR') : ''}</td>
                     <td>
                       {admissibilidade.status !== undefined && status[admissibilidade.status] && (
                         <Chip color={status[admissibilidade.status].color}>
@@ -248,7 +248,7 @@ export default function Admissibilidade() {
                     </td>
                     <td>{admissibilidade.status != 0 && admissibilidade.reconsiderado != true ? <Stack sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
                       <Tooltip title="Inadimitir" variant='outlined'><IconButton color='warning' variant='soft' onClick={() => { setOpen(true); setModal([admissibilidade.inicial?.sei, admissibilidade.status, admissibilidade.inicial_id]) }}><BackHandIcon /></IconButton></Tooltip>
-                      {admissibilidade.status != 2 ? <Tooltip title="Admissivel" variant='outlined'><IconButton color='success' variant='soft' onClick={() => router.push(`/inicial/detalhes/${admissibilidade.inicial_id}?tipo=1`)}><PostAddIcon /></IconButton></Tooltip> : null}
+                      {admissibilidade.status != 2 ? <Tooltip title="Admissivel" variant='outlined'><IconButton color='success' variant='soft' onClick={() => router.push(`/inicial/detalhes/${admissibilidade.inicial_id}?tab=2`)}><PostAddIcon /></IconButton></Tooltip> : null}
                     </Stack> : null}</td>
                   </tr>
                 </Tooltip>
