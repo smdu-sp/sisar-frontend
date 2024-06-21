@@ -46,7 +46,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                 .then((response: IInicial) => {
                     if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
-                        router.push(`/inicial/detalhes/${response.id}`);
+                        router.push(`/inicial/detalhes/${response.id}?tab=0`);
                     }
                 });
 
@@ -55,7 +55,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                 .then((response: IInicial) => {
                     if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
-                        router.push(`/inicial/detalhes/${response.id}`);
+                        router.push(`/inicial/detalhes/${response.id}?tab=0`);
                     }
                 });
     }

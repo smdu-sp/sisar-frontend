@@ -56,6 +56,7 @@ export default function Home() {
   const [dados, setDados] = useState([]);
   const [descricao, setDescricao] = useState('');
   const [titulo, setTitulo] = useState('');
+  const [tipo, setTipo] = useState(0);
   const [dadosTab, setDadosTab] = useState<any>([]);
   const [lemTab, setLemTab] = useState<boolean>(true);
   const [dataAviso, setDataAviso] = useState<Date>(() => {
@@ -139,7 +140,6 @@ export default function Home() {
     );
   };
 
-  const [isLoading, setIsLoading] = useState(false);
 
   const buscar_data = () => {
     if (tipoData == 0) {
@@ -161,7 +161,7 @@ export default function Home() {
   }
 
   const criarAvisos = () => {
-    avisos.criar({ titulo, descricao, data: dataAviso, inicial_id: lemTab ? 1 : dadosTab[0] })
+    avisos.criar({ titulo, descricao, data: dataAviso, inicial_id: lemTab ? 1 : dadosTab[0], tipo })
       .then((response: avisos.IAvisos) => {
         if (response) {
           setAlert('Aviso criado', 'Aviso criado com sucesso!', 'success', 3000, Check);
@@ -170,7 +170,6 @@ export default function Home() {
           setOpenNotf(false)
           setTitulo('');
           setDescricao('');
-          setDataAviso(today)
         }
       })
   }
@@ -275,7 +274,6 @@ export default function Home() {
           <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'end' }}>
             <DateCalendar
               defaultValue={initialValue}
-              loading={isLoading}
               onMonthChange={(newDate) => {
                 busca(newDate.month() + 1);
               }}
@@ -411,6 +409,13 @@ export default function Home() {
                   <FormControl>
                     <FormLabel>Data</FormLabel>
                     <Input type='date' required value={dataAviso.toISOString().split('T')[0]} onChange={(e) => { setDataAviso(new Date(e.target.value)) }} />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Tipo</FormLabel>
+                    <Select required value={tipo} onChange={(_, v) => { setTipo(v ? v : 0) }}>
+                      <Option value={0}>Geral</Option>
+                      <Option value={1}>Pessoal</Option>
+                    </Select>
                   </FormControl>
                   <FormControl>
                     <FormLabel>Processos</FormLabel>
