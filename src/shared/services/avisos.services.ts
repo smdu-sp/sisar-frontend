@@ -12,6 +12,7 @@ export interface ICreateAvisos{
     descricao: string
     data?: Date
     inicial_id?: number
+    tipo: number
 }
 
 export interface IUpdateAvisos extends Partial<ICreateAvisos> {}

@@ -15,7 +15,6 @@ import { useRouter as useRouterNavigation } from "next/navigation";
 import { Autocomplete, AutocompleteOption, Box, Button, Checkbox, Chip, Divider, FormControl, FormLabel, Grid, IconButton, Input, Option, Select } from "@mui/joy";
 import { Business, Check, Today } from "@mui/icons-material";
 import { IUsuario } from "@/shared/services/usuario.services";
-import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import { AlertsContext } from '@/providers/alertsProvider';
 
 
@@ -45,20 +44,8 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
     const [descricao, setDescricao] = useState<string>('');
     const [dataLembrete, setDataLembrete] = useState<Date>(new Date());
     const status = 0;
+    const [tipo, setTipo] = useState(0);
     const { setAlert } = React.useContext(AlertsContext);
-
-
-    const criarAvisos = () => {
-        if (lembrete) {
-            avisos.criar({ titulo, descricao, data: dataLembrete, inicial_id: inicial?.id })
-                .then(() => {
-                    setDataLembrete(dataLembrete);
-                    setLembrete(false);
-                    setTitulo('');
-                    setDescricao('');
-                })
-        }
-    }
 
     const atualizar = () => {
         if (admissibilidade) {
@@ -71,7 +58,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                 .then(() => {
                     setAlert('Adimissão Realizada', `${inicial?.sei} admitido com sucesso`, 'success', 3000, Check);
                     if (lembrete) {
-                        criarAvisos();
+
                     }
                 })
         }
@@ -209,41 +196,6 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                     </FormControl>
                 </Grid>
             </Grid>
-            {lembrete ?
-                <>
-                    <Grid xs={12}><Divider><Chip color="success">Lembrete</Chip></Divider></Grid>
-                    <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
-                        <Grid xs={12} lg={6}>
-                            <FormControl>
-                                <FormLabel>Tituilo</FormLabel>
-                                <Input type="text" value={titulo} onChange={e => setTitulo(e.target.value)} />
-                            </FormControl>
-                        </Grid>
-                        <Grid xs={12} lg={6}>
-                            <FormControl>
-                                <FormLabel>Descrição</FormLabel>
-                                <Input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
-                            </FormControl>
-                        </Grid>
-                    </Grid>
-                    <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
-                        <Grid xs={12} lg={6}>
-                            <FormControl>
-                                <FormLabel>Data</FormLabel>
-                                <Input type="date" value={dataLembrete.toISOString().split('T')[0]} onChange={(e) => setDataLembrete(new Date(e.target.value))} />
-                            </FormControl>
-                        </Grid>
-                        <Grid xs={12} lg={6}>
-                            <FormControl>
-                                <FormLabel>Processo</FormLabel>
-                                <Input type="text" value={inicial?.sei} readOnly />
-                            </FormControl>
-                        </Grid>
-                    </Grid>
-                </>
-                : null
-            }
-
             <Grid xs={12} container sx={{ display: tipo_processo === 1 ? 'none' : 'block' }}>
                 <Grid xs={12}><Divider><Chip color="primary">Interfaces</Chip></Divider></Grid>
                 {inicial && inicial.data_protocolo <= new Date('2019-09-20') && <Grid xs={12} container sx={{ py: 2 }}>
@@ -371,13 +323,14 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                 </Grid>
             </Grid>
             <Grid xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                <IconButton size="sm" variant="soft" color={lembrete ? 'neutral' : 'success'} onClick={() => { setLembrete(!lembrete); }}>
-                    <NotificationAddIcon />
-                </IconButton>
+
                 <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/admissibilidade`); }}>
                     Cancelar
                 </Button>
-                <Button size="sm" variant="solid" onClick={() => { atualizar(); criarAvisos(); }}>
+                <Button size="sm" variant="solid" onClick={() => {
+                    atualizar();
+
+                }}>
                     Salvar
                 </Button>
             </Grid>

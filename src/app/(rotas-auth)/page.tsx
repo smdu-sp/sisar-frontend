@@ -8,6 +8,7 @@ import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
 import { useCallback, useEffect, useState } from 'react';
+import { IProcesso } from '@/shared/services/reunioes.services';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Add, Check, Key } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
@@ -30,7 +31,6 @@ import CircleIcon from '@mui/icons-material/RadioButtonCheckedRounded';
 import Link from '@mui/joy/Link';
 import { AlertsContext } from '@/providers/alertsProvider';
 import 'dayjs/locale/pt-br'; // Importe a localização desejada
-import { atualizar } from '@/shared/services/unidade.services';
 
 dayjs.locale('pt-br');
 
@@ -53,9 +53,10 @@ export default function Home() {
   const [inicial, setInicial] = useState('');
   const [dataRemarcacao, setDataRemarcacao] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
   const [motivo, setMotivo] = useState('');
-  const [dados, setDados] = useState([]);
+  const [dados, setDados] = useState<IProcesso[]>([]);
   const [descricao, setDescricao] = useState('');
   const [titulo, setTitulo] = useState('');
+  const [tipo, setTipo] = useState(0);
   const [dadosTab, setDadosTab] = useState<any>([]);
   const [lemTab, setLemTab] = useState<boolean>(true);
   const [dataAviso, setDataAviso] = useState<Date>(() => {
@@ -93,7 +94,7 @@ export default function Home() {
           if (Array.isArray(response)) {
             for (let i = 0; i < response.length; i++) {
               setDias(prevDias => {
-                return [...prevDias, parseInt(response[i].toString().split("T")[0].split("-")[2])];
+                return [...prevDias, parseInt(response[i].data_processo.toString().split("T")[0].split("-")[2])];
               });
             }
           } else {
@@ -139,7 +140,6 @@ export default function Home() {
     );
   };
 
-  const [isLoading, setIsLoading] = useState(false);
 
   const buscar_data = () => {
     if (tipoData == 0) {
@@ -148,8 +148,8 @@ export default function Home() {
           setDados(response);
         });
     } else if (tipoData == 1) {
-      inicialServices.buscarPorDataProcesso(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
-        .then((response) => {
+      reunioes.buscarPorDataProcesso(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
+        .then((response: IProcesso[]) => {
           setDados(response);
         });
     } else if (tipoData == 2) {
@@ -161,7 +161,7 @@ export default function Home() {
   }
 
   const criarAvisos = () => {
-    avisos.criar({ titulo, descricao, data: dataAviso, inicial_id: lemTab ? 1 : dadosTab[0] })
+    avisos.criar({ titulo, descricao, data: dataAviso, inicial_id: lemTab ? 1 : dadosTab[0], tipo })
       .then((response: avisos.IAvisos) => {
         if (response) {
           setAlert('Aviso criado', 'Aviso criado com sucesso!', 'success', 3000, Check);
@@ -170,7 +170,6 @@ export default function Home() {
           setOpenNotf(false)
           setTitulo('');
           setDescricao('');
-          setDataAviso(today)
         }
       })
   }
@@ -275,7 +274,6 @@ export default function Home() {
           <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'end' }}>
             <DateCalendar
               defaultValue={initialValue}
-              loading={isLoading}
               onMonthChange={(newDate) => {
                 busca(newDate.month() + 1);
               }}
@@ -413,6 +411,13 @@ export default function Home() {
                     <Input type='date' required value={dataAviso.toISOString().split('T')[0]} onChange={(e) => { setDataAviso(new Date(e.target.value)) }} />
                   </FormControl>
                   <FormControl>
+                    <FormLabel>Tipo</FormLabel>
+                    <Select required value={tipo} onChange={(_, v) => { setTipo(v ? v : 0) }}>
+                      <Option value={0}>Geral</Option>
+                      <Option value={1}>Pessoal</Option>
+                    </Select>
+                  </FormControl>
+                  <FormControl>
                     <FormLabel>Processos</FormLabel>
                     {
                       lemTab ?
@@ -439,22 +444,21 @@ export default function Home() {
             display: 'flex',
             flexDirection: 'column',
             height: '70%',
-            px: 2,
+            p: 2,
           }}>
             <Sheet
               // spacing={{ xs: 2, md: 3 }}
               // columns={{ xs: 2, sm: 8, md: 12 }}
               sx={{
-                display: 'flex',
-                flexDirection: 'row',
+                display: 'flex', 
+                flexDirection: tipoData != 2 ? 'column' : 'row',
                 alignItems: 'center',
                 justifyContent: dados.length > 0 ? 'flex-start' : 'center',
                 overflowX: 'auto',
                 width: "100%",
                 bgcolor: 'transparent',
-                overflowY: 'hidden',
-                '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none' },
-                '&::-webkit-scrollbar-thumb': {
+                '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none', maxWidth: "10px" },
+                  '&::-webkit-scrollbar-thumb': {
                   borderRadius: 8,
                   border: '1px solid',
                   backgroundColor: "neutral.plainColor"
@@ -477,15 +481,14 @@ export default function Home() {
                           paddingTop: 1,
                         }}
                       >
-                        <CircleIcon sx={{ width: '20px', color: 'var(--joy-palette-primary-plainColor)' }} />
+                        <CircleIcon color={colors[tipoData]} sx={{ width: '20px'}} />
                         <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                           <Sheet>
                             <Typography level="title-lg" id="card-description" key={data.id}>
-                              {tipoData === 0 ? data.inicial.sei ? data.inicial.sei : data.inicial.aprova_digital :
-                                tipoData === 1 ? data.sei ? data.sei : data.aprova_digital : null}
+                              {data.inicial.sei}
                             </Typography>
                             <Typography level="body-sm" aria-describedby="card-description" mb={1}>
-                              {tipoData === 0 ? data.inicial.processo_fisico : tipoData === 1 ? data.processo_fisico : null}
+                              {data.inicial.processo_fisico}
                             </Typography>
                           </Sheet>
                           <Chip
@@ -493,7 +496,7 @@ export default function Home() {
                             underline='none'
                             href={'/inicial/detalhes/' + data.inicial_id}
                             variant="outlined"
-                            color="primary"
+                            color={colors[tipoData]}
                             size="sm"
                             sx={{ mt: 1, ml: 3 }}
                           >

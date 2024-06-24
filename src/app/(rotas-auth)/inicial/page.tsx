@@ -126,7 +126,7 @@ export default function Inicial() {
               </thead>
               <tbody>
                 {iniciais && iniciais.length > 0 ? iniciais.map((inicial: IInicial) => (
-                  <tr onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)} key={inicial.id} style={{ cursor: 'pointer' }}>
+                  <tr onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)} key={inicial.id} style={{ cursor: 'pointer' }}>
                     <td>{inicial.id}</td>
                     <td>
                       <Chip color={inicial.status > 1 ? status[0].color : status[inicial.status].color}>
