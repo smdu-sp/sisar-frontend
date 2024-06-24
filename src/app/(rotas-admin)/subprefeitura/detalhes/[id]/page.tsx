@@ -9,29 +9,52 @@ import { useRouter } from 'next/navigation';
 import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
 import { AlertsContext } from "@/providers/alertsProvider";
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { z } from "zod";
 
 export default function SubprefeituraDetalhes(props: { params: { id: string } }) {
-    const [idSubprefeitura, setIdSubprefeitura] = useState<string>('');
+    const [idSubprefeitura, setIdSubprefeitura] = useState<string>('aawd');
     const [nome, setNome] = useState<string>('');
+    const [messageError, setMessageError] = useState<string>('');
     const { id } = props.params;
     const { setAlert } = useContext(AlertsContext);
     const router = useRouter();
 
+    const DadosSchema = z.object({
+        nome: z.string().email("Preencha este campo")
+    })
+
+    const result = DadosSchema.safeParse({
+        nome: nome
+    })
+
+    
+  useEffect(() => {
+    if (result) {
+        console.log(result);
+    }
+  }, [result]);
+
+
     const submitForm = async () => {
-        if (!id) {
-            subprefeituraServices.criar({ nome })
-            .then(() => {
-                router.push('/subprefeitura?notification=0');
-            })
-        }else{
-            subprefeituraServices.atualizar({id, nome})
-            .then(() => {
-                router.push('/subprefeitura?notification=1');
-            })
+        if (result.success) {
+            if (!id) {
+                subprefeituraServices.criar({ nome })
+                    .then(() => {
+                        router.push('/subprefeitura?notification=0');
+                    })
+            } else {
+                subprefeituraServices.atualizar({ id, nome })
+                    .then(() => {
+                        router.push('/subprefeitura?notification=1');
+                    })
+            }
+        } else if (result.error) {
+            setMessageError(result.error.issues[0].message);
         }
+        
     }
 
-    useEffect(() => {  
+    useEffect(() => {
         if (id) {
             subprefeituraServices.buscarPorId(id)
                 .then((response: ISubprefeitura) => {
@@ -70,11 +93,16 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
                                     onChange={(event) => setNome(event.target.value)}
                                     size="sm"
                                     type="text"
+                                    color={messageError != '' ? 'danger' : 'neutral'}
                                     startDecorator={<AccountBalanceIcon />}
                                     placeholder="Nome"
                                     required
                                 />
                             </FormControl>
+                            <FormLabel>
+                                {messageError}
+                            </FormLabel>
+
                         </Stack>
                     </Stack>
                     <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
