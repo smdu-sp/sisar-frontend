@@ -6,7 +6,7 @@ import AdmissibilidadeTab from './tabs/admissibilidade';
 import DistribuicaoTab from './tabs/distribuicao';
 import { IInicial } from '@/shared/services/inicial.services';
 import { IUsuario } from '@/shared/services/usuario.services';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInicial, funcionarios?: { administrativos: IUsuario[], tecnicos: IUsuario[] } }) {

@@ -126,7 +126,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
             <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
                 <Grid xs={12} lg={6}>
                     <FormControl>
-                        <FormLabel>Multiplas interfaces</FormLabel>
+                        <FormLabel>Tipo de processo</FormLabel>
                         <Select value={tipo_processo} id='tipo_processo' name='tipo_processo' placeholder='Tipo de processo' onChange={(_, v) => setTipo_processo(v ? v : 1)}>
                             <Option value={1}>Próprio de SMUL</Option>
                             <Option value={2}>Múltiplas interfaces</Option>
@@ -246,7 +246,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
 
             <Grid xs={12} container sx={{ display: tipo_processo === 1 ? 'none' : 'block' }}>
                 <Grid xs={12}><Divider><Chip color="primary">Interfaces</Chip></Divider></Grid>
-                <Grid xs={12} container sx={{ py: 2 }}>
+                {inicial && inicial.data_protocolo <= new Date('2019-09-20') && <Grid xs={12} container sx={{ py: 2 }}>
                     <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
                         <Checkbox
                             label="SEHAB"
@@ -266,13 +266,13 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                                 if (sehab.length > 0) sehab = comum.formatarSei(e.target.value);
                                 setNum_sehab(sehab && sehab);
                             }}
-                            required={interface_sehab}
-                            error={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18}
-                            title={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18 ? 'SEI inválido' : ''}
+                            required={tipo_processo === 2}
+                            error={tipo_processo === 2 && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18}
+                            title={tipo_processo === 2 && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18 ? 'SEI inválido' : ''}
                         />
                         {(!comum.validaDigitoSei(num_sehab) && num_sehab.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
                     </Grid>
-                </Grid>
+                </Grid>}
                 <Grid xs={12} container sx={{ py: 2 }}>
                     <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
                         <Checkbox
@@ -291,9 +291,9 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                                 if (siurb.length > 0) siurb = comum.formatarSei(e.target.value);
                                 setNum_siurb(siurb && siurb);
                             }}
-                            required={interface_siurb}
-                            error={interface_siurb && !comum.validaDigitoSei(num_siurb) && num_siurb.length > 18}
-                            title={interface_siurb && !comum.validaDigitoSei(num_siurb) && num_siurb.length > 18 ? 'SEI inválido' : ''}
+                            required={tipo_processo === 2}
+                            error={tipo_processo === 2 && !comum.validaDigitoSei(num_siurb) && num_siurb.length > 18}
+                            title={tipo_processo === 2 && !comum.validaDigitoSei(num_siurb) && num_siurb.length > 18 ? 'SEI inválido' : ''}
                         />
                     </Grid>
                 </Grid>
@@ -315,9 +315,9 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                                 if (smc.length > 0) smc = comum.formatarSei(e.target.value);
                                 setNum_smc(smc && smc);
                             }}
-                            required={interface_smc}
-                            error={interface_smc && !comum.validaDigitoSei(num_smc) && num_smc.length > 18}
-                            title={interface_smc && !comum.validaDigitoSei(num_smc) && num_smc.length > 18 ? 'SEI inválido' : ''}
+                            required={tipo_processo === 2}
+                            error={tipo_processo === 2 && !comum.validaDigitoSei(num_smc) && num_smc.length > 18}
+                            title={tipo_processo === 2 && !comum.validaDigitoSei(num_smc) && num_smc.length > 18 ? 'SEI inválido' : ''}
                         />
                     </Grid>
                 </Grid>
@@ -339,9 +339,9 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                                 if (smt.length > 0) smt = comum.formatarSei(e.target.value);
                                 setNum_smt(smt && smt);
                             }}
-                            required={interface_smt}
-                            error={interface_smt && !comum.validaDigitoSei(num_smt) && num_smt.length > 18}
-                            title={interface_smt && !comum.validaDigitoSei(num_smt) && num_smt.length > 18 ? 'SEI inválido' : ''}
+                            required={tipo_processo === 2}
+                            error={tipo_processo === 2 && !comum.validaDigitoSei(num_smt) && num_smt.length > 18}
+                            title={tipo_processo === 2 && !comum.validaDigitoSei(num_smt) && num_smt.length > 18 ? 'SEI inválido' : ''}
                         />
                     </Grid>
                 </Grid>
@@ -363,9 +363,9 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                                 if (svma.length > 0) svma = comum.formatarSei(e.target.value);
                                 setNum_svma(svma && svma);
                             }}
-                            required={interface_svma}
-                            error={interface_svma && !comum.validaDigitoSei(num_svma) && num_svma.length > 18}
-                            title={interface_svma && !comum.validaDigitoSei(num_svma) && num_svma.length > 18 ? 'SEI inválido' : ''}
+                            required={tipo_processo === 2}
+                            error={tipo_processo === 2 && !comum.validaDigitoSei(num_svma) && num_svma.length > 18}
+                            title={tipo_processo === 2 && !comum.validaDigitoSei(num_svma) && num_svma.length > 18 ? 'SEI inválido' : ''}
                         />
                     </Grid>
                 </Grid>
