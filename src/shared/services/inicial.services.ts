@@ -267,6 +267,44 @@ const atualizarDistribuicao = async (inicial_id: number, dataUpdate: IUpdateDist
     return iniciais;
 }
 
+const mudarAdministrativoResponsável = async (inicial_id: number, dataUpdate: IUpdateDistribuicao): Promise<IDistribuicao> => {
+    const session = await getServerSession(authOptions);
+    console.log(baseURL);
+    const iniciais = await fetch(`${baseURL}distribuicao/administrativo/atualizar/${inicial_id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify(dataUpdate)
+    }).then ((response) => {
+        const result = response.json();
+        if(response.status === 401) signOut();
+        if(response.status !== 200) return;
+        return result;
+    });
+    return iniciais;
+}
+
+const mudarTecnicoResponsavel = async (inicial_id: number, dataUpdate: IUpdateDistribuicao): Promise<IDistribuicao> => {
+    const session = await getServerSession(authOptions);
+    console.log(baseURL);
+    const iniciais = await fetch(`${baseURL}distribuicao/tecnico/atualizar/${inicial_id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify(dataUpdate)
+    }).then ((response) => {
+        const result = response.json();
+        if(response.status === 401) signOut();
+        if(response.status !== 200) return;
+        return result;
+    });
+    return iniciais;
+}
+
 const processosAvisos = async (): Promise<IProcessosAvisos[]> => {
     const session = await getServerSession(authOptions);
     const iniciais = await fetch(`${baseURL}inicial/busca-processos`, {
@@ -291,5 +329,7 @@ export {
     criar,
     removeSql,
     buscarPorMesAno,
-    processosAvisos
+    processosAvisos,
+    mudarTecnicoResponsavel,
+    mudarAdministrativoResponsável
 }

@@ -5,26 +5,34 @@ import { IUsuario } from "@/shared/services/usuario.services";
 import { Box, Chip, Divider, FormControl, FormLabel, Grid, Option, Select } from "@mui/joy";
 
 import * as inicialServices from '@/shared/services/inicial.services';
+import * as usuarioServices from '@/shared/services/usuario.services';
+import { useEffect, useState } from "react";
 
 export default function DistribuicaoTab({ distribuicao, funcionarios }: { distribuicao?: IDistribuicao, funcionarios?: { administrativos: IUsuario[], tecnicos: IUsuario[] }}) {
+    const [administrativo_responsavel_id, setAdministrativoResponsavelId] = useState(distribuicao?.administrativo_responsavel_id);
+    const [tecnico_responsavel_id, setTecnicoResponsavelId] = useState(distribuicao?.tecnico_responsavel_id);
+    const [usuario, setUsuario] = useState<IUsuario>();
+    useEffect(() => {
+        usuarioServices.validaUsuario().then(setUsuario);
+    }, [])
     function atualizaAdministrativo(administrativo_responsavel_id: string) {
         if (distribuicao) {
-            console.log({ inicial_id: distribuicao.inicial_id, administrativo_responsavel_id})
-            inicialServices.atualizarDistribuicao(distribuicao.inicial_id, { administrativo_responsavel_id })
-                .then((response: IDistribuicao) => {
-                    if (response.inicial_id) {
-                    }
-                });
+            inicialServices.mudarAdministrativoResponsável(distribuicao.inicial_id, { administrativo_responsavel_id })
+            .then((response: IDistribuicao) => {
+                if (response.inicial_id) {
+                    setAdministrativoResponsavelId(response.administrativo_responsavel_id);
+                }
+            });
         }
     }
     function atualizaTecnico(tecnico_responsavel_id: string) {
         if (distribuicao) {
-            console.log({ inicial_id: distribuicao.inicial_id, tecnico_responsavel_id})
-            inicialServices.atualizarDistribuicao(distribuicao.inicial_id, { tecnico_responsavel_id })
-                .then((response: IDistribuicao) => {
-                    if (response.inicial_id) {
-                    }
-                });
+            inicialServices.mudarTecnicoResponsavel(distribuicao.inicial_id, { tecnico_responsavel_id })
+            .then((response: IDistribuicao) => {
+                if (response.inicial_id) {
+                    setTecnicoResponsavelId(response.tecnico_responsavel_id);
+                }
+            });
         }
     }
     return (
@@ -39,7 +47,9 @@ export default function DistribuicaoTab({ distribuicao, funcionarios }: { distri
                     <Grid xs={12} lg={6}>
                         <FormControl>
                             <FormLabel>Administrativo responsável</FormLabel>
-                            <Select onChange={(_, value) => value && atualizaAdministrativo(value)} value={distribuicao.administrativo_responsavel_id}>
+                            <Select onChange={(_, value) => value && atualizaAdministrativo(value)} value={administrativo_responsavel_id}
+                                disabled={['ADM', 'USR'].includes(usuario?.permissao || 'USR') ? true : false}
+                            >
                                 {funcionarios && funcionarios.administrativos && funcionarios.administrativos.map((adms) => (
                                     <Option key={adms.id} value={adms.id}>{adms.nome}</Option>
                                 ))}
@@ -49,7 +59,9 @@ export default function DistribuicaoTab({ distribuicao, funcionarios }: { distri
                     <Grid xs={12} lg={6}>
                         <FormControl>
                             <FormLabel>Técnico responsável</FormLabel>
-                            <Select onChange={(_, value) => value && atualizaTecnico(value)} value={distribuicao.tecnico_responsavel_id}>
+                            <Select onChange={(_, value) => value && atualizaTecnico(value)} value={tecnico_responsavel_id}
+                                disabled={['ADM', 'USR'].includes(usuario?.permissao || 'USR') ? true : false}
+                            >
                                 {funcionarios && funcionarios.tecnicos && funcionarios.tecnicos.map((tecs) => (
                                     <Option key={tecs.id} value={tecs.id}>{tecs.nome}</Option>
                                 ))}

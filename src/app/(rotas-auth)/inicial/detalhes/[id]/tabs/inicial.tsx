@@ -1,10 +1,9 @@
 'use client'
 
 import * as inicialServices from "@/shared/services/inicial.services";
-import * as admissibilidadeServices from "@/shared/services/admissibilidade.services";
-import { ICreateInterfaces, IInicial } from "@/shared/services/inicial.services";
+import { IInicial } from "@/shared/services/inicial.services";
 import { Add, Cancel, Check, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
-import { Alert, Button, Card, Checkbox, Divider, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, Box, Chip } from "@mui/joy"
+import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, Box, ModalDialog, DialogTitle, DialogContent, Stack, List, ListItem } from "@mui/joy"
 import { OverridableStringUnion } from '@mui/types';
 import { ReactNode, useContext, useEffect, useState } from "react";
 import { IAlvaraTipo } from "@/shared/services/alvara-tipo.services";
@@ -15,15 +14,20 @@ import { AlertsContext } from "@/providers/alertsProvider";
 import * as React from 'react';
 import Textarea from '@mui/joy/Textarea';
 import Typography from '@mui/joy/Typography';
+import { Modal } from "@mui/material";
 
 export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const router = useRouter();
     const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
     const [num_sql, setNum_sql] = useState<string>('');
-    const [validoNum_sql, setValidoNum_sql] = useState<boolean>(false);
     const [nums_sql, setNums_sql] = useState<string[]>([]);
     const [addNumSQLStatus, setAddNumSQLStatus] = useState<number>(0);
     const [addNumSQLStatusAlert, setAddNumSQLStatusAlert] = useState<boolean>(false);
+
+    const [modalSqlSequencial, setModalSqlSequencial] = useState(false);
+    const [sqlInicial, setSqlInicial] = useState<string>('');
+    const [sqlFinal, setSqlFinal] = useState<string>('');
+    const [sqlSequencial, setSqlSequencial] = useState<string[]>([]);
 
     const [sei, setSei] = useState<string>('');
     const [tipo_requerimento, setTipo_requerimento] = useState<string>('');
@@ -34,7 +38,6 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const [status, setStatus] = useState<number>(1);
     const [processo_fisico, setProcesso_fisico] = useState<string>('');
     const [data_protocolo, setData_protocolo] = useState<Date>(new Date());
-    const [inicial_id, setInicial_id] = useState<number>(inicial?.id || 0);
     const [obs, setObs] = useState<string>('');
     const [pagamento, setPagamento] = useState(0);
     const decreto = true;
@@ -148,7 +151,105 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
         });
     }, [inicial]);
 
+    function adicionaDigitoSql(sqlNumero: number): string {
+        var soma = 0;
+        const sql = sqlNumero.toString();
+        const verificador = [1, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+        for (let i = 0; i < 10; i++)
+            soma += parseInt(sql[i]) * verificador[i];
+        soma = soma % 11;
+        if (soma === 10) soma = 1;
+        if (soma > 1 && soma < 10) soma = 11 - soma;
+        return comum.formatarSql(sql + soma.toString());
+    }
+
+    function adicionarListaSql(): void {
+        throw new Error("Function not implemented.");
+    }
+
+    function gerarListaSql(): void {
+        const sqlInicialLimpo = parseInt(sqlInicial.replace(/\D/g,'').slice(0, -1));
+        const sqlFinalLimpo = parseInt(sqlFinal.replace(/\D/g,'').slice(0, -1));
+        setSqlSequencial([]);
+        for(let i = sqlInicialLimpo; i <= sqlFinalLimpo; i++) {
+            sqlSequencial.push(adicionaDigitoSql(i));
+            setSqlSequencial(sqlSequencial);
+        }
+    }
+
+    function comparaSqls(): boolean {
+        const sqlInicialLimpo = parseInt(sqlInicial.replace(/\D/g,'').slice(0, -1));
+        const sqlFinalLimpo = parseInt(sqlFinal.replace(/\D/g,'').slice(0, -1));
+        return sqlInicialLimpo < sqlFinalLimpo;
+    }
+
     return (
+        <>
+        <Modal open={modalSqlSequencial} onClose={() => setModalSqlSequencial(false)}>
+            <ModalDialog>
+                <DialogTitle>SQL</DialogTitle>
+                <DialogContent>Adicionar lista de SQL sequenciais</DialogContent>
+                <Stack spacing={2}>
+                  <FormControl>
+                    <FormLabel>SQL inicial</FormLabel>
+                    <Input autoFocus required value={sqlInicial}
+                        onChange={(e) => {
+                            var numSql = e.target.value;
+                            if (numSql.length > 0) numSql = comum.formatarSql(numSql);
+                            setSqlInicial(numSql && numSql);
+                        }} 
+                        error={(!comum.validaDigitoSql(sqlInicial) && sqlInicial.length > 13)}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>SQL Final</FormLabel>
+                    <Input required value={sqlFinal}
+                        onChange={(e) => {
+                            var numSql = e.target.value;
+                            if (numSql.length > 0) numSql = comum.formatarSql(numSql);
+                            setSqlFinal(numSql && numSql);
+                        }}
+                        error={(!comum.validaDigitoSql(sqlFinal) && sqlFinal.length > 13)}
+                    />
+                  </FormControl>
+                  <Button onClick={() => gerarListaSql()}
+                    disabled={!comum.validaDigitoSql(sqlInicial) || !comum.validaDigitoSql(sqlFinal) || !comparaSqls()}
+                  >Gerar Lista</Button>
+                </Stack>
+                {sqlSequencial.length > 0 && <><Stack spacing={2} sx={{ maxHeight: 300, overflow: 'hidden', overflowY: 'auto' }}>
+                    <Table sx={{ tableLayout: 'fixed', maxWidth: 300 }}>
+                        <thead>
+                            <tr>
+                                <th colSpan={2}>SQL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {sqlSequencial.map((sql, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{sql}</td>
+                                        <td style={{ textAlign: 'right' }}>
+                                            <IconButton
+                                                color='danger'
+                                                onClick={() => { sqlSequencial.splice(index, 1); }}
+                                            >
+                                                <Cancel />
+                                            </IconButton>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                        <tfoot>
+                        </tfoot>
+                    </Table>
+                </Stack>
+                <Stack sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', gap: 1 }}>
+                    <Button onClick={() => {}} sx={{ flexGrow: 1 }} color="danger">Limpar Lista</Button>
+                    <Button onClick={() => {}} sx={{ flexGrow: 1 }} color="success">Adicionar Lista</Button>
+                </Stack></>}
+            </ModalDialog>
+        </Modal>
         <Box sx={{ p: 2 }}>
             <Grid
                 container
@@ -196,15 +297,14 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                     <Grid xs={4} sm={4} md={4} lg={2} xl={2}>
                         <FormControl>
                             <FormLabel title='Tipo de Requerimento' sx={{ whiteSpace: 'nowrap', overflowX: 'hidden', textOverflow: 'ellipsis' }}>Tipo Req.</FormLabel>
-                            <Input
-                                id="tipo_requerimento"
-                                name="tipo_requerimento"
-                                placeholder="Tipo Requerimento"
-                                type="text"
+                            <Select
                                 value={tipo_requerimento}
-                                onChange={e => setTipo_requerimento(e.target.value)}
-                                required={inicial ? false : true}
-                            />
+                                onChange={(_, value) => value && setTipo_requerimento(value)}
+                            >
+                                <Option value={1}>IPTU</Option>
+                                <Option value={2}>INCRA</Option>
+                                <Option value={3}>Área Pública</Option>
+                            </Select>
                         </FormControl>
                     </Grid>
                     <Grid xs={8} sm={8} md={8} lg={5} xl={5}>
@@ -227,11 +327,10 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                             <Select
                                 value={pagamento}
                                 onChange={(_, value) => value && setPagamento(value)}
-                                size="sm"
                                 placeholder="Status"
                             >
                                 <Option value={0}>SIM</Option>
-                                <Option value={1}>NÂO</Option>
+                                <Option value={1}>NÃO</Option>
                                 <Option value={2}>SIM-VINCULADO</Option>
                                 <Option value={3}>ISENTO-VINCULADO</Option>
                             </Select>
@@ -345,6 +444,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                     }
                                 />
                                 {(!comum.validaDigitoSql(num_sql) && num_sql.length > 13) && <FormLabel sx={{ color: 'red' }}>SQL inválido</FormLabel>}
+                                <Button sx={{ mt: 1 }} onClick={() => setModalSqlSequencial(true)}>Adicionar SQL Sequencial</Button>
                             </FormControl>
                         </Grid>
                         <Grid xs={12} sx={{ display: addNumSQLStatusAlert ? 'block' : 'none' }}>
@@ -399,5 +499,6 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                 </Button>
             </Box>
         </Box>
+        </>
     )
 }
