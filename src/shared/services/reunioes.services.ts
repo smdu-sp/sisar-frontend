@@ -14,6 +14,29 @@ export interface IReunioes {
     ano: string;
 }
 
+export interface IInicial {
+    id: number
+    decreto: boolean
+    sei: string
+    tipo_requerimento: string
+    requerimento: string
+    aprova_digital?: string
+    processo_fisico?: string
+    data_protocolo: Date
+    envio_admissibilidade?: Date
+    alvara_tipo_id: string
+    tipo_processo: number
+    pagamento: number
+    obs?: string
+    status: number
+}
+
+export interface IProcesso {
+    id: string;
+    data_processo: string;
+    inicial: IInicial[];
+}
+
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
 
@@ -66,4 +89,19 @@ async function reagendarReuniao(id: string, data: Date, motivo: string) {
     return reunoes;
 }
 
-export { buscarPorMesAno, buscarPorData, reagendarReuniao }
+async function buscarPorDataProcesso(data: string): Promise<IProcesso[]> {
+    const session = await getServerSession(authOptions);
+    const reunoes = await fetch(`${baseURL}inicial/buscar-data-processo/${data}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) signOut();
+        return response.json();
+    })
+    return reunoes;
+}
+
+export { buscarPorMesAno, buscarPorData, reagendarReuniao, buscarPorDataProcesso }
