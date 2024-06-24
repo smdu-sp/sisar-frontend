@@ -3,7 +3,7 @@
 import Content from "@/components/Content";
 import { useContext, useEffect, useState } from "react";
 import * as subprefeituraServices from "@/shared/services/subprefeitura.services";
-import { Box, Button, Card, CardActions, CardOverflow, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
+import { Box, Button, Card, CardActions, CardOverflow, CircularProgress, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
 import { InfoOutlined } from "@mui/icons-material";
 import { useRouter } from 'next/navigation';
 import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
@@ -13,11 +13,11 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     boolean,
-  infer as Infer,
-  number,
-  object,
-  string,
-  z
+    infer as Infer,
+    number,
+    object,
+    string,
+    z
 } from "zod";
 
 
@@ -33,7 +33,7 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
     const [nome, setNome] = useState<string>('');
     const [sigla, setSigla] = useState<string>('');
     const [status, setStatus] = useState<number>(1);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [carregando, setCarregando] = useState<boolean>(true);
 
     const { id } = props.params;
     const { setAlert } = useContext(AlertsContext);
@@ -42,13 +42,13 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
     const {
         control,
         handleSubmit,
-        formState: { errors, isValid }
+        formState: { errors, isValid, isSubmitSuccessful }
     } = useForm<Schema>({
         mode: "onChange",
         resolver: zodResolver(schema),
         values: { nome, sigla, status }
     });
-    
+
     const onSubmit = (data: Schema) => {
         console.log(data);
         if (!id) {
@@ -65,7 +65,6 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
     }
 
     useEffect(() => {
-        setIsLoading(true);
         if (id) {
             subprefeituraServices.buscarPorId(id)
                 .then((response: ISubprefeitura) => {
@@ -73,8 +72,11 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
                     setNome(response.nome);
                     setSigla(response.sigla);
                     setStatus(response.status);
-                    setIsLoading(false);
+                    setCarregando(false);
                 });
+            setCarregando(true);
+        } else {
+            setCarregando(false);
         }
     }, [id]);
 
@@ -103,11 +105,11 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
                             <Stack direction="row" spacing={2}>
                                 <FormControl sx={{ flexGrow: 0.9 }} error={Boolean(errors.nome)}>
                                     <FormLabel>Nome</FormLabel>
-                                    {isLoading ? <Skeleton variant="text" level="h1" /> : <Controller
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                         name="nome"
                                         control={control}
                                         defaultValue={nome}
-                                        render={({ field: { ref, ...field }}) => {
+                                        render={({ field: { ref, ...field } }) => {
                                             return (<>
                                                 <Input
                                                     type="text"
@@ -125,11 +127,11 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
                                 </FormControl>
                                 <FormControl sx={{ flexGrow: 0.1 }} error={Boolean(errors.sigla)}>
                                     <FormLabel>Sigla</FormLabel>
-                                    {isLoading ? <Skeleton variant="text" level="h1" /> : <Controller
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                         name="sigla"
                                         control={control}
                                         defaultValue={sigla}
-                                        render={({ field: { ref, ...field }}) => {
+                                        render={({ field: { ref, ...field } }) => {
                                             return (<>
                                                 <Input
                                                     type="text"
@@ -149,11 +151,11 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
                             <Stack direction="row" spacing={2}>
                                 <FormControl sx={{ flexGrow: 1 }} error={Boolean(errors.status)}>
                                     <FormLabel>Status</FormLabel>
-                                    {isLoading ? <Skeleton variant="text" level="h1" /> : <Controller
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                         name="status"
                                         control={control}
                                         defaultValue={status}
-                                        render={({ field: { ref, ...field }}) => {
+                                        render={({ field: { ref, ...field } }) => {
                                             return (<>
                                                 <Select
                                                     startDecorator={<AccountBalanceIcon />}
@@ -180,7 +182,7 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
                                     Cancelar
                                 </Button>
                                 <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
-                                    Salvar
+                                    {isSubmitSuccessful ?  <CircularProgress variant="solid" /> : "Salvar"}
                                 </Button>
                             </CardActions>
                         </CardOverflow>
