@@ -389,8 +389,8 @@ export default function Home() {
           }
           <Modal open={openNotf} onClose={() => setOpenNotf(false)}>
             <ModalDialog>
-              <DialogTitle>Create new project</DialogTitle>
-              <DialogContent>Fill in the information of the project.</DialogContent>
+              <DialogTitle>Adicionar Lembrete</DialogTitle>
+              <DialogContent>Preencha as informações do lembrete</DialogContent>
               <form
                 onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
                   event.preventDefault();

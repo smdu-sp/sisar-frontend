@@ -12,7 +12,8 @@ async function Logout() {
 export interface ISubprefeitura {
     id: string;
     nome: string;
-    status: boolean;
+    sigla: string;
+    status: number;
 }
 
 export interface IPaginadoSubprefeitura {
@@ -86,7 +87,7 @@ async function desativar(id: string): Promise<{ autorizado: boolean }> {
     return desativado;
 }
 
-async function criar({nome}: { nome: string}): Promise<ISubprefeitura> {
+async function criar({ nome, sigla, status }: { nome: string, sigla: string, status: number }): Promise<ISubprefeitura> {
     const session = await getServerSession(authOptions);
     const novaSubprefeitura = await fetch(`${baseURL}subprefeitura/criar`, {
         method: "POST",
@@ -96,6 +97,8 @@ async function criar({nome}: { nome: string}): Promise<ISubprefeitura> {
         },
         body: JSON.stringify({ 
             nome,
+            sigla,
+            status
         })
     }).then((response) => {
         if (response.status === 401) Logout();
@@ -105,7 +108,7 @@ async function criar({nome}: { nome: string}): Promise<ISubprefeitura> {
     return novaSubprefeitura;
 }
 
-async function atualizar({ id, nome}: { id: string, nome: string}): Promise<ISubprefeitura> {
+async function atualizar({ id, nome, sigla, status }: { id: string, nome: string, sigla: string, status: number }): Promise<ISubprefeitura> {
     const session = await getServerSession(authOptions);
     const atualizado = await fetch(`${baseURL}subprefeitura/atualizar/${id}`, {
         method: "PATCH",
@@ -115,6 +118,8 @@ async function atualizar({ id, nome}: { id: string, nome: string}): Promise<ISub
         },
         body: JSON.stringify({
             nome,
+            sigla,
+            status
         })
     }).then((response) => {
         if (response.status === 401) Logout();
