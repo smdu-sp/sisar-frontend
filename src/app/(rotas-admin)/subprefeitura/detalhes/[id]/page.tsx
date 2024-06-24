@@ -3,8 +3,8 @@
 import Content from "@/components/Content";
 import { useContext, useEffect, useState } from "react";
 import * as subprefeituraServices from "@/shared/services/subprefeitura.services";
-import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, FormLabel, Input, Option, Select, Stack } from "@mui/joy";
-import { Abc, Business, Check, Tag } from "@mui/icons-material";
+import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, FormHelperText, FormLabel, Input, Option, Select, Stack } from "@mui/joy";
+import { Abc, Business, Check, InfoOutlined, Tag } from "@mui/icons-material";
 import { useRouter } from 'next/navigation';
 import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
 import { AlertsContext } from "@/providers/alertsProvider";
@@ -14,29 +14,31 @@ import { z } from "zod";
 export default function SubprefeituraDetalhes(props: { params: { id: string } }) {
     const [idSubprefeitura, setIdSubprefeitura] = useState<string>('aawd');
     const [nome, setNome] = useState<string>('');
-    const [messageError, setMessageError] = useState<string>('');
+    const [messageError, setMessageError] = useState<string[]>([]);
+
     const { id } = props.params;
     const { setAlert } = useContext(AlertsContext);
     const router = useRouter();
 
-    const DadosSchema = z.object({
-        nome: z.string().email("Preencha este campo")
-    })
+    const validForm = () => {
+        const DadosSchema = z.object({
+            nome: z.string().min(1, "Preencha este campo")
+        })
 
-    const result = DadosSchema.safeParse({
-        nome: nome
-    })
+        const result = DadosSchema.safeParse({
+            nome: nome
+        })
 
-    
-  useEffect(() => {
-    if (result) {
-        console.log(result);
+        if (result.error) {
+            setMessageError([result.error.issues[0].message]);
+            return
+        }
+
     }
-  }, [result]);
-
 
     const submitForm = async () => {
-        if (result.success) {
+        validForm();
+        if (messageError.length > 0) {
             if (!id) {
                 subprefeituraServices.criar({ nome })
                     .then(() => {
@@ -48,10 +50,7 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
                         router.push('/subprefeitura?notification=1');
                     })
             }
-        } else if (result.error) {
-            setMessageError(result.error.issues[0].message);
         }
-        
     }
 
     useEffect(() => {
@@ -86,23 +85,26 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
                 <Card sx={{ width: '100%' }}>
                     <Stack spacing={2} >
                         <Stack direction="row" spacing={2}>
-                            <FormControl sx={{ flexGrow: 1 }}>
+                            <FormControl sx={{ flexGrow: 1 }} error={messageError.length > 0 ? true : false}>
                                 <FormLabel>Nome</FormLabel>
                                 <Input
                                     value={nome || ''}
                                     onChange={(event) => setNome(event.target.value)}
                                     size="sm"
                                     type="text"
-                                    color={messageError != '' ? 'danger' : 'neutral'}
                                     startDecorator={<AccountBalanceIcon />}
                                     placeholder="Nome"
                                     required
                                 />
+                                {
+                                    messageError.length > 0 ?
+                                        <FormHelperText>
+                                            <InfoOutlined />
+                                            {messageError}
+                                        </FormHelperText>
+                                        : null
+                                }
                             </FormControl>
-                            <FormLabel>
-                                {messageError}
-                            </FormLabel>
-
                         </Stack>
                     </Stack>
                     <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
