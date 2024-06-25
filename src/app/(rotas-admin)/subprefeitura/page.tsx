@@ -3,14 +3,31 @@
 import Content from '@/components/Content';
 import { Suspense, useCallback, useContext, useEffect, useState } from 'react';
 import * as subprefeituraServices from '@/shared/services/subprefeitura.services';
-import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
+import { Box, Button, Card, CardActions, CardOverflow, ChipPropsColorOverrides, CircularProgress, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, IconButton, Input, Modal, ModalDialog, Option, Select, Skeleton, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
 import { Add, Cancel, Check, Clear, Edit, Refresh, Search, Warning } from '@mui/icons-material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertsContext } from '@/providers/alertsProvider';
 import { TablePagination } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
-import { IPaginadoSubprefeitura, ISubprefeitura } from '@/shared/services/subprefeitura.services';
+import { IPaginadoSubprefeitura } from '@/shared/services/subprefeitura.services';
 import subprefeituraDetalhes from './detalhes/[id]/page';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
+import {
+  infer as Infer,
+  number,
+  object,
+  string,
+} from "zod";
+
+const schema = object({
+  nome: string().min(2, { message: "O nome deve ter pelo menos 2 letras" }),
+  sigla: string().min(2, { message: "A sigla deve ter pelo menos 2 letras" }),
+  status: number().min(0).max(1)
+});
+type Schema = Infer<typeof schema>;
 
 
 export default function Unidades() {
@@ -31,12 +48,17 @@ function SearchUnidades() {
   const [status, setStatus] = useState<string>(searchParams.get('status') ? searchParams.get('status') + '' : 'true');
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
   const [notificacao, setNotificacao] = useState(0);
+  const [openComfirm, setOpenComfirm] = useState(false);
   const [open, setOpen] = useState(false);
   const [mensagemStatus, setMensagemStatus] = useState(1);
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
-
+  const [idSubprefeitura, setIdSubprefeitura] = useState<string>('aawd');
+  const [nome, setNome] = useState<string>('');
+  const [sigla, setSigla] = useState<string>('');
+  const [statusModal, setStatusModal] = useState<number>(1);
+  const [carregando, setCarregando] = useState<boolean>(true);
   const confirmaVazio: {
     aberto: boolean,
     confirmaOperacao: () => void,
@@ -136,6 +158,52 @@ function SearchUnidades() {
     buscaSubprefeitura();
   }
 
+  useEffect(() => {
+    if (id) {
+      subprefeituraServices.buscarPorId(id)
+        .then((response: ISubprefeitura) => {
+          setIdSubprefeitura(response.id);
+          setNome(response.nome);
+          setSigla(response.sigla);
+          setStatus(response.status.toString());
+          setCarregando(false);
+        });
+      setCarregando(true);
+    } else {
+      setCarregando(false);
+    }
+  }, [id]);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitSuccessful }
+  } = useForm<Schema>({
+    mode: "onChange",
+    resolver: zodResolver(schema),
+    values: {
+      nome,
+      sigla,
+      status: statusModal
+    }
+  });
+
+  const onSubmit = (data: Schema) => {
+    console.log(data);
+    if (!id) {
+      subprefeituraServices.criar(data)
+        .then(() => {
+          setOpen(false);
+          buscaSubprefeitura();
+        })
+    } else {
+      subprefeituraServices.atualizar({ id, ...data })
+        .then(() => {
+          router.push('/subprefeitura?notification=1');
+        })
+    }
+  }
+
   return (
     <Content
       breadcrumbs={[
@@ -149,9 +217,9 @@ function SearchUnidades() {
         variant="solid"
         color={mensagemStatus === 1 ? 'success' : 'warning'}
         size="lg"
+        open={openComfirm}
         invertedColors
-        open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => setOpenComfirm(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         sx={{ maxWidth: 360 }}
       >
@@ -165,7 +233,7 @@ function SearchUnidades() {
             <Button
               variant="outlined"
               color="primary"
-              onClick={() => setOpen(false)}
+              onClick={() => setOpenComfirm(false)}
             >
               Não
             </Button>
@@ -222,43 +290,47 @@ function SearchUnidades() {
         <thead>
           <tr>
             <th>Nome</th>
+            <th>Sigla</th>
+            <th>Status</th>
             <th style={{ textAlign: 'right' }}></th>
           </tr>
         </thead>
         <tbody>
           {subprefeitura && subprefeitura.length > 0 ? subprefeitura.map((subprefeitura) => (
-              parseInt(subprefeitura.status.toString()) !==
-                (searchParams.get('status') ?
-                  (searchParams.get('status') === 'true' ? 0 : searchParams.get('status') === 'false' ? 1 : 2)
-                  : 0) ? (
-                <tr key={subprefeitura.id} style={{
-                  cursor: 'pointer',
-                  backgroundColor: !subprefeitura.status ?
-                    theme.vars.palette.danger.plainActiveBg :
-                    undefined
-                }}>
-                  <td onClick={() => router.push('/subprefeitura/detalhes/' + subprefeitura.id)}>{subprefeitura.nome}</td>
-                  <td>
-                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                      {!subprefeitura.status ? (
-                        <Tooltip title="Ativar Unidade" arrow placement="top">
-                          <IconButton size="sm" color="success" onClick={() => (setTitle('Ativando!'), setMessage('Deseja ativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(1))}>
-                            <Check />
-                          </IconButton>
-                        </Tooltip>
-                      ) : (
-                        <Tooltip title="Desativar" arrow placement="top">
-                          <IconButton title="Desativar" size="sm" color="danger" onClick={() => (setTitle('Desativando!'), setMessage('Deseja desativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(0))}>
-                            <Cancel />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ) : null
+            parseInt(subprefeitura.status.toString()) !==
+              (searchParams.get('status') ?
+                (searchParams.get('status') === 'true' ? 0 : searchParams.get('status') === 'false' ? 1 : 2)
+                : 0) ? (
+              <tr key={subprefeitura.id} style={{
+                cursor: 'pointer',
+                backgroundColor: !subprefeitura.status ?
+                  theme.vars.palette.danger.plainActiveBg :
+                  undefined
+              }}>
+                <td onClick={() => router.push('/subprefeitura/detalhes/' + subprefeitura.id)}>{subprefeitura.nome}</td>
+                <td>{subprefeitura.sigla}</td>
+                <td>{subprefeitura.status == 1 ? "Ativo" : "Inativo"}</td>
+                <td>
+                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    {!subprefeitura.status ? (
+                      <Tooltip title="Ativar Unidade" arrow placement="top">
+                        <IconButton size="sm" color="success" onClick={() => (setTitle('Ativando!'), setMessage('Deseja ativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(1))}>
+                          <Check />
+                        </IconButton>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="Desativar" arrow placement="top">
+                        <IconButton title="Desativar" size="sm" color="danger" onClick={() => (setTitle('Desativando!'), setMessage('Deseja desativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(0))}>
+                          <Cancel />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ) : null
 
-            )) : <tr><td colSpan={4}>Nenhuma unidade encontrada</td></tr>}
+          )) : <tr><td colSpan={4}>Nenhuma unidade encontrada</td></tr>}
         </tbody>
       </Table>
       {(total && total > 0) ? <TablePagination
@@ -272,11 +344,108 @@ function SearchUnidades() {
         labelRowsPerPage="Registros por página"
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
       /> : null}
-      <IconButton onClick={() => router.push('/subprefeitura/detalhes/')} color='primary' variant='soft' size='lg' sx={{
+      <IconButton onClick={() => setOpen(true)} color='primary' variant='soft' size='lg' sx={{
         position: 'fixed',
         bottom: '2rem',
         right: '2rem',
       }}><Add /></IconButton>
-    </Content>
+
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog>
+          <DialogTitle>Adicionar Subprefeitura</DialogTitle>
+          <DialogContent>Adicione uma nova subprefeitura para continuar</DialogContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Box sx={{ maxWidth: 600, minWidth: 600 }}>
+              <Stack spacing={2}>
+                <Stack direction="row" spacing={2}>
+                  <FormControl sx={{ flexGrow: 0.9 }} error={Boolean(errors.nome)}>
+                    <FormLabel>Nome</FormLabel>
+                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                      name="nome"
+                      control={control}
+                      defaultValue={nome}
+                      render={({ field: { ref, ...field } }) => {
+                        return (<>
+                          <Input
+                            type="text"
+                            startDecorator={<AccountBalanceIcon />}
+                            placeholder="Nome"
+                            error={Boolean(errors.nome)}
+                            {...field}
+                          />
+                          {errors.nome && <FormHelperText color="danger">
+                            {errors.nome?.message}
+                          </FormHelperText>}
+                        </>);
+                      }}
+                    />}
+                  </FormControl>
+                  <FormControl sx={{ flexGrow: 0.1 }} error={Boolean(errors.sigla)}>
+                    <FormLabel>Sigla</FormLabel>
+                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                      name="sigla"
+                      control={control}
+                      defaultValue={sigla}
+                      render={({ field: { ref, ...field } }) => {
+                        return (<>
+                          <Input
+                            type="text"
+                            startDecorator={<AccountBalanceIcon />}
+                            placeholder="Sigla"
+                            error={Boolean(errors.sigla)}
+                            {...field}
+                          />
+                          {errors.sigla && <FormHelperText>
+                            {errors.sigla?.message}
+                          </FormHelperText>}
+                        </>);
+                      }}
+                    />}
+                  </FormControl>
+                </Stack>
+                <Stack direction="row" spacing={2}>
+                  <FormControl sx={{ flexGrow: 1 }} error={Boolean(errors.status)}>
+                    <FormLabel>Status</FormLabel>
+                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                      name="status"
+                      control={control}
+                      defaultValue={statusModal}
+                      render={({ field: { ref, ...field } }) => {
+                        return (<>
+                          <Select
+                            startDecorator={<AccountBalanceIcon />}
+                            placeholder="Status"
+                            {...field}
+                            onChange={(_, value) => field.onChange(value)}
+                          >
+                            <Option value={1}>Ativo</Option>
+                            <Option value={0}>Inativo</Option>
+                          </Select>
+                          {errors.status && <FormHelperText>
+                            {errors.status?.message}
+                          </FormHelperText>}
+                        </>);
+                      }}
+                    />}
+                  </FormControl>
+
+                </Stack>
+              </Stack>
+              <CardOverflow>
+                <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
+                  <Button size="sm" variant="outlined" color="neutral" onClick={() => router.back()}>
+                    Cancelar
+                  </Button>
+                  <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
+                    {isSubmitSuccessful ? <CircularProgress variant="solid" /> : "Salvar"}
+                  </Button>
+                </CardActions>
+              </CardOverflow>
+            </Box>
+          </form>
+        </ModalDialog>
+      </Modal>
+
+    </Content >
   );
 }

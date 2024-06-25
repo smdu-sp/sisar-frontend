@@ -23,23 +23,23 @@ import { MenuItem } from "@mui/material";
 
 const schema = z.object({
     nome: string().min(2, { message: "O nome deve ter pelo menos 2 letras" }),
-    prazo_admissibilidade_smul: z.coerce.number().min(0),
-    reconsideracao_smul: z.coerce.number().min(0),
-    reconsideracao_smul_tipo: z.literal(0).or(z.literal(1)),
-    analise_reconsideracao_smul: z.coerce.number().min(0),
-    prazo_analise_smul1: z.coerce.number().min(0),
-    prazo_analise_smul2: z.coerce.number().min(0),
-    prazo_emissao_alvara_smul: z.coerce.number().min(0),
-    prazo_admissibilidade_multi: z.coerce.number().min(0),
-    reconsideracao_multi: z.coerce.number().min(0),
-    reconsideracao_multi_tipo: z.literal(0).or(z.literal(1)),
-    analise_reconsideracao_multi: z.coerce.number().min(0),
-    prazo_analise_multi1: z.coerce.number().min(0),
-    prazo_analise_multi2: z.coerce.number().min(0),
-    prazo_emissao_alvara_multi: z.coerce.number().min(0),
-    prazo_comunique_se: z.coerce.number().min(1),
-    prazo_encaminhar_coord: z.coerce.number().min(0),
-    status: z.literal(0).or(z.literal(1)),
+    prazo_admissibilidade_smul: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    reconsideracao_smul: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    reconsideracao_smul_tipo: z.coerce.number(),
+    analise_reconsideracao_smul: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    prazo_analise_smul1: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    prazo_analise_smul2: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    prazo_emissao_alvara_smul: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    prazo_admissibilidade_multi: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    reconsideracao_multi: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    reconsideracao_multi_tipo: z.coerce.number(),
+    analise_reconsideracao_multi: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    prazo_analise_multi1: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    prazo_analise_multi2: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    prazo_emissao_alvara_multi: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    prazo_comunique_se: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    prazo_encaminhar_coord: z.coerce.number().min(1, { message: "Valor minimo é 1" }),
+    status: number()
 });
 type Schema = Infer<typeof schema>;
 
@@ -48,24 +48,24 @@ export default function AlvaraTipoDetalhes(props: any) {
     const router = useRouter();
 
     const [nome, setNome] = useState('');
-    const [prazo_admissibilidade_smul, setPrazo_admissibilidade_smul] = useState(0);
-    const [reconsideracao_smul, setReconsideracao_smul] = useState(0);
-    const [reconsideracao_smul_tipo, setReconsideracao_smul_tipo] = useState<0 | 1>(0);
-    const [analise_reconsideracao_smul, setAnalise_reconsideracao_smul] = useState(0);
-    const [prazo_analise_smul1, setPrazo_analise_smul1] = useState(0);
-    const [prazo_analise_smul2, setPrazo_analise_smul2] = useState(0);
-    const [prazo_emissao_alvara_smul, setPrazo_emissao_alvara_smul] = useState(0);
-    const [prazo_admissibilidade_multi, setPrazo_admissibilidade_multi] = useState(0);
-    const [reconsideracao_multi, setReconsideracao_multi] = useState(0);
-    const [reconsideracao_multi_tipo, setReconsideracao_multi_tipo] = useState<0 | 1>(0);
-    const [analise_reconsideracao_multi, setAnalise_reconsideracao_multi] = useState(0);
-    const [prazo_analise_multi1, setPrazo_analise_multi1] = useState(0);
-    const [prazo_analise_multi2, setPrazo_analise_multi2] = useState(0);
-    const [prazo_emissao_alvara_multi, setPrazo_emissao_alvara_multi] = useState(0);
+    const [prazo_admissibilidade_smul, setPrazo_admissibilidade_smul] = useState<number>(0);
+    const [reconsideracao_smul, setReconsideracao_smul] = useState<number>(0);
+    const [reconsideracao_smul_tipo, setReconsideracao_smul_tipo] = useState<number>(0);
+    const [analise_reconsideracao_smul, setAnalise_reconsideracao_smul] = useState<number>(0);
+    const [prazo_analise_smul1, setPrazo_analise_smul1] = useState<number>(0);
+    const [prazo_analise_smul2, setPrazo_analise_smul2] = useState<number>(0);
+    const [prazo_emissao_alvara_smul, setPrazo_emissao_alvara_smul] = useState<number>(0);
+    const [prazo_admissibilidade_multi, setPrazo_admissibilidade_multi] = useState<number>(0);
+    const [reconsideracao_multi, setReconsideracao_multi] = useState<number>(0);
+    const [reconsideracao_multi_tipo, setReconsideracao_multi_tipo] = useState<number>(0);
+    const [analise_reconsideracao_multi, setAnalise_reconsideracao_multi] = useState<number>(0);
+    const [prazo_analise_multi1, setPrazo_analise_multi1] = useState<number>(0);
+    const [prazo_analise_multi2, setPrazo_analise_multi2] = useState<number>(0);
+    const [prazo_emissao_alvara_multi, setPrazo_emissao_alvara_multi] = useState<number>(0);
     const [prazo_comunique_se, setPrazo_comunique_se] = useState<number>(0);
-    const [prazo_encaminhar_coord, setPrazo_encaminhar_coord] = useState(0);
+    const [prazo_encaminhar_coord, setPrazo_encaminhar_coord] = useState<number>(0);
     const [carregando, setCarregando] = useState<boolean>(true);
-    const [status, setStatus] = useState<0 | 1>(0);
+    const [status, setStatus] = useState<number>(1);
     const { setAlert } = useContext(AlertsContext);
 
 
@@ -99,7 +99,18 @@ export default function AlvaraTipoDetalhes(props: any) {
     });
 
     const onSubmit = (data: Schema) => {
-        console.log(data);
+        if (!id) {
+            alvaraTiposService.criar(data)
+                .then(() => {
+                    router.push('/alvara-tipos?notification=0');
+                });
+        } else {
+            alvaraTiposService.atualizar(id, data)
+                .then(() => {
+                    router.push('/alvara-tipos?notification=1');
+                });
+        }
+
     }
 
     useEffect(() => {
@@ -107,7 +118,7 @@ export default function AlvaraTipoDetalhes(props: any) {
             alvaraTiposService.buscarPorId(id)
                 .then((response: IAlvaraTipo) => {
                     setNome(response.nome);
-                    setStatus(response.status == 0 ? 0 : 1);
+                    setStatus(response.status);
                     setPrazo_comunique_se(response.prazo_comunique_se);
                     setPrazo_encaminhar_coord(response.prazo_encaminhar_coord);
                     setPrazo_admissibilidade_smul(response.prazo_admissibilidade_smul);
@@ -129,57 +140,6 @@ export default function AlvaraTipoDetalhes(props: any) {
         setCarregando(false);
     }, [id]);
 
-    const enviaDados = () => {
-        if (id) {
-            alvaraTiposService.atualizar(id, {
-                nome,
-                prazo_admissibilidade_smul,
-                reconsideracao_smul,
-                reconsideracao_smul_tipo,
-                analise_reconsideracao_smul,
-                prazo_analise_smul1,
-                prazo_analise_smul2,
-                prazo_emissao_alvara_smul,
-                prazo_admissibilidade_multi,
-                analise_reconsideracao_multi,
-                reconsideracao_multi,
-                reconsideracao_multi_tipo,
-                prazo_analise_multi1,
-                prazo_analise_multi2,
-                prazo_emissao_alvara_multi,
-                prazo_comunique_se,
-                prazo_encaminhar_coord,
-                status
-            })
-                .then(() => {
-                    router.push('/alvara-tipos?notification=1');
-                });
-        } else {
-            alvaraTiposService.criar({
-                nome,
-                prazo_admissibilidade_smul,
-                reconsideracao_smul,
-                reconsideracao_smul_tipo,
-                analise_reconsideracao_smul,
-                prazo_analise_smul1,
-                prazo_analise_smul2,
-                prazo_emissao_alvara_smul,
-                prazo_admissibilidade_multi,
-                analise_reconsideracao_multi,
-                reconsideracao_multi,
-                reconsideracao_multi_tipo,
-                prazo_analise_multi1,
-                prazo_analise_multi2,
-                prazo_emissao_alvara_multi,
-                prazo_comunique_se,
-                prazo_encaminhar_coord,
-                status
-            })
-                .then(() => {
-                    router.push('/alvara-tipos?notification=0');
-                });
-        }
-    }
     return (
         <Content
             breadcrumbs={[
@@ -235,28 +195,26 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 <Stack width={{ xs: '100%', sm: '30%', md: '30%' }}>
                                     <FormControl>
                                         <FormLabel>Status</FormLabel>
-                                        {carregando ? (
-                                            <Skeleton variant="text" level="h1" />
-                                        ) : (
-                                            <Controller
-                                                name="status"
-                                                control={control}
-                                                defaultValue={status == 1 ? 1 : 0}
-                                                render={({ ...field }) => (
-                                                    <>
-                                                        <Select
-                                                            {...field}
-                                                            variant="outlined"
-                                                        >
-                                                            <Option value={1}>Ativo</Option>
-                                                            <Option value={0}>Inativo</Option>
-                                                        </Select>
-                                                        {errors.status && <FormHelperText>{errors.status.message}</FormHelperText>}
-                                                    </>
-                                                )}
-                                            />
-
-                                        )}
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="status"
+                                            control={control}
+                                            defaultValue={status}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Select
+                                                        placeholder="Status"
+                                                        {...field}
+                                                        onChange={(_, value) => field.onChange(value)}
+                                                    >
+                                                        <Option value={1}>Ativo</Option>
+                                                        <Option value={0}>Inativo</Option>
+                                                    </Select>
+                                                    {errors.status && <FormHelperText>
+                                                        {errors.status?.message}
+                                                    </FormHelperText>}
+                                                </>);
+                                            }}
+                                        />}
                                     </FormControl>
                                 </Stack>
                             </Stack>
@@ -420,27 +378,26 @@ export default function AlvaraTipoDetalhes(props: any) {
                                                     </>);
                                                 }}
                                             />}
-                                            {carregando ? (
-                                                <Skeleton variant="text" level="h1" />
-                                            ) : (
-                                                <Controller
-                                                    name="reconsideracao_smul_tipo"
-                                                    control={control}
-                                                    defaultValue={reconsideracao_smul_tipo}
-                                                    render={({ ...field }) => (
-                                                        <>
-                                                            <Select
-                                                                {...field}
-                                                                variant="outlined"
-                                                            >
-                                                                <Option value={1}>Dias Uteis</Option>
-                                                                <Option value={0}>Dias Corridos</Option>
-                                                            </Select>
-                                                            {errors.reconsideracao_smul_tipo && <FormHelperText>{errors.reconsideracao_smul_tipo.message}</FormHelperText>}
-                                                        </>
-                                                    )}
-                                                />
-                                            )}
+                                            {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                                name="reconsideracao_smul_tipo"
+                                                control={control}
+                                                defaultValue={reconsideracao_smul_tipo}
+                                                render={({ field: { ref, ...field } }) => {
+                                                    return (<>
+                                                        <Select
+                                                            placeholder="reconsideracao_smul_tipo"
+                                                            {...field}
+                                                            onChange={(_, value) => field.onChange(value)}
+                                                        >
+                                                            <Option value={1}>Dias Corridos</Option>
+                                                            <Option value={0}>Dias Úteis</Option>
+                                                        </Select>
+                                                        {errors.reconsideracao_smul_tipo && <FormHelperText>
+                                                            {errors.reconsideracao_smul_tipo?.message}
+                                                        </FormHelperText>}
+                                                    </>);
+                                                }}
+                                            />}
                                         </Box>
                                     </FormControl>
                                 </Stack>
@@ -637,27 +594,26 @@ export default function AlvaraTipoDetalhes(props: any) {
                                                     </>);
                                                 }}
                                             />}
-                                            {carregando ? (
-                                                <Skeleton variant="text" level="h1" />
-                                            ) : (
-                                                <Controller
-                                                    name="reconsideracao_multi_tipo"
-                                                    control={control}
-                                                    defaultValue={reconsideracao_multi_tipo}
-                                                    render={({ ...field }) => (
-                                                        <>
-                                                            <Select
-                                                                {...field}
-                                                                variant="outlined"
-                                                            >
-                                                                <Option value="1">Dias Uteis</Option>
-                                                                <Option value="0">Dias Corridos</Option>
-                                                            </Select>
-                                                            {errors.reconsideracao_multi_tipo && <FormHelperText>{errors.reconsideracao_multi_tipo.message}</FormHelperText>}
-                                                        </>
-                                                    )}
-                                                />
-                                            )}
+                                            {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                                name="reconsideracao_multi_tipo"
+                                                control={control}
+                                                defaultValue={reconsideracao_multi_tipo}
+                                                render={({ field: { ref, ...field } }) => {
+                                                    return (<>
+                                                        <Select
+                                                            placeholder="reconsideracao_multi_tipo"
+                                                            {...field}
+                                                            onChange={(_, value) => field.onChange(value)}
+                                                        >
+                                                            <Option value={1}>Dias Corridos</Option>
+                                                            <Option value={0}>Dias Úteis</Option>
+                                                        </Select>
+                                                        {errors.reconsideracao_multi_tipo && <FormHelperText>
+                                                            {errors.reconsideracao_multi_tipo?.message}
+                                                        </FormHelperText>}
+                                                    </>);
+                                                }}
+                                            />}
                                         </Box>
                                     </FormControl>
                                 </Stack>
@@ -762,7 +718,7 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 <Button size="sm" variant="outlined" color="neutral" onClick={() => router.back()}>
                                     Cancelar
                                 </Button>
-                                <Button size="sm" variant="solid" type="submit">
+                                <Button size="sm" variant="solid" type="submit" disabled={!isValid}>
                                     Salvar
                                 </Button>
                             </CardActions>
