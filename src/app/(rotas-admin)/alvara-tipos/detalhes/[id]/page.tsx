@@ -25,7 +25,7 @@ const schema = z.object({
     nome: string().min(2, { message: "O nome deve ter pelo menos 2 letras" }),
     prazo_admissibilidade_smul: z.coerce.number().min(0),
     reconsideracao_smul: z.coerce.number().min(0),
-    reconsideracao_smul_tipo: z.coerce.number().min(1).max(2),
+    reconsideracao_smul_tipo: z.literal(0).or(z.literal(1)),
     analise_reconsideracao_smul: z.coerce.number().min(0),
     prazo_analise_smul1: z.coerce.number().min(0),
     prazo_analise_smul2: z.coerce.number().min(0),
@@ -49,8 +49,8 @@ export default function AlvaraTipoDetalhes(props: any) {
 
     const [nome, setNome] = useState('');
     const [prazo_admissibilidade_smul, setPrazo_admissibilidade_smul] = useState(0);
-    const [reconsideracao_smul, setReconsideracao_smul] = useState<0 | 1>(0);
-    const [reconsideracao_smul_tipo, setReconsideracao_smul_tipo] = useState(0);
+    const [reconsideracao_smul, setReconsideracao_smul] = useState(0);
+    const [reconsideracao_smul_tipo, setReconsideracao_smul_tipo] = useState<0 | 1>(0);
     const [analise_reconsideracao_smul, setAnalise_reconsideracao_smul] = useState(0);
     const [prazo_analise_smul1, setPrazo_analise_smul1] = useState(0);
     const [prazo_analise_smul2, setPrazo_analise_smul2] = useState(0);
@@ -107,19 +107,19 @@ export default function AlvaraTipoDetalhes(props: any) {
             alvaraTiposService.buscarPorId(id)
                 .then((response: IAlvaraTipo) => {
                     setNome(response.nome);
-                    setStatus(0);
+                    setStatus(response.status == 0 ? 0 : 1);
                     setPrazo_comunique_se(response.prazo_comunique_se);
                     setPrazo_encaminhar_coord(response.prazo_encaminhar_coord);
                     setPrazo_admissibilidade_smul(response.prazo_admissibilidade_smul);
-                    setReconsideracao_smul(0);
-                    setReconsideracao_smul_tipo(response.reconsideracao_smul_tipo);
+                    setReconsideracao_smul(response.reconsideracao_smul);
+                    setReconsideracao_smul_tipo(response.reconsideracao_multi_tipo == 0 ? 0 : 1);
                     setAnalise_reconsideracao_smul(response.analise_reconsideracao_smul);
                     setPrazo_analise_smul1(response.prazo_analise_smul1);
                     setPrazo_analise_smul2(response.prazo_analise_smul2);
                     setPrazo_emissao_alvara_smul(response.prazo_emissao_alvara_smul);
                     setPrazo_admissibilidade_multi(response.prazo_admissibilidade_multi);
                     setReconsideracao_multi(response.reconsideracao_multi);
-                    setReconsideracao_multi_tipo(0);
+                    setReconsideracao_multi_tipo(response.reconsideracao_multi_tipo == 0 ? 0 : 1);
                     setAnalise_reconsideracao_multi(response.analise_reconsideracao_multi);
                     setPrazo_analise_multi1(response.prazo_analise_multi1);
                     setPrazo_analise_multi2(response.prazo_analise_multi2);
@@ -424,9 +424,9 @@ export default function AlvaraTipoDetalhes(props: any) {
                                                 <Skeleton variant="text" level="h1" />
                                             ) : (
                                                 <Controller
-                                                    name="reconsideracao_smul"
+                                                    name="reconsideracao_smul_tipo"
                                                     control={control}
-                                                    defaultValue={reconsideracao_smul}
+                                                    defaultValue={reconsideracao_smul_tipo}
                                                     render={({ ...field }) => (
                                                         <>
                                                             <Select
@@ -436,7 +436,7 @@ export default function AlvaraTipoDetalhes(props: any) {
                                                                 <Option value={1}>Dias Uteis</Option>
                                                                 <Option value={0}>Dias Corridos</Option>
                                                             </Select>
-                                                            {errors.reconsideracao_smul && <FormHelperText>{errors.reconsideracao_smul.message}</FormHelperText>}
+                                                            {errors.reconsideracao_smul_tipo && <FormHelperText>{errors.reconsideracao_smul_tipo.message}</FormHelperText>}
                                                         </>
                                                     )}
                                                 />
