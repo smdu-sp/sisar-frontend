@@ -11,32 +11,35 @@ import { AlertsContext } from "@/providers/alertsProvider";
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from 'zod';
 import {
     infer as Infer,
     number,
     object,
     string,
+    enum as zodEnum,
 } from "zod";
+import { MenuItem } from "@mui/material";
 
-const schema = object({
+const schema = z.object({
     nome: string().min(2, { message: "O nome deve ter pelo menos 2 letras" }),
-    prazo_admissibilidade_smul: number().min(0).max(1),
-    reconsideracao_smul: number().min(0).max(1),
-    reconsideracao_smul_tipo: number().min(1).max(2),
-    analise_reconsideracao_smul: number().min(0).max(1),
-    prazo_analise_smul1: number().min(0).max(1),
-    prazo_analise_smul2: number().min(0).max(1),
-    prazo_emissao_alvara_smul: number().min(0).max(1),
-    prazo_admissibilidade_multi: number().min(0).max(1),
-    reconsideracao_multi: number().min(0).max(1),
-    reconsideracao_multi_tipo: number().min(1).max(2),
-    analise_reconsideracao_multi: number().min(0).max(1),
-    prazo_analise_multi1: number().min(0).max(1),
-    prazo_analise_multi2: number().min(0).max(1),
-    prazo_emissao_alvara_multi: number().min(0).max(1),
-    prazo_comunique_se: number().min(1),
-    prazo_encaminhar_coord: number().min(0).max(1),
-    status: number().min(0).max(1)
+    prazo_admissibilidade_smul: z.coerce.number().min(0),
+    reconsideracao_smul: z.coerce.number().min(0),
+    reconsideracao_smul_tipo: z.coerce.number().min(1).max(2),
+    analise_reconsideracao_smul: z.coerce.number().min(0),
+    prazo_analise_smul1: z.coerce.number().min(0),
+    prazo_analise_smul2: z.coerce.number().min(0),
+    prazo_emissao_alvara_smul: z.coerce.number().min(0),
+    prazo_admissibilidade_multi: z.coerce.number().min(0),
+    reconsideracao_multi: z.coerce.number().min(0),
+    reconsideracao_multi_tipo: z.literal(0).or(z.literal(1)),
+    analise_reconsideracao_multi: z.coerce.number().min(0),
+    prazo_analise_multi1: z.coerce.number().min(0),
+    prazo_analise_multi2: z.coerce.number().min(0),
+    prazo_emissao_alvara_multi: z.coerce.number().min(0),
+    prazo_comunique_se: z.coerce.number().min(1),
+    prazo_encaminhar_coord: z.coerce.number().min(0),
+    status: z.literal(0).or(z.literal(1)),
 });
 type Schema = Infer<typeof schema>;
 
@@ -46,15 +49,15 @@ export default function AlvaraTipoDetalhes(props: any) {
 
     const [nome, setNome] = useState('');
     const [prazo_admissibilidade_smul, setPrazo_admissibilidade_smul] = useState(0);
-    const [reconsideracao_smul, setReconsideracao_smul] = useState(0);
-    const [reconsideracao_smul_tipo, setReconsideracao_smul_tipo] = useState(1);
+    const [reconsideracao_smul, setReconsideracao_smul] = useState<0 | 1>(0);
+    const [reconsideracao_smul_tipo, setReconsideracao_smul_tipo] = useState(0);
     const [analise_reconsideracao_smul, setAnalise_reconsideracao_smul] = useState(0);
     const [prazo_analise_smul1, setPrazo_analise_smul1] = useState(0);
     const [prazo_analise_smul2, setPrazo_analise_smul2] = useState(0);
     const [prazo_emissao_alvara_smul, setPrazo_emissao_alvara_smul] = useState(0);
     const [prazo_admissibilidade_multi, setPrazo_admissibilidade_multi] = useState(0);
     const [reconsideracao_multi, setReconsideracao_multi] = useState(0);
-    const [reconsideracao_multi_tipo, setReconsideracao_multi_tipo] = useState(1);
+    const [reconsideracao_multi_tipo, setReconsideracao_multi_tipo] = useState<0 | 1>(0);
     const [analise_reconsideracao_multi, setAnalise_reconsideracao_multi] = useState(0);
     const [prazo_analise_multi1, setPrazo_analise_multi1] = useState(0);
     const [prazo_analise_multi2, setPrazo_analise_multi2] = useState(0);
@@ -62,7 +65,7 @@ export default function AlvaraTipoDetalhes(props: any) {
     const [prazo_comunique_se, setPrazo_comunique_se] = useState<number>(0);
     const [prazo_encaminhar_coord, setPrazo_encaminhar_coord] = useState(0);
     const [carregando, setCarregando] = useState<boolean>(true);
-    const [status, setStatus] = useState(0);
+    const [status, setStatus] = useState<0 | 1>(0);
     const { setAlert } = useContext(AlertsContext);
 
 
@@ -104,11 +107,11 @@ export default function AlvaraTipoDetalhes(props: any) {
             alvaraTiposService.buscarPorId(id)
                 .then((response: IAlvaraTipo) => {
                     setNome(response.nome);
-                    setStatus(response.status ? 1 : 0);
+                    setStatus(0);
                     setPrazo_comunique_se(response.prazo_comunique_se);
                     setPrazo_encaminhar_coord(response.prazo_encaminhar_coord);
                     setPrazo_admissibilidade_smul(response.prazo_admissibilidade_smul);
-                    setReconsideracao_smul(response.reconsideracao_smul);
+                    setReconsideracao_smul(0);
                     setReconsideracao_smul_tipo(response.reconsideracao_smul_tipo);
                     setAnalise_reconsideracao_smul(response.analise_reconsideracao_smul);
                     setPrazo_analise_smul1(response.prazo_analise_smul1);
@@ -116,7 +119,7 @@ export default function AlvaraTipoDetalhes(props: any) {
                     setPrazo_emissao_alvara_smul(response.prazo_emissao_alvara_smul);
                     setPrazo_admissibilidade_multi(response.prazo_admissibilidade_multi);
                     setReconsideracao_multi(response.reconsideracao_multi);
-                    setReconsideracao_multi_tipo(response.reconsideracao_multi_tipo);
+                    setReconsideracao_multi_tipo(0);
                     setAnalise_reconsideracao_multi(response.analise_reconsideracao_multi);
                     setPrazo_analise_multi1(response.prazo_analise_multi1);
                     setPrazo_analise_multi2(response.prazo_analise_multi2);
@@ -186,19 +189,20 @@ export default function AlvaraTipoDetalhes(props: any) {
             titulo={id ? nome ? nome : 'Detalhes' : 'Novo'}
             pagina="alvara-tipos"
         >
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 2,
-                    mx: 'auto',
-                    width: '90%',
-                    maxWidth: 800,
-                    px: { xs: 2, md: 6 },
-                    py: { xs: 2, md: 3 },
-                }}
-            >
-                <form onSubmit={handleSubmit(onSubmit)}>
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                        mx: 'auto',
+                        width: '90%',
+                        maxWidth: 800,
+                        px: { xs: 2, md: 6 },
+                        py: { xs: 2, md: 3 },
+                    }}
+                >
                     <Card sx={{ width: '100%' }}>
                         <Stack spacing={2} >
                             <Stack direction={{ xs: 'column', sm: 'row' }}
@@ -231,10 +235,28 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 <Stack width={{ xs: '100%', sm: '30%', md: '30%' }}>
                                     <FormControl>
                                         <FormLabel>Status</FormLabel>
-                                        <Select value={status} onChange={(_, v) => setStatus(v ? v : 0)} required>
-                                            <Option value={1}>Ativo</Option>
-                                            <Option value={0}>Inativo</Option>
-                                        </Select>
+                                        {carregando ? (
+                                            <Skeleton variant="text" level="h1" />
+                                        ) : (
+                                            <Controller
+                                                name="status"
+                                                control={control}
+                                                defaultValue={status == 1 ? 1 : 0}
+                                                render={({ ...field }) => (
+                                                    <>
+                                                        <Select
+                                                            {...field}
+                                                            variant="outlined"
+                                                        >
+                                                            <Option value={1}>Ativo</Option>
+                                                            <Option value={0}>Inativo</Option>
+                                                        </Select>
+                                                        {errors.status && <FormHelperText>{errors.status.message}</FormHelperText>}
+                                                    </>
+                                                )}
+                                            />
+
+                                        )}
                                     </FormControl>
                                 </Stack>
                             </Stack>
@@ -253,6 +275,11 @@ export default function AlvaraTipoDetalhes(props: any) {
                                                     <Input
                                                         type="number"
                                                         startDecorator={<AccountBalanceIcon />}
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
                                                         placeholder="prazo_comunique_se"
                                                         error={Boolean(errors.prazo_comunique_se)}
                                                         {...field}
@@ -269,18 +296,30 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
                                     <FormControl>
                                         <FormLabel>Encaminhamento para coordenadoria</FormLabel>
-                                        <Input
-                                            placeholder="Encaminhamento para coordenadoria"
-                                            value={prazo_encaminhar_coord}
-                                            type="number"
-                                            onChange={e => setPrazo_encaminhar_coord(parseInt(e.target.value))}
-                                            slotProps={{
-                                                input: {
-                                                    min: 0
-                                                },
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="prazo_encaminhar_coord"
+                                            control={control}
+                                            defaultValue={prazo_encaminhar_coord}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="number"
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="prazo_encaminhar_coord"
+                                                        error={Boolean(errors.prazo_encaminhar_coord)}
+                                                        {...field}
+                                                    />
+                                                    {errors.prazo_encaminhar_coord && <FormHelperText color="danger">
+                                                        {errors.prazo_encaminhar_coord?.message}
+                                                    </FormHelperText>}
+                                                </>);
                                             }}
-                                            required
-                                        />
+                                        />}
                                     </FormControl>
                                 </Stack>
                             </Stack>
@@ -293,36 +332,60 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
                                     <FormControl>
                                         <FormLabel>Prazo admissibilidade SMUL</FormLabel>
-                                        <Input
-                                            placeholder="Admissibilidade SMUL"
-                                            value={prazo_admissibilidade_smul}
-                                            type="number"
-                                            slotProps={{
-                                                input: {
-                                                    min: 0
-                                                },
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="prazo_admissibilidade_smul"
+                                            control={control}
+                                            defaultValue={prazo_admissibilidade_smul}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="number"
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="prazo_admissibilidade_smul"
+                                                        error={Boolean(errors.prazo_admissibilidade_smul)}
+                                                        {...field}
+                                                    />
+                                                    {errors.prazo_admissibilidade_smul && <FormHelperText color="danger">
+                                                        {errors.prazo_admissibilidade_smul?.message}
+                                                    </FormHelperText>}
+                                                </>);
                                             }}
-                                            onChange={e => setPrazo_admissibilidade_smul(parseInt(e.target.value))}
-                                            required
-                                        />
+                                        />}
                                     </FormControl>
                                 </Stack>
                                 <Divider />
                                 <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
                                     <FormControl>
                                         <FormLabel>Emissão de alvará SMUL</FormLabel>
-                                        <Input
-                                            placeholder="Emissão de alvará SMUL"
-                                            value={prazo_emissao_alvara_smul}
-                                            type="number"
-                                            slotProps={{
-                                                input: {
-                                                    min: 0
-                                                },
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="prazo_emissao_alvara_smul"
+                                            control={control}
+                                            defaultValue={prazo_emissao_alvara_smul}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="number"
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="prazo_emissao_alvara_smul"
+                                                        error={Boolean(errors.prazo_emissao_alvara_smul)}
+                                                        {...field}
+                                                    />
+                                                    {errors.prazo_emissao_alvara_smul && <FormHelperText color="danger">
+                                                        {errors.prazo_emissao_alvara_smul?.message}
+                                                    </FormHelperText>}
+                                                </>);
                                             }}
-                                            onChange={e => setPrazo_emissao_alvara_smul(parseInt(e.target.value))}
-                                            required
-                                        />
+                                        />}
                                     </FormControl>
                                 </Stack>
                             </Stack>
@@ -333,36 +396,51 @@ export default function AlvaraTipoDetalhes(props: any) {
                                     <FormControl>
                                         <FormLabel>Reconsideração SMUL</FormLabel>
                                         <Box sx={{ display: 'flex', flexGrow: 1 }}>
-                                            <Input
-                                                placeholder="Reconsideração SMUL"
-                                                value={reconsideracao_smul}
-                                                type="number"
-                                                slotProps={{
-                                                    input: {
-                                                        min: 0
-                                                    },
+                                            {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                                name="reconsideracao_smul"
+                                                control={control}
+                                                defaultValue={reconsideracao_smul}
+                                                render={({ field: { ref, ...field } }) => {
+                                                    return (<>
+                                                        <Input
+                                                            type="number"
+                                                            slotProps={{
+                                                                input: {
+                                                                    min: 0
+                                                                },
+                                                            }}
+                                                            startDecorator={<AccountBalanceIcon />}
+                                                            placeholder="reconsideracao_smul"
+                                                            error={Boolean(errors.reconsideracao_smul)}
+                                                            {...field}
+                                                        />
+                                                        {errors.reconsideracao_smul && <FormHelperText color="danger">
+                                                            {errors.reconsideracao_smul?.message}
+                                                        </FormHelperText>}
+                                                    </>);
                                                 }}
-                                                sx={{
-                                                    flexGrow: 0.3,
-                                                    borderTopRightRadius: 0,
-                                                    borderBottomRightRadius: 0,
-                                                }}
-                                                onChange={e => setReconsideracao_smul(parseInt(e.target.value))}
-                                                required
-                                            />
-                                            <Select
-                                                sx={{
-                                                    flexGrow: 0.7,
-                                                    borderTopLeftRadius: 0,
-                                                    borderBottomLeftRadius: 0,
-                                                }}
-                                                required
-                                                value={reconsideracao_smul_tipo}
-                                                onChange={(_, v) => v && setReconsideracao_smul_tipo(v)}
-                                            >
-                                                <Option value={1}>dias úteis</Option>
-                                                <Option value={2}>dias corridos</Option>
-                                            </Select>
+                                            />}
+                                            {carregando ? (
+                                                <Skeleton variant="text" level="h1" />
+                                            ) : (
+                                                <Controller
+                                                    name="reconsideracao_smul"
+                                                    control={control}
+                                                    defaultValue={reconsideracao_smul}
+                                                    render={({ ...field }) => (
+                                                        <>
+                                                            <Select
+                                                                {...field}
+                                                                variant="outlined"
+                                                            >
+                                                                <Option value={1}>Dias Uteis</Option>
+                                                                <Option value={0}>Dias Corridos</Option>
+                                                            </Select>
+                                                            {errors.reconsideracao_smul && <FormHelperText>{errors.reconsideracao_smul.message}</FormHelperText>}
+                                                        </>
+                                                    )}
+                                                />
+                                            )}
                                         </Box>
                                     </FormControl>
                                 </Stack>
@@ -370,18 +448,30 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 <Stack width={{ xs: '100%', sm: '40%', md: '40%' }}>
                                     <FormControl>
                                         <FormLabel>Análise de reconsideração SMUL</FormLabel>
-                                        <Input
-                                            placeholder="Análise de reconsideração SMUL"
-                                            value={analise_reconsideracao_smul}
-                                            type="number"
-                                            slotProps={{
-                                                input: {
-                                                    min: 0
-                                                },
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="analise_reconsideracao_smul"
+                                            control={control}
+                                            defaultValue={analise_reconsideracao_smul}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="number"
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="analise_reconsideracao_smul"
+                                                        error={Boolean(errors.analise_reconsideracao_smul)}
+                                                        {...field}
+                                                    />
+                                                    {errors.analise_reconsideracao_smul && <FormHelperText color="danger">
+                                                        {errors.analise_reconsideracao_smul?.message}
+                                                    </FormHelperText>}
+                                                </>);
                                             }}
-                                            onChange={e => setAnalise_reconsideracao_smul(parseInt(e.target.value))}
-                                            required
-                                        />
+                                        />}
                                     </FormControl>
                                 </Stack>
                             </Stack>
@@ -392,36 +482,60 @@ export default function AlvaraTipoDetalhes(props: any) {
 
                                     <FormControl>
                                         <FormLabel>1ª Análise SMUL</FormLabel>
-                                        <Input
-                                            placeholder="1ª Análise SMUL"
-                                            value={prazo_analise_smul1}
-                                            type="number"
-                                            slotProps={{
-                                                input: {
-                                                    min: 0
-                                                },
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="prazo_analise_smul1"
+                                            control={control}
+                                            defaultValue={prazo_analise_smul1}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="number"
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="prazo_analise_smul1"
+                                                        error={Boolean(errors.prazo_analise_smul1)}
+                                                        {...field}
+                                                    />
+                                                    {errors.prazo_analise_smul1 && <FormHelperText color="danger">
+                                                        {errors.prazo_analise_smul1?.message}
+                                                    </FormHelperText>}
+                                                </>);
                                             }}
-                                            onChange={e => setPrazo_analise_smul1(parseInt(e.target.value))}
-                                            required
-                                        />
+                                        />}
                                     </FormControl>
                                 </Stack>
                                 <Divider />
                                 <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
                                     <FormControl>
                                         <FormLabel>2ª Análise SMUL</FormLabel>
-                                        <Input
-                                            placeholder="2ª Análise SMUL"
-                                            value={prazo_analise_smul2}
-                                            type="number"
-                                            slotProps={{
-                                                input: {
-                                                    min: 0
-                                                },
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="prazo_analise_smul2"
+                                            control={control}
+                                            defaultValue={prazo_analise_smul2}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="number"
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="prazo_analise_smul2"
+                                                        error={Boolean(errors.prazo_analise_smul2)}
+                                                        {...field}
+                                                    />
+                                                    {errors.prazo_analise_smul1 && <FormHelperText color="danger">
+                                                        {errors.prazo_analise_smul2?.message}
+                                                    </FormHelperText>}
+                                                </>);
                                             }}
-                                            onChange={e => setPrazo_analise_smul2(parseInt(e.target.value))}
-                                            required
-                                        />
+                                        />}
                                     </FormControl>
                                 </Stack>
                             </Stack>
@@ -435,36 +549,60 @@ export default function AlvaraTipoDetalhes(props: any) {
 
                                     <FormControl>
                                         <FormLabel>Prazo admissibilidade Múlt. Interfaces</FormLabel>
-                                        <Input
-                                            placeholder="Admissibilidade Múlt. Interfaces"
-                                            value={prazo_admissibilidade_multi}
-                                            type="number"
-                                            slotProps={{
-                                                input: {
-                                                    min: 0
-                                                },
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="prazo_admissibilidade_multi"
+                                            control={control}
+                                            defaultValue={prazo_admissibilidade_multi}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="number"
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="prazo_admissibilidade_multi"
+                                                        error={Boolean(errors.prazo_admissibilidade_multi)}
+                                                        {...field}
+                                                    />
+                                                    {errors.prazo_admissibilidade_multi && <FormHelperText color="danger">
+                                                        {errors.prazo_admissibilidade_multi?.message}
+                                                    </FormHelperText>}
+                                                </>);
                                             }}
-                                            onChange={e => setPrazo_admissibilidade_multi(parseInt(e.target.value))}
-                                            required
-                                        />
+                                        />}
                                     </FormControl>
                                 </Stack>
                                 <Divider />
                                 <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
                                     <FormControl>
                                         <FormLabel>Emissão de alvará Múlt. Interfaces</FormLabel>
-                                        <Input
-                                            placeholder="Emissão de alvará Múlt. Interfaces"
-                                            value={prazo_emissao_alvara_multi}
-                                            type="number"
-                                            slotProps={{
-                                                input: {
-                                                    min: 0
-                                                },
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="prazo_emissao_alvara_multi"
+                                            control={control}
+                                            defaultValue={prazo_emissao_alvara_multi}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="number"
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="prazo_emissao_alvara_multi"
+                                                        error={Boolean(errors.prazo_emissao_alvara_multi)}
+                                                        {...field}
+                                                    />
+                                                    {errors.prazo_emissao_alvara_multi && <FormHelperText color="danger">
+                                                        {errors.prazo_emissao_alvara_multi?.message}
+                                                    </FormHelperText>}
+                                                </>);
                                             }}
-                                            onChange={e => setPrazo_emissao_alvara_multi(parseInt(e.target.value))}
-                                            required
-                                        />
+                                        />}
                                     </FormControl>
                                 </Stack>
                             </Stack>
@@ -475,36 +613,51 @@ export default function AlvaraTipoDetalhes(props: any) {
                                     <FormControl>
                                         <FormLabel>Reconsideração Múlt. Interfaces</FormLabel>
                                         <Box sx={{ display: 'flex', flexGrow: 1 }}>
-                                            <Input
-                                                placeholder="Reconsideração Múlt. Interfaces"
-                                                value={reconsideracao_multi}
-                                                type="number"
-                                                slotProps={{
-                                                    input: {
-                                                        min: 0
-                                                    },
+                                            {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                                name="reconsideracao_multi"
+                                                control={control}
+                                                defaultValue={reconsideracao_multi}
+                                                render={({ field: { ref, ...field } }) => {
+                                                    return (<>
+                                                        <Input
+                                                            type="number"
+                                                            slotProps={{
+                                                                input: {
+                                                                    min: 0
+                                                                },
+                                                            }}
+                                                            startDecorator={<AccountBalanceIcon />}
+                                                            placeholder="reconsideracao_multi"
+                                                            error={Boolean(errors.reconsideracao_multi)}
+                                                            {...field}
+                                                        />
+                                                        {errors.reconsideracao_multi && <FormHelperText color="danger">
+                                                            {errors.reconsideracao_multi?.message}
+                                                        </FormHelperText>}
+                                                    </>);
                                                 }}
-                                                sx={{
-                                                    flexGrow: 0.3,
-                                                    borderTopRightRadius: 0,
-                                                    borderBottomRightRadius: 0,
-                                                }}
-                                                onChange={e => setReconsideracao_multi(parseInt(e.target.value))}
-                                                required
-                                            />
-                                            <Select
-                                                sx={{
-                                                    flexGrow: 0.7,
-                                                    borderTopLeftRadius: 0,
-                                                    borderBottomLeftRadius: 0,
-                                                }}
-                                                required
-                                                value={reconsideracao_multi_tipo}
-                                                onChange={(_, v) => v && setReconsideracao_multi_tipo(v)}
-                                            >
-                                                <Option value={1}>dias úteis</Option>
-                                                <Option value={2}>dias corridos</Option>
-                                            </Select>
+                                            />}
+                                            {carregando ? (
+                                                <Skeleton variant="text" level="h1" />
+                                            ) : (
+                                                <Controller
+                                                    name="reconsideracao_multi_tipo"
+                                                    control={control}
+                                                    defaultValue={reconsideracao_multi_tipo}
+                                                    render={({ ...field }) => (
+                                                        <>
+                                                            <Select
+                                                                {...field}
+                                                                variant="outlined"
+                                                            >
+                                                                <Option value="1">Dias Uteis</Option>
+                                                                <Option value="0">Dias Corridos</Option>
+                                                            </Select>
+                                                            {errors.reconsideracao_multi_tipo && <FormHelperText>{errors.reconsideracao_multi_tipo.message}</FormHelperText>}
+                                                        </>
+                                                    )}
+                                                />
+                                            )}
                                         </Box>
                                     </FormControl>
                                 </Stack>
@@ -512,18 +665,30 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 <Stack width={{ xs: '100%', sm: '40%', md: '40%' }}>
                                     <FormControl>
                                         <FormLabel>Análise de reconsideração Múlt. Interfaces</FormLabel>
-                                        <Input
-                                            placeholder="Análise de reconsideração Múlt. Interfaces"
-                                            value={analise_reconsideracao_multi}
-                                            type="number"
-                                            slotProps={{
-                                                input: {
-                                                    min: 0
-                                                },
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="analise_reconsideracao_multi"
+                                            control={control}
+                                            defaultValue={analise_reconsideracao_multi}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="number"
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="analise_reconsideracao_multi"
+                                                        error={Boolean(errors.analise_reconsideracao_multi)}
+                                                        {...field}
+                                                    />
+                                                    {errors.analise_reconsideracao_multi && <FormHelperText color="danger">
+                                                        {errors.analise_reconsideracao_multi?.message}
+                                                    </FormHelperText>}
+                                                </>);
                                             }}
-                                            onChange={e => setAnalise_reconsideracao_multi(parseInt(e.target.value))}
-                                            required
-                                        />
+                                        />}
                                     </FormControl>
                                 </Stack>
                             </Stack>
@@ -534,36 +699,60 @@ export default function AlvaraTipoDetalhes(props: any) {
 
                                     <FormControl>
                                         <FormLabel>1ª Análise Múlt. Interfaces</FormLabel>
-                                        <Input
-                                            placeholder="1ª Análise Múlt. Interfaces"
-                                            value={prazo_analise_multi1}
-                                            type="number"
-                                            slotProps={{
-                                                input: {
-                                                    min: 0
-                                                },
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="prazo_analise_multi1"
+                                            control={control}
+                                            defaultValue={prazo_analise_multi1}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="number"
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="prazo_analise_multi1"
+                                                        error={Boolean(errors.prazo_analise_multi1)}
+                                                        {...field}
+                                                    />
+                                                    {errors.prazo_analise_multi1 && <FormHelperText color="danger">
+                                                        {errors.prazo_analise_multi1?.message}
+                                                    </FormHelperText>}
+                                                </>);
                                             }}
-                                            onChange={e => setPrazo_analise_multi1(parseInt(e.target.value))}
-                                            required
-                                        />
+                                        />}
                                     </FormControl>
                                 </Stack>
                                 <Divider />
                                 <Stack width={{ xs: '100%', sm: '50%', md: '50%' }}>
                                     <FormControl>
                                         <FormLabel>2ª Análise Múlt. Interfaces</FormLabel>
-                                        <Input
-                                            placeholder="2ª Análise Múlt. Interfaces"
-                                            value={prazo_analise_multi2}
-                                            type="number"
-                                            slotProps={{
-                                                input: {
-                                                    min: 0
-                                                },
+                                        {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="prazo_analise_multi2"
+                                            control={control}
+                                            defaultValue={prazo_analise_multi2}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="number"
+                                                        slotProps={{
+                                                            input: {
+                                                                min: 0
+                                                            },
+                                                        }}
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="prazo_analise_multi2"
+                                                        error={Boolean(errors.prazo_analise_multi2)}
+                                                        {...field}
+                                                    />
+                                                    {errors.prazo_analise_multi2 && <FormHelperText color="danger">
+                                                        {errors.prazo_analise_multi2?.message}
+                                                    </FormHelperText>}
+                                                </>);
                                             }}
-                                            onChange={e => setPrazo_analise_multi2(parseInt(e.target.value))}
-                                            required
-                                        />
+                                        />}
                                     </FormControl>
                                 </Stack>
                             </Stack>
@@ -573,14 +762,14 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 <Button size="sm" variant="outlined" color="neutral" onClick={() => router.back()}>
                                     Cancelar
                                 </Button>
-                                <Button size="sm" variant="solid" onClick={enviaDados}>
+                                <Button size="sm" variant="solid" type="submit">
                                     Salvar
                                 </Button>
                             </CardActions>
                         </CardOverflow>
                     </Card>
-                </form>
-            </Box>
+                </Box>
+            </form>
         </Content>
     );
 }
