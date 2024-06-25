@@ -145,7 +145,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                             value={subprefeitura_id && subprefeitura_id !== '' ? subprefeitura.find((subprefeitura: ISubprefeitura) => subprefeitura.id === subprefeitura_id) : null}
                             onChange={(_, value) => value && setSubprefeitura_id(value?.id)}
                             filterOptions={(options, { inputValue }) => {
-                                if (unidades) return (options as IUnidade[]).filter((option) => (
+                                if (subprefeitura) return (options as ISubprefeitura[]).filter((option) => (
                                     (option).nome.toLowerCase().includes(inputValue.toLowerCase()) ||
                                     (option).sigla.toLowerCase().includes(inputValue.toLowerCase())
                                 ));

@@ -159,7 +159,7 @@ export default function SubprefeituraDetalhes(props: { params: { id: string } })
                                                     startDecorator={<AccountBalanceIcon />}
                                                     placeholder="Status"
                                                     {...field}
-                                                    onChange={(_, value) => setStatus(Number(value))}
+                                                    onChange={(_, value) => field.onChange(value)}
                                                 >
                                                     <Option value={1}>Ativo</Option>
                                                     <Option value={0}>Inativo</Option>
