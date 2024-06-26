@@ -14,7 +14,7 @@ export interface IUnidade {
     nome: string;
     sigla: string;
     codigo: string;
-    status: boolean;
+    status: number;
 }
 
 export interface IPaginadoUnidade {
@@ -87,7 +87,7 @@ async function desativar(id: string): Promise<{ autorizado: boolean }> {
     return desativado;
 }
 
-async function criar({ nome, codigo, sigla, status }: { nome: string, codigo: string, sigla: string, status: string }): Promise<IUnidade> {
+async function criar({ nome, codigo, sigla, status }: { nome: string, codigo: string, sigla: string, status: number }): Promise<IUnidade> {
     const session = await getServerSession(authOptions);
     const novaUnidade = await fetch(`${baseURL}unidades/criar`, {
         method: "POST",
@@ -99,7 +99,7 @@ async function criar({ nome, codigo, sigla, status }: { nome: string, codigo: st
             nome,
             sigla,
             codigo,
-            status: status === 'true'
+            status
         })
     }).then((response) => {
         if (response.status === 401) Logout();
@@ -109,7 +109,7 @@ async function criar({ nome, codigo, sigla, status }: { nome: string, codigo: st
     return novaUnidade;
 }
 
-async function atualizar({ id, nome, codigo, sigla, status }: { id: string, nome: string, codigo: string, sigla: string, status: string }): Promise<IUnidade> {
+async function atualizar({ id, nome, codigo, sigla, status }: { id: string, nome: string, codigo: string, sigla: string, status: number }): Promise<IUnidade> {
     const session = await getServerSession(authOptions);
     const atualizado = await fetch(`${baseURL}unidades/atualizar/${id}`, {
         method: "PATCH",
@@ -121,7 +121,7 @@ async function atualizar({ id, nome, codigo, sigla, status }: { id: string, nome
             nome,
             sigla,
             codigo,
-            status: status === 'true'
+            status
         })
     }).then((response) => {
         if (response.status === 401) Logout();
