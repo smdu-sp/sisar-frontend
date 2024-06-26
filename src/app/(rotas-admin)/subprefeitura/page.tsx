@@ -314,13 +314,13 @@ function SearchUnidades() {
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     {!subprefeitura.status ? (
                       <Tooltip title="Ativar Unidade" arrow placement="top">
-                        <IconButton size="sm" color="success" onClick={() => (setTitle('Ativando!'), setMessage('Deseja ativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(1))}>
+                        <IconButton size="sm" color="success" onClick={() => (setTitle('Ativando!'), setMessage('Deseja ativar esta unidade?'), setOpenComfirm(true), setId(subprefeitura.id), setMensagemStatus(1))}>
                           <Check />
                         </IconButton>
                       </Tooltip>
                     ) : (
                       <Tooltip title="Desativar" arrow placement="top">
-                        <IconButton title="Desativar" size="sm" color="danger" onClick={() => (setTitle('Desativando!'), setMessage('Deseja desativar esta unidade?'), setOpen(true), setId(subprefeitura.id), setMensagemStatus(0))}>
+                        <IconButton title="Desativar" size="sm" color="danger" onClick={() => (setTitle('Desativando!'), setMessage('Deseja desativar esta unidade?'), setOpenComfirm(true), setId(subprefeitura.id), setMensagemStatus(0))}>
                           <Cancel />
                         </IconButton>
                       </Tooltip>

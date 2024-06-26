@@ -4,7 +4,7 @@ import Content from "@/components/Content";
 import { useContext, useEffect, useState } from "react";
 import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
 import { IAlvaraTipo } from "@/shared/services/alvara-tipo.services";
-import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
+import { Box, Button, Card, CardActions, CardOverflow, CircularProgress, Divider, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
 import { Check } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { AlertsContext } from "@/providers/alertsProvider";
@@ -72,7 +72,7 @@ export default function AlvaraTipoDetalhes(props: any) {
     const {
         control,
         handleSubmit,
-        formState: { errors, isValid, isSubmitSuccessful }
+        formState: { errors, isValid, isSubmitted }
     } = useForm<Schema>({
         mode: "onChange",
         resolver: zodResolver(schema),
@@ -691,8 +691,8 @@ export default function AlvaraTipoDetalhes(props: any) {
                                 <Button size="sm" variant="outlined" color="neutral" onClick={() => router.back()}>
                                     Cancelar
                                 </Button>
-                                <Button size="sm" variant="solid" type="submit" disabled={!isValid}>
-                                    Salvar
+                                <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
+                                    {isSubmitted ?  <CircularProgress variant="solid" /> : "Salvar"}
                                 </Button>
                             </CardActions>
                         </CardOverflow>
