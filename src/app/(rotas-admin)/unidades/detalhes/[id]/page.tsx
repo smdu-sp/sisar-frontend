@@ -71,10 +71,8 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                     setCodigo(response.codigo);
                     setStatus(response.status ? 1 : 0);
                 });
-            setCarregando(true);
-        } else {
-            setCarregando(false);
         }
+        setCarregando(false);
     }, [id]);
 
 

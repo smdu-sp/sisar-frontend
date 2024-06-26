@@ -26,7 +26,7 @@ function SearchUnidades() {
   const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
-  const [status, setStatus] = useState<string>(searchParams.get('status') ? searchParams.get('status') + '' : 'true');
+  const [status, setStatus] = useState<number>(2);
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
 
   const confirmaVazio: {
@@ -91,11 +91,12 @@ function SearchUnidades() {
       });
   }
 
-  const desativaUnidade = async (id: string) => {
-    var resposta = await unidadeServices.desativar(id);
+  const alterarUnidade = async (id: string) => {
+    var resposta = await unidadeServices.desativar({id, status: 0});
     if (resposta) {
       setAlert('Unidade desativada!', 'Essa unidade foi desativada e não será exibida para seleção.', 'success', 3000, Check);
       buscaUnidades();
+      setStatus(0);
     } else {
       setAlert('Tente novamente!', 'Não foi possível desativar a unidade.', 'warning', 3000, Warning);
     }
@@ -121,7 +122,7 @@ function SearchUnidades() {
   const confirmaDesativaUnidade = async (id: string) => {
     setConfirma({
       aberto: true,
-      confirmaOperacao: () => desativaUnidade(id),
+      confirmaOperacao: () => alterarUnidade(id),
       titulo: 'Desativar unidade',
       pergunta: 'Deseja desativar esta unidade?',
       color: 'warning'
@@ -129,30 +130,31 @@ function SearchUnidades() {
   }
 
   const ativaUnidade = async (id: string) => {
-    var resposta = await unidadeServices.ativar(id);
+    var resposta = await unidadeServices.desativar({id, status: 1});
     if (resposta) {
       setAlert('Unidade ativada!', 'Essa unidade foi autorizada e será visível para seleção.', 'success', 3000, Check);
       buscaUnidades();
+      setStatus(1);
     } else {
       setAlert('Tente novamente!', 'Não foi possível ativar unidade.', 'warning', 3000, Warning);
     }
     setConfirma(confirmaVazio);
   }
 
-  const confirmaAtivaUnidade = async (id: string) => {
-    setConfirma({
-      aberto: true,
-      confirmaOperacao: () => ativaUnidade(id),
-      titulo: 'Ativar unidade',
-      pergunta: 'Deseja ativar esta unidade?',
-      color: 'primary'
-    });
-  }
+  // const confirmaAtivaUnidade = async (id: string) => {
+  //   setConfirma({
+  //     aberto: true,
+  //     confirmaOperacao: () => ativaUnidade(id),
+  //     titulo: 'Ativar unidade',
+  //     pergunta: 'Deseja ativar esta unidade?',
+  //     color: 'primary'
+  //   });
+  // }
 
   const limpaFitros = () => {
     setBusca('');
-    setStatus('true');
-    setPagina(1);
+    setStatus(1);
+    setPagina(2);
     setLimite(10);
     router.push(pathname);
     buscaUnidades();
@@ -214,14 +216,11 @@ function SearchUnidades() {
           <Select
             size="sm"
             value={status}
-            onChange={(_, newValue) => {
-              router.push(pathname + '?' + createQueryString('status', String(newValue! || 'true')));
-              setStatus(newValue! || 'true');
-            }}
+            onChange={(_, v) => { setStatus(v ? v : 0) }}
           >
-            <Option value={'true'}>Ativos</Option>
-            <Option value={'false'}>Inativos</Option>
-            <Option value={'all'}>Todos</Option>
+            <Option value={1}>Ativos</Option>
+            <Option value={0}>Inativos</Option>
+            <Option value={2}>Todos</Option>
           </Select>
         </FormControl>
         <FormControl sx={{ flex: 1 }} size="sm">
@@ -250,35 +249,41 @@ function SearchUnidades() {
         </thead>
         <tbody>
           {unidades && unidades.length > 0 ? unidades.map((unidade) => (
-            <tr key={unidade.id} style={{
-              cursor: 'pointer',
-              backgroundColor: !unidade.status ?
-                theme.vars.palette.danger.plainActiveBg :
-                undefined
-            }}>
-              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.codigo}</td>
-              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.sigla}</td>
-              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.nome}</td>
-              <td>
-                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                  {!unidade.status ? (
-                    <Tooltip title="Ativar Unidade" arrow placement="top">
-                      <IconButton size="sm" color="success" onClick={() => confirmaAtivaUnidade(unidade.id)}>
-                        <Check />
-                      </IconButton>
-                    </Tooltip>
-                  ) : (
-                    <Tooltip title="Desativar" arrow placement="top">
-                      <IconButton title="Desativar" size="sm" color="danger" onClick={() => confirmaDesativaUnidade(unidade.id)}>
-                        <Cancel />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-                </div>
-              </td>
-            </tr>
+            (status ?
+              (status == 0 ? unidade.status == 0 : status == 1 ? unidade.status == 1 : 1)
+              : 0) ? (
+              <tr key={unidade.id} style={{
+                cursor: 'pointer',
+                backgroundColor: !unidade.status ?
+                  theme.vars.palette.danger.plainActiveBg :
+                  undefined
+              }}>
+                <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.codigo}</td>
+                <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.sigla}</td>
+                <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.nome}</td>
+                <td>
+                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    {!unidade.status ? (
+                      <Tooltip title="Ativar Unidade" arrow placement="top">
+                        <IconButton size="sm" color="success" onClick={() => {ativaUnidade(unidade.id)}
+                        }>
+                          <Check />
+                        </IconButton>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="Desativar" arrow placement="top">
+                        <IconButton title="Desativar" size="sm" color="danger" onClick={() => confirmaDesativaUnidade(unidade.id)}>
+                          <Cancel />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ) : null
           )) : <tr><td colSpan={4}>Nenhuma unidade encontrada</td></tr>}
         </tbody>
+
       </Table>
       {(total && total > 0) ? <TablePagination
         component="div"
