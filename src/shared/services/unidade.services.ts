@@ -41,9 +41,9 @@ async function listaCompleta(): Promise<IUnidade[]> {
     return unidades;
 }
 
-async function buscarTudo(status: string = 'true', pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginadoUnidade> {
+async function buscarTudo(status: number, pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginadoUnidade> {
     const session = await getServerSession(authOptions);
-    const unidades = await fetch(`${baseURL}unidades/buscar-tudo?status=${status}&pagina=${pagina}&limite=${limite}&busca=${busca}`, {
+    const subprefeituras = await fetch(`${baseURL}unidades/buscar-tudo?status=${status}&pagina=${pagina}&limite=${limite}&busca=${busca}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -53,7 +53,7 @@ async function buscarTudo(status: string = 'true', pagina: number = 1, limite: n
         if (response.status === 401) Logout();
         return response.json();
     })
-    return unidades;
+    return subprefeituras;
 }
 
 async function buscarPorId(id: string): Promise<IUnidade> {
@@ -71,21 +71,7 @@ async function buscarPorId(id: string): Promise<IUnidade> {
     return unidade;
 }
 
-async function desativar(id: string): Promise<{ autorizado: boolean }> {
-    const session = await getServerSession(authOptions);
-    const desativado = await fetch(`${baseURL}unidades/desativar/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${session?.access_token}`
-        }
-    }).then((response) => {
-        if (response.status === 401) Logout();
-        if (response.status !== 200) return;
-        return response.json();
-    });
-    return desativado;
-}
+
 
 async function criar({ nome, codigo, sigla, status }: { nome: string, codigo: string, sigla: string, status: number }): Promise<IUnidade> {
     const session = await getServerSession(authOptions);
@@ -95,7 +81,7 @@ async function criar({ nome, codigo, sigla, status }: { nome: string, codigo: st
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session?.access_token}`
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
             nome,
             sigla,
             codigo,
@@ -131,6 +117,23 @@ async function atualizar({ id, nome, codigo, sigla, status }: { id: string, nome
     return atualizado;
 }
 
+async function desativar({id, status}: { id: string, status: number }): Promise<IUnidade> {
+    const session = await getServerSession(authOptions);
+    const desativado = await fetch(`${baseURL}unidades/desativar/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        },
+        body:  JSON.stringify({ status })
+    }).then((response) => {
+        if (response.status === 401) Logout();
+        if (response.status !== 200) return;
+        return response.json();
+    });
+    return desativado;
+}
+
 async function ativar(id: string): Promise<IUnidade> {
     const session = await getServerSession(authOptions);
     const ativado = await fetch(`${baseURL}unidades/atualizar/${id}`, {
@@ -139,7 +142,7 @@ async function ativar(id: string): Promise<IUnidade> {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session?.access_token}`
         },
-        body: JSON.stringify({ status: true })
+        body: JSON.stringify({ status: 1 })
     }).then((response) => {
         if (response.status === 401) Logout();
         if (response.status !== 200) return;
@@ -148,7 +151,7 @@ async function ativar(id: string): Promise<IUnidade> {
     return ativado;
 }
 
-export { 
+export {
     ativar,
     atualizar,
     buscarTudo,
