@@ -16,6 +16,7 @@ export interface IInicial_Sqls {
     alterado_em: Date
 
 }
+
 export interface IInicial {
     id: number
     decreto: boolean
@@ -32,6 +33,7 @@ export interface IInicial {
     pagamento: number
     obs?: string
     status: number
+    data_limiteSmul: Date
     iniciais_sqls?: IInicial_Sqls[]
     interfaces?: IInterfaces
     distribuicao?: IDistribuicao
@@ -116,6 +118,7 @@ export interface ICreateInicial {
     nums_sql?: string[]
     status?: number
     interfaces?: ICreateInterfaces
+    data_limiteSmul: Date
 }
 
 export interface IPaginatedInicial {
