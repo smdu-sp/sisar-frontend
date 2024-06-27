@@ -35,7 +35,13 @@ export default function Admissibilidade() {
   const [statusModal, setStatusModal] = useState(0);
   const [motivo, setMotivo] = useState("");
   const [modal, setModal] = useState<any>([]);
-
+  const colors = [
+    "success",
+    "warning",
+    "danger",
+    "neutral",
+    "primary"
+  ]
   const [statusFiltro, setStatusFiltro] = useState(-1);
   const router = useRouter();
   const confirmaVazio: {
@@ -93,6 +99,33 @@ export default function Admissibilidade() {
     router.push(pathname + '?' + createQueryString('pagina', String(novaPagina + 1)));
     setPagina(novaPagina + 1);
   };
+
+  function dataPrazo(date: any, status: any) {
+    var color
+    switch (status) {
+      case 0:
+        date = "Adimitido"
+        color = colors[3]
+        break;
+      case 1:
+        var diasRestantes = new Date(date).getDate() + 15 - parseInt((new Date().getDate()).toString());
+        date = diasRestantes >= 0 ? diasRestantes + " Dias Restantes" : "Em Atraso"
+        var dias = parseInt(diasRestantes.toString().split(" ")[0])
+        color = dias <= 15 && dias >= 10 ? colors[0] : dias <= 9 && dias >= 6 ? colors[1] : dias <= 5 ? colors[2] : null;
+        break;
+      case 2:
+        date = "Sem prazo"
+        color = colors[3]
+        break;
+      case 3:
+        var diasRestantes = new Date(date).getDate() + 15 - parseInt((new Date().getDate()).toString());
+        date = diasRestantes >= 0 ? diasRestantes + " Dias Restantes" : "Em Atraso"
+        var dias = parseInt(diasRestantes.toString().split(" ")[0])
+        color = dias <= 15 && dias >= 10 ? colors[0] : dias <= 9 && dias >= 6 ? colors[1] : dias <= 5 ? colors[2] : null;
+        break;
+    }
+    return [date, color];
+  }
 
   const mudaLimite = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -227,6 +260,7 @@ export default function Admissibilidade() {
                 {/* <th>Parecer</th> */}
                 <th>Data Criação</th>
                 <th>Status</th>
+                <th>Prazo</th>
                 <th></th>
               </tr>
             </thead>
@@ -236,13 +270,20 @@ export default function Admissibilidade() {
                   <tr key={admissibilidade.inicial_id} style={{ cursor: 'default' }}>
                     <td>{admissibilidade.inicial_id}</td>
                     <td>{admissibilidade.inicial?.sei}</td>
-                    <td>{admissibilidade.data_envio ? new Date(admissibilidade.data_envio).toLocaleDateString('pt-BR') : ''}</td>
+                    <td>{admissibilidade.inicial?.envio_admissibilidade ? new Date(admissibilidade.inicial?.envio_admissibilidade).toLocaleDateString('pt-BR') : ''}</td>
                     {/* <td>{admissibilidade.parecer === true ? 'true' : 'false'}</td> */}
                     <td>{admissibilidade.criado_em ? new Date(admissibilidade.criado_em).toLocaleDateString('pt-BR') : ''}</td>
                     <td>
                       {admissibilidade.status !== undefined && status[admissibilidade.status] && (
                         <Chip color={status[admissibilidade.status].color}>
                           {status[admissibilidade.status].label}
+                        </Chip>
+                      )}
+                    </td>
+                    <td>
+                      {admissibilidade.inicial?.data_limiteSmul !== undefined && (
+                        <Chip color={dataPrazo(admissibilidade.inicial?.data_limiteSmul, admissibilidade.status)[1]}>
+                          {dataPrazo(admissibilidade.inicial?.data_limiteSmul, admissibilidade.status)[0]}
                         </Chip>
                       )}
                     </td>
