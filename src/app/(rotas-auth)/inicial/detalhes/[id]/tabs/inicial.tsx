@@ -164,18 +164,35 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
         return comum.formatarSql(sql + soma.toString());
     }
 
-    function adicionarListaSql(): void {
-        throw new Error("Function not implemented.");
+    function adicionarListaSql() {
+        for (const sql_seq of sqlSequencial){
+            if (sql_seq != '' && comum.validaDigitoSql(sql_seq)) {
+                if (!nums_sql.includes(sql_seq)) {
+                    if (inicial) {
+                        inicialServices.adicionaSql(inicial.id, sql_seq).then((response: IInicial) => {
+                            if (response.id) setNums_sql((estado) => [...estado, sql_seq]);
+                        })
+                    }
+                    if (!inicial) setNums_sql((estado) => [...estado, sql_seq]);
+                }
+            }
+        }
+        limparSequencial();
     }
 
-    function gerarListaSql(): void {
+    function limparSequencial() {
+        setSqlSequencial([]);
+        setSqlInicial('');
+        setSqlFinal('');
+    }
+
+    function gerarListaSql() {
         const sqlInicialLimpo = parseInt(sqlInicial.replace(/\D/g,'').slice(0, -1));
         const sqlFinalLimpo = parseInt(sqlFinal.replace(/\D/g,'').slice(0, -1));
         setSqlSequencial([]);
         setTeste(true)
         for(let i = sqlInicialLimpo; i <= sqlFinalLimpo; i++) {
-            sqlSequencial.push(adicionaDigitoSql(i));
-            setSqlSequencial(sqlSequencial);
+            setSqlSequencial((estado) => [...estado, adicionaDigitoSql(i)]);
         }
     }
 
@@ -247,8 +264,8 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                     </Table>
                 </Stack>
                 <Stack sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', gap: 1 }}>
-                    <Button onClick={() => {}} sx={{ flexGrow: 1 }} color="danger">Limpar Lista</Button>
-                    <Button onClick={() => {}} sx={{ flexGrow: 1 }} color="success">Adicionar Lista</Button>
+                    <Button onClick={() => { limparSequencial() }} sx={{ flexGrow: 1 }} color="danger">Limpar Lista</Button>
+                    <Button onClick={() => { adicionarListaSql() }} sx={{ flexGrow: 1 }} color="success">Adicionar Lista</Button>
                 </Stack></>}
             </ModalDialog>
         </Modal>
