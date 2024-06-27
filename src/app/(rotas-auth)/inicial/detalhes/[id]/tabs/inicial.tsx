@@ -40,6 +40,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const [data_protocolo, setData_protocolo] = useState<Date>(new Date());
     const [obs, setObs] = useState<string>('');
     const [pagamento, setPagamento] = useState(0);
+    const [test, setTeste] = useState(false);
     const decreto = true;
     const { setAlert } = useContext(AlertsContext);
 
@@ -171,6 +172,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
         const sqlInicialLimpo = parseInt(sqlInicial.replace(/\D/g,'').slice(0, -1));
         const sqlFinalLimpo = parseInt(sqlFinal.replace(/\D/g,'').slice(0, -1));
         setSqlSequencial([]);
+        setTeste(true)
         for(let i = sqlInicialLimpo; i <= sqlFinalLimpo; i++) {
             sqlSequencial.push(adicionaDigitoSql(i));
             setSqlSequencial(sqlSequencial);

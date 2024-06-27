@@ -92,7 +92,7 @@ function SearchUnidades() {
   }
 
   const alterarUnidade = async (id: string) => {
-    var resposta = await unidadeServices.desativar({id, status: 0});
+    var resposta = await unidadeServices.desativar({ id, status: 0 });
     if (resposta) {
       setAlert('Unidade desativada!', 'Essa unidade foi desativada e não será exibida para seleção.', 'success', 3000, Check);
       buscaUnidades();
@@ -130,7 +130,7 @@ function SearchUnidades() {
   }
 
   const ativaUnidade = async (id: string) => {
-    var resposta = await unidadeServices.desativar({id, status: 1});
+    var resposta = await unidadeServices.desativar({ id, status: 1 });
     if (resposta) {
       setAlert('Unidade ativada!', 'Essa unidade foi autorizada e será visível para seleção.', 'success', 3000, Check);
       buscaUnidades();
@@ -249,38 +249,34 @@ function SearchUnidades() {
         </thead>
         <tbody>
           {unidades && unidades.length > 0 ? unidades.map((unidade) => (
-            (status ?
-              (status == 0 ? unidade.status == 0 : status == 1 ? unidade.status == 1 : 1)
-              : 0) ? (
-              <tr key={unidade.id} style={{
-                cursor: 'pointer',
-                backgroundColor: !unidade.status ?
-                  theme.vars.palette.danger.plainActiveBg :
-                  undefined
-              }}>
-                <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.codigo}</td>
-                <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.sigla}</td>
-                <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.nome}</td>
-                <td>
-                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                    {!unidade.status ? (
-                      <Tooltip title="Ativar Unidade" arrow placement="top">
-                        <IconButton size="sm" color="success" onClick={() => {ativaUnidade(unidade.id)}
-                        }>
-                          <Check />
-                        </IconButton>
-                      </Tooltip>
-                    ) : (
-                      <Tooltip title="Desativar" arrow placement="top">
-                        <IconButton title="Desativar" size="sm" color="danger" onClick={() => confirmaDesativaUnidade(unidade.id)}>
-                          <Cancel />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ) : null
+            <tr key={unidade.id} style={{
+              cursor: 'pointer',
+              backgroundColor: !unidade.status ?
+                theme.vars.palette.danger.plainActiveBg :
+                undefined
+            }}>
+              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.codigo}</td>
+              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.sigla}</td>
+              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.nome}</td>
+              <td>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                  {!unidade.status ? (
+                    <Tooltip title="Ativar Unidade" arrow placement="top">
+                      <IconButton size="sm" color="success" onClick={() => { ativaUnidade(unidade.id) }
+                      }>
+                        <Check />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title="Desativar" arrow placement="top">
+                      <IconButton title="Desativar" size="sm" color="danger" onClick={() => confirmaDesativaUnidade(unidade.id)}>
+                        <Cancel />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </div>
+              </td>
+            </tr>
           )) : <tr><td colSpan={4}>Nenhuma unidade encontrada</td></tr>}
         </tbody>
 
