@@ -44,7 +44,7 @@ export default function Home() {
   const today = new Date();
   const [data, setData] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
   const [dataCard, setDataCard] = useState('');
-  const [diass, setDias] = useState<number[]>([]);
+  const [dias, setDias] = useState<number[]>([]);
   const initialValue = dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-'));
   const colors = ['primary', 'warning', 'success', 'success'] as const;
   const [tipoData, setTipoData] = useState(0);
@@ -286,7 +286,7 @@ export default function Home() {
               reduceAnimations={false}
               slotProps={{
                 day: {
-                  highlightedDays: diass,
+                  highlightedDays: dias,
                 } as any,
               }}
             />
@@ -297,7 +297,7 @@ export default function Home() {
                 <Option value={2} sx={{ fontSize: '14px' }} color='success'>Lembretes</Option>
               </Select>
               <Typography level="body-sm" aria-describedby="card-description" mb={1}>
-                {tipoData == 0 ? 'Reuniões: ' : tipoData == 1 ? 'Processos: ' : 'Lembretes:'} {diass.length}
+                {tipoData == 0 ? 'Reuniões: ' : tipoData == 1 ? 'Processos: ' : 'Lembretes:'} {dias.length}
               </Typography>
             </Box>
           </Box>
@@ -438,7 +438,6 @@ export default function Home() {
               </form>
             </ModalDialog>
           </Modal>
-
           <Sheet sx={{
             bgcolor: 'transparent',
             display: 'flex',
