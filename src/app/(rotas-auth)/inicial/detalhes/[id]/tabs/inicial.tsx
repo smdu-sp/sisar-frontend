@@ -39,13 +39,15 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const [processo_fisico, setProcesso_fisico] = useState<string>('');
     const [data_protocolo, setData_protocolo] = useState<Date>(new Date());
     const [obs, setObs] = useState<string>('');
+    const [data_limiteSmul, setData_limiteSmul] = useState<Date>(new Date())
     const [pagamento, setPagamento] = useState(0);
+    const [test, setTeste] = useState(false);
     const decreto = true;
     const { setAlert } = useContext(AlertsContext);
 
     const enviaDados = () => {
         if (!inicial)
-            inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, nums_sql, status })
+            inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, nums_sql, status, data_limiteSmul })
                 .then((response: IInicial) => {
                     if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
@@ -54,7 +56,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                 });
 
         if (inicial)
-            inicialServices.atualizar(inicial.id, { decreto, sei, tipo_requerimento, requerimento, aprova_digital, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs })
+            inicialServices.atualizar(inicial.id, { decreto, sei, tipo_requerimento, requerimento, aprova_digital, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, data_limiteSmul })
                 .then((response: IInicial) => {
                     if (response.id) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
@@ -189,6 +191,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
         const sqlInicialLimpo = parseInt(sqlInicial.replace(/\D/g,'').slice(0, -1));
         const sqlFinalLimpo = parseInt(sqlFinal.replace(/\D/g,'').slice(0, -1));
         setSqlSequencial([]);
+        setTeste(true)
         for(let i = sqlInicialLimpo; i <= sqlFinalLimpo; i++) {
             setSqlSequencial((estado) => [...estado, adicionaDigitoSql(i)]);
         }
@@ -338,7 +341,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid xs={8} sm={8} md={8} lg={5} xl={5}>
+                    <Grid xs={8} sm={8} md={8} lg={3} xl={3}>
                         <FormControl>
                             <FormLabel>Pagamento</FormLabel>
                             <Select
@@ -351,6 +354,19 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                 <Option value={2}>SIM-VINCULADO</Option>
                                 <Option value={3}>ISENTO-VINCULADO</Option>
                             </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid xs={8} sm={8} md={8} lg={2} xl={2}>
+                        <FormControl>
+                            <FormLabel>Prazo</FormLabel>
+                            <Input
+                                id="prazo"
+                                name="prazo"
+                                placeholder="Prazo"
+                                type="date"
+                                value={data_limiteSmul.toISOString().split('T')[0]}
+                                onChange={e => setData_limiteSmul(new Date(e.target.value))}
+                            />
                         </FormControl>
                     </Grid>
                     <Grid xs={12} sm={12} md={12} lg={6} xl={6}>

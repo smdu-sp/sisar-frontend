@@ -27,7 +27,6 @@ export interface IAlvaraTipo {
     prazo_analise_multi2:   number
     status:                 boolean
 }
-
 export interface IDistribuicao {
     inicial_id: number
     tecnico_responsavel?: IUsuario
@@ -53,10 +52,11 @@ export interface IInicial {
     data_protocolo: Date
     envio_admissibilidade?: Date
     alvara_tipo_id: string
-    alvara_tipo: IAlvaraTipo
+    alvara_tipo?: IAlvaraTipo
     tipo_processo: number
     obs?: string
     status: number
+    data_limiteSmul: Date
     iniciais_sqls?: IInicial_Sqls[]
     interfaces?: IInterfaces
     distribuicao?: IDistribuicao
