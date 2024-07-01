@@ -21,9 +21,9 @@ export default function Inicial() {
 
   useEffect(() => {
     buscaIniciais();
-  }, [ pagina, limite ]);
+  }, [pagina, limite]);
 
-  
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
@@ -71,7 +71,7 @@ export default function Inicial() {
   ]
 
   return (
-    <Content 
+    <Content
       titulo='Processos'
       pagina='inicial'
       breadcrumbs={[{
@@ -110,55 +110,55 @@ export default function Inicial() {
           </Tab>
         </TabList>
         <TabPanel value={0}>
-            <Table hoverRow sx={{ tableLayout: 'auto' }}>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Status</th>
-                  <th>SEI</th>
-                  <th title='Tipo de Requerimento'>Tipo Req.</th>
-                  <th>Requerimento</th>
-                  <th>Protocolo</th>
-                  <th>Tipo de Alvará</th>
-                  <th>Tipo de Processo</th>
-                  <th style={{ textAlign: 'right' }}></th>
+          <Table hoverRow sx={{ tableLayout: 'auto' }}>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Status</th>
+                <th>SEI</th>
+                <th title='Tipo de Requerimento'>Tipo Req.</th>
+                <th>Requerimento</th>
+                <th>Protocolo</th>
+                <th>Tipo de Alvará</th>
+                <th>Tipo de Processo</th>
+                <th style={{ textAlign: 'right' }}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {iniciais && iniciais.length > 0 ? iniciais.map((inicial: IInicial) => (
+                <tr onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)} key={inicial.id} style={{ cursor: 'pointer' }}>
+                  <td>{inicial.id}</td>
+                  <td>
+                    <Chip color={inicial.status > 1 ? status[0].color : status[inicial.status].color}>
+                      {inicial.status > 2 ? status[0].label : status[inicial.status].label}
+                    </Chip>
+                  </td>
+                  <td>{inicial.sei}</td>
+                  <td>{inicial.tipo_requerimento}</td>
+                  <td>{inicial.requerimento}</td>
+                  <td>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
+                  <td>{inicial.alvara_tipo.nome}</td>
+                  <td>
+                    <Chip color={processo[inicial.tipo_processo].color}>
+                      {processo[inicial.tipo_processo].label}
+                    </Chip>
+                  </td>
+                  <td style={{ textAlign: 'right' }}></td>
                 </tr>
-              </thead>
-              <tbody>
-                {iniciais && iniciais.length > 0 ? iniciais.map((inicial: IInicial) => (
-                  <tr onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)} key={inicial.id} style={{ cursor: 'pointer' }}>
-                    <td>{inicial.id}</td>
-                    <td>
-                      <Chip color={inicial.status > 1 ? status[0].color : status[inicial.status].color}>
-                        {inicial.status > 2 ? status[0].label : status[inicial.status].label}
-                      </Chip>
-                    </td>
-                    <td>{inicial.sei}</td>
-                    <td>{inicial.tipo_requerimento}</td>
-                    <td>{inicial.requerimento}</td>
-                    <td>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
-                    <td>{inicial.alvara_tipo.nome}</td>
-                    <td>
-                      <Chip color={processo[inicial.tipo_processo].color}>
-                        {processo[inicial.tipo_processo].label}
-                      </Chip>
-                    </td>
-                    <td style={{ textAlign: 'right' }}></td>
-                  </tr>
-                )) : <tr><td colSpan={9}>Nenhum cadastro inicial encontrado</td></tr>}
-              </tbody>
-            </Table>
-            {(total && total > 0) ? <TablePagination
-              component="div"
-              count={total}
-              page={(pagina - 1)}
-              onPageChange={mudaPagina}
-              rowsPerPage={limite}
-              onRowsPerPageChange={mudaLimite}
-              rowsPerPageOptions={[10, 25, 50, 100]}
-              labelRowsPerPage="Registros por página"
-              labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
-            /> : null}
+              )) : <tr><td colSpan={9}>Nenhum cadastro inicial encontrado</td></tr>}
+            </tbody>
+          </Table>
+          {(total && total > 0) ? <TablePagination
+            component="div"
+            count={total}
+            page={(pagina - 1)}
+            onPageChange={mudaPagina}
+            rowsPerPage={limite}
+            onRowsPerPageChange={mudaLimite}
+            rowsPerPageOptions={[10, 25, 50, 100]}
+            labelRowsPerPage="Registros por página"
+            labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
+          /> : null}
         </TabPanel>
       </Tabs>
       <IconButton component='a' href='/inicial/detalhes' color='primary' variant='soft' size='lg' sx={{

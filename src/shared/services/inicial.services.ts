@@ -142,7 +142,7 @@ const buscarTudo = async (
             "Authorization": `Bearer ${session?.access_token}`
         }
     }).then((response) => {
-        // if (response.status === 401) Logout();
+        if (response.status === 401) signOut();
         return response.json();
     })
     return iniciais;

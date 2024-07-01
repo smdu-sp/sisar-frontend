@@ -3,7 +3,7 @@
 import Content from '@/components/Content';
 import CardAviso from '@/components/CardAviso';
 import * as React from 'react';
-import { Autocomplete, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormLabel, IconButton, Input, Modal, ModalDialog, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, tabClasses } from '@mui/joy';
+import { Autocomplete, Button, Chip, ChipPropsColorOverrides, CircularProgress, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, IconButton, Input, Modal, ModalDialog, Skeleton, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
@@ -31,6 +31,30 @@ import CircleIcon from '@mui/icons-material/RadioButtonCheckedRounded';
 import Link from '@mui/joy/Link';
 import { AlertsContext } from '@/providers/alertsProvider';
 import 'dayjs/locale/pt-br'; // Importe a localização desejada
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { date, z } from 'zod';
+import {
+  infer as Infer,
+  number,
+  object,
+  string,
+  enum as zodEnum,
+} from "zod";
+import { MenuItem } from "@mui/material";
+
+const schemaAviso = z.object({
+  titulo: string().min(1, { message: "O titulo deve ter pelo menos 1 letras" }),
+  descricao: string(),
+  dataAviso: date(),
+  tipo: number(),
+  idInicial: number()
+});
+const schemaReniao = z.object({
+
+});
+type SchemaAviso = Infer<typeof schemaAviso>;
+type SchemaReuniao = Infer<typeof schemaReniao>;
 
 dayjs.locale('pt-br');
 
@@ -59,15 +83,30 @@ export default function Home() {
   const [tipo, setTipo] = useState(0);
   const [dadosTab, setDadosTab] = useState<any>([]);
   const [lemTab, setLemTab] = useState<boolean>(true);
-  const [dataAviso, setDataAviso] = useState<Date>(() => {
-    const dateString = new Date(today).toISOString().split("T")[0];
-    return new Date(dateString);
-  });
+  const [idInicial, setIdInicial] = useState(0);
+  const [seiDados, setSei] = useState('');
+  const [dataAviso, setDataAviso] = useState<Date>(new Date());
+  const [carregando, setCarregando] = useState(true);
   const [processosAvisos, setProcessosAvisos] = useState<inicialServices.IProcessosAvisos[]>([]);
   const [processoCard, setProcessoCard] = useState(0);
   const router = useRouter();
   const { setAlert } = React.useContext(AlertsContext);
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitted }
+  } = useForm<SchemaAviso>({
+    mode: "onChange",
+    resolver: zodResolver(schemaAviso),
+    values: {
+      titulo,
+      descricao,
+      dataAviso,
+      tipo,
+      idInicial
+    }
+  });
 
   const busca = (mes: any) => {
     setDias([]);
@@ -160,8 +199,16 @@ export default function Home() {
     }
   }
 
-  const criarAvisos = () => {
-    avisos.criar({ titulo, descricao, data: dataAviso, inicial_id: lemTab ? 1 : dadosTab[0], tipo })
+  const onSubmit = (data: SchemaAviso) => {
+    const criar ={
+      titulo: data.titulo,
+      descricao: data.descricao,
+      data: data.dataAviso,
+      inicial_id: lemTab ? 1 : data.idInicial,
+      tipo: data.tipo
+    }
+
+    avisos.criar(criar)
       .then((response: avisos.IAvisos) => {
         if (response) {
           setAlert('Aviso criado', 'Aviso criado com sucesso!', 'success', 3000, Check);
@@ -261,6 +308,7 @@ export default function Home() {
     var datacard = data.year() + '-' + (data.month() + 1) + '-' + data.date();
     setDataCard(new Date(datacard).toLocaleDateString('pt-BR'));
     buscar_data();
+    setCarregando(false);
   }, [data]);
 
   return (
@@ -388,27 +436,82 @@ export default function Home() {
             : null
           }
           <Modal open={openNotf} onClose={() => setOpenNotf(false)}>
-            <ModalDialog>
-              <DialogTitle>Adicionar Lembrete</DialogTitle>
-              <DialogContent>Preencha as informações do lembrete</DialogContent>
-              <form
-                onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
-                  event.preventDefault();
-                  setOpenNotf(false);
-                }}
-              >
+            <form onSubmit={handleSubmit(onSubmit)}>
+
+              <ModalDialog>
+                <DialogTitle>Adicionar Lembrete</DialogTitle>
+                <DialogContent>Preencha as informações do lembrete</DialogContent>
                 <Stack spacing={2}>
                   <FormControl>
                     <FormLabel>Titulo</FormLabel>
-                    <Input autoFocus required value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                      name="titulo"
+                      control={control}
+                      defaultValue={titulo}
+                      render={({ field: { ref, ...field } }) => {
+                        return (<>
+                          <Input
+                            type="text"
+                            placeholder="Titulo"
+                            error={Boolean(errors.titulo)}
+                            {...field}
+                          />
+                          {errors.titulo && <FormHelperText color="danger">
+                            {errors.titulo?.message}
+                          </FormHelperText>}
+                        </>);
+                      }}
+                    />}
                   </FormControl>
                   <FormControl>
                     <FormLabel>Descrição</FormLabel>
-                    <Textarea required minRows={5} value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                      name="descricao"
+                      control={control}
+                      defaultValue={descricao}
+                      render={({ field: { ref, ...field } }) => {
+                        return (<>
+                          <Textarea
+                            minRows={2}
+                            placeholder="Descrição"
+                            error={Boolean(errors.descricao)}
+                            {...field}
+                          />
+                          {errors.descricao && <FormHelperText color="danger">
+                            {errors.descricao?.message}
+                          </FormHelperText>}
+                        </>);
+                      }}
+                    />}
                   </FormControl>
                   <FormControl>
                     <FormLabel>Data</FormLabel>
                     <Input type='date' required value={dataAviso.toISOString().split('T')[0]} onChange={(e) => { setDataAviso(new Date(e.target.value)) }} />
+                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                name="dataAviso"
+                                control={control}
+                                defaultValue={new Date(dataAviso.toLocaleString().split('T')[0])}
+                                render={({ field: { ref, ...field } }) => {
+                                    return (<>
+                                        <Input
+                                            type="date"
+                                            placeholder="Data Lembrete"
+                                            error={Boolean(errors.dataAviso)}
+                                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                            onChange={(event) => {
+                                                const newValue = new Date(event.target.value + 'T00:00:00Z');
+                                                field.onChange(newValue);
+                                            }}
+                                            onBlur={field.onBlur}
+                                            disabled={field.disabled}
+                                            name={field.name}
+                                        />
+                                        {errors.dataAviso && <FormHelperText color="danger">
+                                            {errors.dataAviso?.message}
+                                        </FormHelperText>}
+                                    </>);
+                                }}
+                            />}
                   </FormControl>
                   <FormControl>
                     <FormLabel>Tipo</FormLabel>
@@ -430,13 +533,18 @@ export default function Home() {
                           sx={{ width: 300 }}
                         />
                         :
-                        <Input type='text' sx={{ color: 'grey' }} required readOnly value={dadosTab[1]} />
+                        <Input type='text' sx={{ color: 'grey' }} required readOnly value={seiDados} />
                     }
                   </FormControl>
-                  <Button type='submit' onClick={() => { criarAvisos(); }}>Salvar</Button>
+                  <FormControl sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gap: 2 }}>
+                    <Button variant="soft" color='danger' onClick={() => setOpenNotf(false)}>Cancelar</Button>
+                    <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
+                      {isSubmitted ? <CircularProgress variant="solid" /> : "Salvar"}
+                    </Button>
+                  </FormControl>
                 </Stack>
-              </form>
-            </ModalDialog>
+              </ModalDialog>
+            </form>
           </Modal>
           <Sheet sx={{
             bgcolor: 'transparent',
@@ -449,7 +557,7 @@ export default function Home() {
               // spacing={{ xs: 2, md: 3 }}
               // columns={{ xs: 2, sm: 8, md: 12 }}
               sx={{
-                display: 'flex', 
+                display: 'flex',
                 flexDirection: tipoData != 2 ? 'column' : 'row',
                 alignItems: 'center',
                 justifyContent: dados.length > 0 ? 'flex-start' : 'center',
@@ -457,7 +565,7 @@ export default function Home() {
                 width: "100%",
                 bgcolor: 'transparent',
                 '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none', maxWidth: "10px" },
-                  '&::-webkit-scrollbar-thumb': {
+                '&::-webkit-scrollbar-thumb': {
                   borderRadius: 8,
                   border: '1px solid',
                   backgroundColor: "neutral.plainColor"
@@ -480,7 +588,7 @@ export default function Home() {
                           paddingTop: 1,
                         }}
                       >
-                        <CircleIcon color={colors[tipoData]} sx={{ width: '20px'}} />
+                        <CircleIcon color={colors[tipoData]} sx={{ width: '20px' }} />
                         <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                           <Sheet>
                             <Typography level="title-lg" id="card-description" key={data.id}>
@@ -519,10 +627,6 @@ export default function Home() {
                               <DialogTitle>Reagendar Reunião</DialogTitle>
                               <DialogContent>{inicial}</DialogContent>
                               <form
-                                onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
-                                  event.preventDefault();
-                                  setOpen(false);
-                                }}
                               >
                                 <Stack spacing={2}>
                                   <FormControl>
@@ -600,7 +704,7 @@ export default function Home() {
                   </td>
                   <td>
                     <IconButton color='success' onClick={() => {
-                      setLemTab(false); setOpenNotf(true); setDadosTab([inicial.id, inicial.sei]);
+                      setLemTab(false); setOpenNotf(true); setIdInicial(inicial.id); setSei(inicial.sei);
                     }}>
                       <NotificationAddIcon sx={{ fontSize: '25px' }} />
                     </IconButton>

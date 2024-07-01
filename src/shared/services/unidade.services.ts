@@ -22,6 +22,7 @@ export interface IPaginadoUnidade {
     total: number;
     pagina: number;
     limite: number;
+    filtro: string;
 }
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
@@ -41,9 +42,9 @@ async function listaCompleta(): Promise<IUnidade[]> {
     return unidades;
 }
 
-async function buscarTudo(status: number, pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginadoUnidade> {
+async function buscarTudo(filtro: string, pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginadoUnidade> {
     const session = await getServerSession(authOptions);
-    const subprefeituras = await fetch(`${baseURL}unidades/buscar-tudo?status=${status}&pagina=${pagina}&limite=${limite}&busca=${busca}`, {
+    const subprefeituras = await fetch(`${baseURL}unidades/buscar-tudo?filtro=${filtro}&pagina=${pagina}&limite=${limite}&busca=${busca}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
