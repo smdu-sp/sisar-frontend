@@ -10,7 +10,6 @@ import { AlertsContext } from '@/providers/alertsProvider';
 import { TablePagination } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
 import { IPaginadoSubprefeitura } from '@/shared/services/subprefeitura.services';
-import subprefeituraDetalhes from './detalhes/[id]/page';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -78,23 +77,8 @@ function SearchUnidades() {
 
   useEffect(() => {
     buscaSubprefeitura();
-    showNotificacao();
   }, [status, pagina, limite]);
 
-  const showNotificacao = function () {
-    var notification = searchParams.get('notification');
-
-    if (notification) {
-      setAlert(notification == '1' ? 'Subprefeitura alterada!' : 'Subprefeitura criada!',
-        notification == '1' ? 'Subprefeitura alterada com sucesso.' : 'Subprefeitura criada com sucesso.',
-        notification == '1' ? 'warning' : 'success', 3000, Check);
-
-      const newUrl = `${window.location.pathname}`;
-      window.history.replaceState({}, '', newUrl);
-
-      buscaSubprefeitura();
-    }
-  };
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -189,17 +173,23 @@ function SearchUnidades() {
   });
 
   const onSubmit = (data: Schema) => {
-    console.log(data);
     if (!id) {
       subprefeituraServices.criar(data)
         .then(() => {
+          setAlert('Subprefeitura criada!', 'Essa subprefeitura foi criada e será exibida.', 'success', 3000, Check);
+          !isSubmitSuccessful
+          data.nome = '';
+          data.sigla = '';
+          data.status = 1;
           setOpen(false);
           buscaSubprefeitura();
         })
     } else {
       subprefeituraServices.atualizar({ id, ...data })
         .then(() => {
-          router.push('/subprefeitura?notification=1');
+          setAlert('Subprefeitura atualizada!', 'Subprefeitura foi atualiza com sucesso.', 'success', 3000, Check);
+          setOpen(false);
+          buscaSubprefeitura();
         })
     }
   }
@@ -307,10 +297,10 @@ function SearchUnidades() {
                   theme.vars.palette.danger.plainActiveBg :
                   undefined
               }}>
-                <td onClick={() => router.push('/subprefeitura/detalhes/' + subprefeitura.id)}>{subprefeitura.nome}</td>
-                <td>{subprefeitura.sigla}</td>
-                <td>{subprefeitura.status == 1 ? "Ativo" : "Inativo"}</td>
-                <td>
+                <td onClick={() => {setOpen(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.nome}</td>
+                <td onClick={() => {setOpen(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.sigla}</td>
+                <td onClick={() => {setOpen(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.status == 1 ? "Ativo" : "Inativo"}</td>
+                <td onClick={() => {setOpen(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     {!subprefeitura.status ? (
                       <Tooltip title="Ativar Unidade" arrow placement="top">
@@ -433,7 +423,7 @@ function SearchUnidades() {
               </Stack>
               <CardOverflow>
                 <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-                  <Button size="sm" variant="outlined" color="neutral" onClick={() => router.back()}>
+                  <Button size="sm" variant="outlined" color="neutral" onClick={() => setOpen(false)}>
                     Cancelar
                   </Button>
                   <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
