@@ -45,7 +45,7 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
 
         } else {
             unidadeServices.atualizar({
-                id, nome, codigo, sigla, status
+                id, ...data
             })
                 .then(() => router.push('/unidades?notification=1'));
         }
@@ -109,7 +109,7 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                                             return (<>
                                                 <Input
                                                     type="text"
-                                                    startDecorator={<AccountBalanceIcon />}
+                                                    startDecorator={<Business />}
                                                     placeholder="Nome"
                                                     error={Boolean(errors.nome)}
                                                     {...field}
@@ -130,7 +130,6 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                                         render={({ field: { ref, ...field } }) => {
                                             return (<>
                                                 <Select
-                                                    startDecorator={<AccountBalanceIcon />}
                                                     placeholder="Status"
                                                     {...field}
                                                     onChange={(_, value) => field.onChange(value)}
@@ -158,7 +157,6 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                                             return (<>
                                                 <Input
                                                     type="text"
-                                                    startDecorator={<AccountBalanceIcon />}
                                                     placeholder="Código"
                                                     error={Boolean(errors.codigo)}
                                                     {...field}
@@ -180,7 +178,6 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                                             return (<>
                                                 <Input
                                                     type="text"
-                                                    startDecorator={<AccountBalanceIcon />}
                                                     placeholder="Sigla"
                                                     error={Boolean(errors.sigla)}
                                                     {...field}
@@ -199,7 +196,7 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                                 <Button size="sm" variant="outlined" color="neutral" onClick={() => router.back()}>
                                     Cancelar
                                 </Button>
-                                <Button size="sm" variant="solid" color="primary" type="submit">
+                                <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
                                     Salvar
                                 </Button>
                             </CardActions>

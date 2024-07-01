@@ -27,6 +27,7 @@ function SearchUnidades() {
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
   const [status, setStatus] = useState<number>(2);
+  const [filtro, setFiltro] = useState(-1);
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
 
   const confirmaVazio: {
@@ -51,7 +52,7 @@ function SearchUnidades() {
   useEffect(() => {
     buscaUnidades();
     not();
-  }, [status, pagina, limite]);
+  }, [status, pagina, limite, filtro]);
 
 
   const createQueryString = useCallback(
@@ -82,7 +83,7 @@ function SearchUnidades() {
   }
 
   const buscaUnidades = async () => {
-    unidadeServices.buscarTudo(status, pagina, limite, busca)
+    unidadeServices.buscarTudo(filtro.toString(), pagina, limite, busca)
       .then((response: IPaginadoUnidade) => {
         setTotal(response.total);
         setPagina(response.pagina);
@@ -215,14 +216,15 @@ function SearchUnidades() {
           <FormLabel>Status: </FormLabel>
           <Select
             size="sm"
-            value={status}
-            onChange={(_, v) => { setStatus(v ? v : 0) }}
+            value={filtro}
+            onChange={(_, value) => { setFiltro(value as number); }}
           >
+            <Option value={-1}>Todos</Option>
             <Option value={1}>Ativos</Option>
             <Option value={0}>Inativos</Option>
-            <Option value={2}>Todos</Option>
           </Select>
         </FormControl>
+
         <FormControl sx={{ flex: 1 }} size="sm">
           <FormLabel>Buscar: </FormLabel>
           <Input
