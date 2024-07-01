@@ -12,11 +12,30 @@ import { IUnidade } from "@/shared/services/unidade.services";
 import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
 import * as comum from "@/shared/services/comum.services";
 import { useRouter as useRouterNavigation } from "next/navigation";
-import { Autocomplete, AutocompleteOption, Box, Button, Checkbox, Chip, Divider, FormControl, FormLabel, Grid, IconButton, Input, Option, Select } from "@mui/joy";
+import { Autocomplete, AutocompleteOption, Box, Button, Checkbox, Chip, Divider, FormControl, FormHelperText, FormLabel, Grid, IconButton, Input, Option, Select, Skeleton } from "@mui/joy";
 import { Business, Check, Today } from "@mui/icons-material";
 import { IUsuario } from "@/shared/services/usuario.services";
 import { AlertsContext } from '@/providers/alertsProvider';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+    infer as Infer,
+    bigint,
+    boolean,
+    date,
+    number,
+    object,
+    string,
+} from "zod";
 
+const schema = object({
+    status: number().min(0).max(1),
+    unidade_id: string(),
+    data_decisao_interlocutoria: date(),
+    subprefeitura_id: string(),
+});
+type Schema = Infer<typeof schema>;
 
 export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inicial?: IInicial, admissibilidade?: IAdmissibilidade }) {
     const router = useRouterNavigation();
@@ -46,12 +65,29 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
     const status = 0;
     const [tipo, setTipo] = useState(0);
     const { setAlert } = React.useContext(AlertsContext);
+    const [carregando, setCarregando] = useState<boolean>(true);
 
-    const atualizar = () => {
+    const {
+        control,
+        handleSubmit,
+        formState: { errors, isValid, isSubmitSuccessful }
+    } = useForm<Schema>({
+        mode: "onChange",
+        resolver: zodResolver(schema),
+        values: {
+            status,
+            unidade_id,
+            data_decisao_interlocutoria,
+            subprefeitura_id,
+        }
+    });
+
+    const onSubmit = (data: Schema) => {
+        console.log(data);
+        
         if (admissibilidade) {
-            admissibilidadeServices.atualizarId(admissibilidade.inicial_id, { status, unidade_id, data_decisao_interlocutoria, subprefeitura_id })
+            admissibilidadeServices.atualizarId(admissibilidade.inicial_id, { ...data })
                 .then(() => {
-                    console.log('teste');
                     router.push('/admissibilidade');
                 })
             inicialServices.atualizar(admissibilidade.inicial_id, { tipo_processo })
@@ -73,21 +109,23 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
             .then((response: ISubprefeitura[]) => {
                 setSubprefeitura(response);
             })
+        setCarregando(false)
     }, [])
     return (
-        <Box sx={{ p: 2 }}>
-            {admissibilidade && (<>
-                <Grid container xs={12} spacing={2} sx={{ p: 2, mb: 2 }}>
-                    <Grid xs={12} lg={6}>
-                        <FormControl>
-                            <FormLabel>Processo</FormLabel>
-                            <Input value={inicial?.sei} readOnly />
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={12} lg={6}>
-                        <FormControl sx={{ flexGrow: 1 }}>
-                            <FormLabel>Processo Sei</FormLabel>
-                            <Input value={processoSei} onChange={(e) => {
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <Box sx={{ p: 2 }}>
+                {admissibilidade && (<>
+                    <Grid container xs={12} spacing={2} sx={{ p: 2, mb: 2 }}>
+                        <Grid xs={12} lg={6}>
+                            <FormControl>
+                                <FormLabel>Processo</FormLabel>
+                                <Input value={inicial?.sei} readOnly />
+                            </FormControl>
+                        </Grid>
+                        <Grid xs={12} lg={6}>
+                            <FormControl sx={{ flexGrow: 1 }}>
+                                <FormLabel>Processo Sei</FormLabel>
+                                <Input value={processoSei} onChange={(e) => {
                                 var sehab = e.target.value;
                                 if (sehab.length > 0) sehab = comum.formatarSei(e.target.value);
                                 setProcessoSei(sehab && sehab);
@@ -96,244 +134,336 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                                 error={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18}
                                 title={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18 ? 'SEI inválido' : ''}
                             />
+                                {/* {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                    name="processoSei"
+                                    control={control}
+                                    defaultValue={processoSei}
+                                    render={({ field: { ref, ...field } }) => {
+                                        return (<>
+                                            <Input
+                                                type="text"
+                                                placeholder="Sei"
+                                                error={Boolean(errors.processoSei)}
+                                                {...field}
+                                                onChange={(e) => {
+                                                    var sehab = e.target.value;
+                                                    if (sehab.length > 0) sehab = comum.formatarSei(e.target.value);
+                                                    field.onChange(sehab && sehab);
+                                                }}
+                                            />
+                                            {errors.processoSei && <FormHelperText color="danger">
+                                                {errors.processoSei?.message}
+                                            </FormHelperText>}
+                                            {(!comum.validaDigitoSei(processoSei) && processoSei.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
+                                        </>);
+                                    }}
+                                />} */}
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                </>)}
+                {inicial && inicial.envio_admissibilidade && (<>
+                    <Grid xs={12}>
+                        <Divider>
+                            <Chip color="primary">Admissibilidade</Chip>
+                        </Divider>
+                    </Grid>
+                    <Grid container xs={12}>
+
+                    </Grid>
+                </>)}
+                <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
+                    <Grid xs={12} lg={6}>
+                        <FormControl>
+                            <FormLabel>Tipo de processo</FormLabel>
+                            <Select value={tipo_processo} id='tipo_processo' name='tipo_processo' placeholder='Tipo de processo' onChange={(_, v) => setTipo_processo(v ? v : 1)}>
+                                <Option value={1}>Próprio de SMUL</Option>
+                                <Option value={2}>Múltiplas interfaces</Option>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid xs={12} lg={6}>
+                        <FormControl sx={{ flexGrow: 1 }}>
+                            <FormLabel>Status</FormLabel>
+                            <Input value="Adimissivel" readOnly />
+                        </FormControl>
+                    </Grid>
+
+                </Grid>
+                <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
+                    <Grid xs={12} lg={6}>
+                        <FormControl>
+                            <FormLabel>Subprefeitura</FormLabel>
+                            <Controller
+                                name="subprefeitura_id"
+                                control={control}
+                                defaultValue={subprefeitura_id}
+                                render={({ field }) => (
+                                    <>
+                                        <Autocomplete
+                                            options={subprefeitura && subprefeitura.length > 0 ? subprefeitura : []}
+                                            getOptionLabel={(option) => option && option.sigla}
+                                            renderOption={(props, option) => (
+                                                <AutocompleteOption {...props} key={option.id} value={option.id}>
+                                                    {option.sigla}
+                                                </AutocompleteOption>
+                                            )}
+                                            placeholder="Subprefeitura"
+                                            filterOptions={(options, { inputValue }) =>
+                                                options.filter(
+                                                    (option) =>
+                                                        option.nome.toLowerCase().includes(inputValue.toLowerCase()) ||
+                                                        option.sigla.toLowerCase().includes(inputValue.toLowerCase())
+                                                )
+                                            }
+                                            noOptionsText="Nenhuma subprefeitura encontrada"
+                                            onChange={(event, newValue) => {
+                                                field.onChange(newValue ? newValue.id : ''); // Assuming you want to update the form value with the id
+                                            }}
+                                            onBlur={field.onBlur}
+                                        />
+                                    </>
+                                )}
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid xs={12} lg={6}>
+                        <FormControl>
+                            <FormLabel>Unidade</FormLabel>
+
+                            <Controller
+                                name="unidade_id"
+                                control={control}
+                                defaultValue={unidade_id}
+                                render={({ field }) => (
+                                    <>
+                                        <Autocomplete
+                                            options={unidades && unidades.length > 0 ? unidades : []}
+                                            getOptionLabel={(option) => option && option.sigla}
+                                            renderOption={(props, option) => (
+                                                <AutocompleteOption {...props} key={option.id} value={option.id}>
+                                                    {option.sigla}
+                                                </AutocompleteOption>
+                                            )}
+                                            placeholder="Unidades"
+                                            filterOptions={(options, { inputValue }) =>
+                                                options.filter(
+                                                    (option) =>
+                                                        option.nome.toLowerCase().includes(inputValue.toLowerCase()) ||
+                                                        option.sigla.toLowerCase().includes(inputValue.toLowerCase())
+                                                )
+                                            }
+                                            noOptionsText="Nenhuma Unidades encontrada"
+                                            onChange={(event, newValue) => {
+                                                field.onChange(newValue ? newValue.id : ''); // Assuming you want to update the form value with the id
+                                            }}
+                                            onBlur={field.onBlur}
+                                        />
+                                    </>
+                                )}
+                            />
+
                         </FormControl>
                     </Grid>
                 </Grid>
-            </>)}
-            {inicial && inicial.envio_admissibilidade && (<>
-                <Grid xs={12}>
-                    <Divider>
-                        <Chip color="primary">Admissibilidade</Chip>
-                    </Divider>
-                </Grid>
-                <Grid container xs={12}>
-
-                </Grid>
-            </>)}
-            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
-                <Grid xs={12} lg={6}>
-                    <FormControl>
-                        <FormLabel>Tipo de processo</FormLabel>
-                        <Select value={tipo_processo} id='tipo_processo' name='tipo_processo' placeholder='Tipo de processo' onChange={(_, v) => setTipo_processo(v ? v : 1)}>
-                            <Option value={1}>Próprio de SMUL</Option>
-                            <Option value={2}>Múltiplas interfaces</Option>
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid xs={12} lg={6}>
-                    <FormControl sx={{ flexGrow: 1 }}>
-                        <FormLabel>Status</FormLabel>
-                        <Input value="Adimissivel" readOnly />
-                    </FormControl>
-                </Grid>
-
-            </Grid>
-            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
-                <Grid xs={12} lg={6}>
-                    <FormControl>
-                        <FormLabel>Subprefeitura</FormLabel>
-                        <Autocomplete
-                            startDecorator={<Business />}
-                            options={subprefeitura && subprefeitura.length > 0 ? subprefeitura : []}
-                            getOptionLabel={(option) => option && option.nome}
-                            renderOption={(props, option) => (
-                                <AutocompleteOption {...props} key={option.id} value={option.id}>
-                                    {option.nome}
-                                </AutocompleteOption>
-                            )}
-                            placeholder="Unidade"
-                            value={subprefeitura_id && subprefeitura_id !== '' ? subprefeitura.find((subprefeitura: ISubprefeitura) => subprefeitura.id === subprefeitura_id) : null}
-                            onChange={(_, value) => value && setSubprefeitura_id(value?.id)}
-                            filterOptions={(options, { inputValue }) => {
-                                if (subprefeitura) return (options as ISubprefeitura[]).filter((option) => (
-                                    (option).nome.toLowerCase().includes(inputValue.toLowerCase()) ||
-                                    (option).sigla.toLowerCase().includes(inputValue.toLowerCase())
-                                ));
-                                return [];
-                            }}
-                            noOptionsText="Nenhuma unidade encontrada"
-                        />
-                    </FormControl>
-                </Grid>
-                <Grid xs={12} lg={6}>
-                    <FormControl>
-                        <FormLabel>Unidade</FormLabel>
-                        <Autocomplete
-                            startDecorator={<Business />}
-                            options={unidades && unidades.length > 0 ? unidades : []}
-                            getOptionLabel={(option) => option && option.sigla}
-                            renderOption={(props, option) => (
-                                <AutocompleteOption {...props} key={option.id} value={option.id}>
-                                    {option.sigla}
-                                </AutocompleteOption>
-                            )}
-                            placeholder="Unidade"
-                            value={unidade_id && unidade_id !== '' ? unidades.find((unidade: IUnidade) => unidade.id === unidade_id) : null}
-                            onChange={(_, value) => value && setUnidade_id(value?.id)}
-                            filterOptions={(options, { inputValue }) => {
-                                if (unidades) return (options as IUnidade[]).filter((option) => (
-                                    (option).nome.toLowerCase().includes(inputValue.toLowerCase()) ||
-                                    (option).sigla.toLowerCase().includes(inputValue.toLowerCase())
-                                ));
-                                return [];
-                            }}
-                            noOptionsText="Nenhuma unidade encontrada"
-                        />
-                    </FormControl>
-                </Grid>
-            </Grid>
-            <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
-                <Grid xs={12} lg={6}>
-                    <FormControl>
-                        <FormLabel>Data decisão</FormLabel>
-                        <Input type="date" value={data_decisao_interlocutoria.toISOString().split('T')[0]} onChange={e => setDataDecisao(new Date(e.target.value))} />
-                    </FormControl>
-                </Grid>
-                <Grid xs={12} lg={6}>
-                    <FormControl>
-                        <FormLabel>Reunião GRAPOEM</FormLabel>
-                        <Input type="date" value={reuniao.toISOString().split('T')[0]} onChange={(e) => setReuniao(new Date(e.target.value))} />
-                    </FormControl>
-                </Grid>
-            </Grid>
-            <Grid xs={12} container sx={{ display: tipo_processo === 1 ? 'none' : 'block' }}>
-                <Grid xs={12}><Divider><Chip color="primary">Interfaces</Chip></Divider></Grid>
-                {inicial && inicial.data_protocolo <= new Date('2019-09-20') && <Grid xs={12} container sx={{ py: 2 }}>
-                    <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Checkbox
-                            label="SEHAB"
-                            checked={interface_sehab}
-                            onChange={(e) => setInterface_sehab(e.target.checked)}
-                        />
+                <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
+                    <Grid xs={12} lg={6}>
+                        <FormControl>
+                            <FormLabel>Data decisão</FormLabel>
+                            {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                name="data_decisao_interlocutoria"
+                                control={control}
+                                defaultValue={new Date(data_decisao_interlocutoria.toLocaleString().split('T')[0])}
+                                render={({ field: { ref, ...field } }) => {
+                                    return (<>
+                                        <Input
+                                            type="date"
+                                            placeholder="Prazo"
+                                            error={Boolean(errors.data_decisao_interlocutoria)}
+                                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                            onChange={(event) => {
+                                                const newValue = new Date(event.target.value + 'T00:00:00Z');
+                                                field.onChange(newValue);
+                                            }}
+                                            onBlur={field.onBlur}
+                                            disabled={field.disabled}
+                                            name={field.name}
+                                        />
+                                        {errors.data_decisao_interlocutoria && <FormHelperText color="danger">
+                                            {errors.data_decisao_interlocutoria?.message}
+                                        </FormHelperText>}
+                                    </>);
+                                }}
+                            />}
+                        </FormControl>
                     </Grid>
-                    <Grid xs={12} lg={8} xl={10}>
-                        <Input
-                            id="num_sehab"
-                            name="num_sehab"
-                            placeholder="Processo SEHAB"
-                            type="text"
-                            value={num_sehab}
-                            onChange={(e) => {
-                                var sehab = e.target.value;
-                                if (sehab.length > 0) sehab = comum.formatarSei(e.target.value);
-                                setNum_sehab(sehab && sehab);
-                            }}
-                            required={tipo_processo === 2}
-                            error={tipo_processo === 2 && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18}
-                            title={tipo_processo === 2 && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18 ? 'SEI inválido' : ''}
-                        />
-                        {(!comum.validaDigitoSei(num_sehab) && num_sehab.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
-                    </Grid>
-                </Grid>}
-                <Grid xs={12} container sx={{ py: 2 }}>
-                    <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Checkbox
-                            label="SIURB"
-                            checked={interface_siurb}
-                            onChange={(e) => setInterface_siurb(e.target.checked)}
-                        />
-                    </Grid>
-                    <Grid xs={12} lg={8} xl={10}>
-                        <Input
-                            placeholder="Processo SIURB"
-                            type="text"
-                            value={num_siurb}
-                            onChange={(e) => {
-                                var siurb = e.target.value;
-                                if (siurb.length > 0) siurb = comum.formatarSei(e.target.value);
-                                setNum_siurb(siurb && siurb);
-                            }}
-                            required={tipo_processo === 2}
-                            error={tipo_processo === 2 && !comum.validaDigitoSei(num_siurb) && num_siurb.length > 18}
-                            title={tipo_processo === 2 && !comum.validaDigitoSei(num_siurb) && num_siurb.length > 18 ? 'SEI inválido' : ''}
-                        />
-                    </Grid>
+                    {/* <Grid xs={12} lg={6}>
+                        <FormControl>
+                            <FormLabel>Reunião GRAPOEM</FormLabel>
+                            <Input type="date" value={reuniao.toISOString().split('T')[0]} onChange={(e) => setReuniao(new Date(e.target.value))} />
+                            {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                name="reuniao"
+                                control={control}
+                                defaultValue={new Date(reuniao.toLocaleString().split('T')[0])}
+                                render={({ field: { ref, ...field } }) => {
+                                    return (<>
+                                        <Input
+                                            type="date"
+                                            placeholder="Prazo"
+                                            error={Boolean(errors.reuniao)}
+                                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                            onChange={(event) => {
+                                                const newValue = new Date(event.target.value + 'T00:00:00Z');
+                                                field.onChange(newValue);
+                                            }}
+                                            onBlur={field.onBlur}
+                                            disabled={field.disabled}
+                                            name={field.name}
+                                        />
+                                        {errors.reuniao && <FormHelperText color="danger">
+                                            {errors.reuniao?.message}
+                                        </FormHelperText>}
+                                    </>);
+                                }}
+                            />}
+                        </FormControl>
+                    </Grid> */}
                 </Grid>
-                <Grid xs={12} container sx={{ py: 2 }}>
-                    <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Checkbox
-                            label="SMC"
-                            checked={interface_smc}
-                            onChange={(e) => setInterface_smc(e.target.checked)}
-                        />
+                <Grid xs={12} container sx={{ display: tipo_processo === 1 ? 'none' : 'block' }}>
+                    <Grid xs={12}><Divider><Chip color="primary">Interfaces</Chip></Divider></Grid>
+                    {inicial && inicial.data_protocolo <= new Date('2019-09-20') && <Grid xs={12} container sx={{ py: 2 }}>
+                        <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Checkbox
+                                label="SEHAB"
+                                checked={interface_sehab}
+                                onChange={(e) => setInterface_sehab(e.target.checked)}
+                            />
+                        </Grid>
+                        <Grid xs={12} lg={8} xl={10}>
+                            <Input
+                                id="num_sehab"
+                                name="num_sehab"
+                                placeholder="Processo SEHAB"
+                                type="text"
+                                value={num_sehab}
+                                onChange={(e) => {
+                                    var sehab = e.target.value;
+                                    if (sehab.length > 0) sehab = comum.formatarSei(e.target.value);
+                                    setNum_sehab(sehab && sehab);
+                                }}
+                                required={tipo_processo === 2}
+                                error={tipo_processo === 2 && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18}
+                                title={tipo_processo === 2 && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18 ? 'SEI inválido' : ''}
+                            />
+                            {(!comum.validaDigitoSei(num_sehab) && num_sehab.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
+                        </Grid>
+                    </Grid>}
+                    <Grid xs={12} container sx={{ py: 2 }}>
+                        <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Checkbox
+                                label="SIURB"
+                                checked={interface_siurb}
+                                onChange={(e) => setInterface_siurb(e.target.checked)}
+                            />
+                        </Grid>
+                        <Grid xs={12} lg={8} xl={10}>
+                            <Input
+                                placeholder="Processo SIURB"
+                                type="text"
+                                value={num_siurb}
+                                onChange={(e) => {
+                                    var siurb = e.target.value;
+                                    if (siurb.length > 0) siurb = comum.formatarSei(e.target.value);
+                                    setNum_siurb(siurb && siurb);
+                                }}
+                                required={tipo_processo === 2}
+                                error={tipo_processo === 2 && !comum.validaDigitoSei(num_siurb) && num_siurb.length > 18}
+                                title={tipo_processo === 2 && !comum.validaDigitoSei(num_siurb) && num_siurb.length > 18 ? 'SEI inválido' : ''}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid xs={12} lg={8} xl={10}>
-                        <Input
-                            placeholder="Processo SMC"
-                            type="text"
-                            value={num_smc}
-                            onChange={(e) => {
-                                var smc = e.target.value;
-                                if (smc.length > 0) smc = comum.formatarSei(e.target.value);
-                                setNum_smc(smc && smc);
-                            }}
-                            required={tipo_processo === 2}
-                            error={tipo_processo === 2 && !comum.validaDigitoSei(num_smc) && num_smc.length > 18}
-                            title={tipo_processo === 2 && !comum.validaDigitoSei(num_smc) && num_smc.length > 18 ? 'SEI inválido' : ''}
-                        />
+                    <Grid xs={12} container sx={{ py: 2 }}>
+                        <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Checkbox
+                                label="SMC"
+                                checked={interface_smc}
+                                onChange={(e) => setInterface_smc(e.target.checked)}
+                            />
+                        </Grid>
+                        <Grid xs={12} lg={8} xl={10}>
+                            <Input
+                                placeholder="Processo SMC"
+                                type="text"
+                                value={num_smc}
+                                onChange={(e) => {
+                                    var smc = e.target.value;
+                                    if (smc.length > 0) smc = comum.formatarSei(e.target.value);
+                                    setNum_smc(smc && smc);
+                                }}
+                                required={tipo_processo === 2}
+                                error={tipo_processo === 2 && !comum.validaDigitoSei(num_smc) && num_smc.length > 18}
+                                title={tipo_processo === 2 && !comum.validaDigitoSei(num_smc) && num_smc.length > 18 ? 'SEI inválido' : ''}
+                            />
+                        </Grid>
                     </Grid>
-                </Grid>
-                <Grid xs={12} container sx={{ py: 2 }}>
-                    <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Checkbox
-                            label="SMT"
-                            checked={interface_smt}
-                            onChange={(e) => setInterface_smt(e.target.checked)}
-                        />
+                    <Grid xs={12} container sx={{ py: 2 }}>
+                        <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Checkbox
+                                label="SMT"
+                                checked={interface_smt}
+                                onChange={(e) => setInterface_smt(e.target.checked)}
+                            />
+                        </Grid>
+                        <Grid xs={12} lg={8} xl={10}>
+                            <Input
+                                placeholder="Processo SMT"
+                                type="text"
+                                value={num_smt}
+                                onChange={(e) => {
+                                    var smt = e.target.value;
+                                    if (smt.length > 0) smt = comum.formatarSei(e.target.value);
+                                    setNum_smt(smt && smt);
+                                }}
+                                required={tipo_processo === 2}
+                                error={tipo_processo === 2 && !comum.validaDigitoSei(num_smt) && num_smt.length > 18}
+                                title={tipo_processo === 2 && !comum.validaDigitoSei(num_smt) && num_smt.length > 18 ? 'SEI inválido' : ''}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid xs={12} lg={8} xl={10}>
-                        <Input
-                            placeholder="Processo SMT"
-                            type="text"
-                            value={num_smt}
-                            onChange={(e) => {
-                                var smt = e.target.value;
-                                if (smt.length > 0) smt = comum.formatarSei(e.target.value);
-                                setNum_smt(smt && smt);
-                            }}
-                            required={tipo_processo === 2}
-                            error={tipo_processo === 2 && !comum.validaDigitoSei(num_smt) && num_smt.length > 18}
-                            title={tipo_processo === 2 && !comum.validaDigitoSei(num_smt) && num_smt.length > 18 ? 'SEI inválido' : ''}
-                        />
+                    <Grid xs={12} container sx={{ py: 2 }}>
+                        <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Checkbox
+                                label="SVMA"
+                                checked={interface_svma}
+                                onChange={(e) => setInterface_svma(e.target.checked)}
+                            />
+                        </Grid>
+                        <Grid xs={12} lg={8} xl={10}>
+                            <Input
+                                placeholder="Processo SVMA"
+                                type="text"
+                                value={num_svma}
+                                onChange={(e) => {
+                                    var svma = e.target.value;
+                                    if (svma.length > 0) svma = comum.formatarSei(e.target.value);
+                                    setNum_svma(svma && svma);
+                                }}
+                                required={tipo_processo === 2}
+                                error={tipo_processo === 2 && !comum.validaDigitoSei(num_svma) && num_svma.length > 18}
+                                title={tipo_processo === 2 && !comum.validaDigitoSei(num_svma) && num_svma.length > 18 ? 'SEI inválido' : ''}
+                            />
+                        </Grid>
                     </Grid>
                 </Grid>
-                <Grid xs={12} container sx={{ py: 2 }}>
-                    <Grid xs={12} lg={4} xl={2} sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Checkbox
-                            label="SVMA"
-                            checked={interface_svma}
-                            onChange={(e) => setInterface_svma(e.target.checked)}
-                        />
-                    </Grid>
-                    <Grid xs={12} lg={8} xl={10}>
-                        <Input
-                            placeholder="Processo SVMA"
-                            type="text"
-                            value={num_svma}
-                            onChange={(e) => {
-                                var svma = e.target.value;
-                                if (svma.length > 0) svma = comum.formatarSei(e.target.value);
-                                setNum_svma(svma && svma);
-                            }}
-                            required={tipo_processo === 2}
-                            error={tipo_processo === 2 && !comum.validaDigitoSei(num_svma) && num_svma.length > 18}
-                            title={tipo_processo === 2 && !comum.validaDigitoSei(num_svma) && num_svma.length > 18 ? 'SEI inválido' : ''}
-                        />
-                    </Grid>
+                <Grid xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                    <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/admissibilidade`); }}>
+                        Cancelar
+                    </Button>
+                    <Button size="sm" variant="solid" type="submit" disabled={!isValid}>
+                        Salvar
+                    </Button>
                 </Grid>
-            </Grid>
-            <Grid xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-
-                <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/admissibilidade`); }}>
-                    Cancelar
-                </Button>
-                <Button size="sm" variant="solid" onClick={() => {
-                    atualizar();
-
-                }}>
-                    Salvar
-                </Button>
-            </Grid>
-        </Box>
+            </Box>
+        </form>
     )
 }

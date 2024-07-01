@@ -3,7 +3,7 @@
 import * as inicialServices from "@/shared/services/inicial.services";
 import { IInicial } from "@/shared/services/inicial.services";
 import { Add, Cancel, Check, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
-import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, Box, ModalDialog, DialogTitle, DialogContent, Stack, List, ListItem } from "@mui/joy"
+import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, Box, ModalDialog, DialogTitle, DialogContent, Stack, List, ListItem, Skeleton, FormHelperText } from "@mui/joy"
 import { OverridableStringUnion } from '@mui/types';
 import { ReactNode, useContext, useEffect, useState } from "react";
 import { IAlvaraTipo } from "@/shared/services/alvara-tipo.services";
@@ -15,6 +15,34 @@ import * as React from 'react';
 import Textarea from '@mui/joy/Textarea';
 import Typography from '@mui/joy/Typography';
 import { Modal } from "@mui/material";
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+    infer as Infer,
+    bigint,
+    boolean,
+    date,
+    number,
+    object,
+    string,
+} from "zod";
+
+const schema = object({
+    sei: string().min(2, { message: "O SEI deve ter pelo menos 2 letras" }),
+    alvara_tipo_id: string().min(1, { message: "Selecione um tipo de alvara" }),
+    tipo_requerimento: number().min(1, { message: "Selecione um tipo de requerimento" }),
+    requerimento: string().min(2, { message: "O requerimento deve ter pelo menos 2 letras" }),
+    pagamento: number().min(1, { message: "Selecione o tipo de pagamento" }),
+    data_limiteSmul: date(),
+    aprova_digital: string().min(2, { message: "O requerimento deve ter pelo menos 2 letras" }),
+    processo_fisico: string().min(2, { message: "O processo fisico deve ter pelo menos 2 letras" }),
+    data_protocolo: date(),
+    envio_admissibilidade: date(),
+    obs: string(),
+    decreto: boolean(),
+});
+type Schema = Infer<typeof schema>;
 
 export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const router = useRouter();
@@ -29,8 +57,10 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const [sqlFinal, setSqlFinal] = useState<string>('');
     const [sqlSequencial, setSqlSequencial] = useState<string[]>([]);
 
+    const [carregando, setCarregando] = useState<boolean>(true);
+
     const [sei, setSei] = useState<string>('');
-    const [tipo_requerimento, setTipo_requerimento] = useState<string>('');
+    const [tipo_requerimento, setTipo_requerimento] = useState<number>(1);
     const [requerimento, setRequerimento] = useState<string>('');
     const [aprova_digital, setAprova_digital] = useState<string>('');
     const [envio_admissibilidade, setEnvio_admissibilidade] = useState<Date>(new Date());
@@ -45,24 +75,49 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const decreto = true;
     const { setAlert } = useContext(AlertsContext);
 
-    const enviaDados = () => {
-        if (!inicial)
-            inicialServices.criar({ decreto, sei, tipo_requerimento, requerimento, aprova_digital, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, nums_sql, status, data_limiteSmul })
-                .then((response: IInicial) => {
-                    if (response.id) {
-                        setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
-                        router.push(`/inicial/detalhes/${response.id}?tab=0`);
-                    }
-                });
+    const {
+        control,
+        handleSubmit,
+        formState: { errors, isValid, isSubmitSuccessful }
+    } = useForm<Schema>({
+        mode: "onChange",
+        resolver: zodResolver(schema),
+        values: {
+            sei,
+            alvara_tipo_id,
+            tipo_requerimento,
+            requerimento,
+            pagamento,
+            data_limiteSmul,
+            aprova_digital,
+            processo_fisico,
+            data_protocolo,
+            envio_admissibilidade,
+            obs,
+            decreto
+        }
+    });
 
-        if (inicial)
-            inicialServices.atualizar(inicial.id, { decreto, sei, tipo_requerimento, requerimento, aprova_digital, envio_admissibilidade, alvara_tipo_id, processo_fisico, data_protocolo, obs, data_limiteSmul })
+    const onSubmit = (data: Schema) => {
+        data.decreto = true;
+        console.log(data);
+        if (!inicial) {
+            inicialServices.criar(data)
                 .then((response: IInicial) => {
-                    if (response.id) {
+                    if (response) {
                         setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
-                        router.push(`/inicial/detalhes/${response.id}?tab=0`);
+                        router.push(`/inicial/detalhes/${response}?tab=0`);
                     }
                 });
+        } else if (inicial) {
+            inicialServices.atualizar(inicial.id, { ...data })
+                .then((response: IInicial) => {
+                    if (response) {
+                        setAlert('Inicial salvo!', 'Dados salvos com sucesso!', 'success', 3000, Check);
+                        router.push(`/inicial/detalhes/${response}?tab=0`);
+                    }
+                });
+        }
     }
 
     const buscarDados = () => {
@@ -151,6 +206,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                 }
             }
         });
+        setCarregando(false);
     }, [inicial]);
 
     function adicionaDigitoSql(sqlNumero: number): string {
@@ -166,7 +222,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     }
 
     function adicionarListaSql() {
-        for (const sql_seq of sqlSequencial){
+        for (const sql_seq of sqlSequencial) {
             if (sql_seq != '' && comum.validaDigitoSql(sql_seq)) {
                 if (!nums_sql.includes(sql_seq)) {
                     if (inicial) {
@@ -188,350 +244,524 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     }
 
     function gerarListaSql() {
-        const sqlInicialLimpo = parseInt(sqlInicial.replace(/\D/g,'').slice(0, -1));
-        const sqlFinalLimpo = parseInt(sqlFinal.replace(/\D/g,'').slice(0, -1));
+        const sqlInicialLimpo = parseInt(sqlInicial.replace(/\D/g, '').slice(0, -1));
+        const sqlFinalLimpo = parseInt(sqlFinal.replace(/\D/g, '').slice(0, -1));
         setSqlSequencial([]);
         setTeste(true)
-        for(let i = sqlInicialLimpo; i <= sqlFinalLimpo; i++) {
+        for (let i = sqlInicialLimpo; i <= sqlFinalLimpo; i++) {
             setSqlSequencial((estado) => [...estado, adicionaDigitoSql(i)]);
         }
     }
 
     function comparaSqls(): boolean {
-        const sqlInicialLimpo = parseInt(sqlInicial.replace(/\D/g,'').slice(0, -1));
-        const sqlFinalLimpo = parseInt(sqlFinal.replace(/\D/g,'').slice(0, -1));
+        const sqlInicialLimpo = parseInt(sqlInicial.replace(/\D/g, '').slice(0, -1));
+        const sqlFinalLimpo = parseInt(sqlFinal.replace(/\D/g, '').slice(0, -1));
         return sqlInicialLimpo < sqlFinalLimpo;
     }
 
     return (
         <>
-        <Modal open={modalSqlSequencial} onClose={() => setModalSqlSequencial(false)}>
-            <ModalDialog>
-                <DialogTitle>SQL</DialogTitle>
-                <DialogContent>Adicionar lista de SQL sequenciais</DialogContent>
-                <Stack spacing={2}>
-                  <FormControl>
-                    <FormLabel>SQL inicial</FormLabel>
-                    <Input autoFocus required value={sqlInicial}
-                        onChange={(e) => {
-                            var numSql = e.target.value;
-                            if (numSql.length > 0) numSql = comum.formatarSql(numSql);
-                            setSqlInicial(numSql && numSql);
-                        }} 
-                        error={(!comum.validaDigitoSql(sqlInicial) && sqlInicial.length > 13)}
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>SQL Final</FormLabel>
-                    <Input required value={sqlFinal}
-                        onChange={(e) => {
-                            var numSql = e.target.value;
-                            if (numSql.length > 0) numSql = comum.formatarSql(numSql);
-                            setSqlFinal(numSql && numSql);
-                        }}
-                        error={(!comum.validaDigitoSql(sqlFinal) && sqlFinal.length > 13)}
-                    />
-                  </FormControl>
-                  <Button onClick={() => gerarListaSql()}
-                    disabled={!comum.validaDigitoSql(sqlInicial) || !comum.validaDigitoSql(sqlFinal) || !comparaSqls()}
-                  >Gerar Lista</Button>
-                </Stack>
-                {sqlSequencial.length > 0 && <><Stack spacing={2} sx={{ maxHeight: 300, overflow: 'hidden', overflowY: 'auto' }}>
-                    <Table sx={{ tableLayout: 'fixed', maxWidth: 300 }}>
-                        <thead>
-                            <tr>
-                                <th colSpan={2}>SQL</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {sqlSequencial.map((sql, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>{sql}</td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <IconButton
-                                                color='danger'
-                                                onClick={() => { sqlSequencial.splice(index, 1); }}
-                                            >
-                                                <Cancel />
-                                            </IconButton>
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                        <tfoot>
-                        </tfoot>
-                    </Table>
-                </Stack>
-                <Stack sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', gap: 1 }}>
-                    <Button onClick={() => { limparSequencial() }} sx={{ flexGrow: 1 }} color="danger">Limpar Lista</Button>
-                    <Button onClick={() => { adicionarListaSql() }} sx={{ flexGrow: 1 }} color="success">Adicionar Lista</Button>
-                </Stack></>}
-            </ModalDialog>
-        </Modal>
-        <Box sx={{ p: 2 }}>
-            <Grid
-                container
-                spacing={2}
-            >
-                <Grid
-                    container
-                    spacing={2}
-                    xs={12} sm={12} md={12} lg={8} xl={8}
-                    sx={{ mb: 2 }}
-                >
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
+            <Modal open={modalSqlSequencial} onClose={() => setModalSqlSequencial(false)}>
+                <ModalDialog>
+                    <DialogTitle>SQL</DialogTitle>
+                    <DialogContent>Adicionar lista de SQL sequenciais</DialogContent>
+                    <Stack spacing={2}>
                         <FormControl>
-                            <FormLabel>SEI</FormLabel>
-                            <Input
-                                id="sei"
-                                name="sei"
-                                placeholder="Número de SEI"
-                                type="text"
-                                value={sei}
+                            <FormLabel>SQL inicial</FormLabel>
+                            <Input autoFocus required value={sqlInicial}
                                 onChange={(e) => {
-                                    var numSei = e.target.value;
-                                    if (numSei.length > 0) numSei = comum.formatarSei(e.target.value);
-                                    if (numSei) {
-                                        setSei(numSei);
-                                    }
+                                    var numSql = e.target.value;
+                                    if (numSql.length > 0) numSql = comum.formatarSql(numSql);
+                                    setSqlInicial(numSql && numSql);
                                 }}
-                                error={!comum.validaDigitoSei(sei) && sei.length > 18}
-                                disabled={inicial ? true : false}
-                                required={inicial ? false : true}
-                            />
-                            {(!comum.validaDigitoSei(sei) && sei.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
-                        <FormControl>
-                            <FormLabel>Tipo de alvará</FormLabel>
-                            <Select value={alvara_tipo_id} id='id_alvara' name='id_alvara' placeholder='Tipo de alvara' onChange={(_, v) => setAlvara_tipo_id(v ? v : '')}>
-                                {(alvaraTipos && alvaraTipos.length > 0) && alvaraTipos.map((alvaraTipo) => (
-                                    <Option key={alvaraTipo.id} value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={4} sm={4} md={4} lg={2} xl={2}>
-                        <FormControl>
-                            <FormLabel title='Tipo de Requerimento' sx={{ whiteSpace: 'nowrap', overflowX: 'hidden', textOverflow: 'ellipsis' }}>Tipo Req.</FormLabel>
-                            <Select
-                                value={tipo_requerimento}
-                                onChange={(_, value) => value && setTipo_requerimento(value)}
-                            >
-                                <Option value={1}>IPTU</Option>
-                                <Option value={2}>INCRA</Option>
-                                <Option value={3}>Área Pública</Option>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={8} sm={8} md={8} lg={5} xl={5}>
-                        <FormControl>
-                            <FormLabel>Requerimento</FormLabel>
-                            <Input
-                                id="requerimento"
-                                name="requerimento"
-                                placeholder="Requerimento"
-                                type="text"
-                                value={requerimento}
-                                onChange={e => setRequerimento(e.target.value)}
-                                required={inicial ? false : true}
+                                error={(!comum.validaDigitoSql(sqlInicial) && sqlInicial.length > 13)}
                             />
                         </FormControl>
-                    </Grid>
-                    <Grid xs={8} sm={8} md={8} lg={3} xl={3}>
                         <FormControl>
-                            <FormLabel>Pagamento</FormLabel>
-                            <Select
-                                value={pagamento}
-                                onChange={(_, value) => value && setPagamento(value)}
-                                placeholder="Status"
-                            >
-                                <Option value={0}>SIM</Option>
-                                <Option value={1}>NÃO</Option>
-                                <Option value={2}>SIM-VINCULADO</Option>
-                                <Option value={3}>ISENTO-VINCULADO</Option>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={8} sm={8} md={8} lg={2} xl={2}>
-                        <FormControl>
-                            <FormLabel>Prazo</FormLabel>
-                            <Input
-                                id="prazo"
-                                name="prazo"
-                                placeholder="Prazo"
-                                type="date"
-                                value={data_limiteSmul.toISOString().split('T')[0]}
-                                onChange={e => setData_limiteSmul(new Date(e.target.value))}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
-                        <FormControl>
-                            <FormLabel>Num. Aprova Digital</FormLabel>
-                            <Input
-                                id="aprova_digital"
-                                name="aprova_digital"
-                                placeholder="Aprova digital"
-                                value={aprova_digital}
-                                onChange={e => {
-                                    var aprova = e.target.value;
-                                    if (aprova.length > 0) aprova = comum.formatarAprovaDigital(e.target.value);
-                                    setAprova_digital(aprova && aprova);
+                            <FormLabel>SQL Final</FormLabel>
+                            <Input required value={sqlFinal}
+                                onChange={(e) => {
+                                    var numSql = e.target.value;
+                                    if (numSql.length > 0) numSql = comum.formatarSql(numSql);
+                                    setSqlFinal(numSql && numSql);
                                 }}
-                                type="text"
+                                error={(!comum.validaDigitoSql(sqlFinal) && sqlFinal.length > 13)}
                             />
                         </FormControl>
-                    </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
-                        <FormControl>
-                            <FormLabel>Num. Processo Físico</FormLabel>
-                            <Input
-                                id="processo_fisico"
-                                name="processo_fisico"
-                                placeholder="Processo Físico"
-                                type="text"
-                                value={processo_fisico}
-                                onChange={e => {
-                                    var fisico = e.target.value;
-                                    if (fisico.length > 0) fisico = comum.formatarFisico(e.target.value);
-                                    setProcesso_fisico(fisico && fisico);
-                                }}
-                                required={inicial ? false : true}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
-                        <FormControl>
-                            <FormLabel>Data Protocolo</FormLabel>
-                            <Input
-                                id="data_protocolo"
-                                name="data_protocolo"
-                                placeholder=""
-                                type="date"
-                                value={data_protocolo.toISOString().split('T')[0]}
-                                onChange={e => setData_protocolo(new Date(e.target.value))}
-                                required={inicial ? false : true}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
-                        <FormControl>
-                            <FormLabel>Envio Admissibilidade</FormLabel>
-                            <Input
-                                id="envio_admissibilidade"
-                                name="envio_admissibilidade"
-                                placeholder=""
-                                type="date"
-                                value={envio_admissibilidade.toISOString().split('T')[0]}
-                                onChange={e => setEnvio_admissibilidade(new Date(e.target.value))}
-                                required={inicial ? false : true}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <FormLabel>Observação</FormLabel>
-                        <Textarea
-                            placeholder="Digite aqui..."
-                            value={obs}
-                            onChange={e => setObs(e.target.value)}
-                            minRows={2}
-                            maxRows={4}
-                            endDecorator={
-                                <Typography level="body-xs" sx={{ ml: 'auto' }}>
-                                    {obs.length} caracteres
-                                </Typography>
-                            }
-                        />
-                    </Grid>
-
-                </Grid>
-                <Grid xs={12} sm={12} md={12} lg={4} xl={4}>
-                    <Card component={Grid} container variant="soft" sx={{ p: 3 }}>
-                        <Grid xs={12} direction='column'>
-                            <FormControl>
-                                <FormLabel>Adicionar SQL</FormLabel>
-                                <Input
-                                    id="num_sql_input"
-                                    name="num_sql_input"
-                                    placeholder="SQL"
-                                    type="text"
-                                    value={num_sql}
-                                    onChange={(e) => {
-                                        var numSql = e.target.value;
-                                        if (numSql.length > 0) numSql = comum.formatarSql(numSql);
-                                        setNum_sql(numSql && numSql);
-                                    }}
-                                    endDecorator={
-                                        <IconButton
-                                            variant='solid'
-                                            color='primary'
-                                            onClick={handleAddSQL}
-                                            disabled={!comum.validaDigitoSql(num_sql)}
-                                        >
-                                            <Add />
-                                        </IconButton>
-                                    }
-                                />
-                                {(!comum.validaDigitoSql(num_sql) && num_sql.length > 13) && <FormLabel sx={{ color: 'red' }}>SQL inválido</FormLabel>}
-                                <Button sx={{ mt: 1 }} onClick={() => setModalSqlSequencial(true)}>Adicionar SQL Sequencial</Button>
-                            </FormControl>
-                        </Grid>
-                        <Grid xs={12} sx={{ display: addNumSQLStatusAlert ? 'block' : 'none' }}>
-                            <Alert
-                                variant="soft"
-                                color={alertConfigs[addNumSQLStatus].color}
-                                startDecorator={alertConfigs[addNumSQLStatus].icon}
-                                endDecorator={
-                                    <Button size="sm" color={alertConfigs[addNumSQLStatus].color} onClick={() => setAddNumSQLStatusAlert(false)}>
-                                        Fechar
-                                    </Button>
-                                }
-                            >
-                                {alertConfigs[addNumSQLStatus].message}
-                            </Alert>
-                        </Grid>
-                        {nums_sql.length > 0 &&
-                            <Grid xs={12}>
-                                <Table>
-                                    <thead style={{ width: '100%' }}>
-                                        <tr>
-                                            <th colSpan={2} style={{ textAlign: 'center' }}>Nº SQL</th>
+                        <Button onClick={() => gerarListaSql()}
+                            disabled={!comum.validaDigitoSql(sqlInicial) || !comum.validaDigitoSql(sqlFinal) || !comparaSqls()}
+                        >Gerar Lista</Button>
+                    </Stack>
+                    {sqlSequencial.length > 0 && <><Stack spacing={2} sx={{ maxHeight: 300, overflow: 'hidden', overflowY: 'auto' }}>
+                        <Table sx={{ tableLayout: 'fixed', maxWidth: 300 }}>
+                            <thead>
+                                <tr>
+                                    <th colSpan={2}>SQL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {sqlSequencial.map((sql, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td>{sql}</td>
+                                            <td style={{ textAlign: 'right' }}>
+                                                <IconButton
+                                                    color='danger'
+                                                    onClick={() => { sqlSequencial.splice(index, 1); }}
+                                                >
+                                                    <Cancel />
+                                                </IconButton>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody style={{ width: '100%', backgroundColor: '' }}>
-                                        {nums_sql?.map((num_sql, index) => (
-                                            <tr key={index}>
-                                                <td>{num_sql}</td>
-                                                <td style={{ textAlign: 'right' }}>
-                                                    <IconButton
-                                                        color='danger'
-                                                        onClick={() => { removeRegister(index, num_sql) }}
-                                                    >
-                                                        <Cancel />
-                                                    </IconButton>
-                                                </td>
-                                            </tr>
+                                    )
+                                })}
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </Table>
+                    </Stack>
+                        <Stack sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', gap: 1 }}>
+                            <Button onClick={() => { limparSequencial() }} sx={{ flexGrow: 1 }} color="danger">Limpar Lista</Button>
+                            <Button onClick={() => { adicionarListaSql() }} sx={{ flexGrow: 1 }} color="success">Adicionar Lista</Button>
+                        </Stack></>}
+                </ModalDialog>
+            </Modal>
+            <Box sx={{ p: 2 }}>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <Grid
+                        container
+                        spacing={2}
+                    >
+                        <Grid
+                            container
+                            spacing={2}
+                            xs={12} sm={12} md={12} lg={8} xl={8}
+                            sx={{ mb: 2 }}
+                        >
+                            <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
+                                <FormControl>
+                                    <FormLabel>SEI</FormLabel>
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="sei"
+                                        control={control}
+                                        defaultValue={sei}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Input
+                                                    type="text"
+                                                    startDecorator={<AccountBalanceIcon />}
+                                                    placeholder="Sei"
+                                                    error={Boolean(errors.sei)}
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        var numSei = e.target.value;
+                                                        if (numSei.length > 0) numSei = comum.formatarSei(e.target.value);
+                                                        if (numSei) {
+                                                            field.onChange(numSei);
+                                                        }
+                                                    }}
+                                                />
+                                                {errors.sei && <FormHelperText color="danger">
+                                                    {errors.sei?.message}
+                                                </FormHelperText>}
+                                                {(!comum.validaDigitoSei(sei) && sei.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
+                            <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
+                                <FormControl>
+                                    <FormLabel>Tipo de alvará</FormLabel>
+                                    {/* <Select value={alvara_tipo_id}
+                                        id='id_alvara'
+                                        name='id_alvara'
+                                        placeholder='Tipo de alvara'
+                                        onChange={(_, v) => setAlvara_tipo_id(v ? v : '')}>
+                                        {(alvaraTipos && alvaraTipos.length > 0) && alvaraTipos.map((alvaraTipo) => (
+                                            <Option key={alvaraTipo.id} value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
                                         ))}
-                                    </tbody>
-                                </Table>
-                            </Grid>}
-                    </Card>
+                                    </Select> */}
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="alvara_tipo_id"
+                                        control={control}
+                                        defaultValue={alvara_tipo_id}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Select
+                                                    startDecorator={<AccountBalanceIcon />}
+                                                    placeholder="Tipo de Alvara"
+                                                    {...field}
+                                                    onChange={(_, value) => field.onChange(value)}
+                                                >
+                                                    {(alvaraTipos && alvaraTipos.length > 0) && alvaraTipos.map((alvaraTipo) => (
+                                                        <Option key={alvaraTipo.id} value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
+                                                    ))}
+                                                </Select>
+                                                {errors.alvara_tipo_id && <FormHelperText>
+                                                    {errors.alvara_tipo_id?.message}
+                                                </FormHelperText>}
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
+                            <Grid xs={4} sm={4} md={4} lg={2} xl={2}>
+                                <FormControl>
+                                    <FormLabel title='Tipo de Requerimento' sx={{ whiteSpace: 'nowrap', overflowX: 'hidden', textOverflow: 'ellipsis' }}>Tipo Req.</FormLabel>
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="tipo_requerimento"
+                                        control={control}
+                                        defaultValue={tipo_requerimento}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Select
+                                                    placeholder="Tipo de Requerimento"
+                                                    {...field}
+                                                    onChange={(_, value) => field.onChange(value)}
+                                                >
+                                                    <Option value={1}>IPTU</Option>
+                                                    <Option value={2}>INCRA</Option>
+                                                    <Option value={3}>Área Pública</Option>
+                                                </Select>
+                                                {errors.tipo_requerimento && <FormHelperText>
+                                                    {errors.tipo_requerimento?.message}
+                                                </FormHelperText>}
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
+                            <Grid xs={8} sm={8} md={8} lg={5} xl={5}>
+                                <FormControl>
+                                    <FormLabel>Requerimento</FormLabel>
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="requerimento"
+                                        control={control}
+                                        defaultValue={requerimento}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Input
+                                                    type="text"
+                                                    placeholder="Requerimento"
+                                                    error={Boolean(errors.requerimento)}
+                                                    {...field}
+                                                />
+                                                {errors.requerimento && <FormHelperText color="danger">
+                                                    {errors.requerimento?.message}
+                                                </FormHelperText>}
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
+                            <Grid xs={8} sm={8} md={8} lg={3} xl={3}>
+                                <FormControl>
+                                    <FormLabel>Pagamento</FormLabel>
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="pagamento"
+                                        control={control}
+                                        defaultValue={pagamento}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Select
+                                                    placeholder="Tipo de Requerimento"
+                                                    {...field}
+                                                    onChange={(_, value) => field.onChange(value)}
+                                                >
+                                                    <Option value={0}>SIM</Option>
+                                                    <Option value={1}>NÃO</Option>
+                                                    <Option value={2}>SIM-VINCULADO</Option>
+                                                    <Option value={3}>ISENTO-VINCULADO</Option>
+                                                </Select>
+                                                {errors.pagamento && <FormHelperText>
+                                                    {errors.pagamento?.message}
+                                                </FormHelperText>}
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
+                            <Grid xs={8} sm={8} md={8} lg={2} xl={2}>
+                                <FormControl>
+                                    <FormLabel>Prazo</FormLabel>
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="data_limiteSmul"
+                                        control={control}
+                                        defaultValue={new Date(data_limiteSmul.toLocaleString().split('T')[0])}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Input
+                                                    type="date"
+                                                    placeholder="Prazo"
+                                                    error={Boolean(errors.data_limiteSmul)}
+                                                    value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                                    onChange={(event) => {
+                                                        const newValue = new Date(event.target.value + 'T00:00:00Z');
+                                                        field.onChange(newValue);
+                                                    }}
+                                                    onBlur={field.onBlur}
+                                                    disabled={field.disabled}
+                                                    name={field.name}
+                                                />
+                                                {errors.data_limiteSmul && <FormHelperText color="danger">
+                                                    {errors.data_limiteSmul?.message}
+                                                </FormHelperText>}
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
+                            <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
+                                <FormControl>
+                                    <FormLabel>Num. Aprova Digital</FormLabel>
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="aprova_digital"
+                                        control={control}
+                                        defaultValue={aprova_digital}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Input
+                                                    type="text"
+                                                    startDecorator={<AccountBalanceIcon />}
+                                                    placeholder="Sei"
+                                                    error={Boolean(errors.aprova_digital)}
+                                                    {...field}
+                                                    onChange={e => {
+                                                        var aprova = e.target.value;
+                                                        if (aprova.length > 0) aprova = comum.formatarAprovaDigital(e.target.value);
+                                                        field.onChange(aprova && aprova);
+                                                    }}
+                                                />
+                                                {errors.aprova_digital && <FormHelperText color="danger">
+                                                    {errors.aprova_digital?.message}
+                                                </FormHelperText>}
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
+                            <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
+                                <FormControl>
+                                    <FormLabel>Num. Processo Físico</FormLabel>
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="processo_fisico"
+                                        control={control}
+                                        defaultValue={processo_fisico}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Input
+                                                    type="text"
+                                                    startDecorator={<AccountBalanceIcon />}
+                                                    placeholder="Sei"
+                                                    error={Boolean(errors.processo_fisico)}
+                                                    {...field}
+                                                    onChange={e => {
+                                                        var fisico = e.target.value;
+                                                        if (fisico.length > 0) fisico = comum.formatarFisico(e.target.value);
+                                                        field.onChange(fisico && fisico);
+                                                    }}
+                                                />
+                                                {errors.processo_fisico && <FormHelperText color="danger">
+                                                    {errors.processo_fisico?.message}
+                                                </FormHelperText>}
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
+                            <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
+                                <FormControl>
+                                    <FormLabel>Data Protocolo</FormLabel>
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="data_protocolo"
+                                        control={control}
+                                        defaultValue={new Date(data_protocolo.toLocaleString().split('T')[0])}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Input
+                                                    type="date"
+                                                    placeholder="Prazo"
+                                                    error={Boolean(errors.data_protocolo)}
+                                                    value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                                    onChange={(event) => {
+                                                        const newValue = new Date(event.target.value + 'T00:00:00Z');
+                                                        field.onChange(newValue);
+                                                    }}
+                                                    onBlur={field.onBlur}
+                                                    disabled={field.disabled}
+                                                    name={field.name}
+                                                />
+                                                {errors.data_protocolo && <FormHelperText color="danger">
+                                                    {errors.data_protocolo?.message}
+                                                </FormHelperText>}
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
+                            <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
+                                <FormControl>
+                                    <FormLabel>Envio Admissibilidade</FormLabel>
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="envio_admissibilidade"
+                                        control={control}
+                                        defaultValue={new Date(envio_admissibilidade.toLocaleString().split('T')[0])}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Input
+                                                    type="date"
+                                                    placeholder="Prazo"
+                                                    error={Boolean(errors.envio_admissibilidade)}
+                                                    value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                                    onChange={(event) => {
+                                                        const newValue = new Date(event.target.value + 'T00:00:00Z');
+                                                        field.onChange(newValue);
+                                                    }}
+                                                    onBlur={field.onBlur}
+                                                    disabled={field.disabled}
+                                                    name={field.name}
+                                                />
+                                                {errors.envio_admissibilidade && <FormHelperText color="danger">
+                                                    {errors.envio_admissibilidade?.message}
+                                                </FormHelperText>}
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
+                            <Grid xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <FormLabel>Observação</FormLabel>
+                                {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                    name="obs"
+                                    control={control}
+                                    defaultValue={obs}
+                                    render={({ field: { ref, ...field } }) => {
+                                        return (<>
+                                            <Textarea
+                                                placeholder="Digite aqui..."
+                                                minRows={2}
+                                                maxRows={4}
+                                                error={Boolean(errors.obs)}
+                                                {...field}
+                                            />
+                                            {errors.obs && <FormHelperText color="danger">
+                                                {errors.obs?.message}
+                                            </FormHelperText>}
+                                        </>);
+                                    }}
+                                />}
+                            </Grid>
 
-                </Grid>
-            </Grid>
-            <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/inicial`); }}>
-                    Cancelar
-                </Button>
-                <Button size="sm" variant="solid" onClick={enviaDados} disabled={!comum.validaDigitoSei(sei)}>
-                    Salvar
-                </Button>
+                        </Grid>
+                        <Grid xs={12} sm={12} md={12} lg={4} xl={4}>
+                            <Card component={Grid} container variant="soft" sx={{ p: 3 }}>
+                                <Grid xs={12} direction='column'>
+                                    <FormControl>
+                                        <FormLabel>Adicionar SQL</FormLabel>
+                                        <Input
+                                            id="num_sql_input"
+                                            name="num_sql_input"
+                                            placeholder="SQL"
+                                            type="text"
+                                            value={num_sql}
+                                            onChange={(e) => {
+                                                var numSql = e.target.value;
+                                                if (numSql.length > 0) numSql = comum.formatarSql(numSql);
+                                                setNum_sql(numSql && numSql);
+                                            }}
+                                            endDecorator={
+                                                <IconButton
+                                                    variant='solid'
+                                                    color='primary'
+                                                    onClick={handleAddSQL}
+                                                    disabled={!comum.validaDigitoSql(num_sql)}
+                                                >
+                                                    <Add />
+                                                </IconButton>
+                                            }
+                                        />
+                                        {/* {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                            name="num_sql"
+                                            control={control}
+                                            defaultValue={num_sql}
+                                            render={({ field: { ref, ...field } }) => {
+                                                return (<>
+                                                    <Input
+                                                        type="text"
+                                                        startDecorator={<AccountBalanceIcon />}
+                                                        placeholder="Sei"
+                                                        error={Boolean(errors.num_sql)}
+                                                        {...field}
+                                                        onChange={(e) => {
+                                                            var numSql = e.target.value;
+                                                            if (numSql.length > 0) numSql = comum.formatarSql(numSql);
+                                                            field.onChange(numSql && numSql);
+                                                        }}
+                                                    />
+                                                    {errors.num_sql && <FormHelperText color="danger">
+                                                        {errors.num_sql?.message}
+                                                    </FormHelperText>}
+                                                </>);
+                                            }}
+                                        />} */}
+                                        {(!comum.validaDigitoSql(num_sql) && num_sql.length > 13) && <FormLabel sx={{ color: 'red' }}>SQL inválido</FormLabel>}
+                                        <Button sx={{ mt: 1 }} onClick={() => setModalSqlSequencial(true)}>Adicionar SQL Sequencial</Button>
+                                    </FormControl>
+                                </Grid>
+                                <Grid xs={12} sx={{ display: addNumSQLStatusAlert ? 'block' : 'none' }}>
+                                    <Alert
+                                        variant="soft"
+                                        color={alertConfigs[addNumSQLStatus].color}
+                                        startDecorator={alertConfigs[addNumSQLStatus].icon}
+                                        endDecorator={
+                                            <Button size="sm" color={alertConfigs[addNumSQLStatus].color} onClick={() => setAddNumSQLStatusAlert(false)}>
+                                                Fechar
+                                            </Button>
+                                        }
+                                    >
+                                        {alertConfigs[addNumSQLStatus].message}
+                                    </Alert>
+                                </Grid>
+                                {nums_sql.length > 0 &&
+                                    <Grid xs={12} sx={{ maxHeight: '400px', width: '103%', overflowY: 'auto' }}>
+                                        <Table>
+                                            <thead style={{ width: '100%' }}>
+                                                <tr>
+                                                    <th colSpan={2} style={{ textAlign: 'center' }}>Nº SQL</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style={{ width: '100%', backgroundColor: '' }}>
+                                                {nums_sql?.map((num_sql, index) => (
+                                                    <tr key={index}>
+                                                        <td>{num_sql}</td>
+                                                        <td style={{ textAlign: 'right' }}>
+                                                            <IconButton
+                                                                color='danger'
+                                                                onClick={() => { removeRegister(index, num_sql) }}
+                                                            >
+                                                                <Cancel />
+                                                            </IconButton>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </Grid>}
+                            </Card>
+
+                        </Grid>
+                    </Grid>
+                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                        <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/inicial`); }}>
+                            Cancelar
+                        </Button>
+                        <Button size="sm" variant="solid" disabled={!isValid} type="submit">
+                            Salvar
+                        </Button>
+                    </Box>
+                </form>
             </Box>
-        </Box>
         </>
     )
 }
