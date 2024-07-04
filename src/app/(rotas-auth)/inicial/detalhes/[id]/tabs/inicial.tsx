@@ -29,8 +29,8 @@ import {
 } from "zod";
 
 const schema = object({
-    sei: string().min(2, { message: "O SEI deve ter pelo menos 2 letras" }),
-    alvara_tipo_id: string().min(1, { message: "Selecione um tipo de alvara" }),
+    sei: string().min(18, { message: "O SEI deve ter pelo menos 18 caracteres" }),
+    alvara_tipo_id: string({ message: "Selecione um tipo de alvara" }).min(1, { message: "Selecione um tipo de alvara" }),
     tipo_requerimento: number().min(1, { message: "Selecione um tipo de requerimento" }),
     requerimento: string().min(2, { message: "O requerimento deve ter pelo menos 2 letras" }),
     pagamento: number().min(1, { message: "Selecione o tipo de pagamento" }),
@@ -78,6 +78,8 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const {
         control,
         handleSubmit,
+        reset,
+        getValues,
         formState: { errors, isValid, isSubmitSuccessful }
     } = useForm<Schema>({
         mode: "onChange",
@@ -339,7 +341,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                             sx={{ mb: 2 }}
                         >
                             <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
-                                <FormControl>
+                                <FormControl error={Boolean(errors.sei) || !(comum.validaDigitoSei(getValues().sei))}>
                                     <FormLabel>SEI</FormLabel>
                                     {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                         name="sei"
@@ -350,8 +352,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                                 <Input
                                                     type="text"
                                                     startDecorator={<AccountBalanceIcon />}
-                                                    placeholder="Sei"
-                                                    error={Boolean(errors.sei)}
+                                                    placeholder="SEI"
                                                     {...field}
                                                     onChange={(e) => {
                                                         var numSei = e.target.value;
@@ -359,29 +360,23 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                                         if (numSei) {
                                                             field.onChange(numSei);
                                                         }
+
                                                     }}
                                                 />
-                                                {errors.sei && <FormHelperText color="danger">
+                                                {Boolean(errors.sei) && <FormHelperText>
                                                     {errors.sei?.message}
                                                 </FormHelperText>}
-                                                {(!comum.validaDigitoSei(sei) && sei.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
+                                                {!comum.validaDigitoSei(getValues().sei) && <FormHelperText>
+                                                    SEI Inválido
+                                                </FormHelperText>}
                                             </>);
                                         }}
                                     />}
                                 </FormControl>
                             </Grid>
                             <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
-                                <FormControl>
+                                <FormControl error={Boolean(errors.alvara_tipo_id)}>
                                     <FormLabel>Tipo de alvará</FormLabel>
-                                    {/* <Select value={alvara_tipo_id}
-                                        id='id_alvara'
-                                        name='id_alvara'
-                                        placeholder='Tipo de alvara'
-                                        onChange={(_, v) => setAlvara_tipo_id(v ? v : '')}>
-                                        {(alvaraTipos && alvaraTipos.length > 0) && alvaraTipos.map((alvaraTipo) => (
-                                            <Option key={alvaraTipo.id} value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
-                                        ))}
-                                    </Select> */}
                                     {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                         name="alvara_tipo_id"
                                         control={control}
@@ -432,7 +427,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                     />}
                                 </FormControl>
                             </Grid>
-                            <Grid xs={8} sm={8} md={8} lg={5} xl={5}>
+                            <Grid xs={8} sm={8} md={8} lg={4} xl={4}>
                                 <FormControl>
                                     <FormLabel>Requerimento</FormLabel>
                                     {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
@@ -455,7 +450,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                     />}
                                 </FormControl>
                             </Grid>
-                            <Grid xs={8} sm={8} md={8} lg={3} xl={3}>
+                            <Grid xs={12} sm={6} md={6} lg={2} xl={2}>
                                 <FormControl>
                                     <FormLabel>Pagamento</FormLabel>
                                     {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
@@ -482,7 +477,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                     />}
                                 </FormControl>
                             </Grid>
-                            <Grid xs={8} sm={8} md={8} lg={2} xl={2}>
+                            <Grid xs={12} sm={6} md={6} lg={4} xl={4}>
                                 <FormControl>
                                     <FormLabel>Prazo</FormLabel>
                                     {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
@@ -524,7 +519,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                                 <Input
                                                     type="text"
                                                     startDecorator={<AccountBalanceIcon />}
-                                                    placeholder="Sei"
+                                                    placeholder="Aprova Digital"
                                                     error={Boolean(errors.aprova_digital)}
                                                     {...field}
                                                     onChange={e => {
@@ -553,7 +548,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                                 <Input
                                                     type="text"
                                                     startDecorator={<AccountBalanceIcon />}
-                                                    placeholder="Sei"
+                                                    placeholder="Processo físico"
                                                     error={Boolean(errors.processo_fisico)}
                                                     {...field}
                                                     onChange={e => {

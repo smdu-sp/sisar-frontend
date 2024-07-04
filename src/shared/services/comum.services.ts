@@ -71,7 +71,7 @@ function validaDigitoSei(sei: string): boolean {
         soma = soma % 11;
         soma = soma === 1 || soma === 0 ? 0 : 11 - soma;
         valido = soma === digito;
-    }
+    } else return true;
     return valido;
 }
 
