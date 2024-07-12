@@ -3,7 +3,7 @@
 import Content from '@/components/Content';
 import CardAviso from '@/components/CardAviso';
 import * as React from 'react';
-import { Autocomplete, Button, Chip, ChipPropsColorOverrides, CircularProgress, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, IconButton, Input, Modal, ModalDialog, Skeleton, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, tabClasses } from '@mui/joy';
+import { Autocomplete, AutocompleteOption, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, IconButton, Input, Modal, ModalDialog, Skeleton, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
@@ -26,22 +26,20 @@ import Icon from '@mui/material/Icon';;
 import { Card, CardContent, Grid, Option, Select, Sheet, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import * as avisos from '@/shared/services/avisos.services'
-import { ICreateAvisos } from '@/shared/services/avisos.services'
 import CircleIcon from '@mui/icons-material/RadioButtonCheckedRounded';
 import Link from '@mui/joy/Link';
 import { AlertsContext } from '@/providers/alertsProvider';
-import 'dayjs/locale/pt-br'; // Importe a localização desejada
+import 'dayjs/locale/pt-br';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { date, z } from 'zod';
 import {
   infer as Infer,
   number,
-  object,
   string,
-  enum as zodEnum,
 } from "zod";
-import { MenuItem } from "@mui/material";
+import Reuniao from '@/components/Reuniao';
+
 
 const schemaAviso = z.object({
   titulo: string().min(1, { message: "O titulo deve ter pelo menos 1 letras" }),
@@ -50,11 +48,8 @@ const schemaAviso = z.object({
   tipo: number(),
   idInicial: number()
 });
-const schemaReniao = z.object({
 
-});
 type SchemaAviso = Infer<typeof schemaAviso>;
-type SchemaReuniao = Infer<typeof schemaReniao>;
 
 dayjs.locale('pt-br');
 
@@ -75,13 +70,10 @@ export default function Home() {
   const [open, setOpen] = React.useState<boolean>(false);
   const [openNotf, setOpenNotf] = React.useState<boolean>(false);
   const [inicial, setInicial] = useState('');
-  const [dataRemarcacao, setDataRemarcacao] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
-  const [motivo, setMotivo] = useState('');
   const [dados, setDados] = useState<IProcesso[]>([]);
   const [descricao, setDescricao] = useState('');
   const [titulo, setTitulo] = useState('');
   const [tipo, setTipo] = useState(0);
-  const [dadosTab, setDadosTab] = useState<any>([]);
   const [lemTab, setLemTab] = useState<boolean>(true);
   const [idInicial, setIdInicial] = useState(0);
   const [seiDados, setSei] = useState('');
@@ -90,11 +82,13 @@ export default function Home() {
   const [processosAvisos, setProcessosAvisos] = useState<inicialServices.IProcessosAvisos[]>([]);
   const [processoCard, setProcessoCard] = useState(0);
   const router = useRouter();
+  const [IdReuniao, setIdReuniao] = useState("");
   const { setAlert } = React.useContext(AlertsContext);
-
+  const [dataProps, setDataProps] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors, isValid, isSubmitted }
   } = useForm<SchemaAviso>({
     mode: "onChange",
@@ -200,23 +194,21 @@ export default function Home() {
   }
 
   const onSubmit = (data: SchemaAviso) => {
-    const criar ={
+    const criar = {
       titulo: data.titulo,
       descricao: data.descricao,
       data: data.dataAviso,
-      inicial_id: lemTab ? 1 : data.idInicial,
+      inicial_id: data.idInicial,
       tipo: data.tipo
     }
-
     avisos.criar(criar)
       .then((response: avisos.IAvisos) => {
         if (response) {
           setAlert('Aviso criado', 'Aviso criado com sucesso!', 'success', 3000, Check);
           busca(dataAviso.getMonth() + 1);
           setDataAviso(dataAviso);
-          setOpenNotf(false)
-          setTitulo('');
-          setDescricao('');
+          setOpenNotf(false);
+          reset();
         }
       })
   }
@@ -234,21 +226,6 @@ export default function Home() {
     },
     [searchParams]
   );
-
-  const reagendarReuniao = (id: string) => {
-    const dataRemak = new Date(dataRemarcacao.valueOf());
-    reunioes.reagendarReuniao(id, dataRemak, motivo).then((response) => {
-      if (response) {
-        setOpen(false);
-        setMotivo('');
-        setDias([]);
-        buscar_data();
-        setDataRemarcacao(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
-        busca(new Date(dataRemarcacao.valueOf()).toLocaleDateString('pt-BR').split('/')[1]);
-        setAlert('Reagendação feita', 'Reunião reagendada com sucesso!', 'success', 3000, Check);
-      }
-    })
-  }
 
   const buscaIniciais = async () => {
     inicialServices.buscarTudo(1, 10)
@@ -324,6 +301,7 @@ export default function Home() {
               defaultValue={initialValue}
               onMonthChange={(newDate) => {
                 busca(newDate.month() + 1);
+                setDataProps(newDate);
               }}
               renderLoading={() => <DayCalendarSkeleton />}
               value={data}
@@ -435,117 +413,6 @@ export default function Home() {
             </IconButton>
             : null
           }
-          <Modal open={openNotf} onClose={() => setOpenNotf(false)}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-
-              <ModalDialog>
-                <DialogTitle>Adicionar Lembrete</DialogTitle>
-                <DialogContent>Preencha as informações do lembrete</DialogContent>
-                <Stack spacing={2}>
-                  <FormControl>
-                    <FormLabel>Titulo</FormLabel>
-                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
-                      name="titulo"
-                      control={control}
-                      defaultValue={titulo}
-                      render={({ field: { ref, ...field } }) => {
-                        return (<>
-                          <Input
-                            type="text"
-                            placeholder="Titulo"
-                            error={Boolean(errors.titulo)}
-                            {...field}
-                          />
-                          {errors.titulo && <FormHelperText color="danger">
-                            {errors.titulo?.message}
-                          </FormHelperText>}
-                        </>);
-                      }}
-                    />}
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>Descrição</FormLabel>
-                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
-                      name="descricao"
-                      control={control}
-                      defaultValue={descricao}
-                      render={({ field: { ref, ...field } }) => {
-                        return (<>
-                          <Textarea
-                            minRows={2}
-                            placeholder="Descrição"
-                            error={Boolean(errors.descricao)}
-                            {...field}
-                          />
-                          {errors.descricao && <FormHelperText color="danger">
-                            {errors.descricao?.message}
-                          </FormHelperText>}
-                        </>);
-                      }}
-                    />}
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>Data</FormLabel>
-                    <Input type='date' required value={dataAviso.toISOString().split('T')[0]} onChange={(e) => { setDataAviso(new Date(e.target.value)) }} />
-                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
-                                name="dataAviso"
-                                control={control}
-                                defaultValue={new Date(dataAviso.toLocaleString().split('T')[0])}
-                                render={({ field: { ref, ...field } }) => {
-                                    return (<>
-                                        <Input
-                                            type="date"
-                                            placeholder="Data Lembrete"
-                                            error={Boolean(errors.dataAviso)}
-                                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
-                                            onChange={(event) => {
-                                                const newValue = new Date(event.target.value + 'T00:00:00Z');
-                                                field.onChange(newValue);
-                                            }}
-                                            onBlur={field.onBlur}
-                                            disabled={field.disabled}
-                                            name={field.name}
-                                        />
-                                        {errors.dataAviso && <FormHelperText color="danger">
-                                            {errors.dataAviso?.message}
-                                        </FormHelperText>}
-                                    </>);
-                                }}
-                            />}
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>Tipo</FormLabel>
-                    <Select required value={tipo} onChange={(_, v) => { setTipo(v ? v : 0) }}>
-                      <Option value={0}>Geral</Option>
-                      <Option value={1}>Pessoal</Option>
-                    </Select>
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>Processos</FormLabel>
-                    {
-                      lemTab ?
-                        <Autocomplete
-                          key={processoCard}
-                          required
-                          placeholder="Selecione"
-                          options={options}
-                          value={options.find((value: any) => value.value == processoCard)}
-                          sx={{ width: 300 }}
-                        />
-                        :
-                        <Input type='text' sx={{ color: 'grey' }} required readOnly value={seiDados} />
-                    }
-                  </FormControl>
-                  <FormControl sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gap: 2 }}>
-                    <Button variant="soft" color='danger' onClick={() => setOpenNotf(false)}>Cancelar</Button>
-                    <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
-                      {isSubmitted ? <CircularProgress variant="solid" /> : "Salvar"}
-                    </Button>
-                  </FormControl>
-                </Stack>
-              </ModalDialog>
-            </form>
-          </Modal>
           <Sheet sx={{
             bgcolor: 'transparent',
             display: 'flex',
@@ -613,7 +480,7 @@ export default function Home() {
                             <Chip
                               component={Link}
                               underline='none'
-                              onClick={() => { setOpen(true); setInicial(data.inicial.sei); }}
+                              onClick={() => { setOpen(true); setInicial(data.inicial.sei); setIdReuniao(data.id) }}
                               variant="outlined"
                               color="success"
                               size="sm"
@@ -622,33 +489,7 @@ export default function Home() {
                               Reagendar
                             </Chip>
                             : null}
-                          <Modal open={open} onClose={() => setOpen(false)}>
-                            <ModalDialog>
-                              <DialogTitle>Reagendar Reunião</DialogTitle>
-                              <DialogContent>{inicial}</DialogContent>
-                              <form
-                              >
-                                <Stack spacing={2}>
-                                  <FormControl>
-                                    <FormLabel>Data Reunião</FormLabel>
-                                    <Chip color='primary' variant='soft' sx={{ fontSize: '19px', color: 'neutral.softActiveColor' }}>{dataCard}</Chip>
-                                  </FormControl>
 
-                                  <FormControl>
-                                    <FormLabel>Nova data</FormLabel>
-                                    <Input required type='date' value={dataRemarcacao.format('YYYY-MM-DD')} onChange={(e) => {
-                                      setDataRemarcacao(dayjs(e.target.value));
-                                    }} />
-                                  </FormControl>
-                                  <FormControl>
-                                    <FormLabel>Motivo</FormLabel>
-                                    <Textarea required minRows={2} maxRows={5} value={motivo} onChange={(e) => setMotivo(e.target.value)} />
-                                  </FormControl>
-                                  <Button onClick={() => reagendarReuniao(data.id)}>Alterar</Button>
-                                </Stack>
-                              </form>
-                            </ModalDialog>
-                          </Modal>
                         </CardContent>
                       </Card>
                     </Grid>
@@ -727,6 +568,168 @@ export default function Home() {
           /> : null}
         </TabPanel>
       </Tabs>
+
+      <Reuniao
+        buscar={busca}
+        buscarData={buscar_data}
+        data={dataCard}
+        open={open}
+        setOpen={setOpen}
+        id={IdReuniao}
+        dataProps={dataProps}
+      />
+
+      {/* Modal de Lembretes */}
+      <Modal open={openNotf} onClose={() => setOpenNotf(false)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <ModalDialog>
+            <DialogTitle>Adicionar Lembrete</DialogTitle>
+            <DialogContent>Preencha as informações do lembrete</DialogContent>
+            <Stack spacing={2}>
+              <FormControl>
+                <FormLabel>Titulo</FormLabel>
+                {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                  name="titulo"
+                  control={control}
+                  defaultValue={titulo}
+                  render={({ field: { ref, ...field } }) => {
+                    return (<>
+                      <Input
+                        type="text"
+                        placeholder="Titulo"
+                        error={Boolean(errors.titulo)}
+                        {...field}
+                      />
+                      {errors.titulo && <FormHelperText color="danger">
+                        {errors.titulo?.message}
+                      </FormHelperText>}
+                    </>);
+                  }}
+                />}
+              </FormControl>
+              <FormControl>
+                <FormLabel>Descrição</FormLabel>
+                {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                  name="descricao"
+                  control={control}
+                  defaultValue={descricao}
+                  render={({ field: { ref, ...field } }) => {
+                    return (<>
+                      <Textarea
+                        minRows={2}
+                        placeholder="Descrição"
+                        error={Boolean(errors.descricao)}
+                        {...field}
+                      />
+                      {errors.descricao && <FormHelperText color="danger">
+                        {errors.descricao?.message}
+                      </FormHelperText>}
+                    </>);
+                  }}
+                />}
+              </FormControl>
+              <FormControl>
+                <FormLabel>Data</FormLabel>
+                {/* <Input type='date' required value={dataAviso.toISOString().split('T')[0]} onChange={(e) => { setDataAviso(new Date(e.target.value)) }} /> */}
+                {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                  name="dataAviso"
+                  control={control}
+                  defaultValue={new Date(dataAviso.toLocaleString().split('T')[0])}
+                  render={({ field: { ref, ...field } }) => {
+                    return (<>
+                      <Input
+                        type="date"
+                        placeholder="Data Lembrete"
+                        error={Boolean(errors.dataAviso)}
+                        value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                        onChange={(event) => {
+                          const newValue = new Date(event.target.value + 'T00:00:00Z');
+                          field.onChange(newValue);
+                        }}
+                        onBlur={field.onBlur}
+                        disabled={field.disabled}
+                        name={field.name}
+                      />
+                      {errors.dataAviso && <FormHelperText color="danger">
+                        {errors.dataAviso?.message}
+                      </FormHelperText>}
+                    </>);
+                  }}
+                />}
+              </FormControl>
+              <FormControl>
+                <FormLabel>Tipo</FormLabel>
+                {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                  name="tipo"
+                  control={control}
+                  defaultValue={tipo}
+                  render={({ field: { ref, ...field } }) => {
+                    return (<>
+                      <Select
+                        placeholder="Tipo"
+                        {...field}
+                        onChange={(_, value) => field.onChange(value)}
+                      >
+                        <Option value={0}>Geral</Option>
+                        <Option value={1}>Pessoal</Option>
+                      </Select>
+                      {errors.tipo && <FormHelperText>
+                        {errors.tipo?.message}
+                      </FormHelperText>}
+                    </>);
+                  }}
+                />}
+              </FormControl>
+              <FormControl>
+                <FormLabel>Processos</FormLabel>
+                {
+                  lemTab ?
+                      <Controller
+                        name="idInicial"
+                        control={control}
+                        defaultValue={idInicial}
+                        render={({ field }) => (
+                          <>
+                            <Autocomplete
+                              options={processosAvisos && processosAvisos.length > 0 ? processosAvisos : []}
+                              getOptionLabel={(option) => option.sei!}
+                              renderOption={(props, option) => (
+                                <AutocompleteOption {...props} key={option.id} value={option.id}>
+                                  {option.sei}
+                                </AutocompleteOption>
+                              )}
+                              placeholder="Unidades"
+                              filterOptions={(options, { inputValue }) =>
+                                options.filter(
+                                  (option) =>
+                                    option.sei?.toLowerCase().includes(inputValue.toLowerCase())
+                                )
+                              }
+                              noOptionsText="Nenhuma Unidades encontrada"
+                              onChange={(event, newValue) => {
+                                field.onChange(newValue ? newValue.id : '');
+                                console.log(newValue);
+                          
+                              }}
+                              onBlur={field.onBlur}
+                            />
+                          </>
+                        )}
+                      />
+                      :
+                      <Input type='text' sx={{ color: 'grey' }} required readOnly value={seiDados} />
+                }
+                    </FormControl>
+                <FormControl sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gap: 2 }}>
+                  <Button variant="soft" color='danger' onClick={() => setOpenNotf(false)}>Cancelar</Button>
+                  <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
+                    {"Salvar"}
+                  </Button>
+                </FormControl>
+            </Stack>
+          </ModalDialog>
+        </form>
+      </Modal>
     </Content>
   );
 }

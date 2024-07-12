@@ -21,8 +21,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     infer as Infer,
-    bigint,
-    boolean,
+    z,
     date,
     number,
     object,
@@ -84,7 +83,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
 
     const onSubmit = (data: Schema) => {
         console.log(data);
-        
+
         if (admissibilidade) {
             admissibilidadeServices.atualizarId(admissibilidade.inicial_id, { ...data })
                 .then(() => {
@@ -126,38 +125,14 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                             <FormControl sx={{ flexGrow: 1 }}>
                                 <FormLabel>Processo Sei</FormLabel>
                                 <Input value={processoSei} onChange={(e) => {
-                                var sehab = e.target.value;
-                                if (sehab.length > 0) sehab = comum.formatarSei(e.target.value);
-                                setProcessoSei(sehab && sehab);
-                            }}
-                                required={interface_sehab}
-                                error={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18}
-                                title={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18 ? 'SEI inválido' : ''}
-                            />
-                                {/* {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
-                                    name="processoSei"
-                                    control={control}
-                                    defaultValue={processoSei}
-                                    render={({ field: { ref, ...field } }) => {
-                                        return (<>
-                                            <Input
-                                                type="text"
-                                                placeholder="Sei"
-                                                error={Boolean(errors.processoSei)}
-                                                {...field}
-                                                onChange={(e) => {
-                                                    var sehab = e.target.value;
-                                                    if (sehab.length > 0) sehab = comum.formatarSei(e.target.value);
-                                                    field.onChange(sehab && sehab);
-                                                }}
-                                            />
-                                            {errors.processoSei && <FormHelperText color="danger">
-                                                {errors.processoSei?.message}
-                                            </FormHelperText>}
-                                            {(!comum.validaDigitoSei(processoSei) && processoSei.length > 18) && <FormLabel sx={{ color: 'red' }}>SEI inválido</FormLabel>}
-                                        </>);
-                                    }}
-                                />} */}
+                                    var sehab = e.target.value;
+                                    if (sehab.length > 0) sehab = comum.formatarSei(e.target.value);
+                                    setProcessoSei(sehab && sehab);
+                                }}
+                                    required={interface_sehab}
+                                    error={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18}
+                                    title={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18 ? 'SEI inválido' : ''}
+                                />
                             </FormControl>
                         </Grid>
                     </Grid>
@@ -255,7 +230,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                                             }
                                             noOptionsText="Nenhuma Unidades encontrada"
                                             onChange={(event, newValue) => {
-                                                field.onChange(newValue ? newValue.id : ''); // Assuming you want to update the form value with the id
+                                                field.onChange(newValue ? newValue.id : '');
                                             }}
                                             onBlur={field.onBlur}
                                         />
@@ -297,37 +272,6 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                             />}
                         </FormControl>
                     </Grid>
-                    {/* <Grid xs={12} lg={6}>
-                        <FormControl>
-                            <FormLabel>Reunião GRAPOEM</FormLabel>
-                            <Input type="date" value={reuniao.toISOString().split('T')[0]} onChange={(e) => setReuniao(new Date(e.target.value))} />
-                            {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
-                                name="reuniao"
-                                control={control}
-                                defaultValue={new Date(reuniao.toLocaleString().split('T')[0])}
-                                render={({ field: { ref, ...field } }) => {
-                                    return (<>
-                                        <Input
-                                            type="date"
-                                            placeholder="Prazo"
-                                            error={Boolean(errors.reuniao)}
-                                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
-                                            onChange={(event) => {
-                                                const newValue = new Date(event.target.value + 'T00:00:00Z');
-                                                field.onChange(newValue);
-                                            }}
-                                            onBlur={field.onBlur}
-                                            disabled={field.disabled}
-                                            name={field.name}
-                                        />
-                                        {errors.reuniao && <FormHelperText color="danger">
-                                            {errors.reuniao?.message}
-                                        </FormHelperText>}
-                                    </>);
-                                }}
-                            />}
-                        </FormControl>
-                    </Grid> */}
                 </Grid>
                 <Grid xs={12} container sx={{ display: tipo_processo === 1 ? 'none' : 'block' }}>
                     <Grid xs={12}><Divider><Chip color="primary">Interfaces</Chip></Divider></Grid>
