@@ -217,7 +217,7 @@ function SearchUnidades() {
           <Typography level="title-lg">{title}</Typography>
           <Typography sx={{ mt: 1, mb: 2 }} level="title-md">{message}</Typography>
           <Stack direction="row" spacing={1}>
-            <Button variant="solid" color="primary" onClick={() => (atualizarStatus(mensagemStatus), setOpen(false))}>
+            <Button variant="solid" color="primary" onClick={() => (atualizarStatus(mensagemStatus), setOpenComfirm(false))}>
               Sim
             </Button>
             <Button
@@ -300,7 +300,7 @@ function SearchUnidades() {
                 <td onClick={() => {setOpen(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.nome}</td>
                 <td onClick={() => {setOpen(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.sigla}</td>
                 <td onClick={() => {setOpen(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.status == 1 ? "Ativo" : "Inativo"}</td>
-                <td onClick={() => {setOpen(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>
+                <td>
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     {!subprefeitura.status ? (
                       <Tooltip title="Ativar Unidade" arrow placement="top">
