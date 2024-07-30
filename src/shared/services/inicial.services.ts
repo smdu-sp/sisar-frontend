@@ -33,6 +33,8 @@ export interface IInicial {
     pagamento: number
     obs?: string
     status: number
+    requalifica_rapido: boolean
+    associado_reforma: boolean
     data_limiteSmul: Date
     iniciais_sqls?: IInicial_Sqls[]
     interfaces?: IInterfaces
@@ -117,6 +119,8 @@ export interface ICreateInicial {
     obs?: string
     nums_sql?: string[]
     status?: number
+    requalifica_rapido?: boolean
+    associado_reforma?: boolean
     interfaces?: ICreateInterfaces
     data_limiteSmul: Date
 }

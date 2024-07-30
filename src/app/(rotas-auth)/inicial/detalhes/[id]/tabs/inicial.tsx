@@ -3,7 +3,7 @@
 import * as inicialServices from "@/shared/services/inicial.services";
 import { IInicial } from "@/shared/services/inicial.services";
 import { Add, Cancel, Check, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
-import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, Box, ModalDialog, DialogTitle, DialogContent, Stack, List, ListItem, Skeleton, FormHelperText } from "@mui/joy"
+import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, Box, ModalDialog, DialogTitle, DialogContent, Stack, List, ListItem, Skeleton, FormHelperText, Checkbox } from "@mui/joy"
 import { OverridableStringUnion } from '@mui/types';
 import { ReactNode, useContext, useEffect, useState } from "react";
 import { IAlvaraTipo } from "@/shared/services/alvara-tipo.services";
@@ -13,34 +13,35 @@ import * as comum from "@/shared/services/comum.services";
 import { AlertsContext } from "@/providers/alertsProvider";
 import * as React from 'react';
 import Textarea from '@mui/joy/Textarea';
-import Typography from '@mui/joy/Typography';
 import { Modal } from "@mui/material";
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     infer as Infer,
-    bigint,
     boolean,
     date,
     number,
     object,
     string,
+    z,
 } from "zod";
 
 const schema = object({
     sei: string().min(18, { message: "O SEI deve ter pelo menos 18 caracteres" }),
     alvara_tipo_id: string({ message: "Selecione um tipo de alvara" }).min(1, { message: "Selecione um tipo de alvara" }),
     tipo_requerimento: number().min(1, { message: "Selecione um tipo de requerimento" }),
-    requerimento: string().min(2, { message: "O requerimento deve ter pelo menos 2 letras" }),
+    requerimento: string().min(1, { message: "Tamanho mínimo é 1" }).max(3, { message: "Tamanho máximo é 3" }),
     pagamento: number().min(1, { message: "Selecione o tipo de pagamento" }),
     data_limiteSmul: date(),
-    aprova_digital: string().min(2, { message: "O requerimento deve ter pelo menos 2 letras" }),
-    processo_fisico: string().min(2, { message: "O processo fisico deve ter pelo menos 2 letras" }),
+    aprova_digital: string().min(2, { message: "O requerimento deve ter pelo menos 2 letras" }).optional().or(z.literal('')),
+    processo_fisico: string().min(2, { message: "O processo fisico deve ter pelo menos 2 letras" }).optional().or(z.literal('')),
     data_protocolo: date(),
     envio_admissibilidade: date(),
     obs: string(),
     decreto: boolean(),
+    requalifica_rapido: boolean(),
+    associado_reforma: boolean(),
 });
 type Schema = Infer<typeof schema>;
 
@@ -70,7 +71,9 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
     const [data_protocolo, setData_protocolo] = useState<Date>(new Date());
     const [obs, setObs] = useState<string>('');
     const [data_limiteSmul, setData_limiteSmul] = useState<Date>(new Date())
-    const [pagamento, setPagamento] = useState(0);
+    const [pagamento, setPagamento] = useState(1);
+    const [requalifica_rapido, setRequalifica_rapido] = useState(false);
+    const [associado_reforma, setAssociado_reforma] = useState(false);
     const [test, setTeste] = useState(false);
     const decreto = true;
     const { setAlert } = useContext(AlertsContext);
@@ -96,7 +99,9 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
             data_protocolo,
             envio_admissibilidade,
             obs,
-            decreto
+            decreto,
+            requalifica_rapido,
+            associado_reforma
         }
     });
 
@@ -137,6 +142,9 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
             if (inicial.iniciais_sqls && inicial.iniciais_sqls.length > 0) {
                 setNums_sql(inicial.iniciais_sqls.map((sql) => sql.sql));
             }
+            setPagamento(inicial.pagamento);
+            setAssociado_reforma(inicial.associado_reforma);
+            setRequalifica_rapido(inicial.requalifica_rapido);
         }
     }
 
@@ -464,10 +472,10 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                                     {...field}
                                                     onChange={(_, value) => field.onChange(value)}
                                                 >
-                                                    <Option value={0}>SIM</Option>
-                                                    <Option value={1}>NÃO</Option>
-                                                    <Option value={2}>SIM-VINCULADO</Option>
-                                                    <Option value={3}>ISENTO-VINCULADO</Option>
+                                                    <Option value={1}>SIM</Option>
+                                                    <Option value={2}>NÃO</Option>
+                                                    <Option value={3}>SIM-VINCULADO</Option>
+                                                    <Option value={4}>ISENTO-VINCULADO</Option>
                                                 </Select>
                                                 {errors.pagamento && <FormHelperText>
                                                     {errors.pagamento?.message}
@@ -514,6 +522,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                         name="aprova_digital"
                                         control={control}
                                         defaultValue={aprova_digital}
+                                        rules={{ required: false }}
                                         render={({ field: { ref, ...field } }) => {
                                             return (<>
                                                 <Input
@@ -543,6 +552,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                         name="processo_fisico"
                                         control={control}
                                         defaultValue={processo_fisico}
+                                        rules={{ required: false }}
                                         render={({ field: { ref, ...field } }) => {
                                             return (<>
                                                 <Input
@@ -551,6 +561,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                                     placeholder="Processo físico"
                                                     error={Boolean(errors.processo_fisico)}
                                                     {...field}
+                                                    required={false}
                                                     onChange={e => {
                                                         var fisico = e.target.value;
                                                         if (fisico.length > 0) fisico = comum.formatarFisico(e.target.value);
@@ -625,6 +636,52 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                     />}
                                 </FormControl>
                             </Grid>
+                            <Grid xs={12} sm={12} md={6} lg={6} xl={6}>
+                                <FormControl>
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="requalifica_rapido"
+                                        control={control}
+                                        defaultValue={false}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Checkbox
+                                                    label="Requalifica rápido"
+                                                    checked={field.value}
+                                                    onChange={(e) => {
+                                                        field.onChange(e.target.checked);
+                                                    }}    
+                                                    onBlur={field.onBlur}
+                                                    disabled={field.disabled}
+                                                    name={field.name}                                           
+                                                />
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
+                            <Grid xs={12} sm={12} md={6} lg={6} xl={6}>
+                                <FormControl>
+                                    {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                                        name="associado_reforma"
+                                        control={control}
+                                        defaultValue={false}
+                                        render={({ field: { ref, ...field } }) => {
+                                            return (<>
+                                                <Checkbox
+                                                    label="Associado a reforma"
+                                                    checked={field.value}
+                                                    onChange={(e) => {
+                                                        field.onChange(e.target.checked);
+                                                    }}    
+                                                    onBlur={field.onBlur}
+                                                    disabled={field.disabled}
+                                                    name={field.name}                                           
+                                                />
+                                            </>);
+                                        }}
+                                    />}
+                                </FormControl>
+                            </Grid>
                             <Grid xs={12} sm={12} md={12} lg={12} xl={12}>
                                 <FormLabel>Observação</FormLabel>
                                 {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
@@ -647,7 +704,6 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                     }}
                                 />}
                             </Grid>
-
                         </Grid>
                         <Grid xs={12} sm={12} md={12} lg={4} xl={4}>
                             <Card component={Grid} container variant="soft" sx={{ p: 3 }}>

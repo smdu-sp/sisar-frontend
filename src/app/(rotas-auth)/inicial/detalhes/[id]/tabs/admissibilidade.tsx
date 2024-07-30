@@ -115,24 +115,10 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
             <Box sx={{ p: 2 }}>
                 {admissibilidade && (<>
                     <Grid container xs={12} spacing={2} sx={{ p: 2, mb: 2 }}>
-                        <Grid xs={12} lg={6}>
+                        <Grid xs={12} lg={12}>
                             <FormControl>
                                 <FormLabel>Processo</FormLabel>
                                 <Input value={inicial?.sei} readOnly />
-                            </FormControl>
-                        </Grid>
-                        <Grid xs={12} lg={6}>
-                            <FormControl sx={{ flexGrow: 1 }}>
-                                <FormLabel>Processo Sei</FormLabel>
-                                <Input value={processoSei} onChange={(e) => {
-                                    var sehab = e.target.value;
-                                    if (sehab.length > 0) sehab = comum.formatarSei(e.target.value);
-                                    setProcessoSei(sehab && sehab);
-                                }}
-                                    required={interface_sehab}
-                                    error={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18}
-                                    title={interface_sehab && !comum.validaDigitoSei(num_sehab) && num_sehab.length > 18 ? 'SEI inválido' : ''}
-                                />
                             </FormControl>
                         </Grid>
                     </Grid>
