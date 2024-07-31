@@ -51,10 +51,10 @@ export default function ContentTabs({ inicial, funcionarios, novoProcesso }: { i
             })
     }
 
-    const options = processosAvisos.map((processo) => ({
+    const options = processosAvisos && processosAvisos.length > 0 ? processosAvisos.map((processo) => ({
         label: processo.sei,
         value: parseInt(processo.id)
-    }));
+    })) : [];
 
     return (
         <>

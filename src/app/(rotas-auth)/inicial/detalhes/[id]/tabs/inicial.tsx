@@ -314,7 +314,7 @@ export default function InicialTab({ inicial, novoProcesso }: { inicial?: IInici
                                 </tr>
                             </thead>
                             <tbody>
-                                {sqlSequencial.map((sql, index) => {
+                                {sqlSequencial && sqlSequencial.length > 0 && sqlSequencial.map((sql, index) => {
                                     return (
                                         <tr key={index}>
                                             <td>{sql}</td>
@@ -785,7 +785,7 @@ export default function InicialTab({ inicial, novoProcesso }: { inicial?: IInici
                                                 </tr>
                                             </thead>
                                             <tbody style={{ width: '100%', backgroundColor: '' }}>
-                                                {nums_sql?.map((num_sql, index) => (
+                                                {nums_sql && nums_sql.length > 0 && nums_sql?.map((num_sql, index) => (
                                                     <tr key={index}>
                                                         <td>{num_sql}</td>
                                                         <td style={{ textAlign: 'right' }}>

@@ -366,7 +366,7 @@ export default function UsuarioDetalhes(props: any) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {usuario.usuarios.map((item, index) => item.substituto && (
+                                            {usuario && usuario.usuarios && usuario.usuarios.map((item, index) => item.substituto && (
                                                 <tr key={index}>
                                                     <td>{item.substituto.nome}</td>
                                                     <td style={{ textAlign: 'right' }}>
