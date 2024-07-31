@@ -29,7 +29,7 @@ import {
 
 const schema = object({
     sei: string().min(18, { message: "O SEI deve ter pelo menos 18 caracteres" }),
-    alvara_tipo_id: string({ message: "Selecione um tipo de alvara" }).min(0, { message: "Selecione um tipo de alvara" }),
+    alvara_tipo_id: string({ message: "Selecione um tipo de alvara" }).min(1, { message: "Selecione um tipo de alvara" }),
     tipo_requerimento: number().min(1, { message: "Selecione um tipo de requerimento" }),
     requerimento: string().min(1, { message: "Tamanho mínimo é 1" }).max(3, { message: "Tamanho máximo é 3" }),
     pagamento: number().min(1, { message: "Selecione o tipo de pagamento" }),
@@ -45,7 +45,7 @@ const schema = object({
 });
 type Schema = Infer<typeof schema>;
 
-export default function InicialTab({ inicial }: { inicial?: IInicial }) {
+export default function InicialTab({ inicial, novoProcesso }: { inicial?: IInicial , novoProcesso: string | null } ) {
     const router = useRouter();
     const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
     const [num_sql, setNum_sql] = useState<string>('');
@@ -207,6 +207,10 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
 
     useEffect(() => {
         buscarDados();
+        if (novoProcesso) {
+            console.log(novoProcesso);
+            setSei(comum.formatarSei(novoProcesso));
+        }
         alvaraTiposService.listaCompleta().then((result: IAlvaraTipo[]) => {
             if (result) {
                 if (result instanceof Error) {
@@ -330,10 +334,10 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                             </tfoot>
                         </Table>
                     </Stack>
-                        <Stack sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', gap: 1 }}>
-                            <Button onClick={() => { limparSequencial() }} sx={{ flexGrow: 1 }} color="danger">Limpar Lista</Button>
-                            <Button onClick={() => { adicionarListaSql() }} sx={{ flexGrow: 1 }} color="success">Adicionar Lista</Button>
-                        </Stack></>}
+                    <Stack sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', gap: 1 }}>
+                        <Button onClick={() => { limparSequencial() }} sx={{ flexGrow: 1 }} color="danger">Limpar Lista</Button>
+                        <Button onClick={() => { adicionarListaSql() }} sx={{ flexGrow: 1 }} color="success">Adicionar Lista</Button>
+                    </Stack></>}
                 </ModalDialog>
             </Modal>
             <Box sx={{ p: 2 }}>
@@ -370,6 +374,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                                         }
 
                                                     }}
+                                                    readOnly={(novoProcesso && comum.validaDigitoSei(novoProcesso)) || false}
                                                 />
                                                 {Boolean(errors.sei) && <FormHelperText>
                                                     {errors.sei?.message}

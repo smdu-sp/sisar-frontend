@@ -32,6 +32,7 @@ import { AlertsContext } from '@/providers/alertsProvider';
 import 'dayjs/locale/pt-br';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as comum from "@/shared/services/comum.services";
 import { date, z } from 'zod';
 import {
   infer as Infer,
@@ -228,7 +229,7 @@ export default function Home() {
   );
 
   const buscaIniciais = async () => {
-    inicialServices.buscarTudo(1, 10)
+    inicialServices.buscarTudo(pagina, limite)
       .then((response: IPaginatedInicial) => {
         setTotal(response.total);
         setPagina(response.pagina);
@@ -533,7 +534,7 @@ export default function Home() {
                       {inicial.status > 2 ? status[0].label : status[inicial.status].label}
                     </Chip>
                   </td>
-                  <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>{inicial.sei}</td>
+                  <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>{comum.formatarSei(inicial.sei)}</td>
                   <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>{inicial.tipo_requerimento}</td>
                   <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>{inicial.requerimento}</td>
                   <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}`)}>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>

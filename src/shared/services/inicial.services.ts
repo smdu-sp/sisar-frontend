@@ -134,12 +134,9 @@ export interface IPaginatedInicial {
 
 const baseURL = 'http://localhost:3000/';
 
-const buscarTudo = async (
-    pagina: number,
-    limite: number
-): Promise<IPaginatedInicial> => {
+async function buscarTudo (pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginatedInicial> {
     const session = await getServerSession(authOptions);
-    const iniciais = await fetch(`${baseURL}inicial/buscar-tudo?pagina=${pagina}&limite=${limite}`, {
+    const subprefeituras = await fetch(`${baseURL}inicial/buscar-tudo?pagina=${pagina}&limite=${limite}&busca=${busca}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -149,7 +146,7 @@ const buscarTudo = async (
         if (response.status === 401) signOut();
         return response.json();
     })
-    return iniciais;
+    return subprefeituras;
 }
 
 async function buscarPorMesAno(mes: string, ano: string){
@@ -327,6 +324,22 @@ const processosAvisos = async (): Promise<IProcessosAvisos[]> => {
     return iniciais;
 }
 
+const verificaSei = async (sei: string): Promise<IInicial | null> => {
+    sei = sei.replaceAll(/\D/g, '');
+    const session = await getServerSession(authOptions);
+    const inicial = await fetch(`${baseURL}inicial/verifica-sei/${sei}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        // if (response.status === 401) Logout();
+        return response.json();
+    })
+    return inicial;
+}
+
 export {
     atualizar,
     atualizarDistribuicao,
@@ -338,5 +351,6 @@ export {
     buscarPorMesAno,
     processosAvisos,
     mudarTecnicoResponsavel,
-    mudarAdministrativoResponsável
+    mudarAdministrativoResponsável,
+    verificaSei
 }

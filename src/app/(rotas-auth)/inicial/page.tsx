@@ -1,7 +1,7 @@
 'use client'
 
 import Content from '@/components/Content';
-import { Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, IconButton, Tab, TabList, TabPanel, Table, Tabs, tabClasses } from '@mui/joy';
+import { FormLabel, Input, Modal, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, IconButton, ModalDialog, Stack, Tab, TabList, TabPanel, Table, Tabs, tabClasses, FormHelperText } from '@mui/joy';
 import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Add } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
+import * as comum from "@/shared/services/comum.services";
 
 export default function Inicial() {
   const searchParams = useSearchParams();
@@ -17,9 +18,13 @@ export default function Inicial() {
   const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
+  const [modalProcessoNovo, setModalProcessoNovo] = useState(false);
+  const [seiNovo, setSeiNovo] = useState('');
+  const [processoExistente, setProcessoExistente] = useState<IInicial>();
   const router = useRouter();
 
   useEffect(() => {
+    console.log({ pagina, limite });
     buscaIniciais();
   }, [pagina, limite]);
 
@@ -34,13 +39,22 @@ export default function Inicial() {
   );
 
   const buscaIniciais = async () => {
-    inicialServices.buscarTudo(1, 10)
+    inicialServices.buscarTudo(pagina, limite)
       .then((response: IPaginatedInicial) => {
         setTotal(response.total);
         setPagina(response.pagina);
         setLimite(response.limite);
         setIniciais(response.data);
       });
+  }
+
+  const checaSei = async (sei: string) => {
+    console.log(`aqui`);
+    inicialServices.verificaSei(sei).then((response: IInicial | null) => {
+      if (response){
+        setProcessoExistente(response);
+      }      
+    })
   }
 
   const mudaPagina = (
@@ -79,6 +93,36 @@ export default function Inicial() {
         href: ''
       }]}
     >
+      <Modal open={modalProcessoNovo} onClose={() => setModalProcessoNovo(false)}>
+        <ModalDialog>
+            <DialogTitle>Novo Processo</DialogTitle>
+            <DialogContent>Buscar SEI do processo</DialogContent>
+            <Stack spacing={2}>
+                <FormControl>
+                    <FormLabel>SEI</FormLabel>
+                    <Input
+                      value={seiNovo}
+                      onChange={(e) => {
+                        var numSei = e.target.value;
+                        if (numSei.length >= 0) setSeiNovo(comum.formatarSei(e.target.value));
+                        if (numSei.replaceAll(/\D/g, '').length < 16) setProcessoExistente(undefined); 
+                        if (numSei.replaceAll(/\D/g, '').length === 16) checaSei(numSei);
+                        console.log(numSei.length);
+                      }}
+                    />
+                </FormControl>
+                {!comum.validaDigitoSei(seiNovo) && <FormHelperText>
+                    SEI Inválido
+                </FormHelperText>}
+                {processoExistente && processoExistente.id && <FormHelperText component={'a'} href={`/inicial/detalhes/${processoExistente.id}`}>
+                  Processo já cadastrado: #{processoExistente.id}
+                </FormHelperText>}
+            </Stack>
+            {(seiNovo.length > 18 && comum.validaDigitoSei(seiNovo)) && !(processoExistente && processoExistente.id) && <Stack sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', gap: 1 }}>
+                <Button component='a' href={`/inicial/detalhes?novo-processo=${seiNovo.replaceAll(/\D/g, '')}`} sx={{ flexGrow: 1 }} color="success">Novo processo</Button>
+            </Stack>}
+        </ModalDialog>
+    </Modal>
       <Tabs
         variant="outlined"
         defaultValue={0}
@@ -133,7 +177,7 @@ export default function Inicial() {
                       {inicial.status > 2 ? status[0].label : status[inicial.status].label}
                     </Chip>
                   </td>
-                  <td>{inicial.sei}</td>
+                  <td>{comum.formatarSei(inicial.sei)}</td>
                   <td>{inicial.tipo_requerimento}</td>
                   <td>{inicial.requerimento}</td>
                   <td>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
@@ -161,7 +205,7 @@ export default function Inicial() {
           /> : null}
         </TabPanel>
       </Tabs>
-      <IconButton component='a' href='/inicial/detalhes' color='primary' variant='soft' size='lg' sx={{
+      <IconButton /*component='a' href='/inicial/detalhes'*/ onClick={() => setModalProcessoNovo(true)} color='primary' variant='soft' size='lg' sx={{
         position: 'fixed',
         bottom: '2rem',
         right: '2rem',

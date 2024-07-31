@@ -6,7 +6,7 @@ import ContentTabs from './content';
 import { IconButton } from '@mui/material';
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 
-export default async function InicialDetalhes(props: any) {
+export default async function InicialDetalhes(props: any, novoProcesso: string | null) {
     const { id } = props.params;
     const inicial = id ? await inicialServices.buscarPorId(parseInt(id)) : undefined;
     const funcionarios = id ? await usuarioServices.buscarFuncionarios() : undefined;
@@ -23,7 +23,7 @@ export default async function InicialDetalhes(props: any) {
                 href: '/inicial/detalhes'
             }]}
         >
-            <ContentTabs inicial={inicial} funcionarios={funcionarios} />
+            <ContentTabs inicial={inicial} funcionarios={funcionarios} novoProcesso={novoProcesso} />
         </Content>
     )
 }

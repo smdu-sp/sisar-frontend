@@ -74,7 +74,7 @@ export default function Admissibilidade() {
 
 
   const buscaAdmissibilidade = () => {
-    admissibilidadeServices.buscarTudo(1, 10, statusFiltro, busca)
+    admissibilidadeServices.buscarTudo(pagina, limite, statusFiltro)
       .then((response: IPaginadoAdmissibilidade) => {
         setTotal(response.total);
         setPagina(response.pagina);
