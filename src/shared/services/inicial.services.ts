@@ -132,7 +132,7 @@ export interface IPaginatedInicial {
     limite: number;
 }
 
-const baseURL = 'http://localhost:3000/';
+const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
 async function buscarTudo (pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginatedInicial> {
     const session = await getServerSession(authOptions);

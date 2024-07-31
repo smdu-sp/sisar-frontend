@@ -41,7 +41,8 @@ export interface IAvisos {
     inicial_id?: number
     iniciais?: IInicial[]
 }
-const baseURL = 'http://localhost:3000/';
+
+const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
 const criar = async (dataCreate: ICreateAvisos): Promise<IAvisos> => {
     const session = await getServerSession(authOptions);

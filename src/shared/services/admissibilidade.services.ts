@@ -123,7 +123,7 @@ export interface IPaginatedInicial {
     limite: number;
 }
 
-const baseURL = 'http://localhost:3000/';
+const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
 const criar = async (dataCreate: ICreateAdmissibilidade) => {
     const session = await getServerSession(authOptions);
