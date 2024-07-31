@@ -86,10 +86,10 @@ export interface IAdmissibilidade {
     parecer: boolean;
     subprefeitura_id?: string;
     categoria_id?: string;
-    status?: number;
+    status: number;
     inicial?: IInicial;
     reconsiderado: boolean
-    motivo: string
+    motivo: number
     criado_em?: Date
 }
 
@@ -104,7 +104,7 @@ export interface ICreateAdmissibilidade {
     status?: number;
     inicial?: IInicial;
     reconsiderado: boolean
-    motivo: string
+    motivo: number
 }
 
 export interface IUpdateAdmissibilidade extends Partial<ICreateAdmissibilidade> {}

@@ -31,8 +31,10 @@ export default function Admissibilidade() {
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
-  const [statusModal, setStatusModal] = useState(0);
-  const [motivo, setMotivo] = useState("");
+  const [statusModal, setStatusModal] = useState<boolean>(false);
+  const [statusAtual, setStatusAtual] = useState<number>(0);
+  const [reconsiderado, setReconsiderado] = useState(true)
+  const [motivo, setMotivo] = useState(0);
   const [modal, setModal] = useState<any>([]);
   const colors = [
     "success",
@@ -63,13 +65,12 @@ export default function Admissibilidade() {
   }, [pagina, limite, statusFiltro]);
 
   const atualizar = async () => {
-    var reconsiderado = modal[1] === 3 ? true : false;
-    await admissibilidadeServices.atualizarId(modal[2], { status: statusModal, motivo, reconsiderado })
+    await admissibilidadeServices.atualizarId(modal[2], { status: statusModal ? 3 : 2, motivo, reconsiderado: statusModal })
     setOpen(false)
     buscaAdmissibilidade();
-    setAlert('Status atualizado!', `O Status foi para ${status[statusModal].label}`, 'warning', 3000, Check);
-    setStatusModal(0)
-    setMotivo('')
+    setAlert('Status atualizado!', `O Status foi para ${status[statusModal ? 3 : 2].label}`, 'warning', 3000, Check);
+    setStatusModal(true)
+    setMotivo(0)
   }
 
 
@@ -90,6 +91,15 @@ export default function Admissibilidade() {
     },
     [searchParams]
   );
+
+  const motivos = [
+    "Não Cumprimento de Requisito",
+    "Ausência de Documentos",
+    "Documentação não conforme com descrição solicitada",
+    "Não está de acordo com os Parâmetros Urbanísticos",
+    "Não foi dada baixa no pagamento das guias",
+    "N/A"
+  ]
 
 
   const mudaPagina = (
@@ -138,7 +148,7 @@ export default function Admissibilidade() {
     { label: 'Admissivel', color: 'success' },
     { label: 'Em admissão', color: 'primary' },
     { label: 'Inadmissível', color: 'danger' },
-    { label: 'Em Reconseideração', color: 'warning' },
+    { label: 'Em Reconsideração', color: 'warning' },
   ]
 
   return (
@@ -265,7 +275,7 @@ export default function Admissibilidade() {
             </thead>
             <tbody>
               {admissibilidade && admissibilidade.length > 0 ? admissibilidade.map((admissibilidade: IAdmissibilidade) => (
-                <Tooltip key={admissibilidade.inicial_id} title={admissibilidade.motivo} followCursor>
+                <Tooltip key={admissibilidade.inicial_id} title={motivos[admissibilidade.motivo]} followCursor>
                   <tr key={admissibilidade.inicial_id} style={{ cursor: 'default' }}>
                     <td>{admissibilidade.inicial_id}</td>
                     <td>{admissibilidade.inicial?.sei}</td>
@@ -286,12 +296,22 @@ export default function Admissibilidade() {
                         </Chip>
                       )}
                     </td>
-                    <td>{admissibilidade.status != 0 && admissibilidade.reconsiderado != true ? <Stack sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
-                      <Tooltip title="Inadmitir" variant='outlined'><IconButton color='warning' variant='soft' onClick={() => { setOpen(true); setModal([admissibilidade.inicial?.sei, admissibilidade.status, admissibilidade.inicial_id]) }}><BackHandIcon /></IconButton></Tooltip>
-                      {admissibilidade.status != 2 ? <Tooltip title="Admissivel" variant='outlined'><IconButton color='success' variant='soft' onClick={() => router.push(`/inicial/detalhes/${admissibilidade.inicial_id}?tab=2`)}><PostAddIcon /></IconButton></Tooltip> : null}
-                    </Stack> : null}</td>
+                    <td> <Stack sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+                      {admissibilidade.status !== 0 && !(admissibilidade.status === 2 && admissibilidade.reconsiderado) && <Tooltip title="Inadmitir" variant='outlined'>
+                        <IconButton color='warning' variant='soft' onClick={() => { setOpen(true); setModal([admissibilidade.inicial?.sei, admissibilidade.status, admissibilidade.inicial_id, admissibilidade.reconsiderado]); setReconsiderado(admissibilidade.reconsiderado); setStatusAtual(admissibilidade.status) }}><BackHandIcon />
+                        </IconButton>
+                      </Tooltip>}
+                      {(admissibilidade.status === 1 || admissibilidade.status === 3) &&
+                        <Tooltip title="Admissivel" variant='outlined'>
+                          <IconButton color='success' variant='soft' onClick={() => { router.push(`/inicial/detalhes/${admissibilidade.inicial_id}?tab=2`); }}>
+                            <PostAddIcon />
+                          </IconButton>
+                        </Tooltip>
+                      }
+                    </Stack> </td>
                   </tr>
                 </Tooltip>
+
               )) : <tr><td colSpan={9}>Nenhum cadastro inicial encontrado</td></tr>}
             </tbody>
           </Table>
@@ -331,17 +351,31 @@ export default function Admissibilidade() {
                     size="sm"
                     value={statusModal}
                     placeholder="Status"
-                    onChange={(_, value) => { setStatusModal(value as number); }}
+                    onChange={(_, value) => { setStatusModal(value as boolean); }}
                   >
-                    <Option value={2}>Inadmitir</Option>
-                    <Option value={3}>Reconsideração</Option>
+                    {(reconsiderado && statusAtual === 3) || statusAtual === 1 && 
+                      <Option value={false}>Inadmitir</Option>
+                    }
+                    <Option value={true}>Reconsideração</Option>
                   </Select>
                 </FormControl>
                 <FormControl>
                   <FormLabel>Motivo</FormLabel>
-                  <Textarea value={motivo} minRows={5} onChange={(e) => setMotivo(e.target.value)} required />
+                  <Select
+                    size="sm"
+                    value={motivo}
+                    placeholder="Motivo"
+                    onChange={(_, v) => { setMotivo(v ? v : 0); }}
+                  >
+                    <Option value={0}>Não Cumprimento de Requisito</Option>
+                    <Option value={1}>Ausência de Documentos</Option>
+                    <Option value={2}>Documentação não conforme com descrição solicitada</Option>
+                    <Option value={3}>Não está de acordo com os Parâmetros Urbanísticos</Option>
+                    <Option value={4}>Não foi dada baixa no pagamento das guias</Option>
+                    <Option value={5}>N/A</Option>
+                  </Select>
                 </FormControl>
-                <Button onClick={() => atualizar()} >Enviar</Button>
+                <Button onClick={() => atualizar()}>Enviar</Button>
               </Stack>
             </form>
           </ModalDialog>
