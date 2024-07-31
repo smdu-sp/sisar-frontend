@@ -11,7 +11,6 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Add, Check, Clear, Refresh, Search } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
-import { buscarAdministrativos } from '@/shared/services/usuario.services';
 import { AlertsContext } from '@/providers/alertsProvider';
 import BackHandIcon from '@mui/icons-material/BackHand';
 import PostAddIcon from '@mui/icons-material/PostAdd';
@@ -75,7 +74,7 @@ export default function Admissibilidade() {
 
 
   const buscaAdmissibilidade = () => {
-    admissibilidadeServices.buscarTudo(1, 10, statusFiltro)
+    admissibilidadeServices.buscarTudo(1, 10, statusFiltro, busca)
       .then((response: IPaginadoAdmissibilidade) => {
         setTotal(response.total);
         setPagina(response.pagina);
@@ -214,7 +213,7 @@ export default function Admissibilidade() {
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 router.push(pathname + '?' + createQueryString('busca', busca));
-                buscarAdministrativos();
+                buscaAdmissibilidade();
               }
             }}
           />

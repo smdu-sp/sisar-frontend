@@ -99,7 +99,7 @@ export default function AlvaraTipos() {
   };
 
   function buscaDados(): void {
-    alvaraTipoService.buscarTudo(pagina, limite)
+    alvaraTipoService.buscarTudo(pagina, limite, busca)
       .then((response: IPaginadoAlvaraTipo) => {
         setTotal(response.total);
         setPagina(response.pagina);

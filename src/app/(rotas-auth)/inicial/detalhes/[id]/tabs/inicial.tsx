@@ -29,7 +29,7 @@ import {
 
 const schema = object({
     sei: string().min(18, { message: "O SEI deve ter pelo menos 18 caracteres" }),
-    alvara_tipo_id: string({ message: "Selecione um tipo de alvara" }).min(1, { message: "Selecione um tipo de alvara" }),
+    alvara_tipo_id: string({ message: "Selecione um tipo de alvara" }).min(0, { message: "Selecione um tipo de alvara" }),
     tipo_requerimento: number().min(1, { message: "Selecione um tipo de requerimento" }),
     requerimento: string().min(1, { message: "Tamanho mínimo é 1" }).max(3, { message: "Tamanho máximo é 3" }),
     pagamento: number().min(1, { message: "Selecione o tipo de pagamento" }),
@@ -383,7 +383,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                 </FormControl>
                             </Grid>
                             <Grid xs={12} sm={12} md={12} lg={6} xl={6}>
-                                <FormControl error={Boolean(errors.alvara_tipo_id)}>
+                                <FormControl>
                                     <FormLabel>Tipo de alvará</FormLabel>
                                     {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                         name="alvara_tipo_id"
@@ -401,9 +401,6 @@ export default function InicialTab({ inicial }: { inicial?: IInicial }) {
                                                         <Option key={alvaraTipo.id} value={alvaraTipo.id}>{alvaraTipo.nome}</Option>
                                                     ))}
                                                 </Select>
-                                                {errors.alvara_tipo_id && <FormHelperText>
-                                                    {errors.alvara_tipo_id?.message}
-                                                </FormHelperText>}
                                             </>);
                                         }}
                                     />}
