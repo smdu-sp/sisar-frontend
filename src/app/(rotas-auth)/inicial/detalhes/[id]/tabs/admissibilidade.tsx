@@ -91,7 +91,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                 })
             inicialServices.atualizar(admissibilidade.inicial_id, { tipo_processo })
                 .then(() => {
-                    setAlert('Adimissão Realizada', `${inicial?.sei} admitido com sucesso`, 'success', 3000, Check);
+                    setAlert('Admissão Realizada', `${inicial?.sei} admitido com sucesso`, 'success', 3000, Check);
                     if (lembrete) {
 
                     }
@@ -146,7 +146,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                     <Grid xs={12} lg={6}>
                         <FormControl sx={{ flexGrow: 1 }}>
                             <FormLabel>Status</FormLabel>
-                            <Input value="Adimissivel" readOnly />
+                            <Input value="Admissivel" readOnly />
                         </FormControl>
                     </Grid>
 

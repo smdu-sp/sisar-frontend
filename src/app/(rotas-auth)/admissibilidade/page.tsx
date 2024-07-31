@@ -103,7 +103,7 @@ export default function Admissibilidade() {
     var color
     switch (status) {
       case 0:
-        date = "Adimitido"
+        date = "Admitido"
         color = colors[3]
         break;
       case 1:
@@ -199,9 +199,9 @@ export default function Admissibilidade() {
           onChange={(_, value) => { setStatusFiltro(value as number); }}
         >
           <Option value={-1}>Todos</Option>
-          <Option value={0}>Adimitidos</Option>
+          <Option value={0}>Admitidos</Option>
           <Option value={1}>Em admissão</Option>
-          <Option value={2}>Inadimissiveis</Option>
+          <Option value={2}>Inadmissiveis</Option>
           <Option value={3}>Reconseideração</Option>
         </Select>
         <FormControl sx={{ flex: 1 }} size="sm">
@@ -287,7 +287,7 @@ export default function Admissibilidade() {
                       )}
                     </td>
                     <td>{admissibilidade.status != 0 && admissibilidade.reconsiderado != true ? <Stack sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
-                      <Tooltip title="Inadimitir" variant='outlined'><IconButton color='warning' variant='soft' onClick={() => { setOpen(true); setModal([admissibilidade.inicial?.sei, admissibilidade.status, admissibilidade.inicial_id]) }}><BackHandIcon /></IconButton></Tooltip>
+                      <Tooltip title="Inadmitir" variant='outlined'><IconButton color='warning' variant='soft' onClick={() => { setOpen(true); setModal([admissibilidade.inicial?.sei, admissibilidade.status, admissibilidade.inicial_id]) }}><BackHandIcon /></IconButton></Tooltip>
                       {admissibilidade.status != 2 ? <Tooltip title="Admissivel" variant='outlined'><IconButton color='success' variant='soft' onClick={() => router.push(`/inicial/detalhes/${admissibilidade.inicial_id}?tab=2`)}><PostAddIcon /></IconButton></Tooltip> : null}
                     </Stack> : null}</td>
                   </tr>
@@ -333,7 +333,7 @@ export default function Admissibilidade() {
                     placeholder="Status"
                     onChange={(_, value) => { setStatusModal(value as number); }}
                   >
-                    <Option value={2}>Inadimitir</Option>
+                    <Option value={2}>Inadmitir</Option>
                     <Option value={3}>Reconsideração</Option>
                   </Select>
                 </FormControl>
