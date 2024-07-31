@@ -312,8 +312,8 @@ export default function Admissibilidade() {
       <React.Fragment>
         <Modal open={open} onClose={() => setOpen(false)}>
           <ModalDialog>
-            <DialogTitle>Create new project</DialogTitle>
-            <DialogContent>Fill in the information of the project.</DialogContent>
+            <DialogTitle>Gerenciar Processo</DialogTitle>
+            <DialogContent>Preencha os dados para gerenciamento.</DialogContent>
             <form
               onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
                 event.preventDefault();
@@ -341,7 +341,7 @@ export default function Admissibilidade() {
                   <FormLabel>Motivo</FormLabel>
                   <Textarea value={motivo} minRows={5} onChange={(e) => setMotivo(e.target.value)} required />
                 </FormControl>
-                <Button onClick={() => atualizar()} >Submit</Button>
+                <Button onClick={() => atualizar()} >Enviar</Button>
               </Stack>
             </form>
           </ModalDialog>
