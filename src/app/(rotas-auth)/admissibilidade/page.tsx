@@ -65,7 +65,7 @@ export default function Admissibilidade() {
   }, [pagina, limite, statusFiltro]);
 
   const atualizar = async () => {
-    await admissibilidadeServices.atualizarId(modal[2], { status: statusModal ? 3 : 2, motivo, reconsiderado: statusModal })
+    await admissibilidadeServices.atualizarId(modal[2], { status: statusModal ? 3 : 2, motivo, reconsiderado: statusModal === true ? (reconsiderado === null  ? false : true) : false })
     setOpen(false)
     buscaAdmissibilidade();
     setAlert('Status atualizado!', `O Status foi para ${status[statusModal ? 3 : 2].label}`, 'warning', 3000, Check);
@@ -296,19 +296,23 @@ export default function Admissibilidade() {
                         </Chip>
                       )}
                     </td>
-                    <td> <Stack sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
-                      {admissibilidade.status !== 0 && !(admissibilidade.status === 2 && admissibilidade.reconsiderado) && <Tooltip title="Inadmitir" variant='outlined'>
-                        <IconButton color='warning' variant='soft' onClick={() => { setOpen(true); setModal([admissibilidade.inicial?.sei, admissibilidade.status, admissibilidade.inicial_id, admissibilidade.reconsiderado]); setReconsiderado(admissibilidade.reconsiderado); setStatusAtual(admissibilidade.status) }}><BackHandIcon />
-                        </IconButton>
-                      </Tooltip>}
-                      {(admissibilidade.status === 1 || admissibilidade.status === 3) &&
+                    <td>{admissibilidade.status !== 0 && <Stack sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+                      { admissibilidade.reconsiderado !== true ?
+                        <Tooltip title="Inadmitir" variant='outlined'>
+                          <IconButton color='warning' variant='soft' onClick={() => { setOpen(true); setModal([admissibilidade.inicial?.sei, admissibilidade.status, admissibilidade.inicial_id, admissibilidade.reconsiderado]); setReconsiderado(admissibilidade.reconsiderado); setStatusAtual(admissibilidade.status) }}><BackHandIcon />
+                          </IconButton>
+                        </Tooltip>
+                        : null
+                      }
+                      {admissibilidade.status !== 2 &&
                         <Tooltip title="Admissivel" variant='outlined'>
                           <IconButton color='success' variant='soft' onClick={() => { router.push(`/inicial/detalhes/${admissibilidade.inicial_id}?tab=2`); }}>
                             <PostAddIcon />
                           </IconButton>
                         </Tooltip>
                       }
-                    </Stack> </td>
+
+                    </Stack>}</td>
                   </tr>
                 </Tooltip>
 
@@ -353,10 +357,13 @@ export default function Admissibilidade() {
                     placeholder="Status"
                     onChange={(_, value) => { setStatusModal(value as boolean); }}
                   >
-                    {(reconsiderado && statusAtual === 3) || statusAtual === 1 && 
-                      <Option value={false}>Inadmitir</Option>
+                    {
+                       <Option value={false}>Inadmitir</Option>
                     }
-                    <Option value={true}>Reconsideração</Option>
+                    {reconsiderado === false || reconsiderado === null ?
+                      <Option value={true}>Reconsideração</Option>
+                      : null
+                    }
                   </Select>
                 </FormControl>
                 <FormControl>
