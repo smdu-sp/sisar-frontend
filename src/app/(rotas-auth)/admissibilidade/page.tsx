@@ -146,7 +146,7 @@ export default function Admissibilidade() {
 
   const status: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
     { label: 'Admissivel', color: 'success' },
-    { label: 'Em admissão', color: 'primary' },
+    { label: 'Em Análise', color: 'primary' },
     { label: 'Inadmissível', color: 'danger' },
     { label: 'Em Reconsideração', color: 'warning' },
   ]
@@ -212,7 +212,7 @@ export default function Admissibilidade() {
           <Option value={0}>Admitidos</Option>
           <Option value={1}>Em admissão</Option>
           <Option value={2}>Inadmissiveis</Option>
-          <Option value={3}>Reconseideração</Option>
+          <Option value={3}>Reconsideração</Option>
         </Select>
         <FormControl sx={{ flex: 1 }} size="sm">
           <FormLabel>Buscar: </FormLabel>
