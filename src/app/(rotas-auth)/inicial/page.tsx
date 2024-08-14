@@ -24,7 +24,6 @@ export default function Inicial() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log({ pagina, limite });
     buscaIniciais();
   }, [pagina, limite]);
 
@@ -49,7 +48,6 @@ export default function Inicial() {
   }
 
   const checaSei = async (sei: string) => {
-    console.log(`aqui`);
     inicialServices.verificaSei(sei).then((response: IInicial | null) => {
       if (response){
         setProcessoExistente(response);
@@ -107,7 +105,6 @@ export default function Inicial() {
                         if (numSei.length >= 0) setSeiNovo(comum.formatarSei(e.target.value));
                         if (numSei.replaceAll(/\D/g, '').length < 16) setProcessoExistente(undefined); 
                         if (numSei.replaceAll(/\D/g, '').length === 16) checaSei(numSei);
-                        console.log(numSei.length);
                       }}
                     />
                 </FormControl>
@@ -164,6 +161,7 @@ export default function Inicial() {
                 <th>Requerimento</th>
                 <th>Protocolo</th>
                 <th>Tipo de Alvará</th>
+                <th>Última alteração</th>
                 <th>Tipo de Processo</th>
                 <th style={{ textAlign: 'right' }}></th>
               </tr>
@@ -182,6 +180,7 @@ export default function Inicial() {
                   <td>{inicial.requerimento}</td>
                   <td>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
                   <td>{inicial.alvara_tipo.nome}</td>
+                  <td>{new Date(inicial.alterado_em).toLocaleString('pt-BR')}</td>
                   <td>
                     <Chip color={processo[inicial.tipo_processo].color}>
                       {processo[inicial.tipo_processo].label}
