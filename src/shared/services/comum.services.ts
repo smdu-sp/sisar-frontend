@@ -89,7 +89,6 @@ function validaDigitoSql(sql: string): boolean {
         soma = soma % 11;
         if (soma === 10) soma = 1;
         if (soma > 1 && soma < 10) soma = 11 - soma;
-        console.log({ soma, digito });
         valido = soma === digito;
     }
     return valido;

@@ -227,7 +227,6 @@ async function buscarNovo(login: string): Promise<{ id?: string, login?: string,
 }
 
 async function adicionaFerias(id: string, data: IAddFeriasUsuario): Promise<IFerias> {
-    console.log(data);
     const session = await getServerSession(authOptions);
     const ferias = await fetch(`${baseURL}usuarios/adiciona-ferias/${id}`, {
         method: "PATCH",

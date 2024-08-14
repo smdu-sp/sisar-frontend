@@ -709,8 +709,6 @@ export default function Home() {
                               noOptionsText="Nenhuma Unidades encontrada"
                               onChange={(event, newValue) => {
                                 field.onChange(newValue ? newValue.id : '');
-                                console.log(newValue);
-                          
                               }}
                               onBlur={field.onBlur}
                             />

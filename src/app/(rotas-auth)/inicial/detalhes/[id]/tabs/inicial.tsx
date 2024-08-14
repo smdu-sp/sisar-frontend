@@ -107,7 +107,6 @@ export default function InicialTab({ inicial, novoProcesso }: { inicial?: IInici
 
     const onSubmit = (data: Schema) => {
         data.decreto = true;
-        console.log(data);
         if (!inicial) {
             inicialServices.criar(data)
                 .then((response: IInicial) => {
@@ -208,7 +207,6 @@ export default function InicialTab({ inicial, novoProcesso }: { inicial?: IInici
     useEffect(() => {
         buscarDados();
         if (novoProcesso) {
-            console.log(novoProcesso);
             setSei(comum.formatarSei(novoProcesso));
         }
         alvaraTiposService.listaCompleta().then((result: IAlvaraTipo[]) => {

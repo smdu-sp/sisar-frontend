@@ -70,7 +70,6 @@ function SearchUsuarios() {
   const buscaUsuarios = async () => {
     usuarioServices.buscarTudo(status, pagina, limite, busca, permissao)
       .then((response: IPaginadoUsuario) => {
-        console.log(response);
         setTotal(response.total);
         setPagina(response.pagina);
         setLimite(response.limite);

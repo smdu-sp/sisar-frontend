@@ -36,6 +36,7 @@ export interface IInicial {
     requalifica_rapido: boolean
     associado_reforma: boolean
     data_limiteSmul: Date
+    alterado_em: Date
     iniciais_sqls?: IInicial_Sqls[]
     interfaces?: IInterfaces
     distribuicao?: IDistribuicao
@@ -252,9 +253,7 @@ const removeSql = async (inicial_id: string, sql: string): Promise<boolean> => {
 }
 
 const atualizarDistribuicao = async (inicial_id: number, dataUpdate: IUpdateDistribuicao): Promise<IDistribuicao> => {
-    console.log({ inicial_id, dataUpdate })
     const session = await getServerSession(authOptions);
-    console.log(baseURL);
     const iniciais = await fetch(`${baseURL}distribuicao/atualizar/${inicial_id}`, {
         method: "PATCH",
         headers: {
@@ -273,7 +272,6 @@ const atualizarDistribuicao = async (inicial_id: number, dataUpdate: IUpdateDist
 
 const mudarAdministrativoResponsável = async (inicial_id: number, dataUpdate: IUpdateDistribuicao): Promise<IDistribuicao> => {
     const session = await getServerSession(authOptions);
-    console.log(baseURL);
     const iniciais = await fetch(`${baseURL}distribuicao/administrativo/atualizar/${inicial_id}`, {
         method: "PATCH",
         headers: {
@@ -292,7 +290,6 @@ const mudarAdministrativoResponsável = async (inicial_id: number, dataUpdate: I
 
 const mudarTecnicoResponsavel = async (inicial_id: number, dataUpdate: IUpdateDistribuicao): Promise<IDistribuicao> => {
     const session = await getServerSession(authOptions);
-    console.log(baseURL);
     const iniciais = await fetch(`${baseURL}distribuicao/tecnico/atualizar/${inicial_id}`, {
         method: "PATCH",
         headers: {

@@ -82,8 +82,6 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
     });
 
     const onSubmit = (data: Schema) => {
-        console.log(data);
-
         if (admissibilidade) {
             admissibilidadeServices.atualizarId(admissibilidade.inicial_id, { ...data })
                 .then(() => {
