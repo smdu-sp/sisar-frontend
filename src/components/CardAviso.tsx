@@ -16,6 +16,11 @@ import { BorderAll, Style } from '@mui/icons-material';
 import * as avisos from "@/shared/services/avisos.services"
 import { IAvisos } from "@/shared/services/avisos.services"
 import { Interface } from 'readline';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import CancelIcon from '@mui/icons-material/Cancel';
+import DoneIcon from '@mui/icons-material/Done';
+import * as comum from "@/shared/services/comum.services";
 
 interface ICardAviso {
     id: string,
@@ -50,14 +55,24 @@ export default function BioCard(props: ICardAviso) {
                 boxShadow: 'lg',
                 mt: 3,
                 mb: 3,
-                mx: 1
+                mx: 1,
+                position: 'relative'
             }}
             key={props.id}
         >
-            <Chip color='success' sx={{ position: 'absolute', top: 10, right: 10 }}>{props.processo}</Chip>
-            <CardContent sx={{ alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconButton variant='solid' color={edit ? 'primary' : 'danger'} onClick={() => { setEdit(!edit); }}>{edit ? <DriveFileRenameOutlineIcon /> : <CancelIcon />}</IconButton>
+                    <IconButton variant='solid' color={edit ? 'danger' : 'success'} onClick={() => { edit ? setOpen(true) : atualizar(); setMessage("Tem certeza que deseja deletar?") }}>{edit ? <DeleteForeverIcon /> : <DoneIcon />}</IconButton>
+                </Box>
+                <Box>
+                    <Chip color='success'>{comum.formatarSei(props.processo ? comum.formatarSei(props.processo) : "")}</Chip>
+                </Box>
+            </Box>
+            <Box sx={{ alignItems: 'center' }}>
                 {edit === true ?
                     <Typography
+                        level='h2'
                         sx={{
                             border: edit ? "none" : null,
                             boxShadow: edit ? "none" : null,
@@ -65,7 +80,6 @@ export default function BioCard(props: ICardAviso) {
                             fontSize: 20,
                             width: "100%",
                             mb: 1,
-                            mt: 3,
                             textAlign: 'center'
                         }}
                     >
@@ -77,7 +91,6 @@ export default function BioCard(props: ICardAviso) {
                         value={titulo}
                         onChange={(e) => setTitulo(e.target.value)}
                         sx={{
-                            mt: 3,
                             border: edit ? "none" : null,
                             boxShadow: edit ? "none" : null,
                             fontWeight: "bold",
@@ -99,7 +112,6 @@ export default function BioCard(props: ICardAviso) {
                         border: edit ? "none" : null,
                         boxShadow: edit ? "none" : null,
                         fontSize: 15,
-                        mb: 1,
                         width: "100%",
                         display: 'flex',
                         justifyContent: 'center',
@@ -107,15 +119,7 @@ export default function BioCard(props: ICardAviso) {
                     }}
                     readOnly={edit ? true : false}
                 />
-            </CardContent>
-            <CardOverflow sx={{ bgcolor: 'background.level1' }}>
-                <CardActions buttonFlex="1">
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Button variant='solid' color={edit ? 'primary' : 'danger'} onClick={() => { setEdit(!edit); }}>{edit ? "Editar" : "Cancelar"}</Button>
-                        <Button variant='solid' color={edit ? 'danger' : 'success'} onClick={() => { edit ? setOpen(true) : atualizar(); setMessage("Tem certeza que deseja deletar?") }}>{edit ? "Deletar" : "Salvar"}</Button>
-                    </Box>
-                </CardActions>
-            </CardOverflow>
+            </Box>
             <Snackbar
                 variant="solid"
                 color='danger'
