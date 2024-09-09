@@ -19,8 +19,7 @@ import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import DialogTitle from '@mui/joy/DialogTitle';
 import DialogContent from '@mui/joy/DialogContent';
-
-
+import * as comum from "@/shared/services/comum.services";
 
 export default function Admissibilidade() {
   const searchParams = useSearchParams();
@@ -278,7 +277,7 @@ export default function Admissibilidade() {
                 <Tooltip key={admissibilidade.inicial_id} title={motivos[admissibilidade.motivo]} followCursor>
                   <tr key={admissibilidade.inicial_id} style={{ cursor: 'default' }}>
                     <td>{admissibilidade.inicial_id}</td>
-                    <td>{admissibilidade.inicial?.sei}</td>
+                    <td>{admissibilidade.inicial?.sei ? comum.formatarSei(admissibilidade.inicial?.sei) : ''}</td>
                     <td>{admissibilidade.inicial?.envio_admissibilidade ? new Date(admissibilidade.inicial?.envio_admissibilidade).toLocaleDateString('pt-BR') : ''}</td>
                     {/* <td>{admissibilidade.parecer === true ? 'true' : 'false'}</td> */}
                     <td>{admissibilidade.criado_em ? new Date(admissibilidade.criado_em).toLocaleDateString('pt-BR') : ''}</td>

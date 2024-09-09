@@ -116,7 +116,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                         <Grid xs={12} lg={12}>
                             <FormControl>
                                 <FormLabel>Processo</FormLabel>
-                                <Input value={inicial?.sei} readOnly />
+                                <Input value={inicial?.sei ? comum.formatarSei(inicial?.sei) : ''} readOnly />
                             </FormControl>
                         </Grid>
                     </Grid>

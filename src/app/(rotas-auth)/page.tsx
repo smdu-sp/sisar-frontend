@@ -204,13 +204,11 @@ export default function Home() {
     }
     avisos.criar(criar)
       .then((response: avisos.IAvisos) => {
-        if (response) {
-          setAlert('Aviso criado', 'Aviso criado com sucesso!', 'success', 3000, Check);
-          busca(dataAviso.getMonth() + 1);
-          setDataAviso(dataAviso);
-          setOpenNotf(false);
-          reset();
-        }
+        setAlert('Aviso criado', 'Aviso criado com sucesso!', 'success', 3000, Check);
+        busca(dataAviso.getMonth() + 1);
+        setDataAviso(dataAviso);
+        setOpenNotf(false);
+        reset();
       })
   }
 
@@ -403,10 +401,8 @@ export default function Home() {
               </Tab>
             </TabList>
           </Tabs>
-          <Chip sx={{ position: 'absolute', top: 20, left: 15, fontSize: '20px', px: 3, bg: 'primary' }}>
-            {
-              dataCard
-            }
+          <Chip sx={{ position: 'absolute', bottom: 10, left: 15, fontSize: '15px', px: 3, bg: 'primary' }}>
+            {dataCard}
           </Chip>
           {tipoData == 2 ?
             <IconButton sx={{ position: 'absolute', top: 20, right: 15, py: 0.5, fontSize: '40px', bg: 'primary' }} color='success' onClick={() => { setOpenNotf(true); setLemTab(true) }}>
@@ -422,8 +418,6 @@ export default function Home() {
             p: 2,
           }}>
             <Sheet
-              // spacing={{ xs: 2, md: 3 }}
-              // columns={{ xs: 2, sm: 8, md: 12 }}
               sx={{
                 display: 'flex',
                 flexDirection: tipoData != 2 ? 'column' : 'row',
@@ -438,6 +432,7 @@ export default function Home() {
                   border: '1px solid',
                   backgroundColor: "neutral.plainColor"
                 },
+                minHeight: '300px',
               }}
             >
               {
@@ -460,10 +455,10 @@ export default function Home() {
                         <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                           <Sheet>
                             <Typography level="title-lg" id="card-description" key={data.id}>
-                              {data.inicial.sei}
+                              {comum.formatarSei(data.inicial.sei)}
                             </Typography>
                             <Typography level="body-sm" aria-describedby="card-description" mb={1}>
-                              {data.inicial.processo_fisico}
+                              {comum.formatarFisico(data.inicial.processo_fisico)}
                             </Typography>
                           </Sheet>
                           <Chip
@@ -685,46 +680,46 @@ export default function Home() {
                 <FormLabel>Processos</FormLabel>
                 {
                   lemTab ?
-                      <Controller
-                        name="idInicial"
-                        control={control}
-                        defaultValue={idInicial}
-                        render={({ field }) => (
-                          <>
-                            <Autocomplete
-                              options={processosAvisos && processosAvisos.length > 0 ? processosAvisos : []}
-                              getOptionLabel={(option) => option.sei!}
-                              renderOption={(props, option) => (
-                                <AutocompleteOption {...props} key={option.id} value={option.id}>
-                                  {option.sei}
-                                </AutocompleteOption>
-                              )}
-                              placeholder="Unidades"
-                              filterOptions={(options, { inputValue }) =>
-                                options.filter(
-                                  (option) =>
-                                    option.sei?.toLowerCase().includes(inputValue.toLowerCase())
-                                )
-                              }
-                              noOptionsText="Nenhuma Unidades encontrada"
-                              onChange={(event, newValue) => {
-                                field.onChange(newValue ? newValue.id : '');
-                              }}
-                              onBlur={field.onBlur}
-                            />
-                          </>
-                        )}
-                      />
-                      :
-                      <Input type='text' sx={{ color: 'grey' }} required readOnly value={seiDados} />
+                    <Controller
+                      name="idInicial"
+                      control={control}
+                      defaultValue={idInicial}
+                      render={({ field }) => (
+                        <>
+                          <Autocomplete
+                            options={processosAvisos && processosAvisos.length > 0 ? processosAvisos : []}
+                            getOptionLabel={(option) => option.sei!}
+                            renderOption={(props, option) => (
+                              <AutocompleteOption {...props} key={option.id} value={option.id}>
+                                {option.sei}
+                              </AutocompleteOption>
+                            )}
+                            placeholder="Unidades"
+                            filterOptions={(options, { inputValue }) =>
+                              options.filter(
+                                (option) =>
+                                  option.sei?.toLowerCase().includes(inputValue.toLowerCase())
+                              )
+                            }
+                            noOptionsText="Nenhuma Unidades encontrada"
+                            onChange={(event, newValue) => {
+                              field.onChange(newValue ? newValue.id : '');
+                            }}
+                            onBlur={field.onBlur}
+                          />
+                        </>
+                      )}
+                    />
+                    :
+                    <Input type='text' sx={{ color: 'grey' }} required readOnly value={seiDados} />
                 }
-                    </FormControl>
-                <FormControl sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gap: 2 }}>
-                  <Button variant="soft" color='danger' onClick={() => setOpenNotf(false)}>Cancelar</Button>
-                  <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
-                    {"Salvar"}
-                  </Button>
-                </FormControl>
+              </FormControl>
+              <FormControl sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gap: 2 }}>
+                <Button variant="soft" color='danger' onClick={() => setOpenNotf(false)}>Cancelar</Button>
+                <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
+                  Salvar
+                </Button>
+              </FormControl>
             </Stack>
           </ModalDialog>
         </form>
