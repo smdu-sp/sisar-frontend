@@ -346,7 +346,7 @@ export default function Admissibilidade() {
               <Stack spacing={2}>
                 <FormControl>
                   <FormLabel>Sei</FormLabel>
-                  <Input value={modal[0]} required />
+                  <Input value={comum.formatarSei(modal[0])} required />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Status</FormLabel>
