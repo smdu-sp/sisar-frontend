@@ -1,10 +1,11 @@
 'use client'
 
 import Content from '@/components/Content';
-import { Box, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, Tooltip, Typography, tabClasses } from '@mui/joy';
+import { Box, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, List, ListItem, ModalClose, ModalOverflow, Option, Select, Snackbar, Stack, Switch, Tab, TabList, TabPanel, Table, Tabs, Textarea, Tooltip, Typography, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
 import * as admissibilidadeServices from '@/shared/services/admissibilidade.services';
+import * as parecerServices from '@/shared/services/parecer_admissibilidade.service';
 import { IAdmissibilidade, IPaginadoAdmissibilidade } from '@/shared/services/admissibilidade.services';
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -20,12 +21,18 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import DialogTitle from '@mui/joy/DialogTitle';
 import DialogContent from '@mui/joy/DialogContent';
 import * as comum from "@/shared/services/comum.services";
+import MenuIcon from '@mui/icons-material/Menu';
+import { ModalDialogProps } from '@mui/joy/ModalDialog';
+import CancelIcon from '@mui/icons-material/Cancel';
+import EditIcon from '@mui/icons-material/Edit';
+import { IPaginadoParecer, IParecer } from '@/shared/services/parecer_admissibilidade.service';
 
 export default function Admissibilidade() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [open, setOpen] = React.useState<boolean>(false);
   const [admissibilidade, setAdmissibilidade] = useState<IAdmissibilidade[]>([]);
+  const [parecer, setParecer] = useState<IParecer[]>([]);
   const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
@@ -35,6 +42,14 @@ export default function Admissibilidade() {
   const [reconsiderado, setReconsiderado] = useState(true)
   const [motivo, setMotivo] = useState(0);
   const [modal, setModal] = useState<any>([]);
+  const [layout, setLayout] = React.useState<ModalDialogProps['layout'] | undefined>(
+    undefined,
+  );
+  const [textoMotivo, setTextoMotivo] = useState('')
+  const [openModalMotivo, setOpenModalMotivo] = useState(false)
+  const [editMotivo, setEditMotivo] = useState(false)
+
+
   const colors = [
     "success",
     "warning",
@@ -64,7 +79,7 @@ export default function Admissibilidade() {
   }, [pagina, limite, statusFiltro]);
 
   const atualizar = async () => {
-    await admissibilidadeServices.atualizarId(modal[2], { status: statusModal ? 3 : 2, motivo, reconsiderado: statusModal === true ? (reconsiderado === null  ? false : true) : false })
+    await admissibilidadeServices.atualizarId(modal[2], { status: statusModal ? 3 : 2, motivo, reconsiderado: statusModal === true ? (reconsiderado === null ? false : true) : false })
     setOpen(false)
     buscaAdmissibilidade();
     setAlert('Status atualizado!', `O Status foi para ${status[statusModal ? 3 : 2].label}`, 'warning', 3000, Check);
@@ -72,6 +87,16 @@ export default function Admissibilidade() {
     setMotivo(0)
   }
 
+  const buscarParecer = () => {
+    parecerServices.buscarTudo()
+      .then((response: IPaginadoParecer) => {
+        setParecer(response.data);
+      });
+  }
+
+  useEffect(() => {
+    buscarParecer()
+  }, [])
 
   const buscaAdmissibilidade = () => {
     admissibilidadeServices.buscarTudo(pagina, limite, statusFiltro)
@@ -133,6 +158,32 @@ export default function Admissibilidade() {
         break;
     }
     return [date, color];
+  }
+
+  const deletarMotivo = (motivo: string) => {
+    setAlert('Motivo deletado!', `O ${motivo} foi deletado`, 'warning', 3000, Check);
+  }
+
+  const criarMotivo = () => {
+    const JParecer = {
+      parecer: textoMotivo,
+      status: 0
+    }
+    parecerServices.criar(JParecer).
+     then((response) => {
+      if (response) {
+      setAlert('Motivo Criado!', `O ${response.parecer} foi criado`, 'success', 3000, Check);
+      buscarParecer()
+      } else {
+        setAlert('Erro ao criar!', `O motivo ${textoMotivo} não foi possivel criar`, 'danger', 3000, Check);
+      }
+     })
+  }
+
+  const atualizarMotivo = () => {
+    setEditMotivo(false)
+    setAlert('Motivo alterado!', `O ${textoMotivo} foi alterado`, 'success', 3000, Check);
+    setTextoMotivo('')
   }
 
   const mudaLimite = (
@@ -296,7 +347,7 @@ export default function Admissibilidade() {
                       )}
                     </td>
                     <td>{admissibilidade.status !== 0 && <Stack sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
-                      { admissibilidade.reconsiderado !== true ?
+                      {admissibilidade.reconsiderado !== true ?
                         <Tooltip title="Inadmitir" variant='outlined'>
                           <IconButton color='warning' variant='soft' onClick={() => { setOpen(true); setModal([admissibilidade.inicial?.sei, admissibilidade.status, admissibilidade.inicial_id, admissibilidade.reconsiderado]); setReconsiderado(admissibilidade.reconsiderado); setStatusAtual(admissibilidade.status) }}><BackHandIcon />
                           </IconButton>
@@ -357,7 +408,7 @@ export default function Admissibilidade() {
                     onChange={(_, value) => { setStatusModal(value as boolean); }}
                   >
                     {
-                       <Option value={false}>Inadmitir</Option>
+                      <Option value={false}>Inadmitir</Option>
                     }
                     {reconsiderado === false || reconsiderado === null ?
                       <Option value={true}>Reconsideração</Option>
@@ -365,13 +416,18 @@ export default function Admissibilidade() {
                     }
                   </Select>
                 </FormControl>
-                <FormControl>
+                <FormControl sx={{ display: 'flex' }}>
                   <FormLabel>Motivo</FormLabel>
                   <Select
                     size="sm"
                     value={motivo}
                     placeholder="Motivo"
                     onChange={(_, v) => { setMotivo(v ? v : 0); }}
+                    startDecorator={
+                      <IconButton sx={{ zIndex: 9999 }} onClick={() => { setLayout('center') }}>
+                        <MenuIcon />
+                      </IconButton>
+                    }
                   >
                     <Option value={0}>Não Cumprimento de Requisito</Option>
                     <Option value={1}>Ausência de Documentos</Option>
@@ -387,6 +443,79 @@ export default function Admissibilidade() {
           </ModalDialog>
         </Modal>
       </React.Fragment>
-    </Content>
+      <React.Fragment>
+        <Snackbar
+          variant="solid"
+          color="warning"
+          size="lg"
+          invertedColors
+          open={openModalMotivo}
+          onClose={() => setOpenModalMotivo(false)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          sx={{ maxWidth: 360 }}
+        >
+          <div>
+            <Typography level="title-lg">Deletar Motivo</Typography>
+            <Typography sx={{ mt: 1, mb: 2 }} level="title-md">Certeza que deseja excluir este motivo?</Typography>
+            <Stack direction="row" spacing={1}>
+              <Button variant="solid" color="primary" onClick={() => deletarMotivo('motivo')}>
+                Sim
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => setOpenModalMotivo(false)}
+              >
+                Não
+              </Button>
+            </Stack>
+          </div>
+        </Snackbar>
+        <Modal
+          open={!!layout}
+          onClose={() => {
+            setLayout(undefined);
+          }}
+        >
+          <ModalOverflow>
+            <ModalDialog aria-labelledby="modal-dialog-overflow" layout={layout} sx={{ width: '500px' }}>
+              <ModalClose />
+              <Typography id="modal-dialog-overflow" level="h2">
+                Motivos
+              </Typography>
+              <FormControl
+                orientation="horizontal"
+                sx={{ gap: 1, borderRadius: 'sm', width: '100%', display: 'flex', justifyContent: 'center', alignContent: 'center', flexDirection: 'column' }}
+              >
+                {editMotivo ?
+                  <Button variant='soft' color='primary' sx={{ width: '100%' }} onClick={() => { atualizarMotivo() }}>Salvar</Button>
+                  :
+                  <Button variant='soft' color='success' sx={{ width: '100%' }} onClick={() => { criarMotivo() }}>Adicionar</Button>
+                }
+                <Input placeholder="Digite seu texto de motivo" variant="outlined" value={textoMotivo} onChange={(e) => setTextoMotivo(e.target.value)} />
+              </FormControl>
+              <List>
+                {
+                  parecer && parecer.length > 0 ? parecer.map((parecer: IParecer) => (
+                    <ListItem sx={{ display: 'flex', justifyContent: 'space-between' }} value={parecer.id}>
+                      {parecer.parecer}
+                      <Box>
+                        <IconButton color='warning' onClick={() => { setTextoMotivo(parecer.parecer), setEditMotivo(true) }} >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton color='danger' onClick={() => { setOpenModalMotivo(true) }} >
+                          <CancelIcon />
+                        </IconButton>
+                      </Box>
+                    </ListItem>
+                  )) : <ListItem>Nenhum parecer cadastrado</ListItem>
+                }
+              </List>
+            </ModalDialog>
+          </ModalOverflow>
+        </Modal>
+      </React.Fragment>
+
+    </Content >
   );
 }
