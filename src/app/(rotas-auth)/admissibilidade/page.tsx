@@ -27,6 +27,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
 import { IPaginadoParecer, IParecer } from '@/shared/services/parecer_admissibilidade.service';
 
+
 export default function Admissibilidade() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -48,7 +49,9 @@ export default function Admissibilidade() {
   const [textoMotivo, setTextoMotivo] = useState('')
   const [openModalMotivo, setOpenModalMotivo] = useState(false)
   const [editMotivo, setEditMotivo] = useState(false)
-
+  const [idParecer, setIdParecer] = useState('')
+  const [index, setIndex] = React.useState(0);
+  const [statusMotivo, setStatusMotivo] = useState('')
 
   const colors = [
     "success",
@@ -82,7 +85,7 @@ export default function Admissibilidade() {
     await admissibilidadeServices.atualizarId(modal[2], { status: statusModal ? 3 : 2, motivo, reconsiderado: statusModal === true ? (reconsiderado === null ? false : true) : false })
     setOpen(false)
     buscaAdmissibilidade();
-    setAlert('Status atualizado!', `O Status foi para ${status[statusModal ? 3 : 2].label}`, 'warning', 3000, Check);
+    setAlert('Status atualizado!', `O Status foi para ${status[statusModal ? 3 : 2].label}`, 'success', 3000, Check);
     setStatusModal(true)
     setMotivo(0)
   }
@@ -160,30 +163,47 @@ export default function Admissibilidade() {
     return [date, color];
   }
 
-  const deletarMotivo = (motivo: string) => {
-    setAlert('Motivo deletado!', `O ${motivo} foi deletado`, 'warning', 3000, Check);
+  const desativarMotivo = (motivo: string) => {
+    parecerServices.desativar(idParecer)
+      .then((response) => {
+        if (response) {
+          setAlert('Motivo desativado!', `O ${motivo} foi desativado`, 'warning', 3000, CancelIcon);
+          setOpenModalMotivo(false)
+          buscarParecer()
+        }
+      })
   }
 
   const criarMotivo = () => {
     const JParecer = {
       parecer: textoMotivo,
-      status: 0
+      status: 1
     }
     parecerServices.criar(JParecer).
-     then((response) => {
-      if (response) {
-      setAlert('Motivo Criado!', `O ${response.parecer} foi criado`, 'success', 3000, Check);
-      buscarParecer()
-      } else {
-        setAlert('Erro ao criar!', `O motivo ${textoMotivo} não foi possivel criar`, 'danger', 3000, Check);
-      }
-     })
+      then((response) => {
+        if (response) {
+          setAlert('Motivo Criado!', `O motivo ${response.parecer} foi criado`, 'success', 3000, Check);
+          buscarParecer()
+          setTextoMotivo('')
+        } else {
+          setAlert('Erro ao criar!', `O motivo ${textoMotivo} não foi possivel criar`, 'danger', 3000, Check);
+        }
+      })
   }
 
-  const atualizarMotivo = () => {
-    setEditMotivo(false)
-    setAlert('Motivo alterado!', `O ${textoMotivo} foi alterado`, 'success', 3000, Check);
-    setTextoMotivo('')
+  const atualizarMotivo = async () => {
+    const JParecer = {
+      parecer: textoMotivo
+    }
+    await parecerServices.atualizar(idParecer, JParecer)
+      .then((response) => {
+        if (response) {
+          setEditMotivo(false)
+          setAlert('Motivo alterado!', `O ${textoMotivo} foi alterado`, 'success', 3000, Check);
+          setTextoMotivo('')
+          buscarParecer()
+        }
+      })
   }
 
   const mudaLimite = (
@@ -200,6 +220,7 @@ export default function Admissibilidade() {
     { label: 'Inadmissível', color: 'danger' },
     { label: 'Em Reconsideração', color: 'warning' },
   ]
+
 
   return (
     <Content
@@ -455,10 +476,10 @@ export default function Admissibilidade() {
           sx={{ maxWidth: 360 }}
         >
           <div>
-            <Typography level="title-lg">Deletar Motivo</Typography>
-            <Typography sx={{ mt: 1, mb: 2 }} level="title-md">Certeza que deseja excluir este motivo?</Typography>
+            <Typography level="title-lg">{statusMotivo} Motivo</Typography>
+            <Typography sx={{ mt: 1, mb: 2 }} level="title-md">Certeza que deseja {statusMotivo} este motivo?</Typography>
             <Stack direction="row" spacing={1}>
-              <Button variant="solid" color="primary" onClick={() => deletarMotivo('motivo')}>
+              <Button variant="solid" color="primary" onClick={() => desativarMotivo('motivo')}>
                 Sim
               </Button>
               <Button
@@ -471,6 +492,10 @@ export default function Admissibilidade() {
             </Stack>
           </div>
         </Snackbar>
+
+        <Box sx={{ flexGrow: 1, m: -2, overflowX: 'hidden' }}>
+
+        </Box>
         <Modal
           open={!!layout}
           onClose={() => {
@@ -478,7 +503,7 @@ export default function Admissibilidade() {
           }}
         >
           <ModalOverflow>
-            <ModalDialog aria-labelledby="modal-dialog-overflow" layout={layout} sx={{ width: '500px' }}>
+            <ModalDialog aria-labelledby="modal-dialog-overflow" layout={layout} sx={{ minWidth: '500px' }}>
               <ModalClose />
               <Typography id="modal-dialog-overflow" level="h2">
                 Motivos
@@ -494,23 +519,91 @@ export default function Admissibilidade() {
                 }
                 <Input placeholder="Digite seu texto de motivo" variant="outlined" value={textoMotivo} onChange={(e) => setTextoMotivo(e.target.value)} />
               </FormControl>
-              <List>
-                {
-                  parecer && parecer.length > 0 ? parecer.map((parecer: IParecer) => (
-                    <ListItem sx={{ display: 'flex', justifyContent: 'space-between' }} value={parecer.id}>
-                      {parecer.parecer}
-                      <Box>
-                        <IconButton color='warning' onClick={() => { setTextoMotivo(parecer.parecer), setEditMotivo(true) }} >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton color='danger' onClick={() => { setOpenModalMotivo(true) }} >
-                          <CancelIcon />
-                        </IconButton>
-                      </Box>
-                    </ListItem>
-                  )) : <ListItem>Nenhum parecer cadastrado</ListItem>
-                }
-              </List>
+              <Tabs
+                aria-label="Pipeline"
+                value={index}
+                onChange={(event, value) => setIndex(value as number)}
+              >
+                <TabList
+                  sx={{
+                    pt: 1,
+                    justifyContent: 'center',
+                    [`&& .${tabClasses.root}`]: {
+                      flex: 'initial',
+                      bgcolor: 'transparent',
+                      '&:hover': {
+                        bgcolor: 'transparent',
+                      },
+                      [`&.${tabClasses.selected}`]: {
+                        color: 'primary.plainColor',
+                        '&::after': {
+                          height: 2,
+                          borderTopLeftRadius: 3,
+                          borderTopRightRadius: 3,
+                          bgcolor: 'primary.500',
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <Tab indicatorInset >
+                    Ativos
+                  </Tab>
+                  <Tab indicatorInset onChange={() => buscarParecer()}>
+                    Inativos
+                  </Tab>
+                </TabList>
+                <Box
+                  sx={{
+                    background: 'var(--bg)',
+                    boxShadow: '0 0 0 100vmax var(--bg)',
+                    clipPath: 'inset(0 -100vmax)'
+                  }}
+                >
+                  <TabPanel value={0} onChange={() => buscarParecer()}>
+                    <List>
+                      {
+                        parecer && parecer.length > 0 ? parecer.map((parecer: IParecer) => (
+                          parecer.status === 1 ?
+                            <ListItem sx={{ display: 'flex', justifyContent: 'space-between' }} value={parecer.id}>
+                              {parecer.parecer}
+                              <Box>
+                                <IconButton color='warning' onClick={() => { setEditMotivo(true); setTextoMotivo(parecer.parecer); setIdParecer(parecer.id) }} >
+                                  <EditIcon />
+                                </IconButton>
+                                <IconButton color='danger' onClick={() => { setOpenModalMotivo(true); setIdParecer(parecer.id); setStatusMotivo("Desativar") }} >
+                                  <CancelIcon />
+                                </IconButton>
+                              </Box>
+                            </ListItem>
+                            : ''
+                        )) : <ListItem>Nenhum parecer cadastrado</ListItem>
+                      }
+                    </List>
+                  </TabPanel>
+                  <TabPanel value={1} onChange={() => buscarParecer()}>
+                    <List>
+                      {
+                        parecer && parecer.length > 0 ? parecer.map((parecer: IParecer) => (
+                          parecer.status === 0 ?
+                            <ListItem sx={{ display: 'flex', justifyContent: 'space-between' }} value={parecer.id}>
+                              {parecer.parecer}
+                              <Box>
+                                <IconButton color='warning' onClick={() => { setEditMotivo(true); setTextoMotivo(parecer.parecer); setIdParecer(parecer.id) }} >
+                                  <EditIcon />
+                                </IconButton>
+                                <IconButton color='success' onClick={() => { setOpenModalMotivo(true); setIdParecer(parecer.id); setStatusMotivo("Ativar") }} >
+                                  <Check />
+                                </IconButton>
+                              </Box>
+                            </ListItem>
+                            : ''
+                        )) : <ListItem>Nenhum parecer cadastrado</ListItem>
+                      }
+                    </List>
+                  </TabPanel>
+                </Box>
+              </Tabs>
             </ModalDialog>
           </ModalOverflow>
         </Modal>

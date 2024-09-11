@@ -18,7 +18,7 @@ export interface IParecer {
 
 export interface ICriarParecer {
     parecer: string;
-    status: number;
+    status?: number;
 }
 
 export interface IPaginadoParecer {
