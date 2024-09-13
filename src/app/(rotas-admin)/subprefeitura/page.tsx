@@ -58,6 +58,8 @@ function SearchUnidades() {
   const [sigla, setSigla] = useState<string>('');
   const [statusModal, setStatusModal] = useState<number>(1);
   const [carregando, setCarregando] = useState<boolean>(true);
+  const [ loading, setLoading ] = useState<boolean>();
+
   const confirmaVazio: {
     aberto: boolean,
     confirmaOperacao: () => void,
@@ -162,7 +164,7 @@ function SearchUnidades() {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid, isSubmitSuccessful }
+    formState: { errors, isValid }
   } = useForm<Schema>({
     mode: "onChange",
     resolver: zodResolver(schema),
@@ -174,17 +176,18 @@ function SearchUnidades() {
   });
 
   const onSubmit = (data: Schema) => {
+    setLoading(true);
     if (!id) {
       subprefeituraServices.criar(data)
         .then(() => {
           setAlert('Subprefeitura criada!', 'Essa subprefeitura foi criada e será exibida.', 'success', 3000, Check);
-          !isSubmitSuccessful
           data.nome = '';
           data.sigla = '';
           data.status = 1;
           setOpenNovaSub(false);
           limpaCamposForm();
           buscaSubprefeitura();
+          setLoading(false);
         })
     } else {
       subprefeituraServices.atualizar({ id, ...data })
@@ -193,6 +196,7 @@ function SearchUnidades() {
           setOpenNovaSub(false);
           limpaCamposForm();
           buscaSubprefeitura();
+          setLoading(false)
         })
     }
   }
@@ -319,8 +323,8 @@ function SearchUnidades() {
                         </IconButton>
                       </Tooltip>
                     ) : (
-                      <Tooltip title="Desativar" arrow placement="top">
-                        <IconButton title="Desativar" size="sm" color="danger" onClick={() => (setTitle('Desativando!'), setMessage('Deseja desativar esta unidade?'), setOpenComfirm(true), setId(subprefeitura.id), setMensagemStatus(0))}>
+                      <Tooltip title="Desativar Unidade" arrow placement="top">
+                        <IconButton title="Desativar Unidade" size="sm" color="danger" onClick={() => (setTitle('Desativando!'), setMessage('Deseja desativar esta unidade?'), setOpenComfirm(true), setId(subprefeitura.id), setMensagemStatus(0))}>
                           <Cancel />
                         </IconButton>
                       </Tooltip>
@@ -437,7 +441,7 @@ function SearchUnidades() {
                     Cancelar
                   </Button>
                   <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
-                    {isSubmitSuccessful ? <CircularProgress variant="solid" /> : "Salvar"}
+                    {loading ? <CircularProgress variant="solid" /> : "Salvar"}
                   </Button>
                 </CardActions>
               </CardOverflow>
@@ -445,7 +449,6 @@ function SearchUnidades() {
           </form>
         </ModalDialog>
       </Modal>
-
-    </Content >
+    </Content>
   );
 }
