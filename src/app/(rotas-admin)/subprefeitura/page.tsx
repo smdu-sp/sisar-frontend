@@ -48,7 +48,7 @@ function SearchUnidades() {
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
   const [notificacao, setNotificacao] = useState(0);
   const [openComfirm, setOpenComfirm] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [openNovaSub, setOpenNovaSub] = useState(false);
   const [mensagemStatus, setMensagemStatus] = useState(1);
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
@@ -104,12 +104,14 @@ function SearchUnidades() {
       subprefeituraServices.ativar(id)
         .then(() => {
           setAlert('Subprefeitura ativada!', 'Essa subprefeitura foi ativada e será exibida para seleção.', 'success', 3000, Check);
+          limpaCamposForm();
           buscaSubprefeitura();
         })
     } else if (tipo == 0) {
       subprefeituraServices.desativar(id)
         .then(() => {
           setAlert('Subprefeitura desativada!', 'Essa subprefeitura foi desativada e não será exibida para seleção.', 'warning', 3000, Check);
+          limpaCamposForm();
           buscaSubprefeitura();
         })
     }
@@ -131,7 +133,6 @@ function SearchUnidades() {
     setPagina(1);
 
   };
-
 
   const limpaFitros = () => {
     setBusca('');
@@ -181,17 +182,26 @@ function SearchUnidades() {
           data.nome = '';
           data.sigla = '';
           data.status = 1;
-          setOpen(false);
+          setOpenNovaSub(false);
+          limpaCamposForm();
           buscaSubprefeitura();
         })
     } else {
       subprefeituraServices.atualizar({ id, ...data })
         .then(() => {
           setAlert('Subprefeitura atualizada!', 'Subprefeitura foi atualiza com sucesso.', 'success', 3000, Check);
-          setOpen(false);
+          setOpenNovaSub(false);
+          limpaCamposForm();
           buscaSubprefeitura();
         })
     }
+  }
+
+  const limpaCamposForm = () => {
+    setNome('');
+    setSigla('');
+    setId('');
+    setStatusModal(1);
   }
 
   return (
@@ -297,9 +307,9 @@ function SearchUnidades() {
                   theme.vars.palette.danger.plainActiveBg :
                   undefined
               }}>
-                <td onClick={() => {setOpen(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.nome}</td>
-                <td onClick={() => {setOpen(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.sigla}</td>
-                <td onClick={() => {setOpen(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.status == 1 ? "Ativo" : "Inativo"}</td>
+                <td onClick={() => {setOpenNovaSub(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.nome}</td>
+                <td onClick={() => {setOpenNovaSub(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.sigla}</td>
+                <td onClick={() => {setOpenNovaSub(true); setNome(subprefeitura.nome); setSigla(subprefeitura.sigla); setId(subprefeitura.id)}}>{subprefeitura.status == 1 ? "Ativo" : "Inativo"}</td>
                 <td>
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     {!subprefeitura.status ? (
@@ -334,16 +344,16 @@ function SearchUnidades() {
         labelRowsPerPage="Registros por página"
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
       /> : null}
-      <IconButton onClick={() => setOpen(true)} color='primary' variant='soft' size='lg' sx={{
+      <IconButton onClick={() => setOpenNovaSub(true)} color='primary' variant='soft' size='lg' sx={{
         position: 'fixed',
         bottom: '2rem',
         right: '2rem',
       }}><Add /></IconButton>
 
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal open={openNovaSub} onClose={() => { setOpenNovaSub(false); limpaCamposForm() }}>
         <ModalDialog>
-          <DialogTitle>Adicionar Subprefeitura</DialogTitle>
-          <DialogContent>Adicione uma nova subprefeitura para continuar</DialogContent>
+          <DialogTitle>{ !id ? "Adicionar Subprefeitura" : "Editar subprefeitura" }</DialogTitle>
+          <DialogContent>{ !id ? 'Adicione uma nova subprefeitura para continuar' : 'Edite a subprefeitura para continuar'}</DialogContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ maxWidth: 600, minWidth: 600 }}>
               <Stack spacing={2}>
@@ -423,7 +433,7 @@ function SearchUnidades() {
               </Stack>
               <CardOverflow>
                 <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-                  <Button size="sm" variant="outlined" color="neutral" onClick={() => setOpen(false)}>
+                  <Button size="sm" variant="outlined" color="neutral" onClick={() => { setOpenNovaSub(false); limpaCamposForm() }}>
                     Cancelar
                   </Button>
                   <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>

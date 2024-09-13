@@ -215,7 +215,7 @@ export default function UsuarioDetalhes(props: any) {
                             </Select>
                         </FormControl>
                         <FormControl sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row' }}>
-                            <Button color="neutral" variant="outlined" onClick={() => setAdicionarFeriasModal(false)}>Cancelar</Button>
+                            <Button color="neutral" variant="outlined" onClick={() => setAdicionarSubstitutoModal(false)}>Cancelar</Button>
                             <Button color="success" onClick={() => adicionarSubstituto()}>Adicionar</Button>
                         </FormControl>
                     </Stack>
