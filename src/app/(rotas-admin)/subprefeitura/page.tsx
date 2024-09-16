@@ -317,14 +317,14 @@ function SearchUnidades() {
                 <td>
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     {!subprefeitura.status ? (
-                      <Tooltip title="Ativar Unidade" arrow placement="top">
-                        <IconButton size="sm" color="success" onClick={() => (setTitle('Ativando!'), setMessage('Deseja ativar esta unidade?'), setOpenComfirm(true), setId(subprefeitura.id), setMensagemStatus(1))}>
+                      <Tooltip title="Ativar Subprefeitura" arrow placement="top">
+                        <IconButton size="sm" color="success" onClick={() => (setTitle('Ativando!'), setMessage('Deseja ativar esta subprefeitura?'), setOpenComfirm(true), setId(subprefeitura.id), setMensagemStatus(1))}>
                           <Check />
                         </IconButton>
                       </Tooltip>
                     ) : (
-                      <Tooltip title="Desativar Unidade" arrow placement="top">
-                        <IconButton title="Desativar Unidade" size="sm" color="danger" onClick={() => (setTitle('Desativando!'), setMessage('Deseja desativar esta unidade?'), setOpenComfirm(true), setId(subprefeitura.id), setMensagemStatus(0))}>
+                      <Tooltip title="Desativar Subprefeitura" arrow placement="top">
+                        <IconButton title="Desativar Subprefeitura" size="sm" color="danger" onClick={() => (setTitle('Desativando!'), setMessage('Deseja desativar esta subprefeitura?'), setOpenComfirm(true), setId(subprefeitura.id), setMensagemStatus(0))}>
                           <Cancel />
                         </IconButton>
                       </Tooltip>
@@ -334,7 +334,7 @@ function SearchUnidades() {
               </tr>
             ) : null
 
-          )) : <tr><td colSpan={4}>Nenhuma unidade encontrada</td></tr>}
+          )) : <tr><td colSpan={4}>Nenhuma subprefeitura encontrada</td></tr>}
         </tbody>
       </Table>
       {(total && total > 0) ? <TablePagination

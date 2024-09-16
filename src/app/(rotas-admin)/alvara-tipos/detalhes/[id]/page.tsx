@@ -113,6 +113,7 @@ export default function AlvaraTipoDetalhes(props: any) {
     }
 
     useEffect(() => {
+        setCarregando(true)
         if (id) {
             alvaraTiposService.buscarPorId(id)
                 .then((response: IAlvaraTipo) => {
