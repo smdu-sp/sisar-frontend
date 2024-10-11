@@ -18,7 +18,7 @@ export default function Inicial() {
     const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
     const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
     const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
-    const [statusBusca, setStatusBusca] = useState(searchParams.get('status') ? Number(searchParams.get('status')) : 0);
+    // const [statusBusca, setStatusBusca] = useState(searchParams.get('status') ? Number(searchParams.get('status')) : 0);
     const [modalProcessoNovo, setModalProcessoNovo] = useState(false);
     const [seiNovo, setSeiNovo] = useState('');
     const [processoExistente, setProcessoExistente] = useState<IInicial>();
@@ -26,7 +26,7 @@ export default function Inicial() {
 
     useEffect(() => {
         buscaIniciais();
-    }, [pagina, limite, statusBusca]);
+    }, [pagina, limite]);
 
 
     const createQueryString = useCallback(
@@ -39,8 +39,7 @@ export default function Inicial() {
     );
 
     const buscaIniciais = async () => {
-        console.log(statusBusca);
-        inicialServices.buscarTudoAnalise(pagina, limite, statusBusca)
+        inicialServices.buscarTudoAnalise(pagina, limite, 2)
             .then((response: IPaginatedInicial) => {
                 setTotal(response.total);
                 setPagina(response.pagina);
@@ -94,48 +93,6 @@ export default function Inicial() {
                 href: ''
             }]}
         >
-            <Box
-                className="SearchAndFilters-tabletUp"
-                sx={{
-                    borderRadius: 'sm',
-                    py: 2,
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: 1.5,
-                    '& > *': {
-                        minWidth: { xs: '120px', md: '160px' },
-                    },
-                    alignItems: 'end',
-                }}
-            >
-                {/* <IconButton size='sm' onClick={() => { buscaAdmissibilidade(); }}><Refresh /></IconButton>
-                <IconButton size='sm' ><Clear /></IconButton> */}
-                <Select
-                    size="sm"
-                    value={statusBusca}
-                    onChange={(_, value) => { setStatusBusca(value as number); }}
-                >
-                    <Option value={0}>Admissibilidade</Option>
-                    <Option value={1}>Via Ordinaria</Option>
-                    <Option value={2}>Em Análise</Option>
-                    <Option value={3}>Deferido</Option>
-                    <Option value={4}>Indefereido</Option>
-                </Select>
-                {/* <FormControl sx={{ flex: 1 }} size="sm">
-                    <FormLabel>Buscar: </FormLabel>
-                    <Input
-                        startDecorator={<Search fontSize='small' />}
-                        value={busca}
-                        onChange={(event) => setBusca(event.target.value)}
-                        onKeyDown={(event) => {
-                            if (event.key === 'Enter') {
-                                router.push(pathname + '?' + createQueryString('busca', busca));
-                                buscaAdmissibilidade();
-                            }
-                        }}
-                    />
-                </FormControl> */}
-            </Box>
             <Modal open={modalProcessoNovo} onClose={() => setModalProcessoNovo(false)}>
                 <ModalDialog>
                     <DialogTitle>Novo Processo</DialogTitle>
@@ -182,7 +139,7 @@ export default function Inicial() {
                             fontSize: 'sm',
                             fontWeight: 'lg',
                             [`&[aria-selected="true"]`]: {
-                                color: `${status[statusBusca].color}.500`,
+                                color: `${status[2].color}.500`,
                                 bgcolor: 'background.surface',
                             },
                             [`&.${tabClasses.focusVisible}`]: {
@@ -191,8 +148,8 @@ export default function Inicial() {
                         },
                     }}
                 >
-                    <Tab variant="soft" color={status[statusBusca].color} >
-                       { status[statusBusca].label }
+                    <Tab variant="soft" color={status[2].color} >
+                       { status[2].label }
                     </Tab>
                 </TabList>
                 <TabPanel value={0}>
