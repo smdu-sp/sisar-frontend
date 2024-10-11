@@ -166,7 +166,6 @@ function SearchUsuarios() {
         { label: 'Usuários', href: '/usuarios' }
       ]}
       titulo='Usuários'
-      pagina='usuarios'
     >
       <Snackbar
         variant="solid"

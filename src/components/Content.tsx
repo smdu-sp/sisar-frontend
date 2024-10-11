@@ -12,7 +12,6 @@ export default function Content({
     titulo = 'Dashboard',
     tags = [],
     button = null,
-    pagina,
     breadcrumbs,
     menuOverride,
 } : {
@@ -20,7 +19,6 @@ export default function Content({
     titulo?: string;
     tags?: React.ReactNode;
     button?: React.ReactNode;
-    pagina?: string;
     breadcrumbs?: {
       label: string;
       href: string;
@@ -35,7 +33,6 @@ export default function Content({
         <Header />
         <FirstSidebar />
         <SecondSidebar
-            pagina={pagina}
             menuOverride={menuOverride}
         />
         <Box

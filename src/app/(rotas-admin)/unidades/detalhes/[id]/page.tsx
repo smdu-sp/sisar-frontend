@@ -83,7 +83,6 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                 { label: nome ? nome : 'Nova Unidade', href: '/unidades/detalhes/' + idUnidade || '' },
             ]}
             titulo={nome ? nome : 'Nova Unidade'}
-            pagina="unidades"
         >
             <Box
                 sx={{

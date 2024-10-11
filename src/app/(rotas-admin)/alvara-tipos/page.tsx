@@ -120,7 +120,6 @@ export default function AlvaraTipos() {
   return (
     <Content
       titulo='Tipos de alvará'
-      pagina='alvara-tipos'
       breadcrumbs={[{
         label: 'Tipos de alvará',
         href: 'alvara-tipos'

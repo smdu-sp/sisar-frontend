@@ -41,7 +41,6 @@ export default function UsuarioDetalhes() {
                   <Chip color={permissoes[usuario?.permissao].color} size='lg'>{permissoes[usuario?.permissao].label}</Chip>
                 </div> : null
             }
-            pagina=""
         >
             <Box
                 sx={{

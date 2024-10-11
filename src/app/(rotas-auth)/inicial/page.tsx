@@ -85,7 +85,6 @@ export default function Inicial() {
   return (
     <Content
       titulo='Processos'
-      pagina='inicial'
       breadcrumbs={[{
         label: 'Processos',
         href: ''

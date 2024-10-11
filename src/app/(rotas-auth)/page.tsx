@@ -290,7 +290,6 @@ export default function Home() {
   return (
     <Content
       titulo='Página Inicial'
-      pagina='/'
     >
 
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>

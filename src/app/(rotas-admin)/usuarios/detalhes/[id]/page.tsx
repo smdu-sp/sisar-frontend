@@ -165,7 +165,6 @@ export default function UsuarioDetalhes(props: any) {
                   <Chip color={permissoes[usuario?.permissao].color} size='lg'>{permissoes[usuario?.permissao].label}</Chip>
                 </div> : null
             }
-            pagina="usuarios"
         >
             <Modal open={adicionarFeriasModal} sx={{ zIndex: 99 }} onClose={() => setAdicionarFeriasModal(false)}>
                 <ModalDialog>

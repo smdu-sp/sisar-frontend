@@ -6,15 +6,18 @@ import Usuario from './Usuario';
 import { ListSubheader } from '@mui/material';
 import * as usuarioServices from '@/shared/services/usuario.services';
 import { IUsuario } from '@/shared/services/usuario.services';
+import { usePathname } from 'next/navigation';
 
-const RenderMenu = (menu: IMenu, pagina?: string) => {
+const RenderMenu = (menu: IMenu) => {
   const [permissao, setPermissao] = useState('USR');
+  const pagina = `/${usePathname().split("/")[1]}`;  
+
   useEffect(() => {
-    usuarioServices.validaUsuario()
-      .then((response: IUsuario) => {
-        setPermissao(response.permissao);
-      });
+    usuarioServices.validaUsuario().then((response: IUsuario) => {
+      setPermissao(response.permissao);
+    });
   }, [])
+
   return (
       <List
         size="sm"
@@ -29,7 +32,7 @@ const RenderMenu = (menu: IMenu, pagina?: string) => {
         <ListSubheader sx={{ lineHeight: 2, borderRadius: 2, backgroundColor: 'transparent' }}>Menu</ListSubheader>
         {(menu.userOptions && menu.userOptions.length > 0) && menu.userOptions.map((page) => (
           <ListItem sx={{width: '100%'}} key={page.name}>
-            <ListItemButton component={Link} underline="none" selected={pagina===page.name} href={page.href}>
+            <ListItemButton component={Link} underline="none" selected={pagina===page.href} href={page.href}>
               <ListItemDecorator>
                 <SvgIcon component={page.icon} />
               </ListItemDecorator>
@@ -41,7 +44,7 @@ const RenderMenu = (menu: IMenu, pagina?: string) => {
         {['DEV', 'SUP', 'ADM'].includes(permissao) ? <ListSubheader sx={{ lineHeight: 2, borderRadius: 2, backgroundColor: 'transparent' }}>Administração</ListSubheader> : null}
         {['DEV', 'SUP', 'ADM'].includes(permissao) ? menu.adminOptions.map((page) => (
           <ListItem sx={{width: '100%'}} key={page.name}>
-            <ListItemButton component={Link} underline="none" selected={pagina===page.name} href={page.href}>
+            <ListItemButton component={Link} underline="none" selected={pagina===page.href} href={page.href}>
               <ListItemDecorator>
                 <SvgIcon component={page.icon} />
               </ListItemDecorator>
@@ -55,10 +58,8 @@ const RenderMenu = (menu: IMenu, pagina?: string) => {
 }
 
 export default function SecondSidebar({
-  pagina,
   menuOverride,
 } : {
-  pagina?: string;
   menuOverride?: IMenu;
 }) {
   const { closeSidebar } = useContext(MenuContext);
@@ -114,7 +115,7 @@ export default function SecondSidebar({
             flex: 1,
           }}
         >
-          {menuOverride ? RenderMenu(menuOverride, pagina) : RenderMenu(menu, pagina)}
+          {menuOverride ? RenderMenu(menuOverride) : RenderMenu(menu)}
         </Box>
         <Usuario />
       </Sheet>

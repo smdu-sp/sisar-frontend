@@ -167,7 +167,6 @@ function SearchUnidades() {
         { label: 'Unidades', href: '/unidades' }
       ]}
       titulo='Unidades'
-      pagina='unidades'
     >
       <Snackbar
         variant="solid"

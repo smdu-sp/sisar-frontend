@@ -147,7 +147,6 @@ export default function AlvaraTipoDetalhes(props: any) {
                 { label: 'Detalhes', href: '/alvara-tipos/detalhes/' + id && id },
             ]}
             titulo={id ? nome ? nome : 'Detalhes' : 'Novo'}
-            pagina="alvara-tipos"
         >
 
             <form onSubmit={handleSubmit(onSubmit)}>

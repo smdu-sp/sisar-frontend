@@ -214,7 +214,6 @@ function SearchUnidades() {
         { label: 'Subprefeitura', href: '/subprefeitura' }
       ]}
       titulo='Subprefeitura'
-      pagina='subprefeitura'
     >
 
       <Snackbar

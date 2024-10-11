@@ -7,7 +7,6 @@ export default function Importar() {
   return (
     <Content 
       titulo='Importar'
-      pagina='importar'
       breadcrumbs={[{
         label: 'Importar',
         href: ''

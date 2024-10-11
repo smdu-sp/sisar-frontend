@@ -18,7 +18,7 @@ export interface IInicial {
     id: number
     decreto: boolean
     sei: string
-    tipo_requerimento: string
+    tipo_requerimento: number
     requerimento: string
     aprova_digital?: string
     processo_fisico?: string

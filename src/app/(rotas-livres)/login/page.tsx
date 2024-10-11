@@ -12,17 +12,22 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { AlertsContext } from '@/providers/alertsProvider';
 
-function getWindowSize() {
-  const {innerWidth, innerHeight} = window;
-  return {innerWidth, innerHeight};
-}
-
 export default function Login() {
   const { setAlert } = useContext(AlertsContext);
   const [login, setLogin] = useState<string>('');
   const [senha, setSenha] = useState<string>('');
   const [loginSuccess, setLoginSuccess] = useState<boolean>(false);
   const [mostraSenha, setMostraSenha] = useState<boolean>(false);
+  const [windowSize, setWindowSize] = useState<{ innerWidth: number; innerHeight: number; }>();
+      
+  function getWindowSize() {
+    const { innerWidth, innerHeight } = window;
+    return { innerWidth, innerHeight };
+  }
+  
+  function handleWindowResize() {
+    setWindowSize(getWindowSize())
+  }
 
   const router = useRouter();
   async function handleSubmit(event: SyntheticEvent) {
@@ -40,11 +45,12 @@ export default function Login() {
     setAlert('Bem-vindo!', 'Login efetuado com sucesso', 'success', 5000);
     setTimeout(() => router.replace('/'), 3000);
   }
-  const [windowSize, setWindowSize] = useState(getWindowSize());
   useEffect(() => {
-    function handleWindowResize() {setWindowSize(getWindowSize())}
-    window.addEventListener('resize', handleWindowResize);
-    return () => {window.removeEventListener('resize', handleWindowResize)};
+    if (typeof window !== "undefined") {
+      setWindowSize(getWindowSize());
+      window.addEventListener('resize', handleWindowResize);
+      return () => window.removeEventListener('resize', handleWindowResize);
+    }
   }, []);
 
   return (
@@ -81,9 +87,9 @@ export default function Login() {
             flexDirection: 'column',
             gap: 2,
             borderRadius: 6,
-            bgcolor: windowSize.innerWidth < 600 ? 'transparent' : ''
+            bgcolor: windowSize && windowSize.innerWidth < 600 ? 'transparent' : ''
           }}
-          variant={windowSize.innerWidth < 600 ? 'plain' : 'outlined'}
+          variant={windowSize && windowSize.innerWidth < 600 ? 'plain' : 'outlined'}
         >
           <Link
             href='/'
