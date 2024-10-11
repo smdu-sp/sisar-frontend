@@ -1,3 +1,5 @@
+'use client'
+
 import Content from "@/components/Content";
 import * as inicialServices from '@/shared/services/inicial.services';
 import * as usuarioServices from '@/shared/services/usuario.services';
