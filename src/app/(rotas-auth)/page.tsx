@@ -282,7 +282,7 @@ export default function Home() {
 
   useEffect(() => {
     var datacard = data.year() + '-' + (data.month() + 1) + '-' + data.date();
-    setDataCard(new Date(datacard).toLocaleDateString('pt-BR'));
+    setDataCard(datacard.replaceAll("-", "/").split('/').reverse().join('/'));
     buscar_data();
     setCarregando(false);
   }, [data]);
@@ -291,7 +291,6 @@ export default function Home() {
     <Content
       titulo='Página Inicial'
     >
-
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <LocalizationProvider dateAdapter={AdapterDayjs} >
           <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'end' }}>
