@@ -82,16 +82,18 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
     });
 
     const onSubmit = (data: Schema) => {
-        console.log(data);
         if (admissibilidade) {
             admissibilidadeServices.atualizarId(admissibilidade.inicial_id, { ...data })
                 .then(() => {
-                    router.push('/admissibilidade');
+                    inicialServices.atualizar(admissibilidade.inicial_id, { tipo_processo, status: 2 })
+                        .then((e) => {
+                            if (e) {
+                                setAlert('Admissão Realizada', `${comum.formatarSei(inicial?.sei ? inicial?.sei : "")} admitido com sucesso`, 'success', 3000, Check);
+                                router.push('/admissibilidade')
+                            }
+                        })
                 })
-            inicialServices.atualizar(admissibilidade.inicial_id, { tipo_processo })
-                .then(() => {
-                    setAlert('Admissão Realizada', `${inicial?.sei} admitido com sucesso`, 'success', 3000, Check);
-                })
+
         }
     }
 

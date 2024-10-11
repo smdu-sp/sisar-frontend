@@ -35,7 +35,7 @@ export const menu: IMenu = {
             icon: AssignmentTurnedIn,
         },
         {
-            title: 'Em Analise',
+            title: 'Em Análise',
             href: '/analise',
             name: 'analise',
             icon: TroubleshootIcon,

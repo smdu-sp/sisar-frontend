@@ -76,7 +76,7 @@ export default function Inicial() {
         { label: 'Via Ordinaria', color: 'warning' },
         { label: 'Em Análise', color: 'primary' },
         { label: 'Deferido', color: 'success' },
-        { label: 'Indefereido', color: 'danger' },
+        { label: 'Indeferido', color: 'danger' },
     ]
 
     const processo: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [

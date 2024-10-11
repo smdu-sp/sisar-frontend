@@ -1,13 +1,13 @@
 'use client'
 
 import Content from '@/components/Content';
-import { FormLabel, Input, Modal, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, IconButton, ModalDialog, Stack, Tab, TabList, TabPanel, Table, Tabs, tabClasses, FormHelperText } from '@mui/joy';
+import { FormLabel, Input, Modal, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, IconButton, ModalDialog, Stack, Tab, TabList, TabPanel, Table, Tabs, tabClasses, FormHelperText, Select, Option, Box } from '@mui/joy';
 import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
 import { useCallback, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Add } from '@mui/icons-material';
+import { Add, Clear, Refresh, Search } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
 import * as comum from "@/shared/services/comum.services";
 
@@ -18,8 +18,10 @@ export default function Inicial() {
   const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
+  const [statusBusca, setStatusBusca] = useState(searchParams.get('status') ? Number(searchParams.get('status')) : 0);
   const [modalProcessoNovo, setModalProcessoNovo] = useState(false);
   const [seiNovo, setSeiNovo] = useState('');
+  const [busca, setBusca] = useState('');
   const [processoExistente, setProcessoExistente] = useState<IInicial>();
   const router = useRouter();
 
@@ -49,9 +51,9 @@ export default function Inicial() {
 
   const checaSei = async (sei: string) => {
     inicialServices.verificaSei(sei).then((response: IInicial | null) => {
-      if (response){
+      if (response) {
         setProcessoExistente(response);
-      }      
+      }
     })
   }
 
@@ -75,7 +77,7 @@ export default function Inicial() {
     { label: 'Via Ordinaria', color: 'warning' },
     { label: 'Em Análise', color: 'primary' },
     { label: 'Deferido', color: 'success' },
-    { label: 'Indefereido', color: 'danger' },
+    { label: 'Indeferido', color: 'danger' },
   ]
 
   const processo: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
@@ -94,33 +96,75 @@ export default function Inicial() {
     >
       <Modal open={modalProcessoNovo} onClose={() => setModalProcessoNovo(false)}>
         <ModalDialog>
-            <DialogTitle>Novo Processo</DialogTitle>
-            <DialogContent>Buscar SEI do processo</DialogContent>
-            <Stack spacing={2}>
-                <FormControl>
-                    <FormLabel>SEI</FormLabel>
+          <DialogTitle>Novo Processo</DialogTitle>
+          <DialogContent>Buscar SEI do processo</DialogContent>
+          <Stack spacing={2}>
+            <FormControl>
+              <FormLabel>SEI</FormLabel>
+              <Input
+                value={seiNovo}
+                onChange={(e) => {
+                  var numSei = e.target.value;
+                  if (numSei.length >= 0) setSeiNovo(comum.formatarSei(e.target.value));
+                  if (numSei.replaceAll(/\D/g, '').length < 16) setProcessoExistente(undefined);
+                  if (numSei.replaceAll(/\D/g, '').length === 16) checaSei(numSei);
+                }}
+              />
+            </FormControl>
+            {!comum.validaDigitoSei(seiNovo) && <FormHelperText>
+              SEI Inválido
+            </FormHelperText>}
+            {processoExistente && processoExistente.id && <FormHelperText component={'a'} href={`/inicial/detalhes/${processoExistente.id}`}>
+              Processo já cadastrado: #{processoExistente.id}
+            </FormHelperText>}
+          </Stack>
+          {(seiNovo.length > 18 && comum.validaDigitoSei(seiNovo)) && !(processoExistente && processoExistente.id) && <Stack sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', gap: 1 }}>
+            <Button component='a' href={`/inicial/detalhes?novo-processo=${seiNovo.replaceAll(/\D/g, '')}`} sx={{ flexGrow: 1 }} color="success">Novo processo</Button>
+          </Stack>}
+        </ModalDialog>
+      </Modal>
+      <Box
+        className="SearchAndFilters-tabletUp"
+        sx={{
+          borderRadius: 'sm',
+          py: 2,
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 1.5,
+          '& > *': {
+            minWidth: { xs: '120px', md: '160px' },
+          },
+          alignItems: 'end',
+        }}
+      >
+        <IconButton size='sm' onClick={() => { buscaIniciais() }}><Refresh /></IconButton>
+                <IconButton size='sm' ><Clear /></IconButton>
+        <Select
+          size="sm"
+          value={statusBusca}
+          onChange={(_, value) => { setStatusBusca(value as number); }}
+        >
+          <Option value={0}>Admissibilidade</Option>
+          <Option value={1}>Via Ordinaria</Option>
+          <Option value={2}>Em Análise</Option>
+          <Option value={3}>Deferido</Option>
+          <Option value={4}>Indeferido</Option>
+        </Select>
+        <FormControl sx={{ flex: 1 }} size="sm">
+                    <FormLabel>Buscar: </FormLabel>
                     <Input
-                      value={seiNovo}
-                      onChange={(e) => {
-                        var numSei = e.target.value;
-                        if (numSei.length >= 0) setSeiNovo(comum.formatarSei(e.target.value));
-                        if (numSei.replaceAll(/\D/g, '').length < 16) setProcessoExistente(undefined); 
-                        if (numSei.replaceAll(/\D/g, '').length === 16) checaSei(numSei);
-                      }}
+                        startDecorator={<Search fontSize='small' />}
+                        value={busca}
+                        onChange={(event) => setBusca(event.target.value)}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                                router.push(pathname + '?' + createQueryString('busca', busca));
+                                buscaIniciais();
+                            }
+                        }}
                     />
                 </FormControl>
-                {!comum.validaDigitoSei(seiNovo) && <FormHelperText>
-                    SEI Inválido
-                </FormHelperText>}
-                {processoExistente && processoExistente.id && <FormHelperText component={'a'} href={`/inicial/detalhes/${processoExistente.id}`}>
-                  Processo já cadastrado: #{processoExistente.id}
-                </FormHelperText>}
-            </Stack>
-            {(seiNovo.length > 18 && comum.validaDigitoSei(seiNovo)) && !(processoExistente && processoExistente.id) && <Stack sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', gap: 1 }}>
-                <Button component='a' href={`/inicial/detalhes?novo-processo=${seiNovo.replaceAll(/\D/g, '')}`} sx={{ flexGrow: 1 }} color="success">Novo processo</Button>
-            </Stack>}
-        </ModalDialog>
-    </Modal>
+      </Box>
       <Tabs
         variant="outlined"
         defaultValue={0}
