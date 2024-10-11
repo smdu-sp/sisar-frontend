@@ -264,9 +264,11 @@ export default function Home() {
   };
 
   const status: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
-    { label: '-', color: 'primary' },
-    { label: 'Inicial', color: 'neutral' },
-    { label: 'Admissibilidade', color: 'primary' },
+    { label: 'Admissibilidade', color: 'neutral' },
+    { label: 'Via Ordinaria', color: 'warning' },
+    { label: 'Em Análise', color: 'primary' },
+    { label: 'Deferido', color: 'success' },
+    { label: 'Indefereido', color: 'danger' },
   ]
 
   const processo: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [

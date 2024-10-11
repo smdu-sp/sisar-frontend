@@ -135,7 +135,22 @@ export interface IPaginatedInicial {
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
-async function buscarTudo (pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginatedInicial> {
+async function buscarTudoAnalise(pagina: number = 1, limite: number = 10, status: number = 0): Promise<IPaginatedInicial> {
+    const session = await getServerSession(authOptions);
+    const subprefeituras = await fetch(`${baseURL}inicial/buscar-tudo-analise?pagina=${pagina}&limite=${limite}&status=${status}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) signOut();
+        return response.json();
+    })
+    return subprefeituras;
+}
+
+async function buscarTudo(pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginatedInicial> {
     const session = await getServerSession(authOptions);
     const subprefeituras = await fetch(`${baseURL}inicial/buscar-tudo?pagina=${pagina}&limite=${limite}&busca=${busca}`, {
         method: "GET",
@@ -349,5 +364,6 @@ export {
     processosAvisos,
     mudarTecnicoResponsavel,
     mudarAdministrativoResponsável,
-    verificaSei
+    verificaSei,
+    buscarTudoAnalise
 }

@@ -71,9 +71,11 @@ export default function Inicial() {
   };
 
   const status: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
-    { label: '-', color: 'primary' },
-    { label: 'Inicial', color: 'neutral' },
-    { label: 'Admissibilidade', color: 'primary' },
+    { label: 'Admissibilidade', color: 'neutral' },
+    { label: 'Via Ordinaria', color: 'warning' },
+    { label: 'Em Análise', color: 'primary' },
+    { label: 'Deferido', color: 'success' },
+    { label: 'Indefereido', color: 'danger' },
   ]
 
   const processo: { label: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }[] = [
@@ -170,8 +172,8 @@ export default function Inicial() {
                 <tr onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)} key={inicial.id} style={{ cursor: 'pointer' }}>
                   <td>{inicial.id}</td>
                   <td>
-                    <Chip color={inicial.status > 1 ? status[0].color : status[inicial.status].color}>
-                      {inicial.status > 2 ? status[0].label : status[inicial.status].label}
+                    <Chip color={inicial.status > 1 ? status[inicial.status].color : status[inicial.status].color}>
+                      {inicial.status > 2 ? status[inicial.status].label : status[inicial.status].label}
                     </Chip>
                   </td>
                   <td>{comum.formatarSei(inicial.sei)}</td>

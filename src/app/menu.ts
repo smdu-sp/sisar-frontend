@@ -1,4 +1,5 @@
 import { AssignmentTurnedIn, Business, Checklist, Handyman, Home, Person, PlayArrow, UploadFile } from '@mui/icons-material';
+import TroubleshootIcon from '@mui/icons-material/Troubleshoot';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 export interface IMenuOption {
     title:  string;
@@ -32,6 +33,12 @@ export const menu: IMenu = {
             href: '/admissibilidade',
             name: 'admissibilidade',
             icon: AssignmentTurnedIn,
+        },
+        {
+            title: 'Em Analise',
+            href: '/analise',
+            name: 'analise',
+            icon: TroubleshootIcon,
         },
     ],
     adminOptions: [
