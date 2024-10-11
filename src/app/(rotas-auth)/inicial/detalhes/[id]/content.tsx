@@ -16,7 +16,7 @@ import { AlertsContext } from '@/providers/alertsProvider';
 
 
 
-export default function ContentTabs({ inicial, funcionarios, novoProcesso }: { inicial?: IInicial, funcionarios?: { administrativos: IUsuario[], tecnicos: IUsuario[] }, novoProcesso: string | null }) {
+export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInicial, funcionarios?: { administrativos: IUsuario[], tecnicos: IUsuario[] }}) {
     const query = useSearchParams();
     const [tabInicial, setTabInicial] = useState(parseInt(query.get('tab') || '0'));
     const [lembrete, setLembrete] = useState(false);
@@ -141,7 +141,7 @@ export default function ContentTabs({ inicial, funcionarios, novoProcesso }: { i
                         borderRadius: '10px',
                     }
                 }}>
-                    <InicialTab inicial={inicial} novoProcesso={novoProcesso} />
+                    <InicialTab inicial={inicial} />
                 </TabPanel>
                 {(inicial && inicial.status > 1) && <TabPanel value={1}>
                     <DistribuicaoTab distribuicao={inicial.distribuicao} funcionarios={funcionarios} />

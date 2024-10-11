@@ -1,7 +1,7 @@
 function formatarSei(value: string): string {
     //1111.1111/1111111-1
     if (!value) return value;
-    const onlyNumbers = value.replace(/\D/g, '').substring(0, 16);
+    const onlyNumbers = value && value.toString().replace(/\D/g, '').substring(0, 16);
     if (onlyNumbers.length <= 4)
         return onlyNumbers.replace(/(\d{0,4})/, '$1');
     if (onlyNumbers.length <= 8)
@@ -14,7 +14,7 @@ function formatarSei(value: string): string {
 function formatarSql(value: string): string {
     //111.111.1111-1
     if (!value) return value;
-    const onlyNumbers = value.replace(/\D/g, '').substring(0, 11);
+    const onlyNumbers = value && value.toString().replace(/\D/g, '').substring(0, 11);
     if (onlyNumbers.length <= 3)
         return onlyNumbers.replace(/(\d{0,3})/, '$1');
     if (onlyNumbers.length <= 6)
@@ -55,7 +55,8 @@ function formatarFisico(value: string): string {
 
 function validaDigitoSei(sei: string): boolean {
     var valido = false;
-    sei = sei.replace(/\D/g, '').substring(0, 16);
+    console.log(sei);
+    sei = sei && sei.toString().replace(/\D/g, '').substring(0, 16);
     if (sei.length > 16) sei = sei.slice(-16);
     if (sei.length === 16) {
         sei = sei.toString().trim();

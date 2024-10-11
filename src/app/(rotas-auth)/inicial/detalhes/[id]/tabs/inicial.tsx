@@ -26,6 +26,9 @@ import {
     string,
     z,
 } from "zod";
+import { useSearchParams } from 'next/navigation';
+
+export const dynamicParams = true;
 
 const schema = object({
     sei: string().min(18, { message: "O SEI deve ter pelo menos 18 caracteres" }),
@@ -45,8 +48,11 @@ const schema = object({
 });
 type Schema = Infer<typeof schema>;
 
-export default function InicialTab({ inicial, novoProcesso }: { inicial?: IInicial , novoProcesso: string | null } ) {
+export default function InicialTab({ inicial }: { inicial?: IInicial } ) {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const novoProcesso = searchParams.get('novo-processo');
+    
     const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
     const [num_sql, setNum_sql] = useState<string>('');
     const [nums_sql, setNums_sql] = useState<string[]>([]);

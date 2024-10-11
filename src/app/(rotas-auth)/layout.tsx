@@ -10,8 +10,10 @@ export default async function RotasAuth({children}:{children: React.ReactNode}) 
   if (!session) redirect('/login');
   const usuario: IUsuario = await usuarioServices.validaUsuario();
   if (!usuario) {
-    await signOut({ redirect: false });
-    redirect('/login');
+    if (typeof window !== "undefined") {
+      await signOut({ redirect: false });
+      redirect('/login');
+    }
   }
   return <>{children}</>;
 }
