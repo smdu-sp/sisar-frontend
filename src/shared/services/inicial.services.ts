@@ -150,9 +150,9 @@ async function buscarTudoAnalise(pagina: number = 1, limite: number = 10, status
     return subprefeituras;
 }
 
-async function buscarTudo(pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginatedInicial> {
+async function buscarTudo(pagina: number = 1, limite: number = 10, busca: string = '', status: string = "0"): Promise<IPaginatedInicial> {
     const session = await getServerSession(authOptions);
-    const subprefeituras = await fetch(`${baseURL}inicial/buscar-tudo?pagina=${pagina}&limite=${limite}&busca=${busca}`, {
+    const subprefeituras = await fetch(`${baseURL}inicial/buscar-tudo?pagina=${pagina}&limite=${limite}&busca=${busca}&status=${status}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

@@ -21,13 +21,13 @@ export default function Inicial() {
   const [statusBusca, setStatusBusca] = useState(searchParams.get('status') ? Number(searchParams.get('status')) : 0);
   const [modalProcessoNovo, setModalProcessoNovo] = useState(false);
   const [seiNovo, setSeiNovo] = useState('');
-  const [busca, setBusca] = useState('');
   const [processoExistente, setProcessoExistente] = useState<IInicial>();
   const router = useRouter();
+  const [busca, setBusca] = useState(searchParams.get('busca') || '');
 
   useEffect(() => {
     buscaIniciais();
-  }, [pagina, limite]);
+  }, [pagina, limite, statusBusca]);
 
 
   const createQueryString = useCallback(
@@ -40,7 +40,8 @@ export default function Inicial() {
   );
 
   const buscaIniciais = async () => {
-    inicialServices.buscarTudo(pagina, limite)
+    const buscaLimpa = busca.replace(/[-./]/g, '');
+    inicialServices.buscarTudo(pagina, limite, buscaLimpa, statusBusca.toString())
       .then((response: IPaginatedInicial) => {
         setTotal(response.total);
         setPagina(response.pagina);
@@ -138,7 +139,7 @@ export default function Inicial() {
         }}
       >
         <IconButton size='sm' onClick={() => { buscaIniciais() }}><Refresh /></IconButton>
-                <IconButton size='sm' ><Clear /></IconButton>
+        <IconButton size='sm' ><Clear /></IconButton>
         <Select
           size="sm"
           value={statusBusca}
@@ -151,19 +152,19 @@ export default function Inicial() {
           <Option value={4}>Indeferido</Option>
         </Select>
         <FormControl sx={{ flex: 1 }} size="sm">
-                    <FormLabel>Buscar: </FormLabel>
-                    <Input
-                        startDecorator={<Search fontSize='small' />}
-                        value={busca}
-                        onChange={(event) => setBusca(event.target.value)}
-                        onKeyDown={(event) => {
-                            if (event.key === 'Enter') {
-                                router.push(pathname + '?' + createQueryString('busca', busca));
-                                buscaIniciais();
-                            }
-                        }}
-                    />
-                </FormControl>
+          <FormLabel>Buscar: </FormLabel>
+          <Input
+            startDecorator={<Search fontSize='small' />}
+            value={busca}
+            onChange={(event) => setBusca(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                router.push(pathname + '?' + createQueryString('busca', busca));
+                buscaIniciais();
+              }
+            }}
+          />
+        </FormControl>
       </Box>
       <Tabs
         variant="outlined"
