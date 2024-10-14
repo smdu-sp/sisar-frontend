@@ -42,6 +42,7 @@ export default function Admissibilidade() {
   const [statusAtual, setStatusAtual] = useState<number>(0);
   const [reconsiderado, setReconsiderado] = useState(true)
   const [motivo, setMotivo] = useState(0);
+  const [idInicial, setIdInicial] = useState("");
   const [modal, setModal] = useState<any>([]);
   const [layout, setLayout] = React.useState<ModalDialogProps['layout'] | undefined>(
     undefined,
@@ -83,6 +84,7 @@ export default function Admissibilidade() {
 
   const atualizar = async () => {
     await admissibilidadeServices.atualizarId(modal[2], { status: statusModal ? 3 : 2, motivo, reconsiderado: statusModal === true ? (reconsiderado === null ? false : true) : false })
+    await inicialServices.atualizar(modal[2], {status: statusModal ? 0 : 1})
     setOpen(false)
     buscaAdmissibilidade();
     setAlert('Status atualizado!', `O Status foi para ${status[statusModal ? 3 : 2].label}`, 'success', 3000, Check);
