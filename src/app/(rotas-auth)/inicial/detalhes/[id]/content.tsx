@@ -13,6 +13,7 @@ import * as avisos from '@/shared/services/avisos.services';
 import * as inicialServices from '@/shared/services/inicial.services';
 import { Check } from '@mui/icons-material';
 import { AlertsContext } from '@/providers/alertsProvider';
+import FinalizaçãoTab from './tabs/finalizacao';
 
 
 
@@ -130,6 +131,9 @@ export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInic
                     {(inicial) && <Tab variant="soft">
                         Admissibilidade
                     </Tab>}
+                    {(inicial && inicial?.status === 2 ) && <Tab variant="soft">
+                        Finalização
+                    </Tab>}
                 </TabList>
                 <TabPanel value={0} sx={{
                     flexGrow: 1,
@@ -148,6 +152,9 @@ export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInic
                 </TabPanel>}
                 {(inicial) && <TabPanel value={2}>
                     <AdmissibilidadeTab inicial={inicial} admissibilidade={inicial.admissibilidade} />
+                </TabPanel>}
+                {(inicial && inicial?.status === 2 ) && <TabPanel value={3}>
+                    <FinalizaçãoTab inicial={inicial} admissibilidade={inicial.admissibilidade} />
                 </TabPanel>}
             </Tabs>
         </>
