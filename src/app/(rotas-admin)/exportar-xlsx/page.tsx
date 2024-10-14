@@ -6,7 +6,7 @@ import * as XLSX from 'xlsx';
 
 export default function ExportXlsx() {
   
-  const jsonData = [
+  const data = [
     { nome: 'Gustavo', profissao: 'dev' },
     { nome: 'Victor', profissao: 'dev' },
     { nome: 'Marcus', profissao: 'dev' }
@@ -19,11 +19,12 @@ export default function ExportXlsx() {
     // }
   ];
 
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(jsonData);
-    const workbook = XLSX.utils.book_new();
+  const exportToExcel = (): void => {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Desenvolvedores');
     XLSX.writeFile(workbook, 'devs_secretaria.xlsx');
+    return
   }
 
   return (
