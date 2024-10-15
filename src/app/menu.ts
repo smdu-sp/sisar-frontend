@@ -1,6 +1,7 @@
 import { AssignmentTurnedIn, Business, Checklist, Handyman, Home, Person, PlayArrow, UploadFile } from '@mui/icons-material';
 import TroubleshootIcon from '@mui/icons-material/Troubleshoot';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
 export interface IMenuOption {
     title:  string;
     href:   string;
@@ -71,6 +72,12 @@ export const menu: IMenu = {
             href: '/alvara-tipos',
             name: 'alvara-tipos',
             icon: Checklist,
+        },
+        {
+            title: 'Relatórios',
+            href: '/relatorio',
+            name: 'relatorio',
+            icon: SimCardDownloadIcon,
         } 
     ]
 }

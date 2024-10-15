@@ -1,11 +1,12 @@
 'use client'
 
+import Content from '@/components/Content';
 import { Box, Button } from '@mui/joy';
 import React from 'react';
 import * as XLSX from 'xlsx';
 
 export default function ExportXlsx() {
-  
+
   const data = [
     { nome: 'Gustavo', profissao: 'dev' },
     { nome: 'Victor', profissao: 'dev' },
@@ -28,19 +29,12 @@ export default function ExportXlsx() {
   }
 
   return (
-    <>
-      <Box
-        sx={{
-          height: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        <Button onClick={exportToExcel}>
-          Exportar
-        </Button>
-      </Box>
-    </>
+    <Content
+      breadcrumbs={[
+        { label: 'Relatórios', href: '/relatorio' }
+      ]}
+      titulo='Relatórios'
+    >
+    </Content>
   );
 }
