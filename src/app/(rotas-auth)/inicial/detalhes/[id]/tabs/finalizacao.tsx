@@ -3,31 +3,21 @@
 import { IInicial } from "@/shared/services/inicial.services";
 import { IAdmissibilidade } from "@/shared/services/admissibilidade.services";
 import React, { useEffect, useState } from "react";
-import * as admissibilidadeServices from "@/shared/services/admissibilidade.services";
-import * as unidadeServices from "@/shared/services/unidade.services";
-import * as inicialServices from "@/shared/services/inicial.services";
-import * as subprefeituraServices from "@/shared/services/subprefeitura.services";
-import * as avisos from '@/shared/services/avisos.services';
-import { IUnidade } from "@/shared/services/unidade.services";
-import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
 import * as comum from "@/shared/services/comum.services";
+import * as finalizacaoServices from "@/shared/services/finalizacao.service";
 import { useRouter as useRouterNavigation } from "next/navigation";
-import { Autocomplete, AutocompleteOption, Box, Button, Checkbox, Chip, Divider, FormControl, FormHelperText, FormLabel, Grid, IconButton, Input, Option, Select, Skeleton, Textarea } from "@mui/joy";
-import { Business, Check, Today } from "@mui/icons-material";
-import { IUsuario } from "@/shared/services/usuario.services";
+import { Box, Button, Chip, Divider, FormControl, FormHelperText, FormLabel, Grid, Input, Option, Select, Skeleton, Textarea } from "@mui/joy";
 import { AlertsContext } from '@/providers/alertsProvider';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     infer as Infer,
     z,
-    date,
-    number,
     object,
     string,
     boolean,
 } from "zod";
+import { Check } from "@mui/icons-material";
 
 const schema = object({
     data_apostilamento: z.coerce.date(),
@@ -55,13 +45,17 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
     const [obs, setObs] = useState('')
     const [outorga, setOutorga] = useState<boolean>(true)
 
+    const [conclusao, setConclusao] = useState<boolean>(true)
+
+    const [finalizado, setFinalizado] = useState<boolean>(false)
+
     const { setAlert } = React.useContext(AlertsContext);
     const [carregando, setCarregando] = useState<boolean>(true);
 
     const {
         control,
         handleSubmit,
-        formState: { errors, isValid, isSubmitSuccessful }
+        formState: { errors }
     } = useForm<Schema>({
         mode: "onChange",
         resolver: zodResolver(schema),
@@ -78,8 +72,42 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
         }
     });
 
-    const onSubmit = (data: Schema) => {
+    const criar = async (data: Schema) => {
+        const newData = { ...data, inicial_id: inicial?.id ? inicial?.id : 0 }
+        await finalizacaoServices.criar(newData, conclusao)
+            .then((response) => {
+                if (response) {
+                    if (conclusao) setAlert('Processo Deferido!', 'Processo finalizado com sucesso!', 'success', 3000, Check)
+                    if (!conclusao) setAlert('Processo Indeferido!', 'Processo finalizado com sucesso!', 'warning', 3000, Check)
+                    buscaProId(response.inicial_id)
+                }
+            })
+    }
 
+    const buscaProId = async (id: number) => {
+        await finalizacaoServices.BuscaId(id)
+            .then((response) => {
+                if (response.data_conclusao) {
+                    setFinalizado(true)
+                    setData_apostilamento(response.data_apostilamento)
+                    setData_conclusao(response.data_conclusao)
+                    setData_emissao(response.data_emissao)
+                    setData_outorga(response.data_outorga)
+                    setData_resposta(response.data_resposta)
+                    setData_termo(response.data_termo)
+                    setNum_alvara(response.num_alvara)
+                    setObs(response.obs)
+                    setOutorga(response.outorga)
+                }
+            })
+    }
+
+    useEffect(() => {
+        buscaProId(inicial?.id ? inicial?.id : 0)
+    }, [conclusao])
+
+    const onSubmit = (data: Schema) => {
+        criar(data)
     }
 
     useEffect(() => {
@@ -360,11 +388,14 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
                     </Grid>
                     <Grid xs={12} lg={6} sx={{ display: 'flex', justifyContent: 'end', alignItems: 'end' }}>
                         <Grid xs={12} sx={{ display: 'flex', justifyContent: 'end', alignItems: 'end', gap: 1 }}>
-                            <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/admissibilidade`); }}>
+                            <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/analise`); }}>
                                 Cancelar
                             </Button>
-                            <Button size="sm" variant="solid" type="submit" disabled={!isValid}>
-                                Salvar
+                            <Button onClick={() => { setConclusao(false); }} color="danger" size="sm" variant="solid" type="submit" disabled={carregando || finalizado}>
+                                Indeferir
+                            </Button>
+                            <Button onClick={() => { setConclusao(true); }} size="sm" variant="solid" type="submit" disabled={carregando || finalizado}>
+                                Deferir
                             </Button>
                         </Grid>
                     </Grid>

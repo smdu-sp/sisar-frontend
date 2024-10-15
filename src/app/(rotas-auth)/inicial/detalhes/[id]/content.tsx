@@ -131,7 +131,7 @@ export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInic
                     {(inicial) && <Tab variant="soft">
                         Admissibilidade
                     </Tab>}
-                    {(inicial && inicial?.status === 2 ) && <Tab variant="soft">
+                    {(inicial && inicial?.status === 2 || inicial?.status === 3 || inicial?.status === 4 ) && <Tab variant="soft">
                         Finalização
                     </Tab>}
                 </TabList>
@@ -153,7 +153,7 @@ export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInic
                 {(inicial) && <TabPanel value={2}>
                     <AdmissibilidadeTab inicial={inicial} admissibilidade={inicial.admissibilidade} />
                 </TabPanel>}
-                {(inicial && inicial?.status === 2 ) && <TabPanel value={3}>
+                {(inicial && inicial?.status === 2 || inicial?.status === 3 || inicial?.status === 4 ) && <TabPanel value={3}>
                     <FinalizaçãoTab inicial={inicial} admissibilidade={inicial.admissibilidade} />
                 </TabPanel>}
             </Tabs>

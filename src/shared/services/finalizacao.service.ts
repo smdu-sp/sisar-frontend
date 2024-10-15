@@ -1,3 +1,5 @@
+'use server';
+
 import { IInicial } from "@/shared/services/inicial.services"
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/authOptions";
@@ -12,6 +14,7 @@ export interface FinalizacaoPaginado {
 
 export interface IFinalizacaoResponse {
     inicial: IInicial
+    inicial_id: number
     data_apostilamento: Date
     data_conclusao: Date
     data_emissao: Date
@@ -24,7 +27,7 @@ export interface IFinalizacaoResponse {
 }
 
 export interface IFinalizacao{
-    inicial_id: Number
+    inicial_id: number
     data_apostilamento: Date
     data_conclusao: Date
     data_emissao: Date
@@ -38,9 +41,10 @@ export interface IFinalizacao{
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
-async function criar(data: IFinalizacao): Promise<IFinalizacaoResponse> {
+async function criar(data: IFinalizacao, conclusao: boolean): Promise<IFinalizacaoResponse> {
+    const newConclusao = conclusao ? 'true' : 'false';
     const session = await getServerSession(authOptions);
-    const subprefeituras = await fetch(`${baseURL}/finalizacao/criar`, {
+    const finalizacao = await fetch(`${baseURL}finalizacao/criar?conclusao=${newConclusao}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -51,9 +55,25 @@ async function criar(data: IFinalizacao): Promise<IFinalizacaoResponse> {
         if (response.status === 401) signOut();
         return response.json();
     })
-    return subprefeituras;
+    return finalizacao;
+}
+
+async function BuscaId(id: number): Promise<IFinalizacaoResponse> {
+    const session = await getServerSession(authOptions);
+    const finalizacao = await fetch(`${baseURL}finalizacao/buscar/${id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    }).then((response) => {
+        if (response.status === 401) signOut();
+        return response.json();
+    })
+    return finalizacao;
 }
 
 export {
-    criar
+    criar,
+    BuscaId
 }
