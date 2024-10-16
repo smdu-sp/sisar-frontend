@@ -42,7 +42,7 @@ const jsonData = {
 export default function ExportXlsx() {
   const [ fileType, setFileType ] = useState<'XLSX' | 'PDF'>();
 
-  const mainData = [
+  const mainData: { Key: string, Value: any }[] = [
     { Key: 'Total', Value: jsonData.total },
     { Key: 'Análise', Value: jsonData.analise },
     { Key: 'Inadimissíveis', Value: jsonData.inadimissiveis },
@@ -50,23 +50,25 @@ export default function ExportXlsx() {
     { Key: 'Data Gerado', Value: jsonData.data_gerado }
   ];
 
-  const smulData = jsonData.em_analise.smul.data.map(item => ({
-    Nome: item.nome,
-    Quantidade: item.count
-  }));
+  const smulData: { Nome: string, Quantidade: number }[] = jsonData
+    .em_analise.smul.data.map((item: { nome: string, count: number }) => ({
+      Nome: item.nome,
+      Quantidade: item.count
+    }));
 
-  const graproemData = jsonData.em_analise.graproem.data.map(item => ({
-    Nome: item.nome,
-    Quantidade: item.count
-  }));
+  const graproemData: { Nome: string, Quantidade: number }[] = jsonData
+    .em_analise.graproem.data.map((item: { nome: string, count: number }) => ({
+      Nome: item.nome,
+      Quantidade: item.count
+    }));
 
-  const emAnaliseData = [
+  const emAnaliseData: { Key: string, Value: any }[] = [
     { Key: 'SMUL', Value: jsonData.em_analise.smul.quantidade },
     { Key: 'GRAPROEM', Value: jsonData.em_analise.graproem.quantidade },
     { Key: 'Total Parcial', Value: jsonData.em_analise.total_parcial }
   ];
 
-  const exportToXlsx = () => {
+  const exportToXlsx = (): void => {
     const worksheetMain: XLSX.WorkSheet = XLSX.utils.json_to_sheet(mainData);
     const worksheetSmul: XLSX.WorkSheet = XLSX.utils.json_to_sheet(smulData);
     const worksheetGraproem: XLSX.WorkSheet = XLSX.utils.json_to_sheet(graproemData);
@@ -79,7 +81,7 @@ export default function ExportXlsx() {
     XLSX.writeFile(workbook, 'relatorio.xlsx');
   };
 
-  const exportToPdf = () => {
+  const exportToPdf = (): void => {
     console.log('PDF');
   };
 
@@ -157,15 +159,26 @@ export default function ExportXlsx() {
         <FormControl 
           sx={{ 
             mx: 2, 
-            alignSelf: { xs: 'start', sm: 'end' }
+            alignSelf: { xs: 'start', sm: 'end' },
+            display: 'flex',
+            flexDirection : 'row'
           }}
         >
-          <Button 
+          <Button
+            color='success'
             onClick={exportFile}
             startDecorator={<DownloadForOfflineIcon />}
+            sx={{ width: 'fit-content', mr: 1 }}
+          >
+            Download (XLSX)
+          </Button>
+          <Button 
+            color='danger'
+            onClick={exportFile}
+            endDecorator={<DownloadForOfflineIcon />}
             sx={{ width: 'fit-content' }}
           >
-            Download
+            Download (PDF)
           </Button>
         </FormControl>
       </Card>
