@@ -33,7 +33,7 @@ export default function Content({
         <Header />
         <FirstSidebar />
         <SecondSidebar
-            menuOverride={menuOverride}
+          menuOverride={menuOverride}
         />
         <Box
           component="main"
@@ -66,13 +66,13 @@ export default function Content({
           />
           <Box
               sx={{
-                  display: 'flex',
-                  my: 1,
-                  gap: 1,
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  alignItems: { xs: 'start', sm: 'center' },
-                  flexWrap: 'wrap',
-                  justifyContent: { xs: 'start', sm: 'space-between' },
+                display: 'flex',
+                my: 1,
+                gap: 1,
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: { xs: 'start', sm: 'center' },
+                flexWrap: 'wrap',
+                justifyContent: { xs: 'start', sm: 'space-between' },
               }}
           >
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>

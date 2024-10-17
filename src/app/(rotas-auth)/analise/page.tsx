@@ -10,6 +10,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Add } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
 import * as comum from "@/shared/services/comum.services";
+import AssistantIcon from '@mui/icons-material/Assistant';
 
 export default function Inicial() {
     const searchParams = useSearchParams();
@@ -149,7 +150,7 @@ export default function Inicial() {
                     }}
                 >
                     <Tab variant="soft" color={status[2].color} >
-                       { status[2].label }
+                        {status[2].label}
                     </Tab>
                 </TabList>
                 <TabPanel value={0}>
@@ -170,25 +171,29 @@ export default function Inicial() {
                         </thead>
                         <tbody>
                             {iniciais && iniciais.length > 0 ? iniciais.map((inicial: IInicial) => (
-                                <tr onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)} key={inicial.id} style={{ cursor: 'pointer' }}>
-                                    <td>{inicial.id}</td>
-                                    <td>
+                                <tr key={inicial.id} style={{ cursor: 'pointer' }}>
+                                    <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)}>{inicial.id}</td>
+                                    <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)}>
                                         <Chip color={inicial.status > 1 ? status[inicial.status].color : status[inicial.status].color}>
                                             {inicial.status > 2 ? status[inicial.status].label : status[inicial.status].label}
                                         </Chip>
                                     </td>
-                                    <td>{comum.formatarSei(inicial.sei)}</td>
-                                    <td>{inicial.tipo_requerimento}</td>
-                                    <td>{inicial.requerimento}</td>
-                                    <td>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
-                                    <td>{inicial.alvara_tipo.nome}</td>
-                                    <td>{new Date(inicial.alterado_em).toLocaleString('pt-BR')}</td>
-                                    <td>
+                                    <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)}>{comum.formatarSei(inicial.sei)}</td>
+                                    <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)}>{inicial.tipo_requerimento}</td>
+                                    <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)}>{inicial.requerimento}</td>
+                                    <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)}>{new Date(inicial.data_protocolo).toLocaleDateString('pt-BR')}</td>
+                                    <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)}>{inicial.alvara_tipo.nome}</td>
+                                    <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)}>{new Date(inicial.alterado_em).toLocaleString('pt-BR')}</td>
+                                    <td onClick={() => router.push(`/inicial/detalhes/${inicial.id}?tab=0`)}>
                                         <Chip color={processo[inicial.tipo_processo].color}>
                                             {processo[inicial.tipo_processo].label}
                                         </Chip>
                                     </td>
-                                    <td style={{ textAlign: 'right' }}></td>
+                                    <td style={{ textAlign: 'right' }}>
+                                        <IconButton onClick={() => {router.push(`/inicial/detalhes/${inicial.id}?tab=3`)}}>
+                                            <AssistantIcon color='info' />
+                                        </IconButton>
+                                    </td>
                                 </tr>
                             )) : <tr><td colSpan={9}>Nenhum cadastro inicial encontrado</td></tr>}
                         </tbody>
