@@ -5,6 +5,10 @@ import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import { Button, Card, FormControl, FormLabel, Option, Select } from '@mui/joy';
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const jsonData = {
   "total": 20,
@@ -40,58 +44,61 @@ const jsonData = {
 };
 
 export default function ExportXlsx() {
-  const [ fileType, setFileType ] = useState<'XLSX' | 'PDF'>();
+  const [ fileType, setFileType ] = useState<'XLSX' | 'PDF' | 'ALL'>();
+  const [ date, setDate ] = useState<Date | undefined>();
+
+  const smulData: { Key: string, Value: number }[] = jsonData
+    .em_analise.smul.data.map((item: { nome: string, count: number }) => ({
+      Key: item.nome,
+      Value: item.count
+    }));
+
+  const graproemData: { Key: string, Value: number }[] = jsonData
+    .em_analise.graproem.data.map((item: { nome: string, count: number }) => ({
+      Key: item.nome,
+      Value: item.count
+    }));
 
   const mainData: { Key: string, Value: any }[] = [
+    { Key: '', Value: '' },
+    { Key: 'Dados totais', Value: '' },
     { Key: 'Total', Value: jsonData.total },
     { Key: 'Análise', Value: jsonData.analise },
     { Key: 'Inadimissíveis', Value: jsonData.inadimissiveis },
     { Key: 'Admissíveis', Value: jsonData.admissiveis },
-    { Key: 'Data Gerado', Value: jsonData.data_gerado }
-  ];
-
-  const smulData: { Nome: string, Quantidade: number }[] = jsonData
-    .em_analise.smul.data.map((item: { nome: string, count: number }) => ({
-      Nome: item.nome,
-      Quantidade: item.count
-    }));
-
-  const graproemData: { Nome: string, Quantidade: number }[] = jsonData
-    .em_analise.graproem.data.map((item: { nome: string, count: number }) => ({
-      Nome: item.nome,
-      Quantidade: item.count
-    }));
-
-  const emAnaliseData: { Key: string, Value: any }[] = [
+    { Key: 'Data Gerado', Value: jsonData.data_gerado },
+    { Key: '', Value: '' },
+    { Key: 'Em Analise', Value: '' },
     { Key: 'SMUL', Value: jsonData.em_analise.smul.quantidade },
     { Key: 'GRAPROEM', Value: jsonData.em_analise.graproem.quantidade },
-    { Key: 'Total Parcial', Value: jsonData.em_analise.total_parcial }
+    { Key: 'Total Parcial', Value: jsonData.em_analise.total_parcial },
+    { Key: '', Value: '' },
+    { Key: 'SMUL', Value: '' },
+    ...smulData,
+    { Key: '', Value: '' },
+    { Key: 'Graproem', Value: '' },
+    ...graproemData
   ];
+
+  const getRelatorioDate = (): string => `${date?.toString().split(' ')[1]}-${date?.toString().split(' ')[3]}`;
 
   const exportToXlsx = (): void => {
     const worksheetMain: XLSX.WorkSheet = XLSX.utils.json_to_sheet(mainData);
-    const worksheetSmul: XLSX.WorkSheet = XLSX.utils.json_to_sheet(smulData);
-    const worksheetGraproem: XLSX.WorkSheet = XLSX.utils.json_to_sheet(graproemData);
-    const worksheetEmAnalise: XLSX.WorkSheet = XLSX.utils.json_to_sheet(emAnaliseData);
     const workbook: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheetMain, 'Dados Gerais');
-    XLSX.utils.book_append_sheet(workbook, worksheetSmul, 'SMUL');
-    XLSX.utils.book_append_sheet(workbook, worksheetGraproem, 'GRAPROEM');
-    XLSX.utils.book_append_sheet(workbook, worksheetEmAnalise, 'Em Análise');
-    XLSX.writeFile(workbook, 'relatorio.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheetMain, 'Dados');
+    XLSX.writeFile(workbook, `Relatorio-${getRelatorioDate()}.xlsx`);
   };
 
-  const exportToPdf = (): void => {
-    console.log('PDF');
-  };
+  const exportToPdf = (): void => console.log('PDF');
 
   const exportFile = (): void => {
-    if (fileType == 'PDF') {
+    console.log(date);
+    if (fileType == 'ALL') {
+      exportToXlsx();
       exportToPdf();
       return
-    }
-    exportToXlsx();
-    return
+    };
+    fileType == 'PDF' ? exportToPdf() : exportToXlsx();
   }
 
   return (
@@ -115,7 +122,7 @@ export default function ExportXlsx() {
           <Select 
             defaultValue={'XLSX'} 
             sx={{ 
-              width: { xs: '100%', sm: '150px'}, 
+              width: '100%', 
               mb: 3,
               alignSelf: { xs: 'center', sm: 'auto' } 
             }} 
@@ -133,15 +140,29 @@ export default function ExportXlsx() {
               Tipo 2
             </Option>
           </Select>
-          <FormLabel>Extensão de Arquivo</FormLabel>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker']}>
+              <DatePicker 
+                onChange={(e) => setDate(e?.toDate())} 
+                views={['month', 'year']} 
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+          <FormLabel sx={{ mt: 2 }}>Extensão de Arquivo</FormLabel>
           <Select 
             defaultValue={'XLSX'} 
             sx={{ 
-              width: { xs: '100%', sm: '150px'},
+              width: '100%',
               mb: { xs: 3, sm: 0 },
               alignSelf: { xs: 'center', sm: 'auto' } 
             }} 
           >
+            <Option 
+              onClick={() => setFileType('ALL')} 
+              value='Todos'
+            >
+              Todos 
+            </Option>
             <Option 
               onClick={() => setFileType('XLSX')} 
               value='XLSX'
@@ -165,20 +186,12 @@ export default function ExportXlsx() {
           }}
         >
           <Button
-            color='success'
+            color='primary'
             onClick={exportFile}
             startDecorator={<DownloadForOfflineIcon />}
-            sx={{ width: 'fit-content', mr: 1 }}
-          >
-            Download (XLSX)
-          </Button>
-          <Button 
-            color='danger'
-            onClick={exportFile}
-            endDecorator={<DownloadForOfflineIcon />}
             sx={{ width: 'fit-content' }}
           >
-            Download (PDF)
+            Download
           </Button>
         </FormControl>
       </Card>
