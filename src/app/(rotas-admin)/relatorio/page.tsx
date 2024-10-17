@@ -27,6 +27,14 @@ const jsonData = {
         {
           "nome": "teste 2",
           "count": 2
+        },
+        {
+          "nome": "teste 3",
+          "count": 3
+        },
+        {
+          "nome": "teste 4",
+          "count": 4
         }
       ]
     },
@@ -92,13 +100,14 @@ export default function ExportXlsx() {
   const exportToPdf = (): void => console.log('PDF');
 
   const exportFile = (): void => {
-    console.log(date);
+    if (date === undefined) 
+      throw new Error('Erro ao baixar o arquivo, data não selecionada');
     if (fileType == 'ALL') {
       exportToXlsx();
       exportToPdf();
       return
     };
-    fileType == 'PDF' ? exportToPdf() : exportToXlsx();
+    fileType === 'PDF' ? exportToPdf() : exportToXlsx();
   }
 
   return (
