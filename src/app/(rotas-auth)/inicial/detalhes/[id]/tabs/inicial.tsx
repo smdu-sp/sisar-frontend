@@ -52,7 +52,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial } ) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const novoProcesso = searchParams.get('novo-processo');
-    
+
     const [alvaraTipos, setAlvaraTipos] = useState<IAlvaraTipo[]>([]);
     const [num_sql, setNum_sql] = useState<string>('');
     const [nums_sql, setNums_sql] = useState<string[]>([]);
@@ -402,7 +402,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial } ) {
                                             return (<>
                                                 <Select
                                                     startDecorator={<AccountBalanceIcon />}
-                                                    placeholder="Tipo de Alvara"
+                                                    placeholder="Tipo de Alvará"
                                                     {...field}
                                                     onChange={(_, value) => field.onChange(value)}
                                                 >

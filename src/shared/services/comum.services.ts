@@ -55,7 +55,6 @@ function formatarFisico(value: string): string {
 
 function validaDigitoSei(sei: string): boolean {
     var valido = false;
-    console.log(sei);
     sei = sei && sei.toString().replace(/\D/g, '').substring(0, 16);
     if (sei.length > 16) sei = sei.slice(-16);
     if (sei.length === 16) {

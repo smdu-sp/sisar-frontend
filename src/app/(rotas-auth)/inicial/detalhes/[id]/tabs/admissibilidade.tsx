@@ -7,21 +7,17 @@ import * as admissibilidadeServices from "@/shared/services/admissibilidade.serv
 import * as unidadeServices from "@/shared/services/unidade.services";
 import * as inicialServices from "@/shared/services/inicial.services";
 import * as subprefeituraServices from "@/shared/services/subprefeitura.services";
-import * as avisos from '@/shared/services/avisos.services';
 import { IUnidade } from "@/shared/services/unidade.services";
 import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
 import * as comum from "@/shared/services/comum.services";
 import { useRouter as useRouterNavigation } from "next/navigation";
-import { Autocomplete, AutocompleteOption, Box, Button, Checkbox, Chip, Divider, FormControl, FormHelperText, FormLabel, Grid, IconButton, Input, Option, Select, Skeleton } from "@mui/joy";
-import { Business, Check, Today } from "@mui/icons-material";
-import { IUsuario } from "@/shared/services/usuario.services";
+import { Autocomplete, AutocompleteOption, Box, Button, Checkbox, Chip, Divider, FormControl, FormHelperText, FormLabel, Grid, Input, Option, Select, Skeleton } from "@mui/joy";
+import { Check } from "@mui/icons-material";
 import { AlertsContext } from '@/providers/alertsProvider';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     infer as Infer,
-    z,
     date,
     number,
     object,
@@ -50,26 +46,19 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
     const [num_smt, setNum_smt] = useState<string>('');
     const [interface_svma, setInterface_svma] = useState<boolean>(false);
     const [num_svma, setNum_svma] = useState<string>('');
-    const [processoSei, setProcessoSei] = useState<string>('');
     const [data_decisao_interlocutoria, setDataDecisao] = useState<Date>(new Date());
-    const [reuniao, setReuniao] = useState<Date>(new Date());
     const [unidades, setUnidades] = useState<IUnidade[]>([]);
     const [unidade_id, setUnidade_id] = useState('');
     const [subprefeitura, setSubprefeitura] = useState<ISubprefeitura[]>([]);
     const [subprefeitura_id, setSubprefeitura_id] = useState('');
-    const [lembrete, setLembrete] = useState<boolean>(false);
-    const [titulo, setTitulo] = useState<string>('');
-    const [descricao, setDescricao] = useState<string>('');
-    const [dataLembrete, setDataLembrete] = useState<Date>(new Date());
     const status = 0;
-    const [tipo, setTipo] = useState(0);
     const { setAlert } = React.useContext(AlertsContext);
     const [carregando, setCarregando] = useState<boolean>(true);
 
     const {
         control,
         handleSubmit,
-        formState: { errors, isValid, isSubmitSuccessful }
+        formState: { errors, isValid }
     } = useForm<Schema>({
         mode: "onChange",
         resolver: zodResolver(schema),
@@ -83,17 +72,30 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
 
     const onSubmit = (data: Schema) => {
         if (admissibilidade) {
-            admissibilidadeServices.atualizarId(admissibilidade.inicial_id, { ...data })
-                .then(() => {
-                    inicialServices.atualizar(admissibilidade.inicial_id, { tipo_processo, status: 2 })
-                        .then((e) => {
-                            if (e) {
-                                setAlert('Admissão Realizada', `${comum.formatarSei(inicial?.sei ? inicial?.sei : "")} admitido com sucesso`, 'success', 3000, Check);
-                                router.push('/admissibilidade')
-                            }
-                        })
-                })
+            const { status, unidade_id, subprefeitura_id, data_decisao_interlocutoria } = data;
+            admissibilidadeServices.atualizarId(admissibilidade.inicial_id, {
+                status, unidade_id, subprefeitura_id, data_decisao_interlocutoria
+            }).then(() => {
+                inicialServices.atualizar(admissibilidade.inicial_id, { tipo_processo, status: 2 })
+                    .then((e) => {
+                        if (e) {
+                            setAlert('Admissão Realizada', `${comum.formatarSei(inicial?.sei ? inicial?.sei : "")} admitido com sucesso`, 'success', 3000, Check);
+                            // router.push('/admissibilidade')
+                        }
+                    })
+            })
 
+        }
+    }
+
+    const buscarDados = () => {
+        if (inicial) {
+            setTipo_processo(inicial.tipo_processo)
+        }
+        if (admissibilidade) {
+            admissibilidade.subprefeitura_id && setSubprefeitura_id(admissibilidade.subprefeitura_id)
+            admissibilidade.unidade_id && setUnidade_id(admissibilidade.unidade_id)
+            admissibilidade.data_decisao_interlocutoria && setDataDecisao(admissibilidade.data_decisao_interlocutoria)
         }
     }
 
@@ -107,6 +109,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                 setSubprefeitura(response);
             })
         setCarregando(false)
+        buscarDados();
     }, [])
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -161,10 +164,10 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                                     <>
                                         <Autocomplete
                                             options={subprefeitura && subprefeitura.length > 0 ? subprefeitura : []}
-                                            getOptionLabel={(option) => option && option.sigla}
+                                            getOptionLabel={(option) => option && option.nome}
                                             renderOption={(props, option) => (
                                                 <AutocompleteOption {...props} key={option.id} value={option.id}>
-                                                    {option.sigla}
+                                                    {option.nome}
                                                 </AutocompleteOption>
                                             )}
                                             placeholder="Subprefeitura"
@@ -176,10 +179,11 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                                                 )
                                             }
                                             noOptionsText="Nenhuma subprefeitura encontrada"
-                                            onChange={(event, newValue) => {
+                                            onChange={(_, newValue) => {
                                                 field.onChange(newValue ? newValue.id : ''); // Assuming you want to update the form value with the id
                                             }}
                                             onBlur={field.onBlur}
+                                            value={field.value && field.value !== '' ? subprefeitura.find((sub: ISubprefeitura) => sub.id === field.value) : null}
                                         />
                                     </>
                                 )}
@@ -189,7 +193,6 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                     <Grid xs={12} lg={6}>
                         <FormControl>
                             <FormLabel>Unidade</FormLabel>
-
                             <Controller
                                 name="unidade_id"
                                 control={control}
@@ -213,10 +216,11 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                                                 )
                                             }
                                             noOptionsText="Nenhuma Unidades encontrada"
-                                            onChange={(event, newValue) => {
+                                            onChange={(_, newValue) => {
                                                 field.onChange(newValue ? newValue.id : '');
                                             }}
                                             onBlur={field.onBlur}
+                                            value={field.value && field.value !== '' ? unidades.find((unidade: IUnidade) => unidade.id === field.value) : null}
                                         />
                                     </>
                                 )}
