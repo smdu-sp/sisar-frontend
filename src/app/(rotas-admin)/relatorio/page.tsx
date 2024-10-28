@@ -2,13 +2,20 @@
 
 import Content from '@/components/Content';
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
-import { Button, Card, FormControl, FormLabel, Option, Select } from '@mui/joy';
+import { Box, Button, Card, Divider, FormControl, FormLabel, Option, Select, Typography } from '@mui/joy';
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+import { text } from 'stream/consumers';
+import { BorderAll } from '@mui/icons-material';
+import { Alignment } from 'pdfmake/interfaces';
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const jsonData = {
   "total": 20,
@@ -52,8 +59,8 @@ const jsonData = {
 };
 
 export default function ExportXlsx() {
-  const [ fileType, setFileType ] = useState<'XLSX' | 'PDF' | 'ALL'>();
-  const [ date, setDate ] = useState<Date | undefined>();
+  const [fileType, setFileType] = useState<'XLSX' | 'PDF' | 'ALL'>();
+  const [date, setDate] = useState<Date | undefined>();
 
   const smulData: { Key: string, Value: number }[] = jsonData
     .em_analise.smul.data.map((item: { nome: string, count: number }) => ({
@@ -100,18 +107,112 @@ export default function ExportXlsx() {
   const exportToPdf = (): void => console.log('PDF');
 
   const exportFile = (): void => {
-    if (date === undefined) 
+    if (date === undefined)
       throw new Error('Erro ao baixar o arquivo, data não selecionada');
     if (fileType == 'ALL') {
       exportToXlsx();
       exportToPdf();
       return
     };
-    fileType === 'PDF' ? exportToPdf() : exportToXlsx();
+    fileType === 'PDF' ? gerarPDF() : exportToXlsx();
   }
 
+  const gerarPDF = () => {
+    // Define a estrutura do PDF
+    const docDefinition = {
+      content: [
+        { text: 'APROVA RÁPIDO', style: 'header' },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['*', 'auto'], // Define as larguras das colunas
+            body: [
+              [
+                { text: 'TOTAL DE PROCESSOS', style: 'tableHeader' },
+                { text: jsonData.total.toString(), style: 'tableData' }
+              ],
+              [
+                { text: 'ANÁLISE DE ADMISSIBILIDADE', style: 'admissibilidadeHeader' },
+                { text: jsonData.analise.toString(), style: 'tableData' }
+              ],
+              [
+                { text: 'INADMISSÍVEIS', style: 'inadmissiveisHeader' },
+                { text: jsonData.inadimissiveis.toString(), style: 'tableData' }
+              ],
+              [
+                { text: 'ADMISSÍVEIS', style: 'admissiveisHeader' },
+                { text: jsonData.admissiveis.toString(), style: 'tableData' }
+              ],
+            ]
+          },
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['*', 'auto'], // Define as larguras das colunas
+            body: [
+              [
+                { text: 'SMUL', style: 'tableHeader' },
+                { text: jsonData.em_analise.smul.quantidade.toString(), style: 'tableData' }
+              ],
+              [
+                { text: 'GRAPROEM', style: 'tableHeader' },
+                { text: jsonData.em_analise.graproem.quantidade.toString(), style: 'tableData' }
+              ],
+              [
+                { text: 'TOTAL PARCIAL', style: 'tableHeader' },
+                { text: jsonData.em_analise.total_parcial.toString(), style: 'tableData' }
+              ],
+            ]
+          },
+        }
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          marginBottom: 10,
+        },
+        tableHeader: {
+          fontSize: 14,
+          bold: true,
+        },
+        admissibilidadeHeader: {
+          fontSize: 12,
+          bold: true,
+          color: '#D6A24A', 
+        },
+        inadmissiveisHeader: {
+          fontSize: 12,
+          bold: true,
+          color: 'red',
+        },
+        admissiveisHeader: {
+          fontSize: 12,
+          bold: true,
+          color: 'purple', 
+        },
+        tableData: {
+          fontSize: 12,
+        }
+      }
+    };
+
+    // Gera e abre o PDF
+    pdfMake.createPdf(docDefinition).getBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      setPdfUrl(url);
+      setModalIsOpen(true); // Abre o modal ao gerar o PDF
+    });
+  };
+
+
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string>('');
+
   return (
-    <Content 
+    <Content
       titulo='Relatórios'
       breadcrumbs={[{
         label: 'Relatórios',
@@ -123,27 +224,27 @@ export default function ExportXlsx() {
         variant='outlined'
         sx={{
           display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row'}
+          flexDirection: { xs: 'column', sm: 'row' }
         }}
       >
         <FormControl>
           <FormLabel>Tipo de Relatório</FormLabel>
-          <Select 
-            defaultValue={'XLSX'} 
-            sx={{ 
-              width: '100%', 
+          <Select
+            defaultValue={'XLSX'}
+            sx={{
+              width: '100%',
               mb: 3,
-              alignSelf: { xs: 'center', sm: 'auto' } 
-            }} 
+              alignSelf: { xs: 'center', sm: 'auto' }
+            }}
           >
-            <Option 
-              onClick={() => setFileType('XLSX')} 
+            <Option
+              onClick={() => setFileType('XLSX')}
               value='XLSX'
             >
               Tipo 1
             </Option>
-            <Option 
-              onClick={() => setFileType('PDF')} 
+            <Option
+              onClick={() => setFileType('PDF')}
               value='PDF'
             >
               Tipo 2
@@ -151,47 +252,47 @@ export default function ExportXlsx() {
           </Select>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker']}>
-              <DatePicker 
-                onChange={(e) => setDate(e?.toDate())} 
-                views={['month', 'year']} 
+              <DatePicker
+                onChange={(e) => setDate(e?.toDate())}
+                views={['month', 'year']}
               />
             </DemoContainer>
           </LocalizationProvider>
           <FormLabel sx={{ mt: 2 }}>Extensão de Arquivo</FormLabel>
-          <Select 
-            defaultValue={'XLSX'} 
-            sx={{ 
+          <Select
+            defaultValue={'XLSX'}
+            sx={{
               width: '100%',
               mb: { xs: 3, sm: 0 },
-              alignSelf: { xs: 'center', sm: 'auto' } 
-            }} 
+              alignSelf: { xs: 'center', sm: 'auto' }
+            }}
           >
-            <Option 
-              onClick={() => setFileType('ALL')} 
+            <Option
+              onClick={() => setFileType('ALL')}
               value='Todos'
             >
-              Todos 
+              Todos
             </Option>
-            <Option 
-              onClick={() => setFileType('XLSX')} 
+            <Option
+              onClick={() => setFileType('XLSX')}
               value='XLSX'
             >
               XLSX (Excel)
             </Option>
-            <Option 
-              onClick={() => setFileType('PDF')} 
+            <Option
+              onClick={() => setFileType('PDF')}
               value='PDF'
             >
               PDF
             </Option>
           </Select>
         </FormControl>
-        <FormControl 
-          sx={{ 
-            mx: 2, 
+        <FormControl
+          sx={{
+            mx: 2,
             alignSelf: { xs: 'start', sm: 'end' },
             display: 'flex',
-            flexDirection : 'row'
+            flexDirection: 'row'
           }}
         >
           <Button
@@ -204,6 +305,22 @@ export default function ExportXlsx() {
           </Button>
         </FormControl>
       </Card>
-    </Content>  
+      <Card>
+        <Box>
+          <Typography level='h4'>
+            Visualizar Relatório
+          </Typography>
+        </Box>
+        <Divider />
+        {pdfUrl && (
+          <iframe
+            src={pdfUrl}
+            title="Visualizador de PDF"
+            style={{ width: '100%', height: 1200 }}
+          ></iframe>
+        )}
+      </Card>
+
+    </Content>
   );
 }

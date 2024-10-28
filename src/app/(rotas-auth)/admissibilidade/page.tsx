@@ -547,7 +547,7 @@ export default function Admissibilidade() {
                       {
                         parecer && parecer.length > 0 ? parecer.map((parecer: IParecer) => (
                           parecer.status === 1 ?
-                            <ListItem sx={{ display: 'flex', justifyContent: 'space-between' }} value={parecer.id}>
+                            <ListItem key={parecer.id} sx={{ display: 'flex', justifyContent: 'space-between' }} value={parecer.id}>
                               {parecer.parecer}
                               <Box>
                                 <IconButton color='warning' onClick={() => { setEditMotivo(true); setTextoMotivo(parecer.parecer); setIdParecer(parecer.id) }} >
@@ -568,7 +568,7 @@ export default function Admissibilidade() {
                       {
                         parecer && parecer.length > 0 ? parecer.map((parecer: IParecer) => (
                           parecer.status === 0 ?
-                            <ListItem sx={{ display: 'flex', justifyContent: 'space-between' }} value={parecer.id}>
+                            <ListItem key={parecer.id} sx={{ display: 'flex', justifyContent: 'space-between' }} value={parecer.id}>
                               {parecer.parecer}
                               <Box>
                                 <IconButton color='warning' onClick={() => { setEditMotivo(true); setTextoMotivo(parecer.parecer); setIdParecer(parecer.id) }} >
