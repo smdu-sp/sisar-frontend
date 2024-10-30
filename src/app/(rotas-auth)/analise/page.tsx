@@ -29,7 +29,6 @@ export default function Inicial() {
         buscaIniciais();
     }, [pagina, limite]);
 
-
     const createQueryString = useCallback(
         (name: string, value: string) => {
             const params = new URLSearchParams(searchParams.toString())
@@ -49,7 +48,7 @@ export default function Inicial() {
             });
     }
 
-    const checaSei = async (sei: string) => {
+    const sei = async (sei: string) => {
         inicialServices.verificaSei(sei).then((response: IInicial | null) => {
             if (response) {
                 setProcessoExistente(response);
@@ -107,7 +106,7 @@ export default function Inicial() {
                                     var numSei = e.target.value;
                                     if (numSei.length >= 0) setSeiNovo(comum.formatarSei(e.target.value));
                                     if (numSei.replaceAll(/\D/g, '').length < 16) setProcessoExistente(undefined);
-                                    if (numSei.replaceAll(/\D/g, '').length === 16) checaSei(numSei);
+                                    if (numSei.replaceAll(/\D/g, '').length === 16) sei(numSei);
                                 }}
                             />
                         </FormControl>

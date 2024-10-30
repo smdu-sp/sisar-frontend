@@ -26,7 +26,7 @@ const schema = object({
     data_outorga: z.coerce.date(),
     data_resposta: z.coerce.date(),
     data_termo: z.coerce.date(),
-    num_alvara: string(),
+    num_alvara: string().min(1, { message: "Tamanho mínimo é 1" }),
     obs: string(),
     outorga: boolean()
 });
@@ -77,6 +77,15 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
         await finalizacaoServices.criar(newData, conclusao)
             .then((response) => {
                 if (response) {
+                    setData_apostilamento(new Date());
+                    setData_conclusao(new Date());
+                    setData_emissao(new Date());
+                    setData_outorga(new Date());
+                    setData_resposta(new Date());
+                    setData_termo(new Date());
+                    setNum_alvara('');
+                    setObs('');
+                    setOutorga(true);
                     if (conclusao) setAlert('Processo Deferido!', 'Processo finalizado com sucesso!', 'success', 3000, Check)
                     if (!conclusao) setAlert('Processo Indeferido!', 'Processo finalizado com sucesso!', 'warning', 3000, Check)
                     buscaProId(response.inicial_id)
