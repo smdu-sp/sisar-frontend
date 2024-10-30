@@ -39,7 +39,7 @@ export default function Inicial() {
     );
 
     const buscaIniciais = async () => {
-        inicialServices.buscarTudoAnalise(pagina, limite, 2)
+        inicialServices.buscarTudoAnalise(pagina, limite)
             .then((response: IPaginatedInicial) => {
                 setTotal(response.total);
                 setPagina(response.pagina);

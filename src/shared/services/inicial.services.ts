@@ -135,9 +135,9 @@ export interface IPaginatedInicial {
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
-async function buscarTudoAnalise(pagina: number = 1, limite: number = 10, status: number = 0): Promise<IPaginatedInicial> {
+async function buscarTudoAnalise(pagina: number = 1, limite: number = 10): Promise<IPaginatedInicial> {
     const session = await getServerSession(authOptions);
-    const subprefeituras = await fetch(`${baseURL}inicial/buscar-tudo-analise?pagina=${pagina}&limite=${limite}&status=${status}`, {
+    const subprefeituras = await fetch(`${baseURL}inicial/buscar-tudo-analise?pagina=${pagina}&limite=${limite}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
