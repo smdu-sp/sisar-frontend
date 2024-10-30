@@ -208,7 +208,7 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
                     </Grid>
                     <Grid xs={12} lg={3}>
                         <FormControl sx={{ width: '100%' }} error={Boolean(errors.data_emissao)}>
-                            <FormLabel>Data emissao</FormLabel>
+                            <FormLabel>Data Emissão</FormLabel>
                             {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                 name="data_emissao"
                                 control={control}
@@ -238,7 +238,7 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
                     </Grid>
                     <Grid xs={12} lg={3}>
                         <FormControl sx={{ width: '100%' }} error={Boolean(errors.data_outorga)}>
-                            <FormLabel>Data outorga</FormLabel>
+                            <FormLabel>Data Outorga</FormLabel>
                             {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                 name="data_outorga"
                                 control={control}
@@ -270,7 +270,7 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
                 <Grid container xs={12} spacing={2} sx={{ p: 2 }}>
                     <Grid xs={12} lg={3}>
                         <FormControl sx={{ width: '100%' }} error={Boolean(errors.data_resposta)}>
-                            <FormLabel>Data resposta</FormLabel>
+                            <FormLabel>Data Resposta</FormLabel>
                             {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                 name="data_resposta"
                                 control={control}
@@ -300,7 +300,7 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
                     </Grid>
                     <Grid xs={12} lg={3}>
                         <FormControl sx={{ width: '100%' }} error={Boolean(errors.data_termo)}>
-                            <FormLabel>Data termo</FormLabel>
+                            <FormLabel>Data Termo</FormLabel>
                             {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                 name="data_termo"
                                 control={control}
@@ -330,7 +330,7 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
                     </Grid>
                     <Grid xs={12} lg={4}>
                         <FormControl sx={{ width: '100%' }} error={Boolean(errors.num_alvara)}>
-                            <FormLabel>Numero alvara</FormLabel>
+                            <FormLabel>Número Alvara</FormLabel>
                             {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                 name="num_alvara"
                                 control={control}
