@@ -178,7 +178,7 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
                     </Grid>
                     <Grid xs={12} lg={3}>
                         <FormControl sx={{ width: '100%' }} error={Boolean(errors.data_conclusao)}>
-                            <FormLabel>Data Conclusao</FormLabel>
+                            <FormLabel>Data Conclusão</FormLabel>
                             {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
                                 name="data_conclusao"
                                 control={control}
