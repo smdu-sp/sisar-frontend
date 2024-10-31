@@ -1,7 +1,9 @@
 'use client'
 
 import Content from '@/components/Content';
-import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import DownloadForOfflineRoundedIcon from '@mui/icons-material/DownloadForOfflineRounded';
+import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+import RemoveRedEyeRoundedIcon from '@mui/icons-material/RemoveRedEyeRounded';
 import { Box, Button, Card, CardContent, Divider, FormControl, FormLabel, Option, Select, Typography } from '@mui/joy';
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
@@ -14,6 +16,7 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 import { text } from 'stream/consumers';
 import { BorderAll } from '@mui/icons-material';
 import { Alignment } from 'pdfmake/interfaces';
+import { AlertsContext } from '@/providers/alertsProvider';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -59,9 +62,10 @@ const jsonData = {
 };
 
 export default function ExportXlsx() {
-  const [fileType, setFileType] = useState<'XLSX' | 'PDF' | 'ALL'>();
+  const [fileType, setFileType] = useState<'XLSX' | 'PDF'>('XLSX');
   const [date, setDate] = useState<Date | undefined>();
-  const [construcao, setConstrucao] = useState(true);
+  const [construcao, setConstrucao] = useState(false);
+  const { setAlert } = React.useContext(AlertsContext);
 
   const smulData: { Key: string, Value: number }[] = jsonData
     .em_analise.smul.data.map((item: { nome: string, count: number }) => ({
@@ -105,17 +109,15 @@ export default function ExportXlsx() {
     XLSX.writeFile(workbook, `Relatorio-${getRelatorioDate()}.xlsx`);
   };
 
-  const exportToPdf = (): void => console.log('PDF');
-
   const exportFile = (): void => {
-    if (date === undefined)
-      throw new Error('Erro ao baixar o arquivo, data não selecionada');
-    if (fileType == 'ALL') {
-      exportToXlsx();
-      exportToPdf();
-      return
-    };
-    fileType === 'PDF' ? gerarPDF() : exportToXlsx();
+    try {
+      if (date === undefined)
+        throw new Error('Erro ao baixar o arquivo, data não selecionada');
+      fileType === 'PDF' ? gerarPDF() : exportToXlsx(); 
+    } catch (error) {
+      console.error(error);
+      setAlert(`${error}`, ' ', 'danger', 3000, WarningAmberRoundedIcon);
+    }
   }
 
   const gerarPDF = () => {
@@ -207,8 +209,6 @@ export default function ExportXlsx() {
     });
   };
 
-
-
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string>('');
 
@@ -280,12 +280,6 @@ export default function ExportXlsx() {
                   }}
                 >
                   <Option
-                    onClick={() => setFileType('ALL')}
-                    value='Todos'
-                  >
-                    Todos
-                  </Option>
-                  <Option
                     onClick={() => setFileType('XLSX')}
                     value='XLSX'
                   >
@@ -310,10 +304,14 @@ export default function ExportXlsx() {
                 <Button
                   color='primary'
                   onClick={exportFile}
-                  startDecorator={<DownloadForOfflineIcon />}
+                  startDecorator={
+                    fileType == 'XLSX' 
+                    ? <DownloadForOfflineRoundedIcon /> 
+                    : <RemoveRedEyeRoundedIcon />
+                  }
                   sx={{ width: 'fit-content' }}
                 >
-                  Download
+                  { fileType == 'XLSX' ? 'Download' : 'Visualizar' }
                 </Button>
               </FormControl>
             </Card>
@@ -334,7 +332,6 @@ export default function ExportXlsx() {
             </Card>
           </Box>
       }
-
     </Content >
   );
 }
