@@ -13,9 +13,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import { text } from 'stream/consumers';
-import { BorderAll } from '@mui/icons-material';
-import { Alignment } from 'pdfmake/interfaces';
 import { AlertsContext } from '@/providers/alertsProvider';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
