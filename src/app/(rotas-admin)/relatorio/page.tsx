@@ -109,7 +109,7 @@ export default function ExportXlsx() {
   const exportFile = (): void => {
     try {
       if (date === undefined)
-        throw new Error('Erro ao baixar o arquivo, data não selecionada');
+        throw new Error(' Data não selecionada');
       fileType === 'PDF' ? gerarPDF() : exportToXlsx(); 
     } catch (error) {
       console.error(error);
@@ -222,12 +222,23 @@ export default function ExportXlsx() {
           <Box>
             <Card>
               <CardContent>
-                <Typography level='h3' textAlign={'center'}>Relatório em construção</Typography>
+                <Typography 
+                  level='h3' 
+                  textAlign={'center'}
+                >
+                  Relatório em construção
+                </Typography>
               </CardContent>
             </Card>
           </Box>
           :
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: 2 
+            }}
+          >
             <Card
               size='lg'
               variant='outlined'
