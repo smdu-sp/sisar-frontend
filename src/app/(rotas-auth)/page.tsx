@@ -227,7 +227,7 @@ export default function Home() {
   );
 
   const buscaIniciais = async () => {
-    inicialServices.buscarTudo(pagina, limite)
+    inicialServices.buscarTudo(pagina, limite, '', '-1' )
       .then((response: IPaginatedInicial) => {
         setTotal(response.total);
         setPagina(response.pagina);

@@ -26,9 +26,9 @@ import {
 
 const schema = object({
     status: number().min(0).max(1),
-    unidade_id: string(),
+    unidade_id: string().min(1, { message: "Selecione uma subprefeitura" }),
     data_decisao_interlocutoria: date(),
-    subprefeitura_id: string(),
+    subprefeitura_id: string().min(1, { message: "Selecione uma subprefeitura" }),
 });
 type Schema = Infer<typeof schema>;
 
