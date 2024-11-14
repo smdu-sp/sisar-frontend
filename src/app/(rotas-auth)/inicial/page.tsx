@@ -18,7 +18,7 @@ export default function Inicial() {
   const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
-  const [statusBusca, setStatusBusca] = useState(searchParams.get('status') ? Number(searchParams.get('status')) : 0);
+  const [statusBusca, setStatusBusca] = useState(searchParams.get('status') ? Number(searchParams.get('status')) : -1);
   const [modalProcessoNovo, setModalProcessoNovo] = useState(false);
   const [seiNovo, setSeiNovo] = useState('');
   const [processoExistente, setProcessoExistente] = useState<IInicial>();
@@ -145,6 +145,7 @@ export default function Inicial() {
           value={statusBusca}
           onChange={(_, value) => { setStatusBusca(value as number); }}
         >
+          <Option value={-1}>Todos</Option>
           <Option value={0}>Admissibilidade</Option>
           <Option value={1}>Via Ordinaria</Option>
           <Option value={2}>Em Análise</Option>

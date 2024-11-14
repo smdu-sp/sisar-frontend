@@ -431,16 +431,15 @@ function SearchUnidades() {
                       }}
                     />}
                   </FormControl>
-
                 </Stack>
               </Stack>
               <CardOverflow>
-                <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
+                <CardActions sx={{ alignSelf: 'flex-end', pt: 4, mb: -2 }}>
                   <Button size="sm" variant="outlined" color="neutral" onClick={() => { setOpenNovaSub(false); limpaCamposForm() }}>
                     Cancelar
                   </Button>
-                  <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
-                    {loading ? <CircularProgress variant="solid" /> : "Salvar"}
+                  <Button loading={loading} size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
+                    Salvar
                   </Button>
                 </CardActions>
               </CardOverflow>
