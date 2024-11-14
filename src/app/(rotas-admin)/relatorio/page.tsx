@@ -1,8 +1,11 @@
 'use client'
 
 import Content from '@/components/Content';
+// @ts-ignore
 import DownloadForOfflineRoundedIcon from '@mui/icons-material/DownloadForOfflineRounded';
+// @ts-ignore
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+// @ts-ignore
 import RemoveRedEyeRoundedIcon from '@mui/icons-material/RemoveRedEyeRounded';
 import { Box, Button, Card, CardContent, Divider, FormControl, FormLabel, Option, Select, Typography } from '@mui/joy';
 import React, { useState } from 'react';
@@ -59,9 +62,12 @@ const jsonData = {
 };
 
 export default function ExportXlsx() {
+  const [ relatorioType, setRelatorioType ] = useState<string>('');
   const [fileType, setFileType] = useState<'XLSX' | 'PDF'>('XLSX');
   const [date, setDate] = useState<Date | undefined>();
   const [construcao, setConstrucao] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string>('');
   const { setAlert } = React.useContext(AlertsContext);
 
   const smulData: { Key: string, Value: number }[] = jsonData
@@ -108,8 +114,7 @@ export default function ExportXlsx() {
 
   const exportFile = (): void => {
     try {
-      if (date === undefined)
-        throw new Error(' Data não selecionada');
+      if (date === undefined) throw new Error(' Data não selecionada');
       fileType === 'PDF' ? gerarPDF() : exportToXlsx(); 
     } catch (error) {
       console.error(error);
@@ -206,9 +211,6 @@ export default function ExportXlsx() {
     });
   };
 
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState<string>('');
-
   return (
     <Content
       titulo='Relatórios'
@@ -218,127 +220,128 @@ export default function ExportXlsx() {
       }]}
     >
       {
-        construcao ?
-          <Box>
-            <Card>
-              <CardContent>
-                <Typography 
-                  level='h3' 
-                  textAlign={'center'}
-                >
-                  Relatório em construção
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-          :
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              gap: 2 
+        construcao 
+        &&
+        <Box>
+          <Card>
+            <CardContent>
+              <Typography 
+                level='h3' 
+                textAlign={'center'}
+              >
+                Relatório em construção
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box> 
+        ||
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: 2 
+          }}
+        >
+          <Card
+            size='lg'
+            variant='outlined'
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' }
             }}
           >
-            <Card
-              size='lg'
-              variant='outlined'
-              sx={{
-                display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' }
-              }}
-            >
-              <FormControl>
-                <FormLabel>Tipo de Relatório</FormLabel>
-                <Select
-                  defaultValue={'XLSX'}
-                  sx={{
-                    width: '100%',
-                    mb: 3,
-                    alignSelf: { xs: 'center', sm: 'auto' }
-                  }}
-                >
-                  <Option
-                    onClick={() => setFileType('XLSX')}
-                    value='XLSX'
-                  >
-                    Tipo 1
-                  </Option>
-                  <Option
-                    onClick={() => setFileType('PDF')}
-                    value='PDF'
-                  >
-                    Tipo 2
-                  </Option>
-                </Select>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={['DatePicker']}>
-                    <DatePicker
-                      onChange={(e) => setDate(e?.toDate())}
-                      views={['month', 'year']}
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
-                <FormLabel sx={{ mt: 2 }}>Extensão de Arquivo</FormLabel>
-                <Select
-                  defaultValue={'XLSX'}
-                  sx={{
-                    width: '100%',
-                    mb: { xs: 3, sm: 0 },
-                    alignSelf: { xs: 'center', sm: 'auto' }
-                  }}
-                >
-                  <Option
-                    onClick={() => setFileType('XLSX')}
-                    value='XLSX'
-                  >
-                    XLSX (Excel)
-                  </Option>
-                  <Option
-                    onClick={() => setFileType('PDF')}
-                    value='PDF'
-                  >
-                    PDF
-                  </Option>
-                </Select>
-              </FormControl>
-              <FormControl
+            <FormControl>
+              <FormLabel>Tipo de Relatório</FormLabel>
+              <Select
+                defaultValue={'Tipo 1'}
                 sx={{
-                  mx: 2,
-                  alignSelf: { xs: 'start', sm: 'end' },
-                  display: 'flex',
-                  flexDirection: 'row'
+                  width: '100%',
+                  mb: 3,
+                  alignSelf: { xs: 'center', sm: 'auto' }
                 }}
               >
-                <Button
-                  color='primary'
-                  onClick={exportFile}
-                  startDecorator={
-                    fileType == 'XLSX' 
-                    ? <DownloadForOfflineRoundedIcon /> 
-                    : <RemoveRedEyeRoundedIcon />
-                  }
-                  sx={{ width: 'fit-content' }}
+                <Option
+                  onClick={() => setRelatorioType('Tipo 1')}
+                  value='Tipo 1'
                 >
-                  { fileType == 'XLSX' ? 'Download' : 'Visualizar' }
-                </Button>
-              </FormControl>
-            </Card>
-            <Card>
-              <Box>
-                <Typography level='h4'>
-                  Visualizar Relatório
-                </Typography>
-              </Box>
-              <Divider />
-              {pdfUrl && (
-                <iframe
-                  src={pdfUrl}
-                  title="Visualizador de PDF"
-                  style={{ width: '100%', height: 1200 }}
-                ></iframe>
-              )}
-            </Card>
-          </Box>
+                  Tipo 1
+                </Option>
+                <Option
+                  onClick={() => setRelatorioType('Tipo 2')}
+                  value='Tipo 2'
+                >
+                  Tipo 2
+                </Option>
+              </Select>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={['DatePicker']}>
+                  <DatePicker
+                    onChange={(e) => setDate(e?.toDate())}
+                    views={['month', 'year']}
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
+              <FormLabel sx={{ mt: 2 }}>Extensão de Arquivo</FormLabel>
+              <Select
+                defaultValue={'XLSX'}
+                sx={{
+                  width: '100%',
+                  mb: { xs: 3, sm: 0 },
+                  alignSelf: { xs: 'center', sm: 'auto' }
+                }}
+              >
+                <Option
+                  onClick={() => setFileType('XLSX')}
+                  value='XLSX'
+                >
+                  XLSX (Excel)
+                </Option>
+                <Option
+                  onClick={() => setFileType('PDF')}
+                  value='PDF'
+                >
+                  PDF
+                </Option>
+              </Select>
+            </FormControl>
+            <FormControl
+              sx={{
+                mx: 2,
+                alignSelf: { xs: 'start', sm: 'end' },
+                display: 'flex',
+                flexDirection: 'row'
+              }}
+            >
+              <Button
+                color='primary'
+                onClick={exportFile}
+                startDecorator={
+                  fileType == 'XLSX' 
+                  ? <DownloadForOfflineRoundedIcon /> 
+                  : <RemoveRedEyeRoundedIcon />
+                }
+                sx={{ width: 'fit-content' }}
+              >
+                { fileType == 'XLSX' ? 'Download' : 'Pré-visualizar' }
+              </Button>
+            </FormControl>
+          </Card>
+          <Card>
+            <Box>
+              <Typography level='h4'>
+                Visualizar Relatório
+              </Typography>
+            </Box>
+            <Divider />
+            {pdfUrl && (
+              <iframe
+                src={pdfUrl}
+                title="Visualizador de PDF"
+                style={{ width: '100%', height: 1200 }}
+              ></iframe>
+            )}
+          </Card>
+        </Box>
       }
     </Content >
   );
