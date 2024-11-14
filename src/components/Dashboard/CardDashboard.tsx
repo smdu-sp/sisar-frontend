@@ -48,7 +48,7 @@ export default function CardDashboard({
   cor
 }: Props): React.JSX.Element {
   return (
-    <Card>
+    <Card sx={{borderRadius: 4, boxShadow:'0px 4px 12px rgba(0, 0, 0, 0.1)'}}>
       <CardContent>
         <Stack spacing={3}>
           <Stack
