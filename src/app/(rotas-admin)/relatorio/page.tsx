@@ -225,11 +225,6 @@ export default function ExportXlsx() {
     });
   };
 
-
-
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState<string>('');
-
   return (
     <Content
       titulo='Relatórios'
