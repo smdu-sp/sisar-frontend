@@ -8,7 +8,7 @@ import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 // @ts-ignore
 import RemoveRedEyeRoundedIcon from '@mui/icons-material/RemoveRedEyeRounded';
 import { Box, Button, Card, CardContent, Divider, FormControl, FormLabel, Option, Select, Typography } from '@mui/joy';
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -17,6 +17,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { AlertsContext } from '@/providers/alertsProvider';
+import * as relatorioService from '@/shared/services/relatorios/quantitativo.service';
+import { IQuantitativoResponse } from '@/shared/services/relatorios/quantitativo.service';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -69,12 +71,20 @@ export default function ExportXlsx() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string>('');
   const { setAlert } = React.useContext(AlertsContext);
+  const [quantitativo, setQuantitativo] = useState<IQuantitativoResponse>();
 
   const smulData: { Key: string, Value: number }[] = jsonData
     .em_analise.smul.data.map((item: { nome: string, count: number }) => ({
       Key: item.nome,
       Value: item.count
     }));
+
+  useEffect(() => {
+    relatorioService.relatorioQuantitativo()
+      .then((response) => {
+        setQuantitativo(response);
+      });
+  }, [])
 
   const graproemData: { Key: string, Value: number }[] = jsonData
     .em_analise.graproem.data.map((item: { nome: string, count: number }) => ({
@@ -134,23 +144,24 @@ export default function ExportXlsx() {
             body: [
               [
                 { text: 'TOTAL DE PROCESSOS', style: 'tableHeader' },
-                { text: jsonData.total.toString(), style: 'tableData' }
+                { text: quantitativo?.total.toString(), style: 'tableData' }
               ],
               [
                 { text: 'ANÁLISE DE ADMISSIBILIDADE', style: 'admissibilidadeHeader' },
-                { text: jsonData.analise.toString(), style: 'tableData' }
+                { text: quantitativo?.analise.toString(), style: 'tableData' }
               ],
               [
                 { text: 'INADMISSÍVEIS', style: 'inadmissiveisHeader' },
-                { text: jsonData.inadimissiveis.toString(), style: 'tableData' }
+                { text: quantitativo?.inadmissiveis.toString(), style: 'tableData' }
               ],
               [
                 { text: 'ADMISSÍVEIS', style: 'admissiveisHeader' },
-                { text: jsonData.admissiveis.toString(), style: 'tableData' }
+                { text: quantitativo?.admissiveis.toString(), style: 'tableData' }
               ],
             ]
-          },
+          } // Adiciona margem inferior para espaço entre tabelas
         },
+
         {
           table: {
             headerRows: 1,
@@ -158,21 +169,24 @@ export default function ExportXlsx() {
             body: [
               [
                 { text: 'SMUL', style: 'tableHeader' },
-                { text: jsonData.em_analise.smul.quantidade.toString(), style: 'tableData' }
+                { text: quantitativo?.em_analise.smul.quantidade.toString(), style: 'tableData' }
               ],
               [
                 { text: 'GRAPROEM', style: 'tableHeader' },
-                { text: jsonData.em_analise.graproem.quantidade.toString(), style: 'tableData' }
+                { text: quantitativo?.em_analise.graproem.quantidade.toString(), style: 'tableData' }
               ],
               [
                 { text: 'TOTAL PARCIAL', style: 'tableHeader' },
-                { text: jsonData.em_analise.total_parcial.toString(), style: 'tableData' }
+                { text: quantitativo?.em_analise.total_parcial.toString(), style: 'tableData' }
               ],
             ]
-          },
+          } // Adiciona margem superior para espaço entre tabelas
         }
       ],
       styles: {
+        table: {
+          marginBottom: 10,
+        },
         header: {
           fontSize: 18,
           bold: true,
@@ -210,6 +224,11 @@ export default function ExportXlsx() {
       setModalIsOpen(true); // Abre o modal ao gerar o PDF
     });
   };
+
+
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string>('');
 
   return (
     <Content
