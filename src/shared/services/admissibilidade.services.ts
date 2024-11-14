@@ -175,6 +175,46 @@ const buscarId = async (id: string): Promise<IAdmissibilidade> => {
     return admissibilidades;
 }
 
+const numeroPrazoExcedido = async(): Promise<number> =>{
+    const session = await getServerSession(authOptions);
+    const response = await fetch(`${baseURL}admissibilidade/contar-fora-prazo`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`
+        }
+      });
+      const prazoExcedido = await response.json();
+      return prazoExcedido;
+}
+
+const numeroDentroPrazo = async(): Promise<number> =>{
+    const session = await getServerSession(authOptions);
+    const response = await fetch(`${baseURL}admissibilidade/contar-dentro-prazo`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`
+        }
+      });
+      const dentroDoPrazo = await response.json();
+      return dentroDoPrazo;
+}
+
+const admissibilidadeFinalizada = async(): Promise<number> =>{
+    const session = await getServerSession(authOptions);
+    const response = await fetch(`${baseURL}admissibilidade/admissibilidade-finalizada`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`
+        }
+      });
+      const quantidadeAdmissibilidadeFinalizada = await response.json();
+      return quantidadeAdmissibilidadeFinalizada;
+}
+
+
 const atualizarId = async (id: number, updateAdmissibilidade: IUpdateAdmissibilidade): Promise<IAdmissibilidade> => {
     const session = await getServerSession(authOptions);
     const admissibilidades = await fetch(`${baseURL}admissibilidade/atualizar-id/${id}`, {
@@ -191,4 +231,18 @@ const atualizarId = async (id: number, updateAdmissibilidade: IUpdateAdmissibili
     return admissibilidades;
 }
 
-export { criar, buscarTudo, buscarId, atualizarId };
+const medianaAdmissibilidade = async (): Promise<number> =>{
+    const session = await getServerSession(authOptions);
+    const response = await fetch(`${baseURL}admissibilidade/mediana-admissibilidade`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`
+        }
+      });
+      const medianaAdmissibilidade = await response.json();
+      return medianaAdmissibilidade;
+}
+
+
+export { criar, buscarTudo, buscarId, atualizarId, numeroPrazoExcedido, numeroDentroPrazo, admissibilidadeFinalizada, medianaAdmissibilidade };
