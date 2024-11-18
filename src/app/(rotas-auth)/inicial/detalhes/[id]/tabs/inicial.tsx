@@ -738,30 +738,6 @@ export default function InicialTab({ inicial }: { inicial?: IInicial } ) {
                                                 </IconButton>
                                             }
                                         />
-                                        {/* {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
-                                            name="num_sql"
-                                            control={control}
-                                            defaultValue={num_sql}
-                                            render={({ field: { ref, ...field } }) => {
-                                                return (<>
-                                                    <Input
-                                                        type="text"
-                                                        startDecorator={<AccountBalanceIcon />}
-                                                        placeholder="Sei"
-                                                        error={Boolean(errors.num_sql)}
-                                                        {...field}
-                                                        onChange={(e) => {
-                                                            var numSql = e.target.value;
-                                                            if (numSql.length > 0) numSql = comum.formatarSql(numSql);
-                                                            field.onChange(numSql && numSql);
-                                                        }}
-                                                    />
-                                                    {errors.num_sql && <FormHelperText color="danger">
-                                                        {errors.num_sql?.message}
-                                                    </FormHelperText>}
-                                                </>);
-                                            }}
-                                        />} */}
                                         {(!comum.validaDigitoSql(num_sql) && num_sql.length > 13) && <FormLabel sx={{ color: 'red' }}>SQL inválido</FormLabel>}
                                         <Button sx={{ mt: 1 }} onClick={() => setModalSqlSequencial(true)}>Adicionar SQL Sequencial</Button>
                                     </FormControl>
@@ -810,7 +786,7 @@ export default function InicialTab({ inicial }: { inicial?: IInicial } ) {
                         </Grid>
                     </Grid>
                     <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                        <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/inicial`); }}>
+                        <Button size="sm" variant="plain" color="neutral" onClick={() => { router.push(`/inicial`); }}>
                             Cancelar
                         </Button>
                         <Button size="sm" variant="solid" disabled={!isValid} type="submit">

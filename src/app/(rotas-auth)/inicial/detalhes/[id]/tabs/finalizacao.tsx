@@ -397,13 +397,30 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
                     </Grid>
                     <Grid xs={12} lg={6} sx={{ display: 'flex', justifyContent: 'end', alignItems: 'end' }}>
                         <Grid xs={12} sx={{ display: 'flex', justifyContent: 'end', alignItems: 'end', gap: 1 }}>
-                            <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/analise`); }}>
+                            <Button size="sm" variant="plain" color="neutral" onClick={() => { router.push(`/analise`); }}>
                                 Cancelar
                             </Button>
-                            <Button onClick={() => { setConclusao(false); }} color="danger" size="sm" variant="solid" type="submit" disabled={carregando || finalizado}>
+                            <Button 
+                                onClick={() => setConclusao(false)} 
+                                color="danger" 
+                                size="sm" 
+                                variant="solid" 
+                                type="submit" 
+                                loading={carregando}
+                                disabled={finalizado}
+                                sx={{ borderRadius: 4 }}
+                            >
                                 Indeferir
                             </Button>
-                            <Button onClick={() => { setConclusao(true); }} size="sm" variant="solid" type="submit" disabled={carregando || finalizado}>
+                            <Button 
+                                onClick={() => setConclusao(true)} 
+                                size="sm" 
+                                variant="solid" 
+                                type="submit"
+                                loading={carregando} 
+                                disabled={finalizado}
+                                sx={{ borderRadius: 4 }}
+                            >
                                 Deferir
                             </Button>
                         </Grid>
