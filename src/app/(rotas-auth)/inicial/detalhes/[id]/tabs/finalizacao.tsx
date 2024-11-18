@@ -426,7 +426,6 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
                         </Grid>
                     </Grid>
                 </Grid>
-
             </Box>
         </form>
     )

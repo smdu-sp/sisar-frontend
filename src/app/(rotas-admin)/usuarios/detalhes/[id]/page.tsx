@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { OverridableStringUnion } from '@mui/types';
 
 import Content from "@/components/Content";
-import { ISubstituto, IUsuario } from "@/shared/services/usuario.services";
+import { IUsuario } from "@/shared/services/usuario.services";
 import * as usuarioServices from "@/shared/services/usuario.services";
 import { AlertsContext } from "@/providers/alertsProvider";
 import * as unidadeServices from "@/shared/services/unidade.services";
@@ -33,6 +33,7 @@ export default function UsuarioDetalhes(props: any) {
     const { setAlert } = useContext(AlertsContext);
     const [unidades, setUnidades] = useState<IUnidade[]>([]);
     const [unidade_id, setUnidade_id] = useState('');
+    const [ loading, setLoading ] = useState<boolean>();
 
 
     const permissoes: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
@@ -43,38 +44,46 @@ export default function UsuarioDetalhes(props: any) {
     }
 
     useEffect(() => {
+        setLoading(true);
         if (id) carregaDados();
         unidadeServices.listaCompleta()
             .then((response: IUnidade[]) => {
                 setUnidades(response);
+                setLoading(false);
             })
     }, [ id ]);
 
     const carregaDados = () => {
+        setLoading(true);
         usuarioServices.buscarPorId(id)
             .then((response: IUsuario) => {
                 setUsuario(response);
                 setPermissao(response.permissao);
                 setEmail(response.email);
                 response.unidade_id && setUnidade_id(response.unidade_id);
+                setLoading(false);
             });
         buscaAdministrativos();
     }
 
     const buscaAdministrativos = () => {
+        setLoading(true);
         usuarioServices.buscarAdministrativos()
             .then((response: IUsuario[]) => {
                 setAdministrativos(response);
+                setLoading(false);
             });
     }
 
     const submitData = () => {
+        setLoading(true);
         if (usuario){
             usuarioServices.atualizar(usuario.id, {
                 permissao, unidade_id, cargo
             }).then((response) => {
                 if (response.id) {
-                    setAlert('Usuário alterado!', 'Dados atualizados com sucesso!', 'success', 3000, Check);              
+                    setLoading(false);
+                    setAlert('Usuário alterado!', 'Dados atualizados com sucesso!', 'success', 3000, Check);            
                 }
             })
         } else {
@@ -83,6 +92,7 @@ export default function UsuarioDetalhes(props: any) {
                     nome, login, email, permissao, cargo, unidade_id
                 }).then((response) => {
                     if (response.id) {
+                        setLoading(true);
                         setAlert('Usuário criado!', 'Dados inseridos com sucesso!', 'success', 3000, Check);
                         router.push('/usuarios/detalhes/' + response.id);
                     }
@@ -92,11 +102,11 @@ export default function UsuarioDetalhes(props: any) {
     }
 
     const buscarNovo = () => {
+        setLoading(true);
         if (login)
             usuarioServices.buscarNovo(login).then((response) => {
                 if (response.message) setAlert('Erro', response.message, 'warning', 3000, Warning);
-                if (response.id)
-                    router.push('/usuarios/detalhes/' + response.id);
+                if (response.id) router.push('/usuarios/detalhes/' + response.id);
                 else if (response.email) {
                     setNome(response.nome ? response.nome : '');
                     setLogin(response.login ? response.login : '');
@@ -104,6 +114,7 @@ export default function UsuarioDetalhes(props: any) {
                     setUnidade_id(response.unidade_id ? response.unidade_id : '');
                     setNovoUsuario(true);
                 }
+                setLoading(false);
             })
     }
 
@@ -116,16 +127,19 @@ export default function UsuarioDetalhes(props: any) {
     }    
 
     function handleAdicionarFerias(): void {
+        setLoading(true);
         usuarioServices.adicionaFerias(id, { inicio, final }).then((response) => {
             if (response && response.id) {
                 setAdicionarFeriasModal(false);
                 setAlert('Férias adicionada!', 'Férias adicionada com sucesso!', 'success', 3000, Check);
                 carregaDados();
+                setLoading(false);
             }
         })
     }
 
     function removerSubstituto(id: string): void {
+        setLoading(true);
         usuarioServices.removerSubstituto(id).then((response) => {
             if (response) {
                 setAlert('Substituto removido!', 'Substituto removido com sucesso!', 'success', 3000, Check);
@@ -133,19 +147,23 @@ export default function UsuarioDetalhes(props: any) {
             } else {
                 setAlert('Erro', 'Erro ao remover substituto!', 'warning', 3000, Warning);
             }
+            setLoading(false);
         })
     }
 
     function adicionarSubstituto(): void {
+        setLoading(true);
         if (usuario?.id)
             usuarioServices.adicionarSubstituto(usuario?.id, substituto_id).then((response) => {
                 if (response.id) {
                     setAlert('Substituto adicionado!', 'Substituto adicionado com sucesso!', 'success', 3000, Check);
                     carregaDados();
+                    setLoading(false);
                 } else {
+                    setLoading(false);
                     setAlert('Erro', 'Erro ao adicionar substituto!', 'warning', 3000, Warning);
                 }
-            })
+            });
     }
 
     const addHours = (date: Date, h: number) => {
@@ -384,10 +402,20 @@ export default function UsuarioDetalhes(props: any) {
                     </Stack>
                     <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
                         <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-                        <Button size="sm" variant="outlined" color="neutral" onClick={() => router.back()}>
+                        <Button 
+                            size="sm" 
+                            variant="plain" 
+                            color="neutral" 
+                            onClick={() => router.back()}
+                        >
                             Cancelar
                         </Button>
-                        <Button size="sm" variant="solid" onClick={submitData}>
+                        <Button 
+                            size="sm" 
+                            variant="solid" 
+                            onClick={submitData}
+                            sx={{ borderRadius: 4 }}
+                        >
                             Salvar
                         </Button>
                         </CardActions>

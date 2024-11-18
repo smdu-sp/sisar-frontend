@@ -786,10 +786,21 @@ export default function InicialTab({ inicial }: { inicial?: IInicial } ) {
                         </Grid>
                     </Grid>
                     <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                        <Button size="sm" variant="plain" color="neutral" onClick={() => { router.push(`/inicial`); }}>
+                        <Button 
+                            size="sm" 
+                            variant="plain" 
+                            color="neutral" 
+                            onClick={() => router.push(`/inicial`)}
+                        >
                             Cancelar
                         </Button>
-                        <Button size="sm" variant="solid" disabled={!isValid} type="submit">
+                        <Button 
+                            size="sm" 
+                            variant="solid" 
+                            disabled={!isValid} 
+                            type="submit"
+                            sx={{ borderRadius: 4 }}
+                        >
                             Salvar
                         </Button>
                     </Box>
