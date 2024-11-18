@@ -160,6 +160,7 @@ const buscarTudo = async (
     })
     return admissibilidades;
 }
+
 const buscarId = async (id: string): Promise<IAdmissibilidade> => {
     const session = await getServerSession(authOptions);
     const admissibilidades = await fetch(`${baseURL}admissibilidade/buscar-id/${id}`, {
@@ -180,12 +181,12 @@ const numeroPrazoExcedido = async(): Promise<number> =>{
     const response = await fetch(`${baseURL}admissibilidade/contar-fora-prazo`, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session?.access_token}`
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
         }
-      });
-      const prazoExcedido = await response.json();
-      return prazoExcedido;
+    });
+    const prazoExcedido = await response.json();
+    return prazoExcedido;
 }
 
 const numeroDentroPrazo = async(): Promise<number> =>{
@@ -193,12 +194,12 @@ const numeroDentroPrazo = async(): Promise<number> =>{
     const response = await fetch(`${baseURL}admissibilidade/contar-dentro-prazo`, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session?.access_token}`
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
         }
-      });
-      const dentroDoPrazo = await response.json();
-      return dentroDoPrazo;
+    });
+    const dentroDoPrazo = await response.json();
+    return dentroDoPrazo;
 }
 
 const admissibilidadeFinalizada = async(): Promise<number> =>{
@@ -206,14 +207,13 @@ const admissibilidadeFinalizada = async(): Promise<number> =>{
     const response = await fetch(`${baseURL}admissibilidade/admissibilidade-finalizada`, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session?.access_token}`
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
         }
-      });
-      const quantidadeAdmissibilidadeFinalizada = await response.json();
-      return quantidadeAdmissibilidadeFinalizada;
+    });
+    const quantidadeAdmissibilidadeFinalizada = await response.json();
+    return quantidadeAdmissibilidadeFinalizada;
 }
-
 
 const atualizarId = async (id: number, updateAdmissibilidade: IUpdateAdmissibilidade): Promise<IAdmissibilidade> => {
     const session = await getServerSession(authOptions);
@@ -236,13 +236,12 @@ const medianaAdmissibilidade = async (): Promise<number> =>{
     const response = await fetch(`${baseURL}admissibilidade/mediana-admissibilidade`, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session?.access_token}`
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
         }
-      });
-      const medianaAdmissibilidade = await response.json();
-      return medianaAdmissibilidade;
+    });
+    const medianaAdmissibilidade = await response.json();
+    return medianaAdmissibilidade;
 }
-
 
 export { criar, buscarTudo, buscarId, atualizarId, numeroPrazoExcedido, numeroDentroPrazo, admissibilidadeFinalizada, medianaAdmissibilidade };

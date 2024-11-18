@@ -71,6 +71,4 @@ async function relatorioQuantitativo(): Promise<IQuantitativoResponse> {
   return finalizacao;
 }
 
-
-
 export {relatorioQuantitativo};

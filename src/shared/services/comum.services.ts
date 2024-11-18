@@ -52,7 +52,6 @@ function formatarFisico(value: string): string {
     return onlyNumbers.replace(/(\d{0,4})(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,1})/, '$1-$2.$3.$4-$5');
 }
 
-
 function validaDigitoSei(sei: string): boolean {
     var valido = false;
     sei = sei && sei.toString().replace(/\D/g, '').substring(0, 16);
