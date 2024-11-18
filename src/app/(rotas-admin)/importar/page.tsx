@@ -1,8 +1,10 @@
 'use client'
 
 import Content from '@/components/Content';
-import { Button, Card, FormControl, FormLabel, Option, Select, SvgIcon, styled } from '@mui/joy';
-import { useState } from 'react';
+import { AlertsContext } from '@/providers/alertsProvider';
+import { Box, Button, Card, FormControl, FormLabel, Option, Select, SvgIcon, styled } from '@mui/joy';
+import { useRouter } from 'next/navigation';
+import { useContext, useState } from 'react';
 
 const VisuallyHiddenInput = styled('input')`
   clip: rect(0 0 0 0);
@@ -18,6 +20,9 @@ const VisuallyHiddenInput = styled('input')`
 
 export default function Importar() {
   const [ file, setFile ] = useState<string>('');
+  const [ loading, setLoading ] = useState<boolean>();
+  const { setAlert } = useContext(AlertsContext);
+  const router = useRouter();
 
   return (
     <Content 
@@ -73,6 +78,36 @@ export default function Importar() {
             <VisuallyHiddenInput value={file} type="file" onChange={(e) => setFile(e.target.value)} />
           </Button>
         </FormControl>
+        <Box
+          width={'full'}
+          display={'flex'}
+          justifyContent={'flex-end'}
+        >
+          <Button
+            size='sm'
+            variant='plain'
+            color='neutral'
+            onClick={() => router.back()}
+            sx={{ mr: 1, borderRadius: 4 }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            size='sm'
+            loading={loading}
+            loadingPosition='start'
+            onClick={() => {
+              setLoading(true);
+              setTimeout(() => {
+                setLoading(false);
+                setAlert('Success', 'Uploaded successfuly', 'success', 3000);
+              }, 3000);
+            }}
+            sx={{ borderRadius: 4 }}
+          >
+            { loading ? 'Salvando...' : 'Salvar' }
+          </Button>
+        </Box>
       </Card>
     </Content>
   );

@@ -144,7 +144,9 @@ export default function UsuarioDetalhes(props: any) {
             if (response) {
                 setAlert('Substituto removido!', 'Substituto removido com sucesso!', 'success', 3000, Check);
                 carregaDados();
+                setLoading(false);
             } else {
+                setLoading(false);
                 setAlert('Erro', 'Erro ao remover substituto!', 'warning', 3000, Warning);
             }
             setLoading(false);
