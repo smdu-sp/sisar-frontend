@@ -4,8 +4,7 @@ import Content from "@/components/Content";
 import { useContext, useEffect, useState } from "react";
 import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
 import { IAlvaraTipo } from "@/shared/services/alvara-tipo.services";
-import { Box, Button, Card, CardActions, CardOverflow, CircularProgress, Divider, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
-import { Check } from "@mui/icons-material";
+import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
 import { useRouter } from "next/navigation";
 import { AlertsContext } from "@/providers/alertsProvider";
 import { Controller, useForm } from "react-hook-form";
@@ -687,11 +686,23 @@ export default function AlvaraTipoDetalhes(props: any) {
                         </Stack>
                         <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
                             <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-                                <Button size="sm" variant="outlined" color="neutral" onClick={() => router.back()}>
+                                <Button 
+                                    size="sm" 
+                                    variant="plain" 
+                                    color="neutral" 
+                                    onClick={() => router.back()}
+                                >
                                     Cancelar
                                 </Button>
-                                <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
-                                    {isSubmitted ?  <CircularProgress variant="solid" /> : "Salvar"}
+                                <Button 
+                                    size="sm" 
+                                    variant="solid" 
+                                    color="primary" 
+                                    type="submit" 
+                                    loading={isSubmitted} 
+                                    disabled={!isValid}
+                                >
+                                    Salvar
                                 </Button>
                             </CardActions>
                         </CardOverflow>
