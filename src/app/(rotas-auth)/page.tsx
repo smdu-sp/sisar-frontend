@@ -715,11 +715,24 @@ export default function Home() {
                     <Input type='text' sx={{ color: 'grey' }} required readOnly value={seiDados} />
                 }
               </FormControl>
-              <FormControl sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gap: 2 }}>
-                <Button variant='plain' color='neutral' onClick={() => setOpenNotf(false)}>
+              <FormControl sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gap: 0.8 }}>
+                <Button 
+                  size='sm'
+                  variant='plain' 
+                  color='neutral' 
+                  onClick={() => setOpenNotf(false)}
+                >
                   Cancelar
                 </Button>
-                <Button size="sm" variant="solid" color="primary" type="submit" loading={carregando} disabled={!isValid}>
+                <Button 
+                  size="sm" 
+                  variant="solid" 
+                  color="primary" 
+                  type="submit" 
+                  loading={carregando} 
+                  disabled={!isValid}
+                  sx={{ borderRadius: 4 }}
+                >
                   Salvar
                 </Button>
               </FormControl>
