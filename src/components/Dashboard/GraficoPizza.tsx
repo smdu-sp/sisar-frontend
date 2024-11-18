@@ -29,7 +29,7 @@ export function GraficoPizza({ chartSeries, labels, sx, titulo }: TrafficProps):
   const chartOptions = useChartOptions(labels);
 
   return (
-    <Card sx={sx}>
+    <Card sx={{borderRadius: 4, boxShadow:'0px 4px 12px rgba(0, 0, 0, 0.1)'}}>
       <CardHeader title={titulo} />
       <CardContent>
         <Stack spacing={2}>
