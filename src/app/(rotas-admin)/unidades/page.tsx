@@ -4,7 +4,7 @@ import Content from '@/components/Content';
 import { Suspense, useCallback, useContext, useEffect, useState } from 'react';
 import * as unidadeServices from '@/shared/services/unidade.services';
 import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
-import { Add, Cancel, Check, Clear, Edit, Refresh, Search, Warning } from '@mui/icons-material';
+import { Add, Cancel, Check, Clear, Refresh, Search, Warning } from '@mui/icons-material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertsContext } from '@/providers/alertsProvider';
 import { TablePagination } from '@mui/material';
@@ -29,6 +29,9 @@ function SearchUnidades() {
   const [status, setStatus] = useState<number>(2);
   const [filtro, setFiltro] = useState(-1);
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
+  const { setAlert } = useContext(AlertsContext);
+  const theme = useTheme();
+  const router = useRouter();
 
   const confirmaVazio: {
     aberto: boolean,
@@ -42,43 +45,32 @@ function SearchUnidades() {
     titulo: '',
     pergunta: '',
     color: 'primary'
-  }
+  };
   const [confirma, setConfirma] = useState(confirmaVazio);
-  const { setAlert } = useContext(AlertsContext);
-
-  const theme = useTheme();
-  const router = useRouter();
-
+  
   useEffect(() => {
     buscaUnidades();
     not();
   }, [status, pagina, limite, filtro]);
-
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
       params.set(name, value)
       return params.toString();
-    },
-    [searchParams]
+    }, [searchParams]
   );
 
-  const not = function () {
+  const not = function() {
     const notificacao = searchParams.get('notification');
-
     if (notificacao) {
-      if (notificacao == '1') {
-        setAlert('Unidade alterada!', 'Unidade alterada com sucesso.', 'warning', 3000, Check);
-      } else if (notificacao == '0') {
+      if (notificacao == '1') 
+        setAlert('Unidade alterada!', 'Unidade alterada com sucesso.', 'success', 3000, Check);
+      if (notificacao == '0') 
         setAlert('Unidade criada!', 'Unidade criada com sucesso.', 'success', 3000, Check);
-      }
-
       const newUrl = `${window.location.pathname}`;
       window.history.replaceState({}, '', newUrl);
-
       buscaUnidades();
-
     }
   }
 
@@ -89,19 +81,24 @@ function SearchUnidades() {
         setPagina(response.pagina);
         setLimite(response.limite);
         setUnidades(response.data);
+      }).catch(e => {
+        console.error(e);
+        setAlert('Erro buscando unidades', 'Erro', 'danger', 3000);
       });
   }
 
-  const alterarUnidade = async (id: string) => {
+  const alterarUnidade = async (id: string): Promise<void> => {
     var resposta = await unidadeServices.desativar({ id, status: 0 });
     if (resposta) {
       setAlert('Unidade desativada!', 'Essa unidade foi desativada e não será exibida para seleção.', 'success', 3000, Check);
       buscaUnidades();
       setStatus(0);
-    } else {
-      setAlert('Tente novamente!', 'Não foi possível desativar a unidade.', 'warning', 3000, Warning);
+      setConfirma(confirmaVazio);
+      return
     }
+    setAlert('Tente novamente!', 'Não foi possível desativar a unidade.', 'warning', 3000, Warning);
     setConfirma(confirmaVazio);
+    return
   }
 
   const mudaPagina = (
@@ -130,27 +127,28 @@ function SearchUnidades() {
     });
   }
 
-  const ativaUnidade = async (id: string) => {
+  const ativaUnidade = async (id: string): Promise<void> => {
     var resposta = await unidadeServices.desativar({ id, status: 1 });
     if (resposta) {
       setAlert('Unidade ativada!', 'Essa unidade foi autorizada e será visível para seleção.', 'success', 3000, Check);
       buscaUnidades();
       setStatus(1);
-    } else {
-      setAlert('Tente novamente!', 'Não foi possível ativar unidade.', 'warning', 3000, Warning);
+      setConfirma(confirmaVazio);
+      return
     }
+    setAlert('Tente novamente!', 'Não foi possível ativar unidade.', 'warning', 3000, Warning);
     setConfirma(confirmaVazio);
   }
 
-  // const confirmaAtivaUnidade = async (id: string) => {
-  //   setConfirma({
-  //     aberto: true,
-  //     confirmaOperacao: () => ativaUnidade(id),
-  //     titulo: 'Ativar unidade',
-  //     pergunta: 'Deseja ativar esta unidade?',
-  //     color: 'primary'
-  //   });
-  // }
+  const confirmaAtivaUnidade = async (id: string) => {
+    setConfirma({
+      aberto: true,
+      confirmaOperacao: () => ativaUnidade(id),
+      titulo: 'Ativar unidade',
+      pergunta: 'Deseja ativar esta unidade?',
+      color: 'primary'
+    });
+  }
 
   const limpaFitros = () => {
     setBusca('');
@@ -223,7 +221,6 @@ function SearchUnidades() {
             <Option value={0}>Inativos</Option>
           </Select>
         </FormControl>
-
         <FormControl sx={{ flex: 1 }} size="sm">
           <FormLabel>Buscar: </FormLabel>
           <Input
@@ -280,7 +277,6 @@ function SearchUnidades() {
             </tr>
           )) : <tr><td colSpan={4}>Nenhuma unidade encontrada</td></tr>}
         </tbody>
-
       </Table>
       {(total && total > 0) ? <TablePagination
         component="div"
@@ -293,11 +289,19 @@ function SearchUnidades() {
         labelRowsPerPage="Registros por página"
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
       /> : null}
-      <IconButton onClick={() => router.push('/unidades/detalhes/')} color='primary' variant='soft' size='lg' sx={{
-        position: 'fixed',
-        bottom: '2rem',
-        right: '2rem',
-      }}><Add /></IconButton>
+      <IconButton 
+        onClick={() => router.push('/unidades/detalhes/')} 
+        color='primary' 
+        variant='soft' 
+        size='lg' 
+        sx={{
+          position: 'fixed',
+          bottom: '2rem',
+          right: '2rem',
+        }}
+      >
+        <Add />
+      </IconButton>
     </Content>
   );
 }
