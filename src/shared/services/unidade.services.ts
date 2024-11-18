@@ -72,8 +72,6 @@ async function buscarPorId(id: string): Promise<IUnidade> {
     return unidade;
 }
 
-
-
 async function criar({ nome, codigo, sigla, status }: { nome: string, codigo: string, sigla: string, status: number }): Promise<IUnidade> {
     const session = await getServerSession(authOptions);
     const novaUnidade = await fetch(`${baseURL}unidades/criar`, {

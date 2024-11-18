@@ -388,7 +388,7 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
                     </Grid>
                 </Grid>
                 <Grid xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                    <Button size="sm" variant="outlined" color="neutral" onClick={() => { router.push(`/admissibilidade`); }}>
+                    <Button size="sm" variant="plain" color="neutral" onClick={() => { router.push(`/admissibilidade`); }}>
                         Cancelar
                     </Button>
                     <Button size="sm" variant="solid" type="submit" disabled={!isValid}>

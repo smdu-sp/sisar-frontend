@@ -3,9 +3,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/shared/auth/authOptions";
 import { signOut } from "next-auth/react";
-import { promises } from "dns";
-
-
 
 export interface ICreateAvisos{
     titulo: string

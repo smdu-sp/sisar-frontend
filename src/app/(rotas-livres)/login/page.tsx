@@ -5,6 +5,7 @@ import { Button, Sheet, FormControl, Input, SvgIcon, IconButton, CircularProgres
 import Image from 'next/image';
 import logo from '@/assets/logo.png';
 import ThemeToggle from '@/components/ThemeToggle';
+// @ts-ignore
 import { Cancel, Key, Person, Visibility, VisibilityOff } from '@mui/icons-material';
 import React from 'react';
 import Link from 'next/link';
@@ -17,8 +18,10 @@ export default function Login() {
   const [login, setLogin] = useState<string>('');
   const [senha, setSenha] = useState<string>('');
   const [loginSuccess, setLoginSuccess] = useState<boolean>(false);
+  const [ loading, setLoading ] = useState<boolean>();
   const [mostraSenha, setMostraSenha] = useState<boolean>(false);
   const [windowSize, setWindowSize] = useState<{ innerWidth: number; innerHeight: number; }>();
+  const router = useRouter();
       
   function getWindowSize() {
     const { innerWidth, innerHeight } = window;
@@ -29,9 +32,9 @@ export default function Login() {
     setWindowSize(getWindowSize())
   }
 
-  const router = useRouter();
   async function handleSubmit(event: SyntheticEvent) {
     event.preventDefault();
+    setLoading(true);
     const result = await signIn('credentials', {
       login,
       senha,
@@ -44,7 +47,9 @@ export default function Login() {
     }
     setAlert('Bem-vindo!', 'Login efetuado com sucesso', 'success', 5000);
     setTimeout(() => router.replace('/'), 3000);
+    setLoading(false);
   }
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       setWindowSize(getWindowSize());
@@ -130,12 +135,13 @@ export default function Login() {
               />
             </FormControl>
             <Button 
-              sx={{mt: 1, pr: loginSuccess == true ? 6.8 : 3}}
+              sx={{mt: 1, pr: loginSuccess ? 6.8 : 3}}
               size="lg"
               type='submit'
-              onClick={(e) => setLoginSuccess(true)}
-              startDecorator={loginSuccess === true ? <CircularProgress color="primary" size="sm" /> : null}
-            >{loginSuccess === true ? 'Entrando...' : 'Entrar'}</Button>
+              loading={loading}
+            >
+              Entrar
+            </Button>
         </Sheet>
       </form>
     </>

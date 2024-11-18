@@ -180,8 +180,6 @@ async function buscarPorMesAno(mes: string, ano: string){
     return reunoes;
 }
 
-
-
 const buscarPorId = async (id: number): Promise<IInicial> => {
     const session = await getServerSession(authOptions);
     const iniciais = await fetch(`${baseURL}inicial/buscar-por-id/${id}`, {
@@ -196,7 +194,6 @@ const buscarPorId = async (id: number): Promise<IInicial> => {
     })
     return iniciais;
 }
-
 
 const criar = async (dataCreate: ICreateInicial): Promise<IInicial> => {
     const session = await getServerSession(authOptions);
@@ -231,7 +228,6 @@ const atualizar = async (id: number, dataUpdate: IUpdateInicial): Promise<IInici
     });
     return iniciais;
 }
-
 
 const adicionaSql = async (id: number, sql: string): Promise<IInicial> => {
     const session = await getServerSession(authOptions);

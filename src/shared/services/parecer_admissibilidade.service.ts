@@ -3,7 +3,6 @@
 import { authOptions } from "@/shared/auth/authOptions";
 import { getServerSession } from "next-auth";
 import { signOut } from "next-auth/react";
-import { parse } from "path";
 
 async function Logout() {
     await signOut({ redirect: false });
@@ -29,7 +28,6 @@ export interface IPaginadoParecer {
 }
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
-
 
 async function buscarTudo(pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginadoParecer> {
     const session = await getServerSession(authOptions);
@@ -76,7 +74,6 @@ async function atualizar(id: string, data: ICriarParecer): Promise<IParecer> {
     })
     return parecer;
 }
-
 
 async function desativar(id: string): Promise<IParecer> {
     const session = await getServerSession(authOptions);

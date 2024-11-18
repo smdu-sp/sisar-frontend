@@ -39,7 +39,6 @@ export interface IProcesso {
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
-
 async function buscarPorMesAno(mes: string, ano: string){
     const session = await getServerSession(authOptions);
     const reunoes = await fetch(`${baseURL}reunioes/buscar/${mes}/${ano}`, {

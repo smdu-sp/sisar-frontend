@@ -81,7 +81,6 @@ function SearchUnidades() {
     buscaSubprefeitura();
   }, [status, pagina, limite]);
 
-
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())

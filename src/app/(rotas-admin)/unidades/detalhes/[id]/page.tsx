@@ -4,11 +4,10 @@ import Content from "@/components/Content";
 import { useContext, useEffect, useState } from "react";
 import * as unidadeServices from "@/shared/services/unidade.services";
 import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
-import { Abc, Business, Check, Tag } from "@mui/icons-material";
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Business } from "@mui/icons-material";
+import { useRouter } from 'next/navigation';
 import { IUnidade } from "@/shared/services/unidade.services";
 import { AlertsContext } from "@/providers/alertsProvider";
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -33,22 +32,20 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
     const [nome, setNome] = useState<string>('');
     const [sigla, setSigla] = useState<string>('');
     const [codigo, setCodigo] = useState<string>('');
-    const { id } = props.params;
-    const { setAlert } = useContext(AlertsContext);
-    const router = useRouter();
     const [carregando, setCarregando] = useState<boolean>(true);
+    const { id } = props.params;
+    const router = useRouter();
 
     const onSubmit = (data: Schema) => {
-        if (!id) {
-            unidadeServices.criar(data)
-                .then(() => router.push('/unidades?notification=0'));
-
-        } else {
-            unidadeServices.atualizar({
-                id, ...data
-            })
-                .then(() => router.push('/unidades?notification=1'));
-        }
+        setCarregando(true);
+        if (!id) unidadeServices.criar(data).then(() => {
+            router.push('/unidades?notification=0');
+            setCarregando(false);
+        });
+        else unidadeServices.atualizar({ id, ...data }).then(() => {
+            router.push('/unidades?notification=1');
+            setCarregando(false);
+        });
     }
 
     const {
@@ -62,19 +59,17 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
     });
 
     useEffect(() => {
-        if (id) {
-            unidadeServices.buscarPorId(id)
-                .then((response: IUnidade) => {
-                    setIdUnidade(response.id);
-                    setNome(response.nome);
-                    setSigla(response.sigla);
-                    setCodigo(response.codigo);
-                    setStatus(response.status ? 1 : 0);
-                });
-        }
+        setCarregando(true);
+        if (id) unidadeServices.buscarPorId(id)
+            .then((response: IUnidade) => {
+                setIdUnidade(response.id);
+                setNome(response.nome);
+                setSigla(response.sigla);
+                setCodigo(response.codigo);
+                setStatus(response.status ? 1 : 0);
+            });
         setCarregando(false);
     }, [id]);
-
 
     return (
         <Content
@@ -192,10 +187,24 @@ export default function UnidadeDetalhes(props: { params: { id: string } }) {
                         </Stack>
                         <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
                             <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-                                <Button size="sm" variant="outlined" color="neutral" onClick={() => router.back()}>
+                                <Button 
+                                    size="sm" 
+                                    variant="plain" 
+                                    color="neutral"
+                                    onClick={() => router.back()}
+                                >
                                     Cancelar
                                 </Button>
-                                <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
+                                <Button 
+                                    size="sm" 
+                                    variant="solid" 
+                                    color="primary" 
+                                    type="submit" 
+                                    loading={carregando}
+                                    loadingPosition='start'
+                                    disabled={!isValid}
+                                    sx={{ borderRadius: 4 }}
+                                >
                                     Salvar
                                 </Button>
                             </CardActions>

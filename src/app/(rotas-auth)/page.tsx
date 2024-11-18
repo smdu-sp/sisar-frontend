@@ -174,7 +174,6 @@ export default function Home() {
     );
   };
 
-
   const buscar_data = () => {
     if (tipoData == 0) {
       reunioes.buscarPorData(data.year() + '-' + ((data.month() + 1).toString().length == 1 ? '0' + (data.month() + 1) : data.month() + 1) + '-' + (data.date().toString().length == 1 ? '0' + data.date() : data.date().toString()))
@@ -195,6 +194,7 @@ export default function Home() {
   }
 
   const onSubmit = (data: SchemaAviso) => {
+    setCarregando(true);
     const criar = {
       titulo: data.titulo,
       descricao: data.descricao,
@@ -203,13 +203,14 @@ export default function Home() {
       tipo: data.tipo
     }
     avisos.criar(criar)
-      .then((response: avisos.IAvisos) => {
-        setAlert('Aviso criado', 'Aviso criado com sucesso!', 'success', 3000, Check);
+      .then(() => {
+        setAlert('Lembrete criado', 'Lembrete criado com sucesso!', 'success', 3000, Check);
         busca(dataAviso.getMonth() + 1);
         setDataAviso(dataAviso);
         setOpenNotf(false);
         reset();
-      })
+        setCarregando(false);
+      });
   }
 
   const atualizarAvisos = () => {
@@ -714,9 +715,24 @@ export default function Home() {
                     <Input type='text' sx={{ color: 'grey' }} required readOnly value={seiDados} />
                 }
               </FormControl>
-              <FormControl sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gap: 2 }}>
-                <Button variant="soft" color='danger' onClick={() => setOpenNotf(false)}>Cancelar</Button>
-                <Button size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
+              <FormControl sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row', gap: 0.8 }}>
+                <Button 
+                  size='sm'
+                  variant='plain' 
+                  color='neutral' 
+                  onClick={() => setOpenNotf(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="solid" 
+                  color="primary" 
+                  type="submit" 
+                  loading={carregando} 
+                  disabled={!isValid}
+                  sx={{ borderRadius: 4 }}
+                >
                   Salvar
                 </Button>
               </FormControl>
