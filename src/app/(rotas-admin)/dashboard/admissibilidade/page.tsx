@@ -3,82 +3,91 @@
 import React, { useState, useEffect } from "react";
 import CardDashboard from "@/components/Dashboard/CardDashboard";
 import { GraficoPizza } from "@/components/Dashboard/GraficoPizza";
-import { Box, Grid, CircularProgress } from "@mui/material";
+import { Box, Grid, CircularProgress, Pagination } from "@mui/material";
 import Content from "@/components/Content";
-import { numeroPrazoExcedido } from "@/shared/services/admissibilidade.services";
-import { numeroDentroPrazo } from "@/shared/services/admissibilidade.services";
-import { admissibilidadeFinalizada } from "@/shared/services/admissibilidade.services";
-import { medianaAdmissibilidade } from "@/shared/services/admissibilidade.services";
+import {
+  numeroPrazoExcedido,
+  numeroDentroPrazo,
+  admissibilidadeFinalizada,
+  medianaAdmissibilidade,
+  pegarRegistrosAdmissibilidade,
+} from "@/shared/services/admissibilidade.services";
 import Tabela from "@/components/Dashboard/Tabela";
 
+export interface RegistroAdmissibilidade {
+  dataDecisaoInterlocutoria: string;
+  sei: string;
+  envioAdmissibilidade: string;
+  dias: number;
+  status: string;
+}
+
 export default function Dashboard() {
-  const [foraDoPrazo, setForaDoPrazo] = useState<number | null>(null);
+  
 
-  useEffect(() => {
-    const fetchForaDoPrazo = async () => {
-      try {
-        const count = await numeroPrazoExcedido();
-        setForaDoPrazo(count);
-      } catch (error) {
-        console.error("Erro ao buscar o número de prazos excedidos:", error);
-      }
-    };
-
-    fetchForaDoPrazo();
-  }, []);
-
-  const [dentroDoPrazo, setDentroDoPrazo] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchDentroDoPrazo = async () => {
-      try {
-        const count = await numeroDentroPrazo();
-        setDentroDoPrazo(count);
-      } catch (error) {
-        console.error("Erro ao buscar o número de prazos excedidos:", error);
-      }
-    };
-
-    fetchDentroDoPrazo();
-  }, []);
-
-  const [numeroFinalizadas, setQuantidadeAdmissibilidadeFinalizada] = useState<
-    number | null
+  const [registrosAdmissibilidade, setRegistrosAdmissibilidade] = useState<
+    RegistroAdmissibilidade[] | null
   >(null);
 
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const registrosPorPagina = 5;
+
   useEffect(() => {
-    const fetchQuantidadeAdmissibilidadeFinalizada = async () => {
+    const fetchRegistrosAdmissibilidade = async () => {
       try {
-        const count = await admissibilidadeFinalizada();
-        setQuantidadeAdmissibilidadeFinalizada(count);
+        const response = await pegarRegistrosAdmissibilidade();
+        setRegistrosAdmissibilidade(response);
       } catch (error) {
-        console.error("Erro ao buscar o número de prazos excedidos:", error);
+        console.error("Erro ao buscar os registros de admissibilidade:", error);
       }
     };
 
-    fetchQuantidadeAdmissibilidadeFinalizada();
+    fetchRegistrosAdmissibilidade();
   }, []);
 
+  const [foraDoPrazo, setForaDoPrazo] = useState<number | null>(null);
+  const [dentroDoPrazo, setDentroDoPrazo] = useState<number | null>(null);
+  const [numeroFinalizadas, setQuantidadeAdmissibilidadeFinalizada] =
+    useState<number | null>(null);
   const [valorMedianaAdmissibilidade, setMedianaAdmissibilidade] = useState<
     number | null
   >(null);
 
   useEffect(() => {
-    const fetchMedianaAdmissibilidade = async () => {
+    const fetchData = async () => {
       try {
-        const count = await medianaAdmissibilidade();
-        setMedianaAdmissibilidade(count);
+        const [fora, dentro, finalizadas, mediana] = await Promise.all([
+          numeroPrazoExcedido(),
+          numeroDentroPrazo(),
+          admissibilidadeFinalizada(),
+          medianaAdmissibilidade(),
+        ]);
+        setForaDoPrazo(fora);
+        setDentroDoPrazo(dentro);
+        setQuantidadeAdmissibilidadeFinalizada(finalizadas);
+        setMedianaAdmissibilidade(mediana);
       } catch (error) {
-        console.error("Erro ao buscar o número de prazos excedidos:", error);
+        console.error("Erro ao buscar os dados:", error);
       }
     };
 
-    fetchMedianaAdmissibilidade();
+    fetchData();
   }, []);
 
   const total = dentroDoPrazo && foraDoPrazo ? dentroDoPrazo + foraDoPrazo : 0;
-  const dentroPorcentagem = total ? (dentroDoPrazo / total) * 100 : 0;
-  const foraPorcentagem = total ? (foraDoPrazo / total) * 100 : 0;
+  const dentroPorcentagem = total ? (dentroDoPrazo || 0  / total) * 100 : 0;
+  const foraPorcentagem = total ? (foraDoPrazo || 0 / total) * 100 : 0;
+
+  // Calcular os registros exibidos na página atual
+  const inicio = (paginaAtual - 1) * registrosPorPagina;
+  const fim = inicio + registrosPorPagina;
+  const registrosExibidos = registrosAdmissibilidade
+    ? registrosAdmissibilidade.slice(inicio, fim)
+    : [];
+
+  const totalPaginas = registrosAdmissibilidade
+    ? Math.ceil(registrosAdmissibilidade.length / registrosPorPagina)
+    : 0;
 
   return (
     <Content>
@@ -154,13 +163,24 @@ export default function Dashboard() {
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <Tabela
-            processo="2222"
-            dtinicio="25/11/2025"
-            dtfinal="26/10/2026"
-            dias="6"
-            status="vencido"
-          />
+          {registrosAdmissibilidade ? (
+          
+              <Tabela
+                dados={registrosAdmissibilidade}
+              />            
+          ) : (
+            <CircularProgress />
+          )}
+          <Box mt={2} display="flex" justifyContent="center">
+            {registrosAdmissibilidade && (
+              <Pagination
+                count={totalPaginas}
+                page={paginaAtual}
+                onChange={(_, value) => setPaginaAtual(value)}
+                color="primary"
+              />
+            )}
+          </Box>
         </Grid>
       </Grid>
     </Content>

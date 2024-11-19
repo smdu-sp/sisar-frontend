@@ -1,26 +1,15 @@
 import * as React from "react";
 import Table from "@mui/joy/Table";
+import { RegistroAdmissibilidade } from "@/app/(rotas-admin)/dashboard/admissibilidade/page";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface TabelaProps {
-  processo: string;
-  dtinicio: string;
-  dtfinal: string;
-  dias: string;
-  status: string;
+ dados: RegistroAdmissibilidade []
 }
 
-export default function Tabela({ processo, dtinicio, dtfinal, dias, status }: TabelaProps) {
+export default function Tabela({ dados }: TabelaProps) {
  
-  const rows = [
-    {
-      processo,
-      dtinicio,
-      dtfinal,
-      dias,
-      status,
-    },
-  ];
-
   return (
     <Table>  
       <thead>
@@ -33,11 +22,18 @@ export default function Tabela({ processo, dtinicio, dtfinal, dias, status }: Ta
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) => (
-          <tr key={row.processo}>
-            <td>{row.processo}</td> {/* Corrigido para exibir o processo */}
-            <td>{row.dtinicio}</td>
-            <td>{row.dtfinal}</td>
+        {dados.map((row) => (
+          <tr key={row.sei}>
+            <td>{row.sei}</td> 
+            <td>{format(
+                      new Date(row.envioAdmissibilidade),
+                      "dd/MM/yyyy",                      
+                    )}</td>
+                    <td>
+           {format(
+                      new Date(row.dataDecisaoInterlocutoria),
+                      "dd/MM/yyyy",                      
+                    )}</td>
             <td>{row.dias}</td>
             <td>{row.status}</td>
           </tr>

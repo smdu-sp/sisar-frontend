@@ -14,7 +14,7 @@ import Hourglass from "@mui/icons-material/HourglassEmpty";
 import Equalizer from "@mui/icons-material/Equalizer";
 
 export interface Props {
-  value: string;
+  value: React.ReactNode;
   etapa: string;
   icone: string;
   cor?: string; 

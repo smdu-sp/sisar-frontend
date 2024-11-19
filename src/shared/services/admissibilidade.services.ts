@@ -244,4 +244,18 @@ const medianaAdmissibilidade = async (): Promise<number> =>{
     return medianaAdmissibilidade;
 }
 
-export { criar, buscarTudo, buscarId, atualizarId, numeroPrazoExcedido, numeroDentroPrazo, admissibilidadeFinalizada, medianaAdmissibilidade };
+const pegarRegistrosAdmissibilidade = async (): Promise<any> =>{
+    const session = await getServerSession(authOptions);
+    const response = await fetch(`${baseURL}admissibilidade/registros-admissibilidade`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`
+        }
+    });
+    const pegarRegistrosAdmissibilidade = await response.json();
+    return pegarRegistrosAdmissibilidade;
+
+}
+
+export { criar, buscarTudo, buscarId, atualizarId, numeroPrazoExcedido, numeroDentroPrazo, admissibilidadeFinalizada, medianaAdmissibilidade, pegarRegistrosAdmissibilidade };
