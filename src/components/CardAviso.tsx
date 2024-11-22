@@ -61,9 +61,19 @@ export default function BioCard(props: ICardAviso) {
             key={props.id}
         >
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <IconButton variant='solid' color={edit ? 'primary' : 'danger'} onClick={() => { setEdit(!edit); }}>{edit ? <DriveFileRenameOutlineIcon /> : <CancelIcon />}</IconButton>
-                    <IconButton variant='solid' color={edit ? 'danger' : 'success'} onClick={() => { edit ? setOpen(true) : atualizar(); setMessage("Tem certeza que deseja deletar?") }}>{edit ? <DeleteForeverIcon /> : <DoneIcon />}</IconButton>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton 
+                    size='sm'
+                    variant='plain' 
+                    color={edit ? 'primary' : 'danger'} 
+                    onClick={() => { setEdit(!edit); }}>{edit ? <DriveFileRenameOutlineIcon /> : <CancelIcon />}
+                  </IconButton>
+                  <IconButton 
+                    size='sm'
+                    variant='plain' 
+                    color={edit ? 'danger' : 'success'} 
+                    onClick={() => { edit ? setOpen(true) : atualizar(); setMessage("Tem certeza que deseja deletar?") }}>{edit ? <DeleteForeverIcon /> : <DoneIcon />}
+                  </IconButton>
                 </Box>
                 <Box>
                     <Chip color='success'>{comum.formatarSei(props.processo ? comum.formatarSei(props.processo) : "")}</Chip>
@@ -80,7 +90,8 @@ export default function BioCard(props: ICardAviso) {
                             fontSize: 20,
                             width: "100%",
                             mb: 1,
-                            textAlign: 'center'
+                            ml: 1.3,
+                            textAlign: 'start'
                         }}
                     >
                         {titulo}
@@ -96,7 +107,7 @@ export default function BioCard(props: ICardAviso) {
                             fontWeight: "bold",
                             fontSize: 20,
                             width: "100%",
-                            mb: 1
+                            mb: 1,
                         }}
                         readOnly={edit ? true : false}
                     />
