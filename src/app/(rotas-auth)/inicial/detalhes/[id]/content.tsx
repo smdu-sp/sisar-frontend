@@ -7,15 +7,13 @@ import DistribuicaoTab from './tabs/distribuicao';
 import { IInicial } from '@/shared/services/inicial.services';
 import { IUsuario } from '@/shared/services/usuario.services';
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import * as avisos from '@/shared/services/avisos.services';
 import * as inicialServices from '@/shared/services/inicial.services';
 import { Check } from '@mui/icons-material';
 import { AlertsContext } from '@/providers/alertsProvider';
 import FinalizaçãoTab from './tabs/finalizacao';
-
-
 
 export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInicial, funcionarios?: { administrativos: IUsuario[], tecnicos: IUsuario[] }}) {
     const query = useSearchParams();
@@ -31,6 +29,7 @@ export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInic
     const [descricao, setDescricao] = useState('');
     const { setAlert } = React.useContext(AlertsContext);
     const [processosAvisos, setProcessosAvisos] = useState<inicialServices.IProcessosAvisos[]>([]);
+    const router = useRouter();
 
     React.useEffect(() => {
         inicialServices.processosAvisos()
@@ -101,7 +100,38 @@ export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInic
                                         options={options}
                                     />
                                 </FormControl>
-                                <Button type='submit' onClick={() => { criarAvisos(); }}>Salvar</Button>
+                                <Box alignSelf={'end'} >
+                                  <Button 
+                                    size='sm'
+                                    variant='plain'
+                                    color='neutral' 
+                                    type='button'
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setLembrete(false);
+                                    }}
+                                    sx={{
+                                      width: 'fit-content',
+                                      borderRadius: 4,
+                                      alignSelf: 'end',
+                                      mr: 1
+                                    }}
+                                  >
+                                    Cancelar
+                                  </Button>
+                                  <Button 
+                                    size='sm'
+                                    type='submit' 
+                                    onClick={() => criarAvisos()}
+                                    sx={{
+                                      width: 'fit-content',
+                                      borderRadius: 4,
+                                      alignSelf: 'end'
+                                    }}
+                                  >
+                                    Salvar
+                                  </Button>
+                                </Box>                                
                             </Stack>
                         </form>
                     </ModalDialog>
