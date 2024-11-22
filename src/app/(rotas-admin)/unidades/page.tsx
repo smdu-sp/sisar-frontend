@@ -266,7 +266,7 @@ function SearchUnidades() {
                       </IconButton>
                     </Tooltip>
                   ) : (
-                    <Tooltip title="Desativar" arrow placement="top">
+                    <Tooltip title="Desativar Unidade" arrow placement="top">
                       <IconButton title="Desativar" size="sm" color="danger" onClick={() => confirmaDesativaUnidade(unidade.id)}>
                         <Cancel />
                       </IconButton>

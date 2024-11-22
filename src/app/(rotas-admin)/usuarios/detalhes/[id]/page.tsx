@@ -75,30 +75,38 @@ export default function UsuarioDetalhes(props: any) {
             });
     }
 
-    const submitData = () => {
-        setLoading(true);
-        if (usuario){
-            usuarioServices.atualizar(usuario.id, {
-                permissao, unidade_id, cargo
-            }).then((response) => {
-                if (response.id) {
-                    setLoading(false);
-                    setAlert('Usuário alterado!', 'Dados atualizados com sucesso!', 'success', 3000, Check);            
-                }
-            })
-        } else {
-            if (novoUsuario){
-                usuarioServices.criar({
-                    nome, login, email, permissao, cargo, unidade_id
-                }).then((response) => {
-                    if (response.id) {
-                        setLoading(true);
-                        setAlert('Usuário criado!', 'Dados inseridos com sucesso!', 'success', 3000, Check);
-                        router.push('/usuarios/detalhes/' + response.id);
-                    }
-                })
-            }
+    const submitData = async () => {
+      setLoading(true);
+      if (usuario) {
+        try {
+          const userUpdated: IUsuario | void = await usuarioServices
+            .atualizar(usuario.id, { permissao, unidade_id, cargo });
+          if (userUpdated.id) {
+            setLoading(false);
+            setAlert('Usuário alterado!', 'Dados atualizados com sucesso!', 'success', 3000, Check);
+            router.push('/usuarios');
+            return
+          }
+        } catch (error) {
+          setLoading(false);
+          setAlert('Não foi possível alterar o usuário!', 'Os dados não foram atualizados!', 'danger', 3000, Check);
+          return
         }
+      }
+      if (novoUsuario) {
+        try {
+          const newUser = await usuarioServices
+            .criar({ nome, login, email, permissao, cargo, unidade_id })
+          if (newUser.id) {
+            setLoading(true);
+            setAlert('Usuário criado!', 'Dados inseridos com sucesso!', 'success', 3000, Check);
+            router.push('/usuarios');
+          }
+        } catch (error) {
+          setLoading(false);
+          setAlert('Não foi possível criar o usuário!', 'Os dados não foram criados!', 'danger', 3000, Check);
+        } 
+      }
     }
 
     const buscarNovo = () => {
@@ -405,20 +413,21 @@ export default function UsuarioDetalhes(props: any) {
                     <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
                         <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
                         <Button 
-                            size="sm" 
-                            variant="plain" 
-                            color="neutral" 
-                            onClick={() => router.back()}
+                          size="sm" 
+                          variant="plain" 
+                          color="neutral" 
+                          onClick={() => router.back()}
                         >
-                            Cancelar
+                          Cancelar
                         </Button>
-                        <Button 
-                            size="sm" 
-                            variant="solid" 
-                            onClick={submitData}
-                            sx={{ borderRadius: 4 }}
+                        <Button
+                          loading={loading} 
+                          size="sm" 
+                          variant="solid" 
+                          onClick={submitData}
+                          sx={{ borderRadius: 4 }}
                         >
-                            Salvar
+                          Salvar
                         </Button>
                         </CardActions>
                     </CardOverflow>
