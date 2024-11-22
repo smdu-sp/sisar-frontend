@@ -2,7 +2,7 @@
 
 import Content from '@/components/Content';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Theme, Tooltip, Typography } from '@mui/joy';
+import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Tooltip, Typography } from '@mui/joy';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import * as alvaraTipoService from '@/shared/services/alvara-tipo.services';
 import { IPaginadoAlvaraTipo, IAlvaraTipo } from '@/shared/services/alvara-tipo.services';
@@ -263,12 +263,22 @@ export default function AlvaraTipos() {
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     {alvaraTipo.status ? (
                       <Tooltip title="Desativar tipo de alvará" arrow placement="top">
-                        <IconButton title="Desativar" size="sm" color="danger" onClick={() => { setOpen(true); setMensagemStatus('inativar'); setId(alvaraTipo.id); setTipoStatus(alvaraTipo.status); }}>
+                        <IconButton title="Desativar" size="sm" color="danger" onClick={() => { 
+                          setOpen(true); 
+                          setMensagemStatus('inativar'); 
+                          setId(alvaraTipo.id); 
+                          setTipoStatus(alvaraTipo.status); 
+                        }}>
                           <Cancel />
                         </IconButton>
                       </Tooltip>
                     ) : (<Tooltip title="Ativar tipo de alvará" arrow placement="top">
-                      <IconButton size="sm" color="success" onClick={() => { setOpen(true); setMensagemStatus('ativar'); setId(alvaraTipo.id); setTipoStatus(alvaraTipo.status); }}>
+                      <IconButton size="sm" color="success" onClick={() => { 
+                        setOpen(true); 
+                        setMensagemStatus('ativar'); 
+                        setId(alvaraTipo.id); 
+                        setTipoStatus(alvaraTipo.status); 
+                      }}>
                         <Check />
                       </IconButton>
                     </Tooltip>)}

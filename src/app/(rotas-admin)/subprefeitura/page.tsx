@@ -3,8 +3,8 @@
 import Content from '@/components/Content';
 import { Suspense, useCallback, useContext, useEffect, useState } from 'react';
 import * as subprefeituraServices from '@/shared/services/subprefeitura.services';
-import { Box, Button, Card, CardActions, CardOverflow, ChipPropsColorOverrides, CircularProgress, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, IconButton, Input, Modal, ModalDialog, Option, Select, Skeleton, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
-import { Add, Cancel, Check, Clear, Edit, Refresh, Search, Warning } from '@mui/icons-material';
+import { Box, Button, CardActions, CardOverflow, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, IconButton, Input, Modal, ModalDialog, Option, Select, Skeleton, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
+import { Add, Cancel, Check, Clear, Refresh, Search } from '@mui/icons-material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertsContext } from '@/providers/alertsProvider';
 import { TablePagination } from '@mui/material';
@@ -27,7 +27,6 @@ const schema = object({
   status: number().min(0).max(1)
 });
 type Schema = Infer<typeof schema>;
-
 
 export default function Unidades() {
   return (
@@ -268,9 +267,9 @@ function SearchUnidades() {
               setStatus(newValue! || 'true');
             }}
           >
+            <Option value={'all'}>Todos</Option>
             <Option value={'true'}>Ativos</Option>
             <Option value={'false'}>Inativos</Option>
-            <Option value={'all'}>Todos</Option>
           </Select>
         </FormControl>
         <FormControl sx={{ flex: 1 }} size="sm">
@@ -434,10 +433,10 @@ function SearchUnidades() {
               </Stack>
               <CardOverflow>
                 <CardActions sx={{ alignSelf: 'flex-end', pt: 4, mb: -2 }}>
-                  <Button size="sm" variant="outlined" color="neutral" onClick={() => { setOpenNovaSub(false); limpaCamposForm() }}>
+                  <Button size="sm" variant="plain" color="neutral" onClick={() => { setOpenNovaSub(false); limpaCamposForm() }}>
                     Cancelar
                   </Button>
-                  <Button loading={loading} size="sm" variant="solid" color="primary" type="submit" disabled={!isValid}>
+                  <Button loading={loading} size="sm" variant="solid" color="primary" type="submit" disabled={!isValid} sx={{ borderRadius: 4 }}>
                     Salvar
                   </Button>
                 </CardActions>
