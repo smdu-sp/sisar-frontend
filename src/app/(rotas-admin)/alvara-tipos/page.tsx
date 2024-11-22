@@ -2,7 +2,7 @@
 
 import Content from '@/components/Content';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Tooltip, Typography } from '@mui/joy';
+import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Theme, Tooltip, Typography } from '@mui/joy';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import * as alvaraTipoService from '@/shared/services/alvara-tipo.services';
 import { IPaginadoAlvaraTipo, IAlvaraTipo } from '@/shared/services/alvara-tipo.services';
@@ -10,6 +10,7 @@ import { TablePagination } from '@mui/material';
 import { Add, Cancel, Check, Clear, Refresh, Search } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
 import { AlertsContext } from '@/providers/alertsProvider';
+import { useTheme } from '@emotion/react';
 
 export default function AlvaraTipos() {
   const confirmaVazio: {
@@ -44,6 +45,7 @@ export default function AlvaraTipos() {
   const [mensagemStatus, setMensagemStatus] = useState('');
   const [id, setId] = useState('');
   const [tipoStatus, setTipoStatus] = useState(1);
+  const theme: any = useTheme();
 
   useEffect(() => {
     buscaDados();
@@ -51,25 +53,24 @@ export default function AlvaraTipos() {
   }, [pagina, limite]);
 
   const showNotificacao = function () {
-    var notification = searchParams.get('notification');
+    let notification = searchParams.get('notification');
     if (notification) {
       setNotificacao(notification ? parseInt(notification) : 0);
       setAlert(notificacao == 1 ? 'Tipo alvará alterado!' : 'Tipo alvará criado!',
-        notificacao == 1 ? 'Tipo alvará alterado com sucesso.' : 'Tipo alvará criado com sucesso.', notificacao == 1 ? 'warning' : 'success', 3000, Check);
+        notificacao == 1 ? 'Tipo alvará alterado com sucesso.' : 'Tipo alvará criado com sucesso.', notificacao == 1 ? 'success' : 'success', 3000, Check);
     }
     const newUrl = `${window.location.pathname}`;
     window.history.replaceState({}, '', newUrl);
-
     buscaDados();
   };
 
   const status = function () {
     setOpen(false);
-    var status = parseInt(tipoStatus.toString());
+    let status = parseInt(tipoStatus.toString());
     alvaraTipoService.alterarStatus(id, status === 1 ? 0 : 1)
       .then(() => {
         setAlert(mensagemStatus == 'ativar' ? 'Alvará ativado!' : 'Alvará inativado!',
-          mensagemStatus == 'ativar' ? 'Alvará ativado com sucesso.' : 'Alvará inativado com sucesso.', status === 1 ? 'warning' : 'success', 3000, Check);
+          mensagemStatus == 'ativar' ? 'Alvará ativado com sucesso.' : 'Alvará inativado com sucesso.', status === 1 ? 'success' : 'success', 3000, Check);
         buscaDados();
       });
   }
@@ -205,9 +206,9 @@ export default function AlvaraTipos() {
               setStatus(newValue! || 'true');
             }}
           >
+            <Option value={'all'}>Todos</Option>
             <Option value={'true'}>Ativos</Option>
             <Option value={'false'}>Inativos</Option>
-            <Option value={'all'}>Todos</Option>
           </Select>
         </FormControl>
         <FormControl sx={{ flex: 1 }} size="sm">
@@ -243,7 +244,15 @@ export default function AlvaraTipos() {
               (searchParams.get('status') ?
                 (searchParams.get('status') === 'true' ? 0 : searchParams.get('status') === 'false' ? 1 : 2)
                 : 0) ? (
-              <tr key={alvaraTipo.id} style={{ cursor: 'pointer' }}>
+              <tr 
+                key={alvaraTipo.id} 
+                style={{ 
+                  cursor: 'pointer',
+                  backgroundColor: !alvaraTipo.status ?
+                  theme.vars.palette.danger.plainActiveBg :
+                  undefined 
+                }}
+              >
                 <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.nome}</td>
                 <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_admissibilidade_smul}</td>
                 <td onClick={() => router.push(`/alvara-tipos/detalhes/${alvaraTipo.id}`)}>{alvaraTipo.prazo_analise_smul1}</td>
