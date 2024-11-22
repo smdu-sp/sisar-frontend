@@ -75,16 +75,17 @@ function SearchUnidades() {
   }
 
   const buscaUnidades = async () => {
-    unidadeServices.buscarTudo(filtro.toString(), pagina, limite, busca)
-      .then((response: IPaginadoUnidade) => {
-        setTotal(response.total);
-        setPagina(response.pagina);
-        setLimite(response.limite);
-        setUnidades(response.data);
-      }).catch(e => {
-        console.error(e);
-        setAlert('Erro buscando unidades', 'Erro', 'danger', 3000);
-      });
+    try {
+      const unidades: IPaginadoUnidade = await unidadeServices
+        .buscarTudo(filtro.toString(), pagina, limite, busca);
+      setTotal(unidades.total);
+      setPagina(unidades.pagina);
+      setLimite(unidades.limite);
+      setUnidades(unidades.data);
+    } catch (error) {
+      console.error(error);
+      setAlert('Erro buscando unidades', 'Erro', 'danger', 3000);
+    }
   }
 
   const alterarUnidade = async (id: string): Promise<void> => {
@@ -128,7 +129,7 @@ function SearchUnidades() {
   }
 
   const ativaUnidade = async (id: string): Promise<void> => {
-    var resposta = await unidadeServices.desativar({ id, status: 1 });
+    let resposta = await unidadeServices.ativar(id);
     if (resposta) {
       setAlert('Unidade ativada!', 'Essa unidade foi autorizada e será visível para seleção.', 'success', 3000, Check);
       buscaUnidades();
@@ -258,10 +259,9 @@ function SearchUnidades() {
               <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.nome}</td>
               <td>
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                  {!unidade.status ? (
+                  {unidade.id && unidade.status === 0 ? (
                     <Tooltip title="Ativar Unidade" arrow placement="top">
-                      <IconButton size="sm" color="success" onClick={() => { ativaUnidade(unidade.id) }
-                      }>
+                      <IconButton size="sm" color="success" onClick={() => { ativaUnidade(unidade.id) }}>
                         <Check />
                       </IconButton>
                     </Tooltip>

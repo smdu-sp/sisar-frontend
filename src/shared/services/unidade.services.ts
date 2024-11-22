@@ -42,19 +42,21 @@ async function listaCompleta(): Promise<IUnidade[]> {
     return unidades;
 }
 
-async function buscarTudo(filtro: string, pagina: number = 1, limite: number = 10, busca: string = ''): Promise<IPaginadoUnidade> {
-    const session = await getServerSession(authOptions);
-    const subprefeituras = await fetch(`${baseURL}unidades/buscar-tudo?filtro=${filtro}&pagina=${pagina}&limite=${limite}&busca=${busca}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${session?.access_token}`
-        }
-    }).then((response) => {
-        if (response.status === 401) Logout();
-        return response.json();
-    })
-    return subprefeituras;
+async function buscarTudo(filtro: string | null, pagina: number = 1, limite: number = 10, busca: string | null): Promise<IPaginadoUnidade> {
+  const session = await getServerSession(authOptions);
+  if (!filtro) filtro = null;
+  const unidade: IPaginadoUnidade = await fetch(
+    `${baseURL}unidades/buscar-tudo?filtro=${filtro}&pagina=${pagina}&limite=${limite}&busca=${busca}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${session?.access_token}`
+    }
+  }).then((response) => {
+    if (response.status === 401) Logout();
+    return response.json();
+  });
+  return unidade;
 }
 
 async function buscarPorId(id: string): Promise<IUnidade> {
