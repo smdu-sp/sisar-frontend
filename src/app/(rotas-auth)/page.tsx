@@ -484,9 +484,8 @@ export default function Home() {
                               sx={{ mt: 1 }}
                             >
                               Reagendar
-                            </Chip>
-                            : null}
-
+                            </Chip> : null
+                          }
                         </CardContent>
                       </Card>
                     </Grid>

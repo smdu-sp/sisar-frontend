@@ -96,19 +96,11 @@ export default function AlvaraTipoDetalhes(props: any) {
         }
     });
 
-    const onSubmit = (data: Schema) => {
-        if (!id) {
-            alvaraTiposService.criar(data)
-                .then(() => {
-                    router.push('/alvara-tipos?notification=0');
-                });
-        } else {
-            alvaraTiposService.atualizar(id, data)
-                .then(() => {
-                    router.push('/alvara-tipos?notification=1');
-                });
-        }
-
+    const onSubmit = (data: Schema): Promise<void | IAlvaraTipo> => {
+      if (!id) return alvaraTiposService.criar(data)
+        .then(() => router.push('/alvara-tipos?notification=0'));
+      return alvaraTiposService.atualizar(id, data)
+        .then(() => router.push('/alvara-tipos?notification=1'));
     }
 
     useEffect(() => {
@@ -687,22 +679,23 @@ export default function AlvaraTipoDetalhes(props: any) {
                         <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
                             <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
                                 <Button 
-                                    size="sm" 
-                                    variant="plain" 
-                                    color="neutral" 
-                                    onClick={() => router.back()}
+                                  size="sm" 
+                                  variant="plain" 
+                                  color="neutral" 
+                                  onClick={() => router.back()}
                                 >
-                                    Cancelar
+                                  Cancelar
                                 </Button>
                                 <Button 
-                                    size="sm" 
-                                    variant="solid" 
-                                    color="primary" 
-                                    type="submit" 
-                                    loading={isSubmitted} 
-                                    disabled={!isValid}
+                                  size="sm" 
+                                  variant="solid" 
+                                  color="primary" 
+                                  type="submit" 
+                                  loading={isSubmitted} 
+                                  disabled={!isValid}
+                                  sx={{ borderRadius: 4 }}
                                 >
-                                    Salvar
+                                  Salvar
                                 </Button>
                             </CardActions>
                         </CardOverflow>
