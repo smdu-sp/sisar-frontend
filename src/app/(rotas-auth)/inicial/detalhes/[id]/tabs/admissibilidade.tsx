@@ -75,23 +75,15 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
             const { status, unidade_id, subprefeitura_id, data_decisao_interlocutoria } = data;
             admissibilidadeServices.atualizarId(admissibilidade.inicial_id, {
                 status, unidade_id, subprefeitura_id, data_decisao_interlocutoria
-            }).then(() => {
-                inicialServices.atualizar(admissibilidade.inicial_id, { tipo_processo, status: 2 })
-                    .then((e) => {
-                        if (e) {
-                            setAlert('Admissão Realizada', `${comum.formatarSei(inicial?.sei ? inicial?.sei : "")} admitido com sucesso`, 'success', 3000, Check);
-                            // router.push('/admissibilidade')
-                        }
-                    })
-            })
-
+            }).then(() => inicialServices.atualizar(admissibilidade.inicial_id, { tipo_processo, status: 2 })
+                .then((e) => {
+                    if (e) setAlert('Admissão Realizada', `${comum.formatarSei(inicial?.sei ? inicial?.sei : "")} admitido com sucesso`, 'success', 3000, Check);
+                }))
         }
     }
 
     const buscarDados = () => {
-        if (inicial) {
-            setTipo_processo(inicial.tipo_processo)
-        }
+        if (inicial) setTipo_processo(inicial.tipo_processo);
         if (admissibilidade) {
             admissibilidade.subprefeitura_id && setSubprefeitura_id(admissibilidade.subprefeitura_id)
             admissibilidade.unidade_id && setUnidade_id(admissibilidade.unidade_id)
@@ -110,7 +102,8 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
             })
         setCarregando(false)
         buscarDados();
-    }, [])
+    }, []);
+
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ p: 2 }}>

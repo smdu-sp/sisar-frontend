@@ -212,16 +212,14 @@ export default function InicialTab({ inicial }: { inicial?: IInicial } ) {
 
     useEffect(() => {
         buscarDados();
-        if (novoProcesso) {
-            setSei(comum.formatarSei(novoProcesso));
-        }
+        if (novoProcesso) setSei(comum.formatarSei(novoProcesso));
         alvaraTiposService.listaCompleta().then((result: IAlvaraTipo[]) => {
             if (result) {
                 if (result instanceof Error) {
                     alert(result.message);
-                } else {
-                    setAlvaraTipos(result);
-                }
+                    return
+                } 
+                setAlvaraTipos(result);
             }
         });
         setCarregando(false);
@@ -229,14 +227,12 @@ export default function InicialTab({ inicial }: { inicial?: IInicial } ) {
 
     function adicionaDigitoSql(sqlNumero: number): string {
         var soma = 0;
-        const sql = sqlNumero.toString();
         const verificador = [1, 10, 9, 8, 7, 6, 5, 4, 3, 2];
-        for (let i = 0; i < 10; i++)
-            soma += parseInt(sql[i]) * verificador[i];
+        for (let i = 0; i < 10; i++) soma += parseInt(sqlNumero.toString()[i]) * verificador[i];
         soma = soma % 11;
         if (soma === 10) soma = 1;
         if (soma > 1 && soma < 10) soma = 11 - soma;
-        return comum.formatarSql(sql + soma.toString());
+        return comum.formatarSql(sqlNumero.toString() + soma.toString());
     }
 
     function adicionarListaSql() {
@@ -265,10 +261,9 @@ export default function InicialTab({ inicial }: { inicial?: IInicial } ) {
         const sqlInicialLimpo = parseInt(sqlInicial.replace(/\D/g, '').slice(0, -1));
         const sqlFinalLimpo = parseInt(sqlFinal.replace(/\D/g, '').slice(0, -1));
         setSqlSequencial([]);
-        setTeste(true)
-        for (let i = sqlInicialLimpo; i <= sqlFinalLimpo; i++) {
+        setTeste(true);
+        for (let i = sqlInicialLimpo; i <= sqlFinalLimpo; i++) 
             setSqlSequencial((estado) => [...estado, adicionaDigitoSql(i)]);
-        }
     }
 
     function comparaSqls(): boolean {
