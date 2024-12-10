@@ -35,7 +35,6 @@ export default function UsuarioDetalhes(props: any) {
     const [unidade_id, setUnidade_id] = useState('');
     const [ loading, setLoading ] = useState<boolean>();
 
-
     const permissoes: Record<string, { label: string, value: string, color: OverridableStringUnion<ColorPaletteProp, ChipPropsColorOverrides> | undefined }> = {
         'DEV': { label: 'Desenvolvedor', value: 'DEV', color: 'neutral' },
         'SUP': { label: 'Superadmin', value: 'SUP', color: 'primary' },
@@ -109,21 +108,28 @@ export default function UsuarioDetalhes(props: any) {
       }
     }
 
-    const buscarNovo = () => {
+    const buscarNovo = async () => {
+      try {
         setLoading(true);
-        if (login)
-            usuarioServices.buscarNovo(login).then((response) => {
-                if (response.message) setAlert('Erro', response.message, 'warning', 3000, Warning);
-                if (response.id) router.push('/usuarios/detalhes/' + response.id);
-                else if (response.email) {
-                    setNome(response.nome ? response.nome : '');
-                    setLogin(response.login ? response.login : '');
-                    setEmail(response.email ? response.email : '');
-                    setUnidade_id(response.unidade_id ? response.unidade_id : '');
-                    setNovoUsuario(true);
-                }
-                setLoading(false);
-            })
+        if (login) {
+          const usuario = await usuarioServices.buscarNovo(login);
+          if (usuario.id != undefined) {
+            router.push('/usuarios/detalhes/' + usuario.id);
+            return
+          }
+          if (usuario.email != null || usuario.email != undefined) {
+            setNome(usuario.nome ? usuario.nome : '');
+            setLogin(usuario.login ? usuario.login : '');
+            setEmail(usuario.email ? usuario.email : '');
+            setUnidade_id(usuario.unidade_id ? usuario.unidade_id : '');
+            setNovoUsuario(true);
+          }
+        }
+      } catch (error: any) {
+        setAlert('Erro', error.message, 'warning', 3000, Warning);
+      } finally {
+        setLoading(false);
+      }
     }
 
     const limpaUsuario = () => {
