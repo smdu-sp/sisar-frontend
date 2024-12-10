@@ -56,9 +56,9 @@ export interface IQuantitativoResponse {
 
 const baseURL = process.env.API_URL || "http://localhost:3000/";
 
-async function relatorioQuantitativo(): Promise<IQuantitativoResponse> {
+async function relatorioQuantitativo(mes: string, ano: string): Promise<IQuantitativoResponse> {
   const session = await getServerSession(authOptions);
-  const finalizacao = await fetch(`${baseURL}relatorio/ap/quantitativo`, {
+  const finalizacao = await fetch(`${baseURL}relatorio/ap/quantitativo/${mes}/${ano}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

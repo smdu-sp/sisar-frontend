@@ -8,7 +8,7 @@ import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 // @ts-ignore
 import RemoveRedEyeRoundedIcon from '@mui/icons-material/RemoveRedEyeRounded';
 import { Box, Button, Card, CardContent, Divider, FormControl, FormLabel, Option, Select, Typography } from '@mui/joy';
-import React, { use, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -22,47 +22,6 @@ import { IQuantitativoResponse } from '@/shared/services/relatorios/quantitativo
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const jsonData = {
-  "total": 20,
-  "analise": 0,
-  "inadimissiveis": 1,
-  "admissiveis": 19,
-  "data_gerado": "16/10/2024",
-  "em_analise": {
-    "smul": {
-      "quantidade": 3,
-      "data": [
-        {
-          "nome": "Unidade",
-          "count": 1
-        },
-        {
-          "nome": "teste 2",
-          "count": 2
-        },
-        {
-          "nome": "teste 3",
-          "count": 3
-        },
-        {
-          "nome": "teste 4",
-          "count": 4
-        }
-      ]
-    },
-    "graproem": {
-      "quantidade": 1,
-      "data": [
-        {
-          "nome": "Unidade",
-          "count": 1
-        }
-      ]
-    },
-    "total_parcial": 4
-  }
-};
-
 export default function ExportXlsx() {
   const [ relatorioType, setRelatorioType ] = useState<string>('');
   const [fileType, setFileType] = useState<'XLSX' | 'PDF'>('XLSX');
@@ -73,58 +32,67 @@ export default function ExportXlsx() {
   const { setAlert } = React.useContext(AlertsContext);
   const [quantitativo, setQuantitativo] = useState<IQuantitativoResponse>();
 
-  const smulData: { Key: string, Value: number }[] = jsonData
-    .em_analise.smul.data.map((item: { nome: string, count: number }) => ({
+  const getRelatorio = async (month: string, year: string) => {
+    try {
+      const relatorio = await relatorioService.relatorioQuantitativo(month, year);
+      console.log(relatorio);
+      if (relatorio) setQuantitativo(relatorio);
+    } catch (error) {
+      throw error; 
+    }
+  };
+
+  const smulData = async (): Promise<{ Key: string, Value: number }[]> => {
+    if (quantitativo == null || quantitativo == undefined) throw new Error('Não foi possível buscar o relatório')
+    return quantitativo.em_analise.smul.data.map((item: { nome: string, count: number }) => ({
       Key: item.nome,
       Value: item.count
     }));
+  }
 
-  useEffect(() => {
-    relatorioService.relatorioQuantitativo()
-      .then((response) => {
-        setQuantitativo(response);
-      });
-  }, [])
-
-  const graproemData: { Key: string, Value: number }[] = jsonData
-    .em_analise.graproem.data.map((item: { nome: string, count: number }) => ({
+  const graproemData = async (): Promise<{ Key: string, Value: number }[]> => {
+    if (quantitativo == null || quantitativo == undefined) throw new Error('Não foi possível buscar o relatório')
+    return quantitativo.em_analise.graproem.data.map((item: { nome: string, count: number }) => ({
       Key: item.nome,
       Value: item.count
     }));
+  }
 
-  const mainData: { Key: string, Value: any }[] = [
+  const mainData = async (): Promise<{ Key: string, Value: any }[]> => [
     { Key: '', Value: '' },
     { Key: 'Dados totais', Value: '' },
-    { Key: 'Total', Value: jsonData.total },
-    { Key: 'Análise', Value: jsonData.analise },
-    { Key: 'Inadimissíveis', Value: jsonData.inadimissiveis },
-    { Key: 'Admissíveis', Value: jsonData.admissiveis },
-    { Key: 'Data Gerado', Value: jsonData.data_gerado },
+    { Key: 'Total', Value: quantitativo?.total },
+    { Key: 'Análise', Value: quantitativo?.analise },
+    { Key: 'Inadimissíveis', Value: quantitativo?.inadmissiveis },
+    { Key: 'Admissíveis', Value: quantitativo?.admissiveis },
+    { Key: 'Data Gerado', Value: quantitativo?.data_gerado },
     { Key: '', Value: '' },
     { Key: 'Em Analise', Value: '' },
-    { Key: 'SMUL', Value: jsonData.em_analise.smul.quantidade },
-    { Key: 'GRAPROEM', Value: jsonData.em_analise.graproem.quantidade },
-    { Key: 'Total Parcial', Value: jsonData.em_analise.total_parcial },
+    { Key: 'SMUL', Value: quantitativo?.em_analise.smul.quantidade },
+    { Key: 'GRAPROEM', Value: quantitativo?.em_analise.graproem.quantidade },
+    { Key: 'Total Parcial', Value: quantitativo?.em_analise.total_parcial },
     { Key: '', Value: '' },
     { Key: 'SMUL', Value: '' },
-    ...smulData,
+    ...(await smulData()),
     { Key: '', Value: '' },
     { Key: 'Graproem', Value: '' },
-    ...graproemData
+    ...(await graproemData())
   ];
 
   const getRelatorioDate = (): string => `${date?.toString().split(' ')[1]}-${date?.toString().split(' ')[3]}`;
 
-  const exportToXlsx = (): void => {
-    const worksheetMain: XLSX.WorkSheet = XLSX.utils.json_to_sheet(mainData);
+  const exportToXlsx = async (): Promise<void> => {
+    const worksheetMain: XLSX.WorkSheet = XLSX.utils.json_to_sheet(await mainData());
     const workbook: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheetMain, 'Dados');
     XLSX.writeFile(workbook, `Relatorio-${getRelatorioDate()}.xlsx`);
   };
 
-  const exportFile = (): void => {
+  const exportFile = async (): Promise<void> => {
     try {
-      if (date === undefined) throw new Error(' Data não selecionada');
+      if (!date) throw new Error(' Data não selecionada');
+      await getRelatorio(date.getMonth().toString(), date.getFullYear().toString());
+      // if (!quantitativo) throw new Error('Não foi possível buscar o relatório')
       fileType === 'PDF' ? gerarPDF() : exportToXlsx(); 
     } catch (error) {
       console.error(error);
