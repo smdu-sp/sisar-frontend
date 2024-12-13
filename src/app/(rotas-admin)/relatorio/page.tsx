@@ -30,78 +30,82 @@ export default function ExportXlsx() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string>('');
   const { setAlert } = React.useContext(AlertsContext);
-  const [quantitativo, setQuantitativo] = useState<IQuantitativoResponse>();
+
+  const getRelatorioDate = (): string => `${date?.toString().split(' ')[1]}-${date?.toString().split(' ')[3]}`;
 
   const getRelatorio = async (month: string, year: string) => {
     try {
       const relatorio = await relatorioService.relatorioQuantitativo(month, year);
-      console.log(relatorio);
-      if (relatorio) setQuantitativo(relatorio);
-    } catch (error) {
-      throw error; 
+      if (!relatorio) throw new Error("Não foi possível buscar o reltório");
+      return relatorio;
+    } catch (error: any) {
+      throw setAlert(error.message, "Erro", 'warning', 3000, WarningAmberRoundedIcon); 
     }
   };
 
-  const smulData = async (): Promise<{ Key: string, Value: number }[]> => {
-    if (quantitativo == null || quantitativo == undefined) throw new Error('Não foi possível buscar o relatório')
+  const smulData = async (quantitativo: IQuantitativoResponse): Promise<{ Key: string, Value: number }[]> => {
+    if (quantitativo == null || quantitativo == undefined) throw new Error('Não foi possível buscar o relatório');
+    if (!quantitativo.em_analise.smul.data.length || quantitativo.em_analise.smul.data.length < 1) {
+      return [{ Key: "", Value: 0 }]
+    }
     return quantitativo.em_analise.smul.data.map((item: { nome: string, count: number }) => ({
       Key: item.nome,
       Value: item.count
     }));
   }
 
-  const graproemData = async (): Promise<{ Key: string, Value: number }[]> => {
-    if (quantitativo == null || quantitativo == undefined) throw new Error('Não foi possível buscar o relatório')
+  const graproemData = async (quantitativo: IQuantitativoResponse): Promise<{ Key: string, Value: number }[]> => {
+    if (quantitativo == null || quantitativo == undefined) throw new Error('Não foi possível buscar o relatório');
+    if (!quantitativo.em_analise.graproem.data.length || quantitativo.em_analise.graproem.data.length < 1) {
+      return [{ Key: "", Value: 0 }]
+    }
     return quantitativo.em_analise.graproem.data.map((item: { nome: string, count: number }) => ({
       Key: item.nome,
       Value: item.count
     }));
   }
 
-  const mainData = async (): Promise<{ Key: string, Value: any }[]> => [
+  const mainData = async (quantitativo: IQuantitativoResponse): Promise<{ Key: string, Value: any }[]> => [
     { Key: '', Value: '' },
     { Key: 'Dados totais', Value: '' },
-    { Key: 'Total', Value: quantitativo?.total },
-    { Key: 'Análise', Value: quantitativo?.analise },
-    { Key: 'Inadimissíveis', Value: quantitativo?.inadmissiveis },
-    { Key: 'Admissíveis', Value: quantitativo?.admissiveis },
-    { Key: 'Data Gerado', Value: quantitativo?.data_gerado },
+    { Key: 'Total', Value: quantitativo.total },
+    { Key: 'Análise', Value: quantitativo.analise },
+    { Key: 'Inadimissíveis', Value: quantitativo.inadmissiveis },
+    { Key: 'Admissíveis', Value: quantitativo.admissiveis },
+    { Key: 'Data Gerado', Value: quantitativo.data_gerado },
     { Key: '', Value: '' },
     { Key: 'Em Analise', Value: '' },
-    { Key: 'SMUL', Value: quantitativo?.em_analise.smul.quantidade },
-    { Key: 'GRAPROEM', Value: quantitativo?.em_analise.graproem.quantidade },
-    { Key: 'Total Parcial', Value: quantitativo?.em_analise.total_parcial },
+    { Key: 'SMUL', Value: quantitativo.em_analise.smul.quantidade },
+    { Key: 'GRAPROEM', Value: quantitativo.em_analise.graproem.quantidade },
+    { Key: 'Total Parcial', Value: quantitativo.em_analise.total_parcial ? quantitativo.em_analise.total_parcial : 0 },
+    { Key: '', Value: '' },
+    { Key: 'Deferidos', Value: '' },
+    { Key: 'SMUL', Value: quantitativo.deferidos.smul.quantidade },
+    { Key: 'GRAPROEM', Value: quantitativo.deferidos.graproem.quantidade },
+    { Key: 'Total Parcial', Value: quantitativo.deferidos.total_parcial ? quantitativo.deferidos.total_parcial : 0 },
+    { Key: '', Value: '' },
+    { Key: 'Indeferidos', Value: '' },
+    { Key: 'SMUL', Value: quantitativo.indeferidos.smul.quantidade },
+    { Key: 'GRAPROEM', Value: quantitativo.indeferidos.graproem.quantidade },
+    { Key: 'Total Parcial', Value: quantitativo.indeferidos.total_parcial ? quantitativo.indeferidos.total_parcial : 0 },
     { Key: '', Value: '' },
     { Key: 'SMUL', Value: '' },
-    ...(await smulData()),
+    ...(await smulData(quantitativo)),
     { Key: '', Value: '' },
     { Key: 'Graproem', Value: '' },
-    ...(await graproemData())
+    ...(await graproemData(quantitativo))
   ];
 
-  const getRelatorioDate = (): string => `${date?.toString().split(' ')[1]}-${date?.toString().split(' ')[3]}`;
-
-  const exportToXlsx = async (): Promise<void> => {
-    const worksheetMain: XLSX.WorkSheet = XLSX.utils.json_to_sheet(await mainData());
+  const exportToXlsx = async (quantitativo: IQuantitativoResponse): Promise<void> => {
+    const worksheetMain: XLSX.WorkSheet = XLSX.utils.json_to_sheet(await mainData(quantitativo));
     const workbook: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheetMain, 'Dados');
     XLSX.writeFile(workbook, `Relatorio-${getRelatorioDate()}.xlsx`);
   };
 
-  const exportFile = async (): Promise<void> => {
-    try {
-      if (!date) throw new Error(' Data não selecionada');
-      await getRelatorio(date.getMonth().toString(), date.getFullYear().toString());
-      // if (!quantitativo) throw new Error('Não foi possível buscar o relatório')
-      fileType === 'PDF' ? gerarPDF() : exportToXlsx(); 
-    } catch (error) {
-      console.error(error);
-      setAlert(`${error}`, ' ', 'danger', 3000, WarningAmberRoundedIcon);
-    }
-  }
-
-  const gerarPDF = () => {
+  const gerarPDF = (quantitativo: IQuantitativoResponse) => {
     // Define a estrutura do PDF
+    if (!quantitativo) throw new Error("Não existe relatório na variável quantitativo");
     const docDefinition = {
       content: [
         { text: 'APROVA RÁPIDO', style: 'header' },
@@ -112,19 +116,19 @@ export default function ExportXlsx() {
             body: [
               [
                 { text: 'TOTAL DE PROCESSOS', style: 'tableHeader' },
-                { text: quantitativo?.total.toString(), style: 'tableData' }
+                { text: quantitativo?.total, style: 'tableData' }
               ],
               [
                 { text: 'ANÁLISE DE ADMISSIBILIDADE', style: 'admissibilidadeHeader' },
-                { text: quantitativo?.analise.toString(), style: 'tableData' }
+                { text: quantitativo?.analise, style: 'tableData' }
               ],
               [
                 { text: 'INADMISSÍVEIS', style: 'inadmissiveisHeader' },
-                { text: quantitativo?.inadmissiveis.toString(), style: 'tableData' }
+                { text: quantitativo?.inadmissiveis, style: 'tableData' }
               ],
               [
                 { text: 'ADMISSÍVEIS', style: 'admissiveisHeader' },
-                { text: quantitativo?.admissiveis.toString(), style: 'tableData' }
+                { text: quantitativo?.admissiveis, style: 'tableData' }
               ],
             ]
           } // Adiciona margem inferior para espaço entre tabelas
@@ -137,15 +141,15 @@ export default function ExportXlsx() {
             body: [
               [
                 { text: 'SMUL', style: 'tableHeader' },
-                { text: quantitativo?.em_analise.smul.quantidade.toString(), style: 'tableData' }
+                { text: quantitativo?.em_analise.smul.quantidade, style: 'tableData' }
               ],
               [
                 { text: 'GRAPROEM', style: 'tableHeader' },
-                { text: quantitativo?.em_analise.graproem.quantidade.toString(), style: 'tableData' }
+                { text: quantitativo?.em_analise.graproem.quantidade, style: 'tableData' }
               ],
               [
                 { text: 'TOTAL PARCIAL', style: 'tableHeader' },
-                { text: quantitativo?.em_analise.total_parcial.toString(), style: 'tableData' }
+                { text: quantitativo?.em_analise.total_parcial, style: 'tableData' }
               ],
             ]
           } // Adiciona margem superior para espaço entre tabelas
@@ -192,6 +196,17 @@ export default function ExportXlsx() {
       setModalIsOpen(true); // Abre o modal ao gerar o PDF
     });
   };
+
+  const exportFile = async (): Promise<void> => {
+    try {
+      if (!date) throw new Error('Data não selecionada');
+      const quantitativo: IQuantitativoResponse | undefined = await getRelatorio((date.getMonth() + 1).toString(), date.getFullYear().toString());
+      if (!quantitativo) throw new Error('Não foi possível buscar o relatório')
+      fileType === 'PDF' ? gerarPDF(quantitativo) : exportToXlsx(quantitativo); 
+    } catch (error) {
+      setAlert(`${error}`, ' ', 'danger', 3000, WarningAmberRoundedIcon);
+    }
+  }
 
   return (
     <Content
