@@ -189,7 +189,7 @@ export default function Inicial() {
                                         </Chip>
                                     </td>
                                     <td style={{ textAlign: 'right' }}>
-                                        <IconButton onClick={() => {router.push(`/inicial/detalhes/${inicial.id}?tab=3`)}}>
+                                        <IconButton size='sm' onClick={() => {router.push(`/inicial/detalhes/${inicial.id}?tab=3`)}}>
                                             <AssistantIcon color='info' />
                                         </IconButton>
                                     </td>
