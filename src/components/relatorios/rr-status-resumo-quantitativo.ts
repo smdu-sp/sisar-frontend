@@ -1,10 +1,10 @@
-// APROVA RÁPIDO STATUS E RESUMO QUANTITATIVO
+// REQUALIFICA RÁPIDO STATUS E RESUMO QUANTITATIVO
 
 import * as relatorioService from '@/shared/services/relatorios/quantitativo.service';
 
 // Modelo XLSX
-export const getRelatorioArQuantitativo = async (month: string, year: string): Promise<relatorioService.IQuantitativoResponse> => {
-  const relatorio: relatorioService.IQuantitativoResponse = await relatorioService.relatorioQuantitativo(month, year);
+export const getRelatorioRrQuantitativo = async (month: string, year: string): Promise<relatorioService.IQuantitativoResponse> => {
+  const relatorio: relatorioService.IQuantitativoResponse = await relatorioService.getRelatorioReqRapido(month, year);
   if (!relatorio) throw new Error("Não foi possível buscar o reltório");
   return relatorio;
 };
@@ -31,10 +31,12 @@ const graproemData = async (quantitativo: relatorioService.IQuantitativoResponse
   }));
 }
 
-export const getArQunatitativoXlsx = async (month: string, year: string): Promise<{ Key: string, Value: any }[]> => {
-  const quantitativo: relatorioService.IQuantitativoResponse = await getRelatorioArQuantitativo(month, year);
+export const getRrQunatitativoXlsx = async (month: string, year: string): Promise<{ Key: string, Value: any }[]> => {
+  const quantitativo: relatorioService.IQuantitativoResponse = await getRelatorioRrQuantitativo(month, year);
   if (!quantitativo) throw new Error("Não foi possível buscar o reltório");
   return [
+    { Key: '', Value: '' },
+    { Key: 'Requalifica', Value: 'Rápido' },
     { Key: '', Value: '' },
     { Key: 'Dados totais', Value: '' },
     { Key: 'Total', Value: quantitativo.total },
@@ -67,13 +69,12 @@ export const getArQunatitativoXlsx = async (month: string, year: string): Promis
 };
 
 // Modelo PDF
-export const getArStatusResumoQuantitativoPdf = async (month: string, year: string) => {
-  const quantitativo: relatorioService.IQuantitativoResponse = await getRelatorioArQuantitativo(month, year);
+export const getRrStatusResumoQuantitativoPdf = async (month: string, year: string) => {
+  const quantitativo: relatorioService.IQuantitativoResponse = await getRelatorioRrQuantitativo(month, year);
   if (!quantitativo) throw new Error("Não existe relatório na variável quantitativo");
-  // Define a estrutura do PDF
   const docDefinition = {
     content: [
-      { text: 'APROVA RÁPIDO', style: 'header' },
+      { text: 'REQUALIFICA RÁPIDO', style: 'header' },
       {
         table: {
           headerRows: 1,

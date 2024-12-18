@@ -10,8 +10,7 @@ export interface unidade {
   sigla: string;
   codigo: string;
   status: number;
-}
-[];
+}[];
 
 export interface IQuantitativoResponse {
   total: number;
@@ -56,9 +55,9 @@ export interface IQuantitativoResponse {
 
 const baseURL = process.env.API_URL || "http://localhost:3000/";
 
-async function relatorioQuantitativo(mes: string, ano: string): Promise<IQuantitativoResponse> {
+export async function relatorioQuantitativo(mes: string, ano: string): Promise<IQuantitativoResponse> {
   const session = await getServerSession(authOptions);
-  const finalizacao = await fetch(`${baseURL}relatorio/ap/quantitativo/${mes}/${ano}`, {
+  const finalizacao = await fetch(`${baseURL}relatorio/ar/quantitativo/${mes}/${ano}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -71,4 +70,17 @@ async function relatorioQuantitativo(mes: string, ano: string): Promise<IQuantit
   return finalizacao;
 }
 
-export {relatorioQuantitativo};
+export async function getRelatorioReqRapido(mes: string, ano: string): Promise<IQuantitativoResponse> {
+  const session = await getServerSession(authOptions);
+  const finalizacao = await fetch(`${baseURL}relatorio/rr/quantitativo/${mes}/${ano}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.access_token}`,
+    },
+  }).then((response) => {
+    if (response.status === 401) signOut();
+    return response.json();
+  });
+  return finalizacao;
+}

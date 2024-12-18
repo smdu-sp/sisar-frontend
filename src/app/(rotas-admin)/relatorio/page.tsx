@@ -17,14 +17,13 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { AlertsContext } from '@/providers/alertsProvider';
-import * as relatorioService from '@/shared/services/relatorios/quantitativo.service';
-import { IQuantitativoResponse } from '@/shared/services/relatorios/quantitativo.service';
-import { getArQunatitativoXlsx, getArStatusResumoQuantitativoPdf, getRelatorioArQuantitativo } from '@/components/relatorios/ar-status-resumo-quantitativo';
+import { getArQunatitativoXlsx, getArStatusResumoQuantitativoPdf } from '@/components/relatorios/ar-status-resumo-quantitativo';
+import { getRrQunatitativoXlsx, getRrStatusResumoQuantitativoPdf } from '@/components/relatorios/rr-status-resumo-quantitativo';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export default function ExportXlsx() {
-  const [ relatorioType, setRelatorioType ] = useState<'ARSRQ' | 'RRSRQ'>();
+  const [ relatorioType, setRelatorioType ] = useState<'aprova-rapido' | 'requalifica-rapido'>();
   const [fileType, setFileType] = useState<'XLSX' | 'PDF'>('XLSX');
   const [date, setDate] = useState<Date | undefined>();
   const [construcao, setConstrucao] = useState(false);
@@ -32,58 +31,47 @@ export default function ExportXlsx() {
   const [pdfUrl, setPdfUrl] = useState<string>('');
   const { setAlert } = React.useContext(AlertsContext);
 
+  // Função auxiliar para pegar a data selecionada pelo usuário
   const getRelatorioDate = (): string => `${date?.toString().split(' ')[1]}-${date?.toString().split(' ')[3]}`;
 
+  // Função que lida com a exportação do relatório em XLSX
   const exportToXlsx = async (): Promise<void> => {
     try {
       if (!date) throw new Error('Selecione uma data!');
-      let worksheetMain: XLSX.WorkSheet | null = null;
       if (!relatorioType) throw new Error('Selecione o tipo de relatório!');
-  
+      let worksheetMain: XLSX.WorkSheet | null = null;
       switch (relatorioType) {
-        case 'ARSRQ':
+        case 'aprova-rapido':
           worksheetMain = XLSX.utils.json_to_sheet(await getArQunatitativoXlsx((date.getMonth() + 1).toString(), date.getFullYear().toString()));
           break;
-        case 'RRSRQ':
-          worksheetMain = XLSX.utils.json_to_sheet(await getArQunatitativoXlsx((date.getMonth() + 1).toString(), date.getFullYear().toString()));
+        case 'requalifica-rapido':
+          worksheetMain = XLSX.utils.json_to_sheet(await getRrQunatitativoXlsx((date.getMonth() + 1).toString(), date.getFullYear().toString()));
+          break;
       }
-
-      // if (relatorioType == 'ARSRQ') {
-      //   worksheetMain = XLSX.utils.json_to_sheet(await getArQunatitativoXlsx((date.getMonth() + 1).toString(), date.getFullYear().toString()));
-      // }
-  
-      // if (relatorioType == 'RRSRQ') {
-      //   throw new Error('Ainda indisponível');
-      // }
-  
-      if (worksheetMain == null) {
-        return
-      }
-  
+      if (worksheetMain == null) throw new Error('Relatório indisponível.');
       const workbook: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheetMain, 'Dados');
-      XLSX.writeFile(workbook, `Relatorio-${getRelatorioDate()}.xlsx`); 
+      XLSX.writeFile(workbook, `Relatorio-${relatorioType}-${getRelatorioDate()}.xlsx`); 
     } catch (error: any) {
       throw setAlert(error.message, "Indisponível", 'warning', 3000, WarningAmberRoundedIcon); 
     }
   };
 
-  const gerarPDF = async () => {
+  // Função que lida com a exportação do relatório em PDF
+  const gerarPDF = async (): Promise<void> => {
     try {
       if (!date) throw new Error("Não existe relatório na variável quantitativo");
       if (!relatorioType) throw new Error("Tipo do reltório não selecionado");
       let docDefinition;
-  
-      if (relatorioType == 'ARSRQ') {
-        docDefinition = await getArStatusResumoQuantitativoPdf((date.getMonth() + 1).toString(), date.getFullYear().toString());
-      } 
-  
-      if (relatorioType == 'RRSRQ') {
-        throw new Error('Relatório ainda indisponível');
+      switch (relatorioType) {
+        case 'aprova-rapido':
+          docDefinition = await getArStatusResumoQuantitativoPdf((date.getMonth() + 1).toString(), date.getFullYear().toString());
+          break;
+        case 'requalifica-rapido':
+          docDefinition = await getRrStatusResumoQuantitativoPdf((date.getMonth() + 1).toString(), date.getFullYear().toString());
+          break;
       }
-  
-      if (!docDefinition) return
-  
+      if (!docDefinition) throw new Error('Relatório indisponível.');
       pdfMake.createPdf(docDefinition).getBlob((blob) => {
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);
@@ -94,17 +82,12 @@ export default function ExportXlsx() {
     }
   };
 
+  // Função que define qual tipo de relatório gerar
   const exportFile = async (): Promise<void> => {
     try {
-      if (!fileType) throw new Error();
-      if (fileType == 'PDF') {
-        gerarPDF();
-        return
-      }
-      if (fileType == 'XLSX') {
-        exportToXlsx();
-        return
-      } 
+      if (!fileType) throw new Error('Defina o tipo de arquivo.');
+      if (fileType == 'PDF') gerarPDF();
+      if (fileType == 'XLSX') exportToXlsx();
     } catch (error: any) {
       throw setAlert(error.message, "Indisponível", 'warning', 3000, WarningAmberRoundedIcon); 
     }
@@ -160,14 +143,14 @@ export default function ExportXlsx() {
                 }}
               >
                 <Option
-                  onClick={() => setRelatorioType('ARSRQ')}
-                  value='ARSRQ'
+                  onClick={() => setRelatorioType('aprova-rapido')}
+                  value='aprova-rapido'
                 >
                   Aprova Rápido - Status e Resumo Quantitativo
                 </Option>
                 <Option
-                  onClick={() => setRelatorioType('RRSRQ')}
-                  value='RRSRQ'
+                  onClick={() => setRelatorioType('requalifica-rapido')}
+                  value='requalifica-rapido'
                 >
                   Requalifica Rápido - Status e Resumo Quantitativo
                 </Option>
