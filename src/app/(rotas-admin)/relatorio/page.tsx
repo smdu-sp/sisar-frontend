@@ -27,7 +27,6 @@ export default function ExportXlsx() {
   const [fileType, setFileType] = useState<'XLSX' | 'PDF'>('XLSX');
   const [date, setDate] = useState<Date | undefined>();
   const [construcao, setConstrucao] = useState(false);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string>('');
   const { setAlert } = React.useContext(AlertsContext);
 
@@ -35,7 +34,7 @@ export default function ExportXlsx() {
   const getRelatorioDate = (): string => `${date?.toString().split(' ')[1]}-${date?.toString().split(' ')[3]}`;
 
   // Função que lida com a exportação do relatório em XLSX
-  const exportToXlsx = async (): Promise<void> => {
+  const exportXlsx = async (): Promise<void> => {
     try {
       if (!date) throw new Error('Selecione uma data!');
       if (!relatorioType) throw new Error('Selecione o tipo de relatório!');
@@ -58,7 +57,7 @@ export default function ExportXlsx() {
   };
 
   // Função que lida com a exportação do relatório em PDF
-  const gerarPDF = async (): Promise<void> => {
+  const exportPDF = async (): Promise<void> => {
     try {
       if (!date) throw new Error("Não existe relatório na variável quantitativo");
       if (!relatorioType) throw new Error("Tipo do reltório não selecionado");
@@ -72,11 +71,7 @@ export default function ExportXlsx() {
           break;
       }
       if (!docDefinition) throw new Error('Relatório indisponível.');
-      pdfMake.createPdf(docDefinition).getBlob((blob) => {
-        const url = URL.createObjectURL(blob);
-        setPdfUrl(url);
-        setModalIsOpen(true);
-      }); 
+      pdfMake.createPdf(docDefinition).getBlob(blob => setPdfUrl(URL.createObjectURL(blob))); 
     } catch (error: any) {
       throw setAlert(error.message, "Indisponível", 'warning', 3000, WarningAmberRoundedIcon); 
     }
@@ -86,8 +81,8 @@ export default function ExportXlsx() {
   const exportFile = async (): Promise<void> => {
     try {
       if (!fileType) throw new Error('Defina o tipo de arquivo.');
-      if (fileType == 'PDF') gerarPDF();
-      if (fileType == 'XLSX') exportToXlsx();
+      if (fileType == 'PDF') exportPDF();
+      if (fileType == 'XLSX') exportXlsx();
     } catch (error: any) {
       throw setAlert(error.message, "Indisponível", 'warning', 3000, WarningAmberRoundedIcon); 
     }
