@@ -50,7 +50,7 @@ export default function ExportXlsx() {
       if (worksheetMain == null) throw new Error('Relatório indisponível.');
       const workbook: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheetMain, 'Dados');
-      XLSX.writeFile(workbook, `Relatorio-${relatorioType}-${getRelatorioDate()}.xlsx`); 
+      XLSX.writeFile(workbook, `RELATORIO-${relatorioType.toUpperCase()}-${getRelatorioDate().toUpperCase()}.xlsx`); 
     } catch (error: any) {
       throw setAlert(error.message, "Indisponível", 'warning', 3000, WarningAmberRoundedIcon); 
     }
@@ -71,6 +71,7 @@ export default function ExportXlsx() {
           break;
       }
       if (!docDefinition) throw new Error('Relatório indisponível.');
+      // @ts-ignore
       pdfMake.createPdf(docDefinition).getBlob(blob => setPdfUrl(URL.createObjectURL(blob))); 
     } catch (error: any) {
       throw setAlert(error.message, "Indisponível", 'warning', 3000, WarningAmberRoundedIcon); 

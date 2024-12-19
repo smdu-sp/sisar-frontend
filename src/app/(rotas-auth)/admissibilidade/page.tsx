@@ -376,7 +376,7 @@ export default function Admissibilidade() {
                             </IconButton>
                           </Tooltip>
                         }
-                        <Tooltip title="Admissivel" variant='outlined'>
+                        <Tooltip title="Admitir" variant='outlined'>
                           <IconButton color='success' variant='soft' onClick={() => { router.push(`/inicial/detalhes/${admissibilidade.inicial_id}?tab=2`); }}>
                             <PostAddIcon />
                           </IconButton>

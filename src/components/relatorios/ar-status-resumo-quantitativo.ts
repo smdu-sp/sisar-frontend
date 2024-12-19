@@ -1,15 +1,16 @@
 // APROVA RÁPIDO STATUS E RESUMO QUANTITATIVO
 
-import * as relatorioService from '@/shared/services/relatorios/quantitativo.service';
+import * as relatorioService from '@/shared/services/relatorios/relatorio.service';
+import { IAprovaRapidoQuantitativoResponse } from '@/types/relatorio/relatorio.dto';
 
 // Modelo XLSX
-export const getRelatorioArQuantitativo = async (month: string, year: string): Promise<relatorioService.IQuantitativoResponse> => {
-  const relatorio: relatorioService.IQuantitativoResponse = await relatorioService.relatorioQuantitativo(month, year);
+export const getRelatorioArQuantitativo = async (month: string, year: string): Promise<IAprovaRapidoQuantitativoResponse> => {
+  const relatorio: IAprovaRapidoQuantitativoResponse = await relatorioService.relatorioQuantitativo(month, year);
   if (!relatorio) throw new Error("Não foi possível buscar o reltório");
   return relatorio;
 };
 
-const smulData = async (quantitativo: relatorioService.IQuantitativoResponse): Promise<{ Key: string, Value: number }[]> => {
+const smulData = async (quantitativo: IAprovaRapidoQuantitativoResponse): Promise<{ Key: string, Value: number }[]> => {
   if (quantitativo == null || quantitativo == undefined) throw new Error('Não foi possível buscar o relatório');
   if (!quantitativo.em_analise.smul.data.length || quantitativo.em_analise.smul.data.length < 1) {
     return [{ Key: "", Value: 0 }]
@@ -20,7 +21,7 @@ const smulData = async (quantitativo: relatorioService.IQuantitativoResponse): P
   }));
 }
 
-const graproemData = async (quantitativo: relatorioService.IQuantitativoResponse): Promise<{ Key: string, Value: number }[]> => {
+const graproemData = async (quantitativo: IAprovaRapidoQuantitativoResponse): Promise<{ Key: string, Value: number }[]> => {
   if (quantitativo == null || quantitativo == undefined) throw new Error('Não foi possível buscar o relatório');
   if (!quantitativo.em_analise.graproem.data.length || quantitativo.em_analise.graproem.data.length < 1) {
     return [{ Key: "", Value: 0 }]
@@ -32,7 +33,7 @@ const graproemData = async (quantitativo: relatorioService.IQuantitativoResponse
 }
 
 export const getArQunatitativoXlsx = async (month: string, year: string): Promise<{ Key: string, Value: any }[]> => {
-  const quantitativo: relatorioService.IQuantitativoResponse = await getRelatorioArQuantitativo(month, year);
+  const quantitativo: IAprovaRapidoQuantitativoResponse = await getRelatorioArQuantitativo(month, year);
   if (!quantitativo) throw new Error("Não foi possível buscar o reltório");
   return [
     { Key: '', Value: '' },
@@ -68,9 +69,8 @@ export const getArQunatitativoXlsx = async (month: string, year: string): Promis
 
 // Modelo PDF
 export const getArStatusResumoQuantitativoPdf = async (month: string, year: string) => {
-  const quantitativo: relatorioService.IQuantitativoResponse = await getRelatorioArQuantitativo(month, year);
+  const quantitativo: IAprovaRapidoQuantitativoResponse = await getRelatorioArQuantitativo(month, year);
   if (!quantitativo) throw new Error("Não existe relatório na variável quantitativo");
-  // Define a estrutura do PDF
   const docDefinition = {
     content: [
       { text: 'APROVA RÁPIDO', style: 'header' },
@@ -118,7 +118,86 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
             ],
           ]
         } // Adiciona margem superior para espaço entre tabelas
-      }
+      },
+
+      // Processos
+      { text: 'LEGENDA:', style: 'header_legenda' },
+      { text: 'laranja = em análise de admissibilidade', style: 'legenda_laranja' },
+      { text: 'vermelho = inadmissíveis', style: 'legenda_vermelho' },
+      { text: 'verde = admissíveis ainda em análise', style: 'legenda_verde' },
+      { text: 'azul escuro = processos deferidos', style: 'legenda_azulEs' },
+      { text: 'azul claro = processos indeferidos', style: 'legenda_azulCl' },
+      { text: 'cinza = via ordinária a pedido do interessado', style: 'legenda_cinza' },
+
+      { text: 'PROCESSOS:', style: 'header_processos' },
+      {
+        table: {
+          headerRows: 1,
+          cols: 2,
+          widths: ['auto', '*', 'auto'], // Define as larguras das colunas
+          body: [
+            [
+              { text: 'PROCESSO', style: 'tableProcessoHeader' },
+              { text: 'STATUS', style: 'tableProcessoHeader' },
+              { text: 'DESCRIÇÃO DE STATUS', style: 'tableProcessoHeader' }
+            ],
+
+            // Dados de admissivel
+            ...quantitativo?.admissiveis_dados?.map((a: any) => [
+              { text: a.inicial?.id.toString(), style: 'admissivelData' },
+              {
+                text: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'Em Análise';
+                    case 1: return 'Admissível';
+                    case 2: return 'Deferido';
+                    case 3: return 'Indeferido';
+                    default: return 'Status Desconhecido';
+                  }
+                })(),
+                style: 'admissivelData'
+              },
+              { text: a.inicial?.obs, style: 'admissivelData' }
+            ]),
+
+            // Dados de processos em análise
+            ...quantitativo?.em_analise_dados?.map((a: any) => [
+              { text: a.inicial?.id.toString(), style: 'analiseData' },
+              {
+                text: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'Em Análise';
+                    case 1: return 'Admissível';
+                    case 2: return 'Deferido';
+                    case 3: return 'Indeferido';
+                    default: return 'Status Desconhecido';
+                  }
+                })(),
+                style: 'analiseData'
+              },
+              { text: a.inicial?.obs, style: 'analiseData' }
+            ]),
+
+            // Dados de processos inadimissíveis
+            ...quantitativo?.inadmissiveis_dados?.map((a: any) => [
+              { text: a.inicial?.id.toString(), style: 'inadimissivelData' },
+              {
+                text: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'Em Análise';
+                    case 1: return 'Admissível';
+                    case 2: return 'Deferido';
+                    case 3: return 'Indeferido';
+                    default: return 'Status Desconhecido';
+                  }
+                })(),
+                style: 'inadimissivelData'
+              },
+              { text: a.inicial?.obs, style: 'inadimissivelData' }
+            ])
+          ]
+        }
+      },
     ],
     styles: {
       table: {
@@ -150,6 +229,75 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
       },
       tableData: {
         fontSize: 12,
+      },
+
+      // Sessão de PROCESSOS
+      header_legenda: {
+        marginTop: 20,
+        marginBottom: 8,
+        fontSize: 10,
+        underline: true,
+        bold: true,
+      },
+      legenda_laranja: {
+        color: 'orange',
+        fontSize: 9
+      },
+      legenda_vermelho: {
+        color: 'red',
+        fontSize: 9
+      },
+      legenda_verde: {
+        color: 'green',
+        fontSize: 9
+      },
+      legenda_azulEs: {
+        color: 'darkblue',
+        fontSize: 9
+      },
+      legenda_azulCl: {
+        color: 'lightblue',
+        fontSize: 9
+      },
+      legenda_cinza: {
+        color: 'gray',
+        fontSize: 9
+      },
+
+      header_processos: {
+        marginTop: 20,
+        marginBottom: 8,
+        fontSize: 10,
+        underline: true,
+        bold: true,
+        decoration: 'underline'
+      },
+      tableProcessoHeader: {
+        margin: 10,
+        fontSize: 10,
+        bold: true,
+        alignment: 'center',
+        valign: 'center'
+      },
+
+      // Tabela de dados dos processos
+      admissivelData: {
+        alignment: 'center',
+        color: 'darkblue',
+        valign: 'center',
+        fontSize: 8
+      },
+      analiseData: {
+        alignment: 'center',
+        color: 'orange',
+        valign: 'center',
+        fontSize: 8
+      },
+      inadimissivelData: {
+        alignment: 'center',
+        color: 'red',
+        valign: 'center',
+        fontSize: 8
       }
     }
   };
