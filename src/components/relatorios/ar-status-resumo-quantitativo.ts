@@ -144,7 +144,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
 
             // Dados de admissivel
             ...quantitativo?.admissiveis_dados?.map((a: any) => [
-              { text: a.inicial?.id.toString(), style: 'admissivelData' },
+              { text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital , style: 'admissivelData' },
               {
                 text: (() => {
                   switch (a.inicial.status) {
@@ -162,7 +162,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
 
             // Dados de processos em análise
             ...quantitativo?.em_analise_dados?.map((a: any) => [
-              { text: a.inicial?.id.toString(), style: 'analiseData' },
+              { text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital, style: 'analiseData' },
               {
                 text: (() => {
                   switch (a.inicial.status) {
@@ -180,7 +180,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
 
             // Dados de processos inadimissíveis
             ...quantitativo?.inadmissiveis_dados?.map((a: any) => [
-              { text: a.inicial?.id.toString(), style: 'inadimissivelData' },
+              { text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital, style: 'inadimissivelData' },
               {
                 text: (() => {
                   switch (a.inicial.status) {

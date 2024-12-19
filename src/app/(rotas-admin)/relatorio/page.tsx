@@ -7,7 +7,7 @@ import DownloadForOfflineRoundedIcon from '@mui/icons-material/DownloadForOfflin
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 // @ts-ignore
 import RemoveRedEyeRoundedIcon from '@mui/icons-material/RemoveRedEyeRounded';
-import { Box, Button, Card, CardContent, Divider, FormControl, FormLabel, Option, Select, Typography } from '@mui/joy';
+import { Box, Button, Card, Divider, FormControl, FormLabel, Option, Select, Typography } from '@mui/joy';
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
@@ -22,11 +22,10 @@ import { getRrQunatitativoXlsx, getRrStatusResumoQuantitativoPdf } from '@/compo
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-export default function ExportXlsx() {
+export default function ExportRelatorios() {
   const [ relatorioType, setRelatorioType ] = useState<'aprova-rapido' | 'requalifica-rapido'>();
   const [fileType, setFileType] = useState<'XLSX' | 'PDF'>('XLSX');
   const [date, setDate] = useState<Date | undefined>();
-  const [construcao, setConstrucao] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string>('');
   const { setAlert } = React.useContext(AlertsContext);
 
@@ -97,130 +96,113 @@ export default function ExportXlsx() {
         href: ''
       }]}
     >
-      {
-        construcao 
-        &&
-        <Box>
-          <Card>
-            <CardContent>
-              <Typography 
-                level='h3' 
-                textAlign={'center'}
-              >
-                Relatório em construção
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box> 
-        ||
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: 2 
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: 2 
+        }}
+      >
+        <Card
+          size='lg'
+          variant='outlined'
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' }
           }}
         >
-          <Card
-            size='lg'
-            variant='outlined'
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' }
-            }}
-          >
-            <FormControl>
-              <FormLabel>Tipo de Relatório</FormLabel>
-              <Select
-                defaultValue={'Tipo 1'}
-                sx={{
-                  width: '100%',
-                  mb: 3,
-                  alignSelf: { xs: 'center', sm: 'auto' }
-                }}
-              >
-                <Option
-                  onClick={() => setRelatorioType('aprova-rapido')}
-                  value='aprova-rapido'
-                >
-                  Aprova Rápido - Status e Resumo Quantitativo
-                </Option>
-                <Option
-                  onClick={() => setRelatorioType('requalifica-rapido')}
-                  value='requalifica-rapido'
-                >
-                  Requalifica Rápido - Status e Resumo Quantitativo
-                </Option>
-              </Select>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={['DatePicker']}>
-                  <DatePicker
-                    onChange={(e) => setDate(e?.toDate())}
-                    views={['month', 'year']}
-                  />
-                </DemoContainer>
-              </LocalizationProvider>
-              <FormLabel sx={{ mt: 2 }}>Extensão de Arquivo</FormLabel>
-              <Select
-                defaultValue={'XLSX'}
-                sx={{
-                  width: '100%',
-                  mb: { xs: 3, sm: 0 },
-                  alignSelf: { xs: 'center', sm: 'auto' }
-                }}
-              >
-                <Option
-                  onClick={() => setFileType('XLSX')}
-                  value='XLSX'
-                >
-                  XLSX (Excel)
-                </Option>
-                <Option
-                  onClick={() => setFileType('PDF')}
-                  value='PDF'
-                >
-                  PDF
-                </Option>
-              </Select>
-            </FormControl>
-            <FormControl
+          <FormControl>
+            <FormLabel>Tipo de Relatório</FormLabel>
+            <Select
+              defaultValue={'Tipo 1'}
               sx={{
-                mx: 2,
-                alignSelf: { xs: 'start', sm: 'end' },
-                display: 'flex',
-                flexDirection: 'row'
+                width: '100%',
+                mb: 3,
+                alignSelf: { xs: 'center', sm: 'auto' }
               }}
             >
-              <Button
-                color='primary'
-                onClick={exportFile}
-                startDecorator={
-                  fileType == 'XLSX' 
-                  ? <DownloadForOfflineRoundedIcon /> 
-                  : <RemoveRedEyeRoundedIcon />
-                }
-                sx={{ width: 'fit-content' }}
+              <Option
+                onClick={() => setRelatorioType('aprova-rapido')}
+                value='aprova-rapido'
               >
-                { fileType == 'XLSX' ? 'Download' : 'Pré-visualizar' }
-              </Button>
-            </FormControl>
-          </Card>
-          <Card>
-            <Box>
-              <Typography level='h4'>
-                Visualizar Relatório
-              </Typography>
-            </Box>
-            <Divider />
-            {pdfUrl && (
-              <iframe
-                src={pdfUrl}
-                title="Visualizador de PDF"
-                style={{ width: '100%', height: 1200 }}
-              ></iframe>
-            )}
-          </Card>
-        </Box>
-      }
-    </Content >
+                Aprova Rápido - Status e Resumo Quantitativo
+              </Option>
+              <Option
+                onClick={() => setRelatorioType('requalifica-rapido')}
+                value='requalifica-rapido'
+              >
+                Requalifica Rápido - Status e Resumo Quantitativo
+              </Option>
+            </Select>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={['DatePicker']}>
+                <DatePicker
+                  onChange={(e) => setDate(e?.toDate())}
+                  views={['month', 'year']}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+            <FormLabel sx={{ mt: 2 }}>Extensão de Arquivo</FormLabel>
+            <Select
+              defaultValue={'XLSX'}
+              sx={{
+                width: '100%',
+                mb: { xs: 3, sm: 0 },
+                alignSelf: { xs: 'center', sm: 'auto' }
+              }}
+            >
+              <Option
+                onClick={() => setFileType('XLSX')}
+                value='XLSX'
+              >
+                XLSX (Excel)
+              </Option>
+              <Option
+                onClick={() => setFileType('PDF')}
+                value='PDF'
+              >
+                PDF
+              </Option>
+            </Select>
+          </FormControl>
+          <FormControl
+            sx={{
+              mx: 2,
+              alignSelf: { xs: 'start', sm: 'end' },
+              display: 'flex',
+              flexDirection: 'row'
+            }}
+          >
+            <Button
+              color='primary'
+              onClick={exportFile}
+              startDecorator={
+                fileType == 'XLSX' 
+                ? <DownloadForOfflineRoundedIcon /> 
+                : <RemoveRedEyeRoundedIcon />
+              }
+              sx={{ width: 'fit-content' }}
+            >
+              { fileType == 'XLSX' ? 'Download' : 'Pré-visualizar' }
+            </Button>
+          </FormControl>
+        </Card>
+        <Card>
+          <Box>
+            <Typography level='h4'>
+              Visualizar Relatório
+            </Typography>
+          </Box>
+          <Divider />
+          {pdfUrl && (
+            <iframe
+              src={pdfUrl}
+              title="Visualizador de PDF"
+              style={{ width: '100%', height: 1200 }}
+            ></iframe>
+          )}
+        </Card>
+      </Box>
+    </Content>
   );
 }
