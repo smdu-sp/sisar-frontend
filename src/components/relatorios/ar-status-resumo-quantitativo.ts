@@ -70,7 +70,7 @@ export const getArQunatitativoXlsx = async (month: string, year: string): Promis
 // Modelo PDF
 export const getArStatusResumoQuantitativoPdf = async (month: string, year: string) => {
   const quantitativo: IAprovaRapidoQuantitativoResponse = await getRelatorioArQuantitativo(month, year);
-  if (!quantitativo) throw new Error("Não existe relatório na variável quantitativo");
+  if (!quantitativo) throw new Error("Não existe relatório na variável quantitativo - PDF");
   const docDefinition = {
     content: [
       { text: 'APROVA RÁPIDO', style: 'header' },
@@ -117,7 +117,102 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
               { text: quantitativo?.em_analise.total_parcial, style: 'tableData' }
             ],
           ]
-        } // Adiciona margem superior para espaço entre tabelas
+        }
+      },
+
+      // Divisória invisível
+      { text: "", style: "divisoria" },
+
+      {
+        table: {
+          headerRows: 1,
+          widths: ['35%', '*'],
+          body: [
+            [
+              // Dados de quantidade de processos em análise
+              { text: '1. Em Análise', style: 'tableUnidadesHeader' },
+              {
+                table: {
+                  headerRows: 1,
+                  widths: ['80%', '*'],
+                  body: [
+                    [
+                      { text: 'SMUL', style: 'tableUnidades' },
+                      { text: quantitativo.em_analise.smul.quantidade, style: 'tableUnidadesData' },
+                    ],
+                    [
+                      { text: 'GRAPROEM', style: 'tableUnidades' },
+                      { text: quantitativo.em_analise.graproem.quantidade, style: 'tableUnidadesData' },
+                    ],
+                    [
+                      { text: 'Total parcial', style: 'tableUnidades' },
+                      { text: quantitativo.em_analise.total_parcial, style: 'tableUnidades' }
+                    ]
+                  ],
+                },
+                border: [false, false, false, false], // Sem borda nas quatro direções externas
+              },
+            ],
+            [
+              // Dados de quantidade de processos deferidos
+              { text: '2. Deferidos', style: 'tableUnidades' },
+              {
+                table: {
+                  headerRows: 1,
+                  widths: ['80%', '*'],
+                  body: [
+                    [
+                      { text: 'SMUL', style: 'tableUnidades' },
+                      { text: quantitativo.deferidos.smul.quantidade, style: 'tableUnidadesData' },
+                    ],
+                    [
+                      { text: 'GRAPROEM', style: 'tableUnidades' },
+                      { text: quantitativo.deferidos.graproem.quantidade, style: 'tableUnidadesData' },
+                    ],
+                    [
+                      { text: 'Total parcial', style: 'tableUnidades' },
+                      { text: quantitativo.deferidos.total_parcial, style: 'tableUnidades' }
+                    ]
+                  ],
+                },
+                border: [false, false, false, false], // Sem borda nas quatro direções externas
+              },
+            ],
+            [
+              // Dados de quantidade de processos indeferidos
+              { text: '3. Indeferidos', style: 'tableUnidades' },
+              {
+                table: {
+                  headerRows: 1,
+                  widths: ['80%', '*'],
+                  body: [
+                    [
+                      { text: 'SMUL', style: 'tableUnidades' },
+                      { text: quantitativo.indeferidos.smul.quantidade, style: 'tableUnidadesData' },
+                    ],
+                    [
+                      { text: 'GRAPROEM', style: 'tableUnidades' },
+                      { text: quantitativo.indeferidos.graproem.quantidade, style: 'tableUnidadesData' },
+                    ],
+                    [
+                      { text: 'Total parcial', style: 'tableUnidades' },
+                      { text: quantitativo.indeferidos.total_parcial, style: 'tableUnidades' }
+                    ],
+                    [
+                      { text: 'Total parcial', style: 'tableUnidades' },
+                      { text: quantitativo.indeferidos.total_parcial, style: 'tableUnidades' }
+                    ]
+                  ],
+                },
+                border: [false, false, false, false], // Sem borda nas quatro direções externas
+              },
+            ],
+            [
+              { text: '4. Via Ordinária a Pedido do Interessado', style: 'tableUnidades' },
+              { text: quantitativo?.admissiveis, style: 'tableData' }
+            ],
+          ]
+        },
       },
 
       // Processos
@@ -202,6 +297,10 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
 
     // Estilização via CSS personalizado
     styles: {
+      divisoria: {
+        marginTop: 10,
+        marginBottom: 10
+      },
       table: {
         marginBottom: 10,
       },
@@ -231,6 +330,15 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
       },
       tableData: {
         fontSize: 12,
+      },
+
+      // Sessão da tabela de unidades
+      tableUnidadesHeader: {
+        marginBottom: 10
+      },
+      tableUnidades: {
+      },
+      tableUnidadesData: {
       },
 
       // Sessão de PROCESSOS
