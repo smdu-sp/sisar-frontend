@@ -24,9 +24,9 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export default function ExportRelatorios() {
   const [ relatorioType, setRelatorioType ] = useState<'aprova-rapido' | 'requalifica-rapido'>();
-  const [fileType, setFileType] = useState<'XLSX' | 'PDF'>('XLSX');
-  const [date, setDate] = useState<Date | undefined>();
-  const [pdfUrl, setPdfUrl] = useState<string>('');
+  const [ fileType, setFileType ] = useState<'XLSX' | 'PDF'>('XLSX');
+  const [ date, setDate ] = useState<Date | undefined>();
+  const [ pdfUrl, setPdfUrl ] = useState<string>('');
   const { setAlert } = React.useContext(AlertsContext);
 
   // Função auxiliar para pegar a data selecionada pelo usuário
@@ -35,8 +35,8 @@ export default function ExportRelatorios() {
   // Função que lida com a exportação do relatório em XLSX
   const exportXlsx = async (): Promise<void> => {
     try {
-      if (!date) throw new Error('Selecione uma data!');
       if (!relatorioType) throw new Error('Selecione o tipo de relatório!');
+      if (!date) throw new Error('Selecione uma data!');
       let worksheetMain: XLSX.WorkSheet | null = null;
       switch (relatorioType) {
         case 'aprova-rapido':
@@ -58,8 +58,8 @@ export default function ExportRelatorios() {
   // Função que lida com a exportação do relatório em PDF
   const exportPDF = async (): Promise<void> => {
     try {
-      if (!date) throw new Error("Não existe relatório na variável quantitativo");
       if (!relatorioType) throw new Error("Tipo do reltório não selecionado");
+      if (!date) throw new Error('Selecione uma data!');
       let docDefinition;
       switch (relatorioType) {
         case 'aprova-rapido':

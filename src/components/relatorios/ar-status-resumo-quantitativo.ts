@@ -199,6 +199,8 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
         }
       },
     ],
+
+    // Estilização via CSS personalizado
     styles: {
       table: {
         marginBottom: 10,
@@ -235,9 +237,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
       header_legenda: {
         marginTop: 20,
         marginBottom: 8,
-        fontSize: 10,
-        underline: true,
-        bold: true,
+        fontSize: 9.5
       },
       legenda_laranja: {
         color: 'orange',
@@ -267,36 +267,34 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
       header_processos: {
         marginTop: 20,
         marginBottom: 8,
-        fontSize: 10,
-        underline: true,
-        bold: true,
+        fontSize: 9.5,
         decoration: 'underline'
       },
       tableProcessoHeader: {
         margin: 10,
-        fontSize: 10,
-        bold: true,
+        fontSize: 9.5,
         alignment: 'center',
-        valign: 'center'
+        valign: 'middle',
+        border: 0.5
       },
 
       // Tabela de dados dos processos
       admissivelData: {
         alignment: 'center',
         color: 'darkblue',
-        valign: 'center',
+        valign: 'middle',
         fontSize: 8
       },
       analiseData: {
         alignment: 'center',
         color: 'orange',
-        valign: 'center',
+        valign: 'middle',
         fontSize: 8
       },
       inadimissivelData: {
         alignment: 'center',
         color: 'red',
-        valign: 'center',
+        valign: 'middle',
         fontSize: 8
       }
     }
