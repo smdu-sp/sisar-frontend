@@ -1,6 +1,6 @@
 // REQUALIFICA RÁPIDO STATUS E RESUMO QUANTITATIVO
 
-import * as relatorioService from '@/shared/services/relatorios/quantitativo.service';
+import * as relatorioService from '@/shared/services/relatorios/relatorio.service';
 
 // Modelo XLSX
 export const getRelatorioRrQuantitativo = async (month: string, year: string): Promise<relatorioService.IQuantitativoResponse> => {
