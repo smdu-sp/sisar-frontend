@@ -104,7 +104,8 @@ export interface ICreateAdmissibilidade {
     status?: number;
     inicial?: IInicial;
     reconsiderado: boolean
-    motivo: number
+    motivo: string
+    parecer_admissibilidade_id?: string
 }
 
 export interface IUpdateAdmissibilidade extends Partial<ICreateAdmissibilidade> {}

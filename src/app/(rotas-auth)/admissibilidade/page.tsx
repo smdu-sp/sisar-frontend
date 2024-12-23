@@ -34,6 +34,7 @@ export default function Admissibilidade() {
   const [open, setOpen] = React.useState<boolean>(false);
   const [admissibilidade, setAdmissibilidade] = useState<IAdmissibilidade[]>([]);
   const [parecer, setParecer] = useState<IParecer[]>([]);
+  const [pareceres, setPareceres] = useState<IParecer[]>([]);
   const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
@@ -41,7 +42,7 @@ export default function Admissibilidade() {
   const [statusModal, setStatusModal] = useState<boolean>(false);
   const [statusAtual, setStatusAtual] = useState<number>(0);
   const [reconsiderado, setReconsiderado] = useState(true)
-  const [motivo, setMotivo] = useState(0);
+  const [parecer_admissibilidade_id, setParecer_admissibilidade_id] = useState("");
   const [idInicial, setIdInicial] = useState("");
   const [modal, setModal] = useState<any>([]);
   const [layout, setLayout] = React.useState<ModalDialogProps['layout'] | undefined>(
@@ -83,12 +84,13 @@ export default function Admissibilidade() {
   }, [pagina, limite, statusFiltro]);
 
   const atualizar = async () => {
-    await admissibilidadeServices.atualizarId(modal[2], { status: 3, motivo, data_decisao_interlocutoria: new Date() })
+    console.log(parecer_admissibilidade_id);
+    await admissibilidadeServices.atualizarId(modal[2], { status: 3, parecer_admissibilidade_id, data_decisao_interlocutoria: new Date() })
     setOpen(false)
     buscaAdmissibilidade();
     setAlert('Status atualizado!', `O Status foi para ${status[statusModal ? 3 : 2].label}`, 'success', 3000, Check);
     setStatusModal(true)
-    setMotivo(0)
+    setParecer_admissibilidade_id("")
   }
 
   const buscarParecer = () => {
@@ -423,21 +425,16 @@ export default function Admissibilidade() {
                   <FormLabel>Motivo</FormLabel>
                   <Select
                     size="sm"
-                    value={motivo}
+                    value={parecer_admissibilidade_id}
                     placeholder="Motivo"
-                    onChange={(_, v) => { setMotivo(v ? v : 0); }}
+                    onChange={(_, v) => { v && setParecer_admissibilidade_id(v) }}
                     startDecorator={
                       <IconButton sx={{ zIndex: 9999 }} onClick={() => { setLayout('center') }}>
                         <MenuIcon />
                       </IconButton>
                     }
                   >
-                    <Option value={0}>Não Cumprimento de Requisito</Option>
-                    <Option value={1}>Ausência de Documentos</Option>
-                    <Option value={2}>Documentação não conforme com descrição solicitada</Option>
-                    <Option value={3}>Não está de acordo com os Parâmetros Urbanísticos</Option>
-                    <Option value={4}>Não foi dada baixa no pagamento das guias</Option>
-                    <Option value={5}>N/A</Option>
+                    {parecer && parecer.length > 0 && parecer.map((item) => <Option key={item.id} value={item.id}>{item.parecer}</Option>)}
                   </Select>
                 </FormControl>
                 <Button onClick={() => atualizar()}>Enviar</Button>
