@@ -68,16 +68,32 @@ export const getArQunatitativoXlsx = async (month: string, year: string): Promis
 };
 
 // Modelo PDF
+const gerarLinhasDeDados = (data: { nome: string, count: number }[], style: string): { text: string, style: string }[][] => {
+  const linhas = [];
+  for (const unidade in data) {
+    const valor = data[unidade];
+    linhas.push([
+      { text: unidade, style: style },
+      { text: valor.toString(), style: style }
+    ]);
+  }
+  return linhas;
+}
+
 export const getArStatusResumoQuantitativoPdf = async (month: string, year: string) => {
   const quantitativo: IAprovaRapidoQuantitativoResponse = await getRelatorioArQuantitativo(month, year);
   if (!quantitativo) throw new Error("Não existe relatório na variável quantitativo - PDF");
   const docDefinition = {
     content: [
+
+      // Cabeçalho
       { text: 'APROVA RÁPIDO', style: 'header' },
+
+      // Tabela superior
       {
         table: {
           headerRows: 1,
-          widths: ['*', 'auto'], // Define as larguras das colunas
+          widths: ['*', 'auto'],
           body: [
             [
               { text: 'TOTAL DE PROCESSOS', style: 'tableHeader' },
@@ -96,27 +112,6 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
               { text: quantitativo?.admissiveis, style: 'tableData' }
             ],
           ]
-        } // Adiciona margem inferior para espaço entre tabelas
-      },
-
-      {
-        table: {
-          headerRows: 1,
-          widths: ['*', 'auto'], // Define as larguras das colunas
-          body: [
-            [
-              { text: 'SMUL', style: 'tableHeader' },
-              { text: quantitativo?.em_analise.smul.quantidade, style: 'tableData' }
-            ],
-            [
-              { text: 'GRAPROEM', style: 'tableHeader' },
-              { text: quantitativo?.em_analise.graproem.quantidade, style: 'tableData' }
-            ],
-            [
-              { text: 'TOTAL PARCIAL', style: 'tableHeader' },
-              { text: quantitativo?.em_analise.total_parcial, style: 'tableData' }
-            ],
-          ]
         }
       },
 
@@ -130,86 +125,100 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
           body: [
             [
               // Dados de quantidade de processos em análise
-              { text: '1. Em Análise', style: 'tableUnidadesHeader' },
+              { text: '1. Em Análise', style: 'tableUnidadesHeaderEmAnalise' },
               {
                 table: {
                   headerRows: 1,
                   widths: ['80%', '*'],
                   body: [
                     [
-                      { text: 'SMUL', style: 'tableUnidades' },
-                      { text: quantitativo.em_analise.smul.quantidade, style: 'tableUnidadesData' },
+                      { text: 'SMUL', style: 'tableUnidadesEmAnalise' },
+                      { text: quantitativo.em_analise.smul.quantidade, style: 'tableUnidadesEmAnalise' },
                     ],
+
+                    ...gerarLinhasDeDados(quantitativo.em_analise.smul.data, 'dataSmulEmAnalise'),
+
                     [
-                      { text: 'GRAPROEM', style: 'tableUnidades' },
-                      { text: quantitativo.em_analise.graproem.quantidade, style: 'tableUnidadesData' },
+                      { text: 'GRAPROEM', style: 'tableUnidadesEmAnalise' },
+                      { text: quantitativo.em_analise.graproem.quantidade, style: 'tableUnidadesEmAnalise' },
                     ],
+
+                    ...gerarLinhasDeDados(quantitativo.em_analise.graproem.data, 'dataSmulEmAnalise'),
+
                     [
-                      { text: 'Total parcial', style: 'tableUnidades' },
-                      { text: quantitativo.em_analise.total_parcial, style: 'tableUnidades' }
+                      { text: 'Total parcial', style: 'tableUnidadesEmAnalise' },
+                      { text: quantitativo.em_analise.total_parcial, style: 'tableUnidadesEmAnalise' }
                     ]
                   ],
                 },
-                border: [false, false, false, false], // Sem borda nas quatro direções externas
+                border: [0, 0, 0, 0],
               },
             ],
             [
               // Dados de quantidade de processos deferidos
-              { text: '2. Deferidos', style: 'tableUnidades' },
+              { text: '2. Deferidos', style: 'tableUnidadesHeaderDeferidos' },
               {
                 table: {
                   headerRows: 1,
                   widths: ['80%', '*'],
                   body: [
                     [
-                      { text: 'SMUL', style: 'tableUnidades' },
-                      { text: quantitativo.deferidos.smul.quantidade, style: 'tableUnidadesData' },
+                      { text: 'SMUL', style: 'tableUnidadesDeferidos' },
+                      { text: quantitativo.deferidos.smul.quantidade, style: 'tableUnidadesDeferidos' },
                     ],
+
+                    ...gerarLinhasDeDados(quantitativo.deferidos.smul.data, 'dataSmulDeferidos'),
+
                     [
-                      { text: 'GRAPROEM', style: 'tableUnidades' },
-                      { text: quantitativo.deferidos.graproem.quantidade, style: 'tableUnidadesData' },
+                      { text: 'GRAPROEM', style: 'tableUnidadesDeferidos' },
+                      { text: quantitativo.deferidos.graproem.quantidade, style: 'tableUnidadesDeferidos' },
                     ],
+
+                    ...gerarLinhasDeDados(quantitativo.deferidos.graproem.data, 'dataSmulDeferidos'),
+
                     [
-                      { text: 'Total parcial', style: 'tableUnidades' },
-                      { text: quantitativo.deferidos.total_parcial, style: 'tableUnidades' }
+                      { text: 'Total parcial', style: 'tableUnidadesDeferidos' },
+                      { text: quantitativo.deferidos.total_parcial, style: 'tableUnidadesDeferidos' }
                     ]
                   ],
                 },
-                border: [false, false, false, false], // Sem borda nas quatro direções externas
+                border: [0, 0, 0, 0],
               },
             ],
             [
               // Dados de quantidade de processos indeferidos
-              { text: '3. Indeferidos', style: 'tableUnidades' },
+              { text: '3. Indeferidos', style: 'tableUnidadesHeaderIndeferidos' },
               {
                 table: {
                   headerRows: 1,
                   widths: ['80%', '*'],
                   body: [
                     [
-                      { text: 'SMUL', style: 'tableUnidades' },
-                      { text: quantitativo.indeferidos.smul.quantidade, style: 'tableUnidadesData' },
+                      { text: 'SMUL', style: 'tableUnidadesIndeferidos' },
+                      { text: quantitativo.indeferidos.smul.quantidade, style: 'tableUnidadesIndeferidos' },
                     ],
+
+                    ...gerarLinhasDeDados(quantitativo.indeferidos.smul.data, 'dataSmulIndeferidos'),
+
                     [
-                      { text: 'GRAPROEM', style: 'tableUnidades' },
-                      { text: quantitativo.indeferidos.graproem.quantidade, style: 'tableUnidadesData' },
+                      { text: 'GRAPROEM', style: 'tableUnidadesIndeferidos' },
+                      { text: quantitativo.indeferidos.graproem.quantidade, style: 'tableUnidadesIndeferidos' },
                     ],
+
+                    ...gerarLinhasDeDados(quantitativo.indeferidos.graproem.data, 'dataSmulIndeferidos'),
+
                     [
-                      { text: 'Total parcial', style: 'tableUnidades' },
-                      { text: quantitativo.indeferidos.total_parcial, style: 'tableUnidades' }
-                    ],
-                    [
-                      { text: 'Total parcial', style: 'tableUnidades' },
-                      { text: quantitativo.indeferidos.total_parcial, style: 'tableUnidades' }
+                      { text: 'Total parcial', style: 'tableUnidadesIndeferidos' },
+                      { text: quantitativo.indeferidos.total_parcial, style: 'tableUnidadesIndeferidos' }
                     ]
                   ],
                 },
-                border: [false, false, false, false], // Sem borda nas quatro direções externas
+                border: [0, 0, 0, 0],
               },
             ],
             [
-              { text: '4. Via Ordinária a Pedido do Interessado', style: 'tableUnidades' },
-              { text: quantitativo?.admissiveis, style: 'tableData' }
+              { text: '4. Via Ordinária a Pedido do Interessado', style: 'tableUnidadesViaOrdinaria' },
+              { text: quantitativo?.admissiveis, style: 'tableUnidadesViaOrdinaria' }
             ],
           ]
         },
@@ -239,56 +248,158 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
 
             // Dados de admissivel
             ...quantitativo?.admissiveis_dados?.map((a: any) => [
-              { text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital , style: 'admissivelData' },
+              { 
+                text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital , 
+                style: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'admissivelData';
+                    case 1: return 'admissivelData';
+                    case 2: return 'analiseData';
+                    case 3: return 'deferidoData';
+                    case 4: return 'indeferidoData';
+                    default: return 'tableUnidadesViaOrdinaria'
+                  }
+                })() 
+              },
               {
                 text: (() => {
                   switch (a.inicial.status) {
-                    case 0: return 'Em Análise';
+                    case 0: return 'Admissibilidade';
                     case 1: return 'Admissível';
-                    case 2: return 'Deferido';
-                    case 3: return 'Indeferido';
+                    case 2: return 'Em Análise';
+                    case 3: return 'Deferido';
+                    case 4: return 'Indeferido';
                     default: return 'Status Desconhecido';
                   }
                 })(),
-                style: 'admissivelData'
+                style: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'admissivelData';
+                    case 1: return 'admissivelData';
+                    case 2: return 'analiseData';
+                    case 3: return 'deferidoData';
+                    case 4: return 'indeferidoData';
+                    default: return 'tableUnidadesViaOrdinaria'
+                  }
+                })()
               },
-              { text: a.inicial?.obs, style: 'admissivelData' }
+              { 
+                text: a.inicial?.obs, 
+                style: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'admissivelData';
+                    case 1: return 'admissivelData';
+                    case 2: return 'analiseData';
+                    case 3: return 'deferidoData';
+                    case 4: return 'indeferidoData';
+                    default: return 'tableUnidadesViaOrdinaria'
+                  }
+                })() 
+              }
             ]),
 
             // Dados de processos em análise
             ...quantitativo?.em_analise_dados?.map((a: any) => [
-              { text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital, style: 'analiseData' },
+              { 
+                text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital, 
+                style: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'admissivelData';
+                    case 1: return 'admissivelData';
+                    case 2: return 'analiseData';
+                    case 3: return 'deferidoData';
+                    case 4: return 'indeferidoData';
+                    default: return 'tableUnidadesViaOrdinaria'
+                  }
+                })() 
+              },
               {
                 text: (() => {
                   switch (a.inicial.status) {
-                    case 0: return 'Em Análise';
+                    case 0: return 'Admissibilidade';
                     case 1: return 'Admissível';
-                    case 2: return 'Deferido';
-                    case 3: return 'Indeferido';
+                    case 2: return 'Em Análise';
+                    case 3: return 'Deferido';
+                    case 4: return 'Indeferido';
                     default: return 'Status Desconhecido';
                   }
                 })(),
-                style: 'analiseData'
+                style: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'admissivelData';
+                    case 1: return 'admissivelData';
+                    case 2: return 'analiseData';
+                    case 3: return 'deferidoData';
+                    case 4: return 'indeferidoData';
+                    default: return 'tableUnidadesViaOrdinaria'
+                  }
+                })()
               },
-              { text: a.inicial?.obs, style: 'analiseData' }
+              { 
+                text: a.inicial?.obs, 
+                style: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'admissivelData';
+                    case 1: return 'admissivelData';
+                    case 2: return 'analiseData';
+                    case 3: return 'deferidoData';
+                    case 4: return 'indeferidoData';
+                    default: return 'tableUnidadesViaOrdinaria'
+                  }
+                })() 
+              }
             ]),
 
             // Dados de processos inadimissíveis
             ...quantitativo?.inadmissiveis_dados?.map((a: any) => [
-              { text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital, style: 'inadimissivelData' },
+              { 
+                text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital, 
+                style: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'admissivelData';
+                    case 1: return 'admissivelData';
+                    case 2: return 'analiseData';
+                    case 3: return 'deferidoData';
+                    case 4: return 'indeferidoData';
+                    default: return 'tableUnidadesViaOrdinaria'
+                  }
+                })() 
+              },
               {
                 text: (() => {
                   switch (a.inicial.status) {
-                    case 0: return 'Em Análise';
+                    case 0: return 'Admissibilidade';
                     case 1: return 'Admissível';
-                    case 2: return 'Deferido';
-                    case 3: return 'Indeferido';
+                    case 2: return 'Em Análise';
+                    case 3: return 'Deferido';
+                    case 4: return 'Indeferido';
                     default: return 'Status Desconhecido';
                   }
                 })(),
-                style: 'inadimissivelData'
+                style: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'admissivelData';
+                    case 1: return 'admissivelData';
+                    case 2: return 'analiseData';
+                    case 3: return 'deferidoData';
+                    case 4: return 'indeferidoData';
+                    default: return 'tableUnidadesViaOrdinaria'
+                  }
+                })()
               },
-              { text: a.inicial?.obs, style: 'inadimissivelData' }
+              { 
+                text: a.inicial?.obs, 
+                style: (() => {
+                  switch (a.inicial.status) {
+                    case 0: return 'admissivelData';
+                    case 1: return 'admissivelData';
+                    case 2: return 'analiseData';
+                    case 3: return 'deferidoData';
+                    case 4: return 'indeferidoData';
+                    default: return 'tableUnidadesViaOrdinaria'
+                  }
+                })()  
+              }
             ])
           ]
         }
@@ -333,12 +444,41 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
       },
 
       // Sessão da tabela de unidades
-      tableUnidadesHeader: {
-        marginBottom: 10
+      tableUnidadesHeaderEmAnalise: {
+        marginBottom: 10,
+        color: 'green'
       },
-      tableUnidades: {
+      tableUnidadesHeaderDeferidos: {
+        marginBottom: 10,
+        color: 'darkblue'
       },
-      tableUnidadesData: {
+      tableUnidadesHeaderIndeferidos: {
+        marginBottom: 10,
+        color: '#75B8E6'
+      },
+      tableUnidadesViaOrdinaria: {
+        color: 'gray'
+      },
+      tableUnidadesEmAnalise: {
+        color: 'green',
+        bold: true
+      },
+      tableUnidadesDeferidos: {
+        color: 'darkblue',
+        bold: true
+      },
+      tableUnidadesIndeferidos: {
+        color: '#75B8E6',
+        bold: true
+      },
+      dataSmulIndeferidos: {
+        color: '#75B8E6'
+      },
+      dataSmulDeferidos: {
+        color: 'darkblue'
+      },
+      dataSmulEmAnalise: {
+        color: 'green'
       },
 
       // Sessão de PROCESSOS
@@ -364,7 +504,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
         fontSize: 9
       },
       legenda_azulCl: {
-        color: 'lightblue',
+        color: '#75B8E6',
         fontSize: 9
       },
       legenda_cinza: {
@@ -387,24 +527,36 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
       },
 
       // Tabela de dados dos processos
-      admissivelData: {
-        alignment: 'center',
-        color: 'darkblue',
-        valign: 'middle',
-        fontSize: 8
-      },
       analiseData: {
         alignment: 'center',
         color: 'orange',
         valign: 'middle',
         fontSize: 8
       },
-      inadimissivelData: {
+      inadmissivelData: {
         alignment: 'center',
         color: 'red',
         valign: 'middle',
         fontSize: 8
-      }
+      },
+      admissivelData: {
+        alignment: 'center',
+        color: 'green',
+        valign: 'middle',
+        fontSize: 8
+      },
+      deferidoData: {
+        alignment: 'center',
+        color: 'darkblue',
+        valign: 'middle',
+        fontSize: 8
+      },
+      indeferidoData: {
+        alignment: 'center',
+        color: '#75B8E6',
+        valign: 'middle',
+        fontSize: 8
+      },
     }
   };
   return docDefinition;

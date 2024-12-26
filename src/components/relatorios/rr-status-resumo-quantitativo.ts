@@ -1,15 +1,16 @@
 // REQUALIFICA RÁPIDO STATUS E RESUMO QUANTITATIVO
 
 import * as relatorioService from '@/shared/services/relatorios/relatorio.service';
+import { IAprovaRapidoQuantitativoResponse } from '@/types/relatorio/relatorio.dto';
 
 // Modelo XLSX
-export const getRelatorioRrQuantitativo = async (month: string, year: string): Promise<relatorioService.IQuantitativoResponse> => {
-  const relatorio: relatorioService.IQuantitativoResponse = await relatorioService.getRelatorioReqRapido(month, year);
+export const getRelatorioRrQuantitativo = async (month: string, year: string): Promise<IAprovaRapidoQuantitativoResponse> => {
+  const relatorio: IAprovaRapidoQuantitativoResponse = await relatorioService.getRelatorioReqRapido(month, year);
   if (!relatorio) throw new Error("Não foi possível buscar o reltório");
   return relatorio;
 };
 
-const smulData = async (quantitativo: relatorioService.IQuantitativoResponse): Promise<{ Key: string, Value: number }[]> => {
+const smulData = async (quantitativo: IAprovaRapidoQuantitativoResponse): Promise<{ Key: string, Value: number }[]> => {
   if (quantitativo == null || quantitativo == undefined) throw new Error('Não foi possível buscar o relatório');
   if (!quantitativo.em_analise.smul.data.length || quantitativo.em_analise.smul.data.length < 1) {
     return [{ Key: "", Value: 0 }]
@@ -20,7 +21,7 @@ const smulData = async (quantitativo: relatorioService.IQuantitativoResponse): P
   }));
 }
 
-const graproemData = async (quantitativo: relatorioService.IQuantitativoResponse): Promise<{ Key: string, Value: number }[]> => {
+const graproemData = async (quantitativo: IAprovaRapidoQuantitativoResponse): Promise<{ Key: string, Value: number }[]> => {
   if (quantitativo == null || quantitativo == undefined) throw new Error('Não foi possível buscar o relatório');
   if (!quantitativo.em_analise.graproem.data.length || quantitativo.em_analise.graproem.data.length < 1) {
     return [{ Key: "", Value: 0 }]
@@ -32,7 +33,7 @@ const graproemData = async (quantitativo: relatorioService.IQuantitativoResponse
 }
 
 export const getRrQunatitativoXlsx = async (month: string, year: string): Promise<{ Key: string, Value: any }[]> => {
-  const quantitativo: relatorioService.IQuantitativoResponse = await getRelatorioRrQuantitativo(month, year);
+  const quantitativo: IAprovaRapidoQuantitativoResponse = await getRelatorioRrQuantitativo(month, year);
   if (!quantitativo) throw new Error("Não foi possível buscar o reltório");
   return [
     { Key: '', Value: '' },
@@ -70,7 +71,7 @@ export const getRrQunatitativoXlsx = async (month: string, year: string): Promis
 
 // Modelo PDF
 export const getRrStatusResumoQuantitativoPdf = async (month: string, year: string) => {
-  const quantitativo: relatorioService.IQuantitativoResponse = await getRelatorioRrQuantitativo(month, year);
+  const quantitativo: IAprovaRapidoQuantitativoResponse = await getRelatorioRrQuantitativo(month, year);
   if (!quantitativo) throw new Error("Não existe relatório na variável quantitativo");
   const docDefinition = {
     content: [
