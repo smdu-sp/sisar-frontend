@@ -86,6 +86,10 @@ export default function Home() {
   const [IdReuniao, setIdReuniao] = useState("");
   const { setAlert } = React.useContext(AlertsContext);
   const [dataProps, setDataProps] = useState(dayjs(today.toLocaleDateString('pt-BR').split('/').reverse().join('-')));
+  const [modalProcessoNovo, setModalProcessoNovo] = useState(false);
+  const [seiNovo, setSeiNovo] = useState('');
+  const [processoExistente, setProcessoExistente] = useState<IInicial>();
+
   const {
     control,
     handleSubmit,
@@ -289,11 +293,48 @@ export default function Home() {
     buscar_data();
     setCarregando(false);
   }, [data]);
+  
+  const checaSei = async (sei: string) => {
+    inicialServices.verificaSei(sei).then((response: IInicial | null) => {
+      if (response) {
+        setProcessoExistente(response);
+      }
+    })
+  }
 
   return (
     <Content
       titulo='Página Inicial'
     >
+      <Modal open={modalProcessoNovo} onClose={() => setModalProcessoNovo(false)}>
+        <ModalDialog>
+          <DialogTitle>Novo Processo</DialogTitle>
+          <DialogContent>Buscar SEI do processo</DialogContent>
+          <Stack spacing={2}>
+            <FormControl>
+              <FormLabel>SEI</FormLabel>
+              <Input
+                value={seiNovo}
+                onChange={(e) => {
+                  var numSei = e.target.value;
+                  if (numSei.length >= 0) setSeiNovo(comum.formatarSei(e.target.value));
+                  if (numSei.replaceAll(/\D/g, '').length < 16) setProcessoExistente(undefined);
+                  if (numSei.replaceAll(/\D/g, '').length === 16) checaSei(numSei);
+                }}
+              />
+            </FormControl>
+            {!comum.validaDigitoSei(seiNovo) && <FormHelperText>
+              SEI Inválido
+            </FormHelperText>}
+            {processoExistente && processoExistente.id && <FormHelperText component={'a'} href={`/inicial/detalhes/${processoExistente.id}`}>
+              Processo já cadastrado: #{processoExistente.id}
+            </FormHelperText>}
+          </Stack>
+          {(seiNovo.length > 18 && comum.validaDigitoSei(seiNovo)) && !(processoExistente && processoExistente.id) && <Stack sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', gap: 1 }}>
+            <Button component='a' href={`/inicial/detalhes?novo-processo=${seiNovo.replaceAll(/\D/g, '')}`} sx={{ flexGrow: 1 }} color="success">Novo processo</Button>
+          </Stack>}
+        </ModalDialog>
+      </Modal>
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <LocalizationProvider dateAdapter={AdapterDayjs} >
           <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'end' }}>
@@ -564,6 +605,11 @@ export default function Home() {
           /> : null}
         </TabPanel>
       </Tabs>
+      <IconButton /*component='a' href='/inicial/detalhes'*/ onClick={() => setModalProcessoNovo(true)} color='primary' variant='soft' size='lg' sx={{
+        position: 'fixed',
+        bottom: '2rem',
+        right: '2rem',
+      }}><Add /></IconButton>
 
       <Reuniao
         buscar={busca}
