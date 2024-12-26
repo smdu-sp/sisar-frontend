@@ -72,10 +72,7 @@ const gerarLinhasDeDados = (data: { nome: string, count: number }[], style: stri
   const linhas = [];
   for (const unidade in data) {
     const valor = data[unidade];
-    linhas.push([
-      { text: unidade, style: style },
-      { text: valor.toString(), style: style }
-    ]);
+    linhas.push([ { text: unidade, style: style }, { text: valor.toString(), style: style } ]);
   }
   return linhas;
 }
@@ -238,7 +235,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
         table: {
           headerRows: 1,
           cols: 2,
-          widths: ['auto', '*', 'auto'], // Define as larguras das colunas
+          widths: ['auto', '*', 'auto'],
           body: [
             [
               { text: 'PROCESSO', style: 'tableProcessoHeader' },
@@ -252,7 +249,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
                 text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital , 
                 style: (() => {
                   switch (a.inicial.status) {
-                    case 0: return 'admissivelData';
+                    case 0: return 'analiseData';
                     case 1: return 'admissivelData';
                     case 2: return 'analiseData';
                     case 3: return 'deferidoData';
@@ -264,7 +261,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
               {
                 text: (() => {
                   switch (a.inicial.status) {
-                    case 0: return 'Admissibilidade';
+                    case 0: return 'Em analise de admissibilidade';
                     case 1: return 'Admissível';
                     case 2: return 'Em Análise';
                     case 3: return 'Deferido';
@@ -274,7 +271,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
                 })(),
                 style: (() => {
                   switch (a.inicial.status) {
-                    case 0: return 'admissivelData';
+                    case 0: return 'analiseData';
                     case 1: return 'admissivelData';
                     case 2: return 'analiseData';
                     case 3: return 'deferidoData';
@@ -287,7 +284,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
                 text: a.inicial?.obs, 
                 style: (() => {
                   switch (a.inicial.status) {
-                    case 0: return 'admissivelData';
+                    case 0: return 'analiseData';
                     case 1: return 'admissivelData';
                     case 2: return 'analiseData';
                     case 3: return 'deferidoData';
@@ -304,7 +301,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
                 text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital, 
                 style: (() => {
                   switch (a.inicial.status) {
-                    case 0: return 'admissivelData';
+                    case 0: return 'analiseData';
                     case 1: return 'admissivelData';
                     case 2: return 'analiseData';
                     case 3: return 'deferidoData';
@@ -316,7 +313,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
               {
                 text: (() => {
                   switch (a.inicial.status) {
-                    case 0: return 'Admissibilidade';
+                    case 0: return 'Em analise de admissibilidade';
                     case 1: return 'Admissível';
                     case 2: return 'Em Análise';
                     case 3: return 'Deferido';
@@ -326,7 +323,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
                 })(),
                 style: (() => {
                   switch (a.inicial.status) {
-                    case 0: return 'admissivelData';
+                    case 0: return 'analiseData';
                     case 1: return 'admissivelData';
                     case 2: return 'analiseData';
                     case 3: return 'deferidoData';
@@ -339,7 +336,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
                 text: a.inicial?.obs, 
                 style: (() => {
                   switch (a.inicial.status) {
-                    case 0: return 'admissivelData';
+                    case 0: return 'analiseData';
                     case 1: return 'admissivelData';
                     case 2: return 'analiseData';
                     case 3: return 'deferidoData';
