@@ -72,7 +72,10 @@ const gerarLinhasDeDados = (data: { nome: string, count: number }[], style: stri
   const linhas = [];
   for (const unidade in data) {
     const valor = data[unidade];
-    linhas.push([ { text: unidade, style: style }, { text: valor.toString(), style: style } ]);
+    linhas.push([ 
+      { text: unidade, style: style }, 
+      { text: valor.toString(), style: style } 
+    ]);
   }
   return linhas;
 }
@@ -94,7 +97,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
           body: [
             [
               { text: 'TOTAL DE PROCESSOS', style: 'tableHeader' },
-              { text: quantitativo?.total, style: 'tableData' }
+              { text: quantitativo?.total, style: 'tableDataTotalProcessos' }
             ],
             [
               { text: 'ANÁLISE DE ADMISSIBILIDADE', style: 'admissibilidadeHeader' },
@@ -214,6 +217,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
               },
             ],
             [
+              // Via ordinária
               { text: '4. Via Ordinária a Pedido do Interessado', style: 'tableUnidadesViaOrdinaria' },
               { text: quantitativo?.admissiveis, style: 'tableUnidadesViaOrdinaria' }
             ],
@@ -386,6 +390,10 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
       },
       tableData: {
         fontSize: 12,
+      },
+      tableDataTotalProcessos: {
+        fontSize: 12,
+        bold: true
       },
 
       // Sessão da tabela de unidades
