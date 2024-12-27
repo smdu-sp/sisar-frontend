@@ -243,161 +243,109 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
               { text: 'DESCRIÇÃO DE STATUS', style: 'tableProcessoHeader' }
             ],
 
-            // Dados de admissivel
-            ...quantitativo?.admissiveis_dados?.map((a: any) => [
-              { 
-                text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital , 
-                style: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'analiseData';
-                    case 1: return 'admissivelData';
-                    case 2: return 'analiseData';
-                    case 3: return 'deferidoData';
-                    case 4: return 'indeferidoData';
-                    default: return 'tableUnidadesViaOrdinaria'
-                  }
-                })() 
-              },
-              {
-                text: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'Em analise de admissibilidade';
-                    case 1: return 'Admissível';
-                    case 2: return 'Em Análise';
-                    case 3: return 'Deferido';
-                    case 4: return 'Indeferido';
-                    default: return 'Status Desconhecido';
-                  }
-                })(),
-                style: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'analiseData';
-                    case 1: return 'admissivelData';
-                    case 2: return 'analiseData';
-                    case 3: return 'deferidoData';
-                    case 4: return 'indeferidoData';
-                    default: return 'tableUnidadesViaOrdinaria'
-                  }
-                })()
-              },
-              { 
-                text: a.inicial?.obs, 
-                style: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'analiseData';
-                    case 1: return 'admissivelData';
-                    case 2: return 'analiseData';
-                    case 3: return 'deferidoData';
-                    case 4: return 'indeferidoData';
-                    default: return 'tableUnidadesViaOrdinaria'
-                  }
-                })() 
-              }
-            ]),
+            // Legenda de status de processos:
+            // case 0: return 'analiseData';
+            // case 1: return 'inadmissivelData';
+            // case 2: return 'admissivelData';
+            // case 3: return 'deferidoData';
+            // case 4: return 'indeferidoData';
+            // default: return 'tableUnidadesViaOrdinaria'
 
-            // Dados de processos em análise
-            ...quantitativo?.em_analise_dados?.map((a: any) => [
+            // Dados de processos em analise de admissibilidade
+            ...quantitativo?.analise_admissiveis_dados?.map((a: any) => [
               { 
-                text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital, 
-                style: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'analiseData';
-                    case 1: return 'admissivelData';
-                    case 2: return 'analiseData';
-                    case 3: return 'deferidoData';
-                    case 4: return 'indeferidoData';
-                    default: return 'tableUnidadesViaOrdinaria'
-                  }
-                })() 
+                text: a.sei || a.processo_fisico || a.aprova_digital , 
+                style: 'analiseData'
               },
               {
-                text: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'Em analise de admissibilidade';
-                    case 1: return 'Admissível';
-                    case 2: return 'Em Análise';
-                    case 3: return 'Deferido';
-                    case 4: return 'Indeferido';
-                    default: return 'Status Desconhecido';
-                  }
-                })(),
-                style: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'analiseData';
-                    case 1: return 'admissivelData';
-                    case 2: return 'analiseData';
-                    case 3: return 'deferidoData';
-                    case 4: return 'indeferidoData';
-                    default: return 'tableUnidadesViaOrdinaria'
-                  }
-                })()
+                text: 'Em analise de admissibilidade',
+                style: 'analiseData'
               },
               { 
-                text: a.inicial?.obs, 
-                style: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'analiseData';
-                    case 1: return 'admissivelData';
-                    case 2: return 'analiseData';
-                    case 3: return 'deferidoData';
-                    case 4: return 'indeferidoData';
-                    default: return 'tableUnidadesViaOrdinaria'
-                  }
-                })() 
+                text: a.obs, 
+                style: 'analiseData'
               }
             ]),
 
             // Dados de processos inadimissíveis
             ...quantitativo?.inadmissiveis_dados?.map((a: any) => [
               { 
-                text: a.inicial?.sei || a.inicial?.processo_fisico || a.inicial?.aprova_digital, 
-                style: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'admissivelData';
-                    case 1: return 'admissivelData';
-                    case 2: return 'analiseData';
-                    case 3: return 'deferidoData';
-                    case 4: return 'indeferidoData';
-                    default: return 'tableUnidadesViaOrdinaria'
-                  }
-                })() 
+                text: a.sei || a.processo_fisico || a.aprova_digital, 
+                style: 'inadmissivelData'
               },
               {
-                text: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'Admissibilidade';
-                    case 1: return 'Admissível';
-                    case 2: return 'Em Análise';
-                    case 3: return 'Deferido';
-                    case 4: return 'Indeferido';
-                    default: return 'Status Desconhecido';
-                  }
-                })(),
-                style: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'admissivelData';
-                    case 1: return 'admissivelData';
-                    case 2: return 'analiseData';
-                    case 3: return 'deferidoData';
-                    case 4: return 'indeferidoData';
-                    default: return 'tableUnidadesViaOrdinaria'
-                  }
-                })()
+                text: 'Inadmissível',
+                style: 'inadmissivelData'
               },
               { 
-                text: a.inicial?.obs, 
-                style: (() => {
-                  switch (a.inicial.status) {
-                    case 0: return 'admissivelData';
-                    case 1: return 'admissivelData';
-                    case 2: return 'analiseData';
-                    case 3: return 'deferidoData';
-                    case 4: return 'indeferidoData';
-                    default: return 'tableUnidadesViaOrdinaria'
-                  }
-                })()  
+                text: a.obs, 
+                style: 'inadmissivelData'  
               }
-            ])
+            ]),
+
+            // Dados de processos admissíveis ainda em análise
+            ...quantitativo?.em_analise_dados?.map((a: any) => [
+              { 
+                text: a.sei || a.processo_fisico || a.aprova_digital, 
+                style: 'admissivelData'
+              },
+              {
+                text: 'Admissível em análise',
+                style: 'admissivelData'
+              },
+              { 
+                text: a.obs, 
+                style: 'admissivelData'
+              }
+            ]),
+
+            // Dados de processos deferidos
+            ...quantitativo?.deferidos_dados?.map((a: any) => [
+              { 
+                text: a.sei || a.processo_fisico || a.aprova_digital, 
+                style: 'deferidoData'
+              },
+              {
+                text: 'Deferido',
+                style: 'deferidoData'
+              },
+              { 
+                text: a.obs, 
+                style: 'deferidoData'  
+              }
+            ]),
+
+            // Dados de processos indeferidos
+            ...quantitativo?.indeferidos_dados?.map((a: any) => [
+              { 
+                text: a.sei || a.processo_fisico || a.aprova_digital, 
+                style: 'indeferidoData'
+              },
+              {
+                text: 'Indeferido',
+                style: 'indeferidoData'
+              },
+              { 
+                text: a.obs, 
+                style: 'indeferidoData' 
+              }
+            ]),
+
+            // Dados de processos em via ordinaria
+            ...quantitativo?.via_ordinaria_dados?.map((a: any) => [
+              { 
+                text: a.sei || a.processo_fisico || a.aprova_digital, 
+                style: 'tableUnidadesViaOrdinaria'
+              },
+              {
+                text: 'Via orinária',
+                style: 'tableUnidadesViaOrdinaria'
+              },
+              { 
+                text: a.obs, 
+                style: 'tableUnidadesViaOrdinaria'
+              }
+            ]),
           ]
         }
       },

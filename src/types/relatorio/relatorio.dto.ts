@@ -39,7 +39,10 @@ export interface IAprovaRapidoQuantitativoResponse {
     };
     total_parcial: number;
   };
-  "inadmissiveis_dados": any,
-  "admissiveis_dados": any,
-  "em_analise_dados": any
+  "analise_admissiveis_dados": any[],
+  "inadmissiveis_dados": any[],
+  "em_analise_dados": any[],
+  "deferidos_dados": any[],
+  "indeferidos_dados": any[],
+  "via_ordinaria_dados": any[]
 }
