@@ -44,11 +44,8 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
     const [num_alvara, setNum_alvara] = useState('')
     const [obs, setObs] = useState('')
     const [outorga, setOutorga] = useState<boolean>(true)
-
     const [conclusao, setConclusao] = useState<boolean>(true)
-
     const [finalizado, setFinalizado] = useState<boolean>(false)
-
     const { setAlert } = React.useContext(AlertsContext);
     const [carregando, setCarregando] = useState<boolean>(true);
 
@@ -112,16 +109,14 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
     }
 
     useEffect(() => {
-        buscaProId(inicial?.id ? inicial?.id : 0)
+        buscaProId(inicial?.id ? inicial?.id : 0);
+        setCarregando(false);
     }, [conclusao])
 
     const onSubmit = (data: Schema) => {
         criar(data)
     }
 
-    useEffect(() => {
-        setCarregando(false)
-    }, [])
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ p: 2 }}>
@@ -189,7 +184,7 @@ export default function FinalizaçãoTab({ inicial, admissibilidade }: { inicial
                                             type="date"
                                             placeholder="Prazo"
                                             error={Boolean(errors.data_conclusao)}
-                                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                            value={field.value ? new Date(field.value)?.toISOString()?.split('T')[0] : ''}
                                             onChange={(event) => {
                                                 const newValue = new Date(event.target.value);
                                                 field.onChange(newValue);
