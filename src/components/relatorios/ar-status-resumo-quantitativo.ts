@@ -1,5 +1,6 @@
 // APROVA RÁPIDO STATUS E RESUMO QUANTITATIVO
 
+import { IInicial } from '@/shared/services/admissibilidade.services';
 import * as relatorioService from '@/shared/services/relatorios/relatorio.service';
 import { IAprovaRapidoQuantitativoResponse } from '@/types/relatorio/relatorio.dto';
 
@@ -256,7 +257,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
             // default: return 'tableUnidadesViaOrdinaria'
 
             // Dados de processos em analise de admissibilidade
-            ...quantitativo?.analise_admissiveis_dados?.map((a: any) => [
+            ...quantitativo?.analise_admissiveis_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
               { 
                 text: a.sei || a.processo_fisico || a.aprova_digital , 
                 style: 'analiseData'
@@ -272,7 +273,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
             ]),
 
             // Dados de processos inadimissíveis
-            ...quantitativo?.inadmissiveis_dados?.map((a: any) => [
+            ...quantitativo?.inadmissiveis_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
               { 
                 text: a.sei || a.processo_fisico || a.aprova_digital, 
                 style: 'inadmissivelData'
@@ -288,7 +289,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
             ]),
 
             // Dados de processos admissíveis ainda em análise
-            ...quantitativo?.em_analise_dados?.map((a: any) => [
+            ...quantitativo?.em_analise_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
               { 
                 text: a.sei || a.processo_fisico || a.aprova_digital, 
                 style: 'admissivelData'
@@ -304,7 +305,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
             ]),
 
             // Dados de processos deferidos
-            ...quantitativo?.deferidos_dados?.map((a: any) => [
+            ...quantitativo?.deferidos_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
               { 
                 text: a.sei || a.processo_fisico || a.aprova_digital, 
                 style: 'deferidoData'
@@ -320,7 +321,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
             ]),
 
             // Dados de processos indeferidos
-            ...quantitativo?.indeferidos_dados?.map((a: any) => [
+            ...quantitativo?.indeferidos_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
               { 
                 text: a.sei || a.processo_fisico || a.aprova_digital, 
                 style: 'indeferidoData'
@@ -336,7 +337,7 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
             ]),
 
             // Dados de processos em via ordinaria
-            ...quantitativo?.via_ordinaria_dados?.map((a: any) => [
+            ...quantitativo?.via_ordinaria_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
               { 
                 text: a.sei || a.processo_fisico || a.aprova_digital, 
                 style: 'tableUnidadesViaOrdinaria'
