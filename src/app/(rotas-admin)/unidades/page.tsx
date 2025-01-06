@@ -3,13 +3,14 @@
 import Content from '@/components/Content';
 import { Suspense, useCallback, useContext, useEffect, useState } from 'react';
 import * as unidadeServices from '@/shared/services/unidade.services';
-import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
+import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Modal, ModalDialog, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
 import { Add, Cancel, Check, Clear, Refresh, Search, Warning } from '@mui/icons-material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertsContext } from '@/providers/alertsProvider';
 import { TablePagination } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
 import { IPaginadoUnidade, IUnidade } from '@/shared/services/unidade.services';
+import NewUnidadeModal from '@/components/unidades/NewUnidadeModal';
 
 export default function Unidades() {
   return (
@@ -29,6 +30,8 @@ function SearchUnidades() {
   const [status, setStatus] = useState<number>(2);
   const [filtro, setFiltro] = useState(-1);
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
+  const [ openNew, setOpenNew ] = useState<boolean>(false);
+  const [ idUnidade, setIdUnidade ] = useState<string| null>(null);
   const { setAlert } = useContext(AlertsContext);
   const theme = useTheme();
   const router = useRouter();
@@ -254,9 +257,12 @@ function SearchUnidades() {
                 theme.vars.palette.danger.plainActiveBg :
                 undefined
             }}>
-              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.codigo}</td>
+              {/* <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.codigo}</td>
               <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.sigla}</td>
-              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.nome}</td>
+              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.nome}</td> */}
+              <td onClick={() => { setIdUnidade(unidade.id); setOpenNew(true) }}>{unidade.codigo}</td>
+              <td onClick={() => { setIdUnidade(unidade.id); setOpenNew(true) }}>{unidade.sigla}</td>
+              <td onClick={() => { setIdUnidade(unidade.id); setOpenNew(true) }}>{unidade.nome}</td>
               <td>
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                   {unidade.id && unidade.status === 0 ? (
@@ -289,16 +295,17 @@ function SearchUnidades() {
         labelRowsPerPage="Registros por página"
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
       /> : null}
+      <Modal keepMounted open={openNew} onClose={() => setOpenNew(false)}>
+        <ModalDialog>
+          <NewUnidadeModal id={idUnidade} setOpen={setOpenNew} />
+        </ModalDialog>
+      </Modal>
       <IconButton 
-        onClick={() => router.push('/unidades/detalhes/')} 
+        onClick={() => { setIdUnidade(null); setOpenNew(true); }}
         color='primary' 
         variant='soft' 
         size='lg' 
-        sx={{
-          position: 'fixed',
-          bottom: '2rem',
-          right: '2rem',
-        }}
+        sx={{ position: 'fixed', bottom: '2rem', right: '2rem' }}
       >
         <Add />
       </IconButton>

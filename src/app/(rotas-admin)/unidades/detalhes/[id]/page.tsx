@@ -1,13 +1,13 @@
 'use client'
 
 import Content from "@/components/Content";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as unidadeServices from "@/shared/services/unidade.services";
 import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
+// @ts-ignore
 import { Business } from "@mui/icons-material";
 import { useRouter } from 'next/navigation';
 import { IUnidade } from "@/shared/services/unidade.services";
-import { AlertsContext } from "@/providers/alertsProvider";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -16,7 +16,6 @@ import {
     object,
     string,
 } from "zod";
-
 
 const schema = object({
     nome: string().min(2, { message: "O nome deve ter pelo menos 2 letras" }),
