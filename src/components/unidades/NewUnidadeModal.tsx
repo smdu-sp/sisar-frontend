@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import * as unidadeServices from "@/shared/services/unidade.services";
-import { Button, CardActions, CardOverflow, Divider, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
+import { Button, CardActions, CardOverflow, Divider, FormControl, FormHelperText, FormLabel, Input, Modal, ModalDialog, Option, Select, Skeleton, Stack } from "@mui/joy";
 // @ts-ignore
 import { Business } from "@mui/icons-material";
 import { IUnidade } from "@/shared/services/unidade.services";
@@ -23,7 +23,7 @@ const schema = object({
 });
 type Schema = Infer<typeof schema>;
 
-export default function NewUnidadeModal({ id, setOpen }: { id: string | null, setOpen: Function }) {
+export default function NewUnidadeModal({ id, open, setOpen }: { id: string | null, open: boolean, setOpen: Function }) {
   const [status, setStatus] = useState<number>(1);
   const [nome, setNome] = useState<string>('');
   const [sigla, setSigla] = useState<string>('');
@@ -70,125 +70,129 @@ export default function NewUnidadeModal({ id, setOpen }: { id: string | null, se
   }, [id]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
-      <Stack spacing={2} >
-        <Stack direction="row" spacing={2}>
-          <FormControl sx={{ flexGrow: 1 }}>
-            <FormLabel>Nome</FormLabel>
-            {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
-              name="nome"
-              control={control}
-              defaultValue={nome}
-              render={({ field: { ref, ...field } }) => {
-                return (<>
-                  <Input
-                    type="text"
-                    startDecorator={<Business />}
-                    placeholder="Nome"
-                    error={Boolean(errors.nome)}
-                    {...field}
-                  />
-                  {errors.nome && <FormHelperText color="danger">
-                    {errors.nome?.message}
-                  </FormHelperText>}
-                </>);
-              }}
-            />}
-          </FormControl>
-          <FormControl>
-            <FormLabel>Status</FormLabel>
-            {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
-              name="status"
-              control={control}
-              defaultValue={status}
-              render={({ field: { ref, ...field } }) => {
-                return (<>
-                  <Select
-                    placeholder="Status"
-                    {...field}
-                    onChange={(_, value) => field.onChange(value)}
-                  >
-                    <Option value={1}>Ativo</Option>
-                    <Option value={0}>Inativo</Option>
-                  </Select>
-                  {errors.status && <FormHelperText>
-                    {errors.status?.message}
-                  </FormHelperText>}
-                </>);
-              }}
-            />}
-          </FormControl>
-        </Stack>
-        <Divider />
-        <Stack direction="row" spacing={2}>
-          <FormControl sx={{ flexGrow: 1 }}>
-            <FormLabel>Código</FormLabel>
-            {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
-              name="codigo"
-              control={control}
-              defaultValue={codigo}
-              render={({ field: { ref, ...field } }) => {
-                return (<>
-                  <Input
-                    type="text"
-                    placeholder="Código"
-                    error={Boolean(errors.codigo)}
-                    {...field}
-                  />
-                  {errors.codigo && <FormHelperText>
-                    {errors.codigo?.message}
-                  </FormHelperText>}
-                </>);
-              }}
-            />}
-          </FormControl>
-            <FormControl sx={{ flexGrow: 1 }}>
-              <FormLabel>Sigla</FormLabel>
-              {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
-                  name="sigla"
+    <Modal keepMounted open={open} onClose={() => setOpen(false)}>
+      <ModalDialog>
+        <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
+          <Stack spacing={2} >
+            <Stack direction="row" spacing={2}>
+              <FormControl sx={{ flexGrow: 1 }}>
+                <FormLabel>Nome</FormLabel>
+                {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                  name="nome"
                   control={control}
-                  defaultValue={sigla}
+                  defaultValue={nome}
                   render={({ field: { ref, ...field } }) => {
                     return (<>
                       <Input
                         type="text"
-                        placeholder="Sigla"
-                        error={Boolean(errors.sigla)}
+                        startDecorator={<Business />}
+                        placeholder="Nome"
+                        error={Boolean(errors.nome)}
                         {...field}
                       />
-                      {errors.sigla && <FormHelperText>
-                          {errors.sigla?.message}
+                      {errors.nome && <FormHelperText color="danger">
+                        {errors.nome?.message}
                       </FormHelperText>}
                     </>);
                   }}
-              />}
-            </FormControl>
-        </Stack>
-      </Stack>
-      <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider', marginTop: 5, marginBottom: -2 }}>
-        <CardActions sx={{ alignSelf: 'flex-end', pt: 2, marginX: -1, marginY: -1 }}>
-          <Button 
-            size="sm" 
-            variant="plain" 
-            color="neutral"
-            onClick={() => setOpen(false)}
-          >
-            Cancelar
-          </Button>
-          <Button 
-            size="sm" 
-            variant="solid" 
-            color="primary" 
-            type="submit" 
-            loading={carregando}
-            loadingPosition='start'
-            disabled={!isValid}
-            sx={{ borderRadius: 4 }}
-          >
-            Salvar
-          </Button>
-        </CardActions>
-      </CardOverflow>
-    </form>
+                />}
+              </FormControl>
+              <FormControl>
+                <FormLabel>Status</FormLabel>
+                {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                  name="status"
+                  control={control}
+                  defaultValue={status}
+                  render={({ field: { ref, ...field } }) => {
+                    return (<>
+                      <Select
+                        placeholder="Status"
+                        {...field}
+                        onChange={(_, value) => field.onChange(value)}
+                      >
+                        <Option value={1}>Ativo</Option>
+                        <Option value={0}>Inativo</Option>
+                      </Select>
+                      {errors.status && <FormHelperText>
+                        {errors.status?.message}
+                      </FormHelperText>}
+                    </>);
+                  }}
+                />}
+              </FormControl>
+            </Stack>
+            <Divider />
+            <Stack direction="row" spacing={2}>
+              <FormControl sx={{ flexGrow: 1 }}>
+                <FormLabel>Código</FormLabel>
+                {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                  name="codigo"
+                  control={control}
+                  defaultValue={codigo}
+                  render={({ field: { ref, ...field } }) => {
+                    return (<>
+                      <Input
+                        type="text"
+                        placeholder="Código"
+                        error={Boolean(errors.codigo)}
+                        {...field}
+                      />
+                      {errors.codigo && <FormHelperText>
+                        {errors.codigo?.message}
+                      </FormHelperText>}
+                    </>);
+                  }}
+                />}
+              </FormControl>
+                <FormControl sx={{ flexGrow: 1 }}>
+                  <FormLabel>Sigla</FormLabel>
+                  {carregando ? <Skeleton variant="text" level="h1" /> : <Controller
+                      name="sigla"
+                      control={control}
+                      defaultValue={sigla}
+                      render={({ field: { ref, ...field } }) => {
+                        return (<>
+                          <Input
+                            type="text"
+                            placeholder="Sigla"
+                            error={Boolean(errors.sigla)}
+                            {...field}
+                          />
+                          {errors.sigla && <FormHelperText>
+                              {errors.sigla?.message}
+                          </FormHelperText>}
+                        </>);
+                      }}
+                  />}
+                </FormControl>
+            </Stack>
+          </Stack>
+          <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider', marginTop: 5, marginBottom: -2 }}>
+            <CardActions sx={{ alignSelf: 'flex-end', pt: 2, marginX: -1, marginY: -1 }}>
+              <Button 
+                size="sm" 
+                variant="plain" 
+                color="neutral"
+                onClick={() => setOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                size="sm" 
+                variant="solid" 
+                color="primary" 
+                type="submit" 
+                loading={carregando}
+                loadingPosition='start'
+                disabled={!isValid}
+                sx={{ borderRadius: 4 }}
+              >
+                Salvar
+              </Button>
+            </CardActions>
+          </CardOverflow>
+        </form>
+      </ModalDialog>
+    </Modal>
   );
 }

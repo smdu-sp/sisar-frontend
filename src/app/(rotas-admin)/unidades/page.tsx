@@ -4,6 +4,7 @@ import Content from '@/components/Content';
 import { Suspense, useCallback, useContext, useEffect, useState } from 'react';
 import * as unidadeServices from '@/shared/services/unidade.services';
 import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Modal, ModalDialog, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
+// @ts-ignore
 import { Add, Cancel, Check, Clear, Refresh, Search, Warning } from '@mui/icons-material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertsContext } from '@/providers/alertsProvider';
@@ -71,16 +72,14 @@ function SearchUnidades() {
         setAlert('Unidade alterada!', 'Unidade alterada com sucesso.', 'success', 3000, Check);
       if (notificacao == '0') 
         setAlert('Unidade criada!', 'Unidade criada com sucesso.', 'success', 3000, Check);
-      const newUrl = `${window.location.pathname}`;
-      window.history.replaceState({}, '', newUrl);
+      window.history.replaceState({}, '', `${window.location.pathname}`);
       buscaUnidades();
     }
   }
 
   const buscaUnidades = async () => {
     try {
-      const unidades: IPaginadoUnidade = await unidadeServices
-        .buscarTudo(filtro.toString(), pagina, limite, busca);
+      const unidades: IPaginadoUnidade = await unidadeServices.buscarTudo(filtro.toString(), pagina, limite, busca);
       setTotal(unidades.total);
       setPagina(unidades.pagina);
       setLimite(unidades.limite);
@@ -105,17 +104,12 @@ function SearchUnidades() {
     return
   }
 
-  const mudaPagina = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    novaPagina: number,
-  ) => {
+  const mudaPagina = (event: React.MouseEvent<HTMLButtonElement> | null, novaPagina: number) => {
     router.push(pathname + '?' + createQueryString('pagina', String(novaPagina + 1)));
     setPagina(novaPagina + 1);
   };
 
-  const mudaLimite = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const mudaLimite = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     router.push(pathname + '?' + createQueryString('limite', String(event.target.value)));
     setLimite(parseInt(event.target.value, 10));
     setPagina(1);
@@ -144,15 +138,15 @@ function SearchUnidades() {
     setConfirma(confirmaVazio);
   }
 
-  const confirmaAtivaUnidade = async (id: string) => {
-    setConfirma({
-      aberto: true,
-      confirmaOperacao: () => ativaUnidade(id),
-      titulo: 'Ativar unidade',
-      pergunta: 'Deseja ativar esta unidade?',
-      color: 'primary'
-    });
-  }
+  // const confirmaAtivaUnidade = async (id: string) => {
+  //   setConfirma({
+  //     aberto: true,
+  //     confirmaOperacao: () => ativaUnidade(id),
+  //     titulo: 'Ativar unidade',
+  //     pergunta: 'Deseja ativar esta unidade?',
+  //     color: 'primary'
+  //   });
+  // }
 
   const limpaFitros = () => {
     setBusca('');
@@ -165,9 +159,7 @@ function SearchUnidades() {
 
   return (
     <Content
-      breadcrumbs={[
-        { label: 'Unidades', href: '/unidades' }
-      ]}
+      breadcrumbs={[{ label: 'Unidades', href: '/unidades' }]}
       titulo='Unidades'
     >
       <Snackbar
@@ -295,11 +287,7 @@ function SearchUnidades() {
         labelRowsPerPage="Registros por página"
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
       /> : null}
-      <Modal keepMounted open={openNew} onClose={() => setOpenNew(false)}>
-        <ModalDialog>
-          <NewUnidadeModal id={idUnidade} setOpen={setOpenNew} />
-        </ModalDialog>
-      </Modal>
+      <NewUnidadeModal id={idUnidade} open={openNew} setOpen={setOpenNew} />
       <IconButton 
         onClick={() => { setIdUnidade(null); setOpenNew(true); }}
         color='primary' 
