@@ -23,7 +23,7 @@ const schema = object({
 });
 type Schema = Infer<typeof schema>;
 
-export default function NewUnidadeModal({ id, open, setOpen }: { id: string | null, open: boolean, setOpen: Function }) {
+export function UnidadeRegisterModal({ id, open, setOpen }: { id: string | null, open: boolean, setOpen: Function }) {
   const [status, setStatus] = useState<number>(1);
   const [nome, setNome] = useState<string>('');
   const [sigla, setSigla] = useState<string>('');

@@ -3,7 +3,7 @@
 import Content from '@/components/Content';
 import { Suspense, useCallback, useContext, useEffect, useState } from 'react';
 import * as unidadeServices from '@/shared/services/unidade.services';
-import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Modal, ModalDialog, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
+import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
 // @ts-ignore
 import { Add, Cancel, Check, Clear, Refresh, Search, Warning } from '@mui/icons-material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -11,7 +11,7 @@ import { AlertsContext } from '@/providers/alertsProvider';
 import { TablePagination } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
 import { IPaginadoUnidade, IUnidade } from '@/shared/services/unidade.services';
-import NewUnidadeModal from '@/components/unidades/NewUnidadeModal';
+import { UnidadeRegisterModal } from '@/components/unidades/UnidadeRegisterModal';
 
 export default function Unidades() {
   return (
@@ -287,7 +287,7 @@ function SearchUnidades() {
         labelRowsPerPage="Registros por página"
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
       /> : null}
-      <NewUnidadeModal id={idUnidade} open={openNew} setOpen={setOpenNew} />
+      <UnidadeRegisterModal id={idUnidade} open={openNew} setOpen={setOpenNew} />
       <IconButton 
         onClick={() => { setIdUnidade(null); setOpenNew(true); }}
         color='primary' 
