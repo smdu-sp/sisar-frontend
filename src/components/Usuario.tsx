@@ -2,8 +2,8 @@ import { Box, Card, CardContent, Chip, ChipPropsColorOverrides, ColorPaletteProp
 import { OverridableStringUnion } from '@mui/types';
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import * as usuarioServices from "@/shared/services/usuario.services";
-import { IUsuario } from "@/shared/services/usuario.services";
+import * as usuarioServices from "@/shared/services/usuario/usuario.services";
+import { IUsuario } from "@/shared/services/usuario/usuario.services";
 
 export default function Usuario() {
     const router = useRouter();

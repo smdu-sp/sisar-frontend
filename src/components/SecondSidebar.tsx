@@ -4,8 +4,8 @@ import { IMenu, menu } from '../app/menu';
 import { MenuContext } from '@/shared/contexts/MenuContext';
 import Usuario from './Usuario';
 import { ListSubheader } from '@mui/material';
-import * as usuarioServices from '@/shared/services/usuario.services';
-import { IUsuario } from '@/shared/services/usuario.services';
+import * as usuarioServices from '@/shared/services/usuario/usuario.services';
+import { IUsuario } from '@/shared/services/usuario/usuario.services';
 import { usePathname } from 'next/navigation';
 
 const RenderMenu = (menu: IMenu) => {

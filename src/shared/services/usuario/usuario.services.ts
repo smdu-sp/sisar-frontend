@@ -1,77 +1,17 @@
 'use server'
 
 import { authOptions } from "@/shared/auth/authOptions";
+import { IAddFeriasUsuario, ICreateUsuario, IFerias, IPaginadoUsuario, ISubstituto, IUpdateUsuario, IUsuario } from "@/types/usuario/usuario.dto";
 import { getServerSession } from "next-auth";
 import { signOut } from "next-auth/react";
+<<<<<<< HEAD:src/shared/services/usuario.services.ts
 import { IUnidade } from "./unidade/unidade.services";
+=======
+>>>>>>> f01059f94fd79e67b3bc0ec4bfc600c410fe8d15:src/shared/services/usuario/usuario.services.ts
 
 async function Logout() {
     await signOut({ redirect: false });
     window.location.href = '/login';
-}
-
-export interface IUsuario {
-    id: string;
-    nome: string;
-    email: string;
-    login: string;
-    permissao: string;
-    cargo: string;
-    status: number;
-    criado_em: Date;
-    atualizado_em: Date;
-    unidade_id?: string;
-    ferias?: IFerias[];
-    substitutos?: ISubstituto[];
-    usuarios?: ISubstituto[];
-    unidade?: IUnidade;
-}
-
-export interface IFerias {
-    id: string;
-    inicio: Date;
-    final: Date;
-    usuario_id: string;
-    usuario?: IUsuario;
-    criado_em: Date;
-    atualizado_em: Date;
-}
-
-export interface ISubstituto {
-    id: string;
-    usuario_id: Date;
-    usuario?: IUsuario;
-    substituto_id: string;
-    substituto?: IUsuario;
-}
-
-export interface IAddFeriasUsuario {
-    inicio: Date;
-    final: Date;
-}
-
-export interface ICreateUsuario {
-    nome: string;
-    email: string;
-    login: string;
-    permissao: string;
-    cargo: string;
-    unidade_id?: string;
-}
-
-export interface IUpdateUsuario {
-    id?: string;
-    permissao?: string;
-    cargo?: string;
-    status?: number;
-    unidade_id?: string;
-}
-
-export interface IPaginadoUsuario {
-    data: IUsuario[];
-    total: number;
-    pagina: number;
-    limite: number;
 }
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
@@ -152,7 +92,7 @@ async function criar(data: ICreateUsuario): Promise<IUsuario> {
         }, body: JSON.stringify(data)
     }).then((response) => {
         if (response.status === 401) Logout();
-        // if (response.status !== 200) return;
+        if (response.status !== 201) return;
         return response.json();
     })
     return criado;

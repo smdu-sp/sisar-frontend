@@ -7,8 +7,8 @@ import { useRouter } from 'next/navigation';
 import { OverridableStringUnion } from '@mui/types';
 
 import Content from "@/components/Content";
-import { IUsuario } from "@/shared/services/usuario.services";
-import * as usuarioServices from "@/shared/services/usuario.services";
+import { IUsuario } from "@/shared/services/usuario/usuario.services";
+import * as usuarioServices from "@/shared/services/usuario/usuario.services";
 import { AlertsContext } from "@/providers/alertsProvider";
 import * as unidadeServices from "@/shared/services/unidade/unidade.services";
 import { IUnidade } from "@/shared/services/unidade/unidade.services";
