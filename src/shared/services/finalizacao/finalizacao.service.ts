@@ -1,6 +1,6 @@
 'use server';
 
-import { IInicial } from "@/shared/services/inicial.services"
+import { IInicial } from "@/shared/services/inicial/inicial.services"
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/authOptions";
 import { signOut } from "next-auth/react";

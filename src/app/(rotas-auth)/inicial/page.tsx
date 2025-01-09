@@ -3,8 +3,8 @@
 import Content from '@/components/Content';
 import { FormLabel, Input, Modal, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, IconButton, ModalDialog, Stack, Tab, TabList, TabPanel, Table, Tabs, tabClasses, FormHelperText, Select, Option, Box } from '@mui/joy';
 import { TablePagination } from '@mui/material';
-import * as inicialServices from '@/shared/services/inicial.services';
-import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
+import * as inicialServices from '@/shared/services/inicial/inicial.services';
+import { IInicial, IPaginatedInicial } from '@/shared/services/inicial/inicial.services';
 import { useCallback, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Add, Clear, Refresh, Search } from '@mui/icons-material';

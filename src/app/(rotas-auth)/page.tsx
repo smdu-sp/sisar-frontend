@@ -5,8 +5,8 @@ import CardAviso from '@/components/CardAviso';
 import * as React from 'react';
 import { Autocomplete, AutocompleteOption, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, IconButton, Input, Modal, ModalDialog, Skeleton, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
-import * as inicialServices from '@/shared/services/inicial.services';
-import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
+import * as inicialServices from '@/shared/services/inicial/inicial.services';
+import { IInicial, IPaginatedInicial } from '@/shared/services/inicial/inicial.services';
 import { useCallback, useEffect, useState } from 'react';
 import { IProcesso } from '@/types/reunioes/reunioes.dto';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -25,7 +25,7 @@ import ListDecoration from '../../components/ListDecoration';
 import Icon from '@mui/material/Icon';;
 import { Card, CardContent, Grid, Option, Select, Sheet, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
-import * as avisos from '@/shared/services/avisos.services'
+import * as avisos from '@/shared/services/avisos/avisos.services'
 import CircleIcon from '@mui/icons-material/RadioButtonCheckedRounded';
 import Link from '@mui/joy/Link';
 import { AlertsContext } from '@/providers/alertsProvider';

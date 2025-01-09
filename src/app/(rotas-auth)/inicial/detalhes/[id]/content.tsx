@@ -4,13 +4,13 @@ import { Autocomplete, Box, Button, DialogContent, DialogTitle, FormControl, For
 import InicialTab from './tabs/inicial';
 import AdmissibilidadeTab from './tabs/admissibilidade';
 import DistribuicaoTab from './tabs/distribuicao';
-import { IInicial } from '@/shared/services/inicial.services';
+import { IInicial } from '@/shared/services/inicial/inicial.services';
 import { IUsuario } from '@/types/usuario/usuario.dto';
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
-import * as avisos from '@/shared/services/avisos.services';
-import * as inicialServices from '@/shared/services/inicial.services';
+import * as avisos from '@/shared/services/avisos/avisos.services';
+import * as inicialServices from '@/shared/services/inicial/inicial.services';
 import { Check } from '@mui/icons-material';
 import { AlertsContext } from '@/providers/alertsProvider';
 import FinalizaçãoTab from './tabs/finalizacao';

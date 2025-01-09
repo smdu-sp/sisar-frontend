@@ -2,12 +2,15 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/shared/auth/authOptions";
-import { IAlvaraTipo } from "./alvara-tipo/alvara-tipo.services";
+// import { IAlvaraTipo } from "../alvara-tipo/alvara-tipo.services";
 import { IAlvaraTipo } from "@/types/admissibilidade/admissibilidade.dto";
 import { signOut } from "next-auth/react";
-import { IUsuario } from "./usuario/usuario.services";
-import { IAdmissibilidade } from "./admissibilidade/admissibilidade.services";
+// import { IUsuario } from "../usuario/usuario.services";
+import { IUsuario } from "@/types/usuario/usuario.dto";
+// import { IAdmissibilidade } from "../admissibilidade/admissibilidade.services";
+import { IAdmissibilidade } from "@/types/admissibilidade/admissibilidade.dto";
 import { Interface } from "readline";
+
 
 export interface IInicial_Sqls {
     id: string

@@ -1,11 +1,11 @@
 'use server'
 
 import Content from "@/components/Content";
-import * as inicialServices from '@/shared/services/inicial.services';
+import * as inicialServices from '@/shared/services/inicial/inicial.services';
 import * as usuarioServices from '@/shared/services/usuario/usuario.services';
 import ContentTabs from './content';
 import { useEffect, useState } from "react";
-import { IInicial } from "@/shared/services/inicial.services";
+import { IInicial } from "@/shared/services/inicial/inicial.services";
 import { IUsuario } from "@/shared/services/usuario/usuario.services";
 
 export default async function InicialDetalhes(props: any) {

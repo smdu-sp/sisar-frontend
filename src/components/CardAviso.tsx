@@ -6,7 +6,7 @@ import Card from '@mui/joy/Card';
 import IconButton from '@mui/joy/IconButton';
 import Typography from '@mui/joy/Typography';
 import { Input, Snackbar, Stack, Textarea } from '@mui/joy';
-import * as avisos from "@/shared/services/avisos.services"
+import * as avisos from "@/shared/services/avisos/avisos.services"
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CancelIcon from '@mui/icons-material/Cancel';
