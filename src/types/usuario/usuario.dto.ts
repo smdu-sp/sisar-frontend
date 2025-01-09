@@ -1,4 +1,4 @@
-import { IUnidade } from "@/shared/services/unidade.services";
+import { IUnidade } from "@/types/unidade/unidade.dto";
 
 export interface IUsuario {
   id: string;
