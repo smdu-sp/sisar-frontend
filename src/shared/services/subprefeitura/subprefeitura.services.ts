@@ -1,6 +1,7 @@
 'use server'
 
 import { authOptions } from "@/shared/auth/authOptions";
+import { IPaginadoSubprefeitura, ISubprefeitura } from "@/types/subprefeitura/subprefeitura.dto";
 import { getServerSession } from "next-auth";
 import { signOut } from "next-auth/react";
 
@@ -9,19 +10,7 @@ async function Logout() {
     window.location.href = '/login';
 }
 
-export interface ISubprefeitura {
-    id: string;
-    nome: string;
-    sigla: string;
-    status: number;
-}
 
-export interface IPaginadoSubprefeitura {
-    data: ISubprefeitura[];
-    total: number;
-    pagina: number;
-    limite: number;
-}
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 

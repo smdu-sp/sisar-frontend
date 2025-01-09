@@ -2,12 +2,12 @@
 
 import Content from "@/components/Content";
 import { useEffect, useState } from "react";
-import * as unidadeServices from "@/shared/services/unidade.services";
+import * as unidadeServices from "@/shared/services/unidade/unidade.services";
 import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
 // @ts-ignore
 import { Business } from "@mui/icons-material";
 import { useRouter } from 'next/navigation';
-import { IUnidade } from "@/shared/services/unidade.services";
+import { IUnidade } from "@/shared/services/unidade/unidade.services";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {

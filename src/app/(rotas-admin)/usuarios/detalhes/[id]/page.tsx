@@ -10,8 +10,8 @@ import Content from "@/components/Content";
 import { IUsuario } from "@/shared/services/usuario.services";
 import * as usuarioServices from "@/shared/services/usuario.services";
 import { AlertsContext } from "@/providers/alertsProvider";
-import * as unidadeServices from "@/shared/services/unidade.services";
-import { IUnidade } from "@/shared/services/unidade.services";
+import * as unidadeServices from "@/shared/services/unidade/unidade.services";
+import { IUnidade } from "@/shared/services/unidade/unidade.services";
 
 
 export default function UsuarioDetalhes(props: any) {

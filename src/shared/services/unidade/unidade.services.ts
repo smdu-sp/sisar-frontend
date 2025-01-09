@@ -1,6 +1,7 @@
 'use server'
 
 import { authOptions } from "@/shared/auth/authOptions";
+import { IPaginadoUnidade, IUnidade } from "@/types/unidade/unidade.dto";
 import { getServerSession } from "next-auth";
 import { signOut } from "next-auth/react";
 
@@ -9,21 +10,7 @@ async function Logout() {
     window.location.href = '/login';
 }
 
-export interface IUnidade {
-    id: string;
-    nome: string;
-    sigla: string;
-    codigo: string;
-    status: number;
-}
 
-export interface IPaginadoUnidade {
-    data: IUnidade[];
-    total: number;
-    pagina: number;
-    limite: number;
-    filtro: string;
-}
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 

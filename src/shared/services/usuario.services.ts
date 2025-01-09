@@ -3,7 +3,7 @@
 import { authOptions } from "@/shared/auth/authOptions";
 import { getServerSession } from "next-auth";
 import { signOut } from "next-auth/react";
-import { IUnidade } from "./unidade.services";
+import { IUnidade } from "./unidade/unidade.services";
 
 async function Logout() {
     await signOut({ redirect: false });

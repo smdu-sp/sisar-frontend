@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 import { Button, Chip, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, Input, Modal, ModalDialog, Skeleton, Stack, Textarea } from "@mui/joy";
-import * as reunioes from '@/shared/services/reunioes.services';
+import * as reunioes from '@/shared/services/reunioes/reunioes.services';
 import { Check } from '@mui/icons-material';
 import { AlertsContext } from '@/providers/alertsProvider';
 import { Controller, useForm } from "react-hook-form";
