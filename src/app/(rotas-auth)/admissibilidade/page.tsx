@@ -1,16 +1,14 @@
 'use client'
 
 import Content from '@/components/Content';
-import { Box, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, List, ListItem, ModalClose, ModalOverflow, Option, Select, Snackbar, Stack, Switch, Tab, TabList, TabPanel, Table, Tabs, Textarea, Tooltip, Typography, tabClasses } from '@mui/joy';
+import { Box, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, List, ListItem, ModalClose, ModalOverflow, Option, Select, Snackbar, Stack, Tab, TabList, TabPanel, Table, Tabs, Tooltip, Typography, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
-import * as inicialServices from '@/shared/services/inicial.services';
 import * as admissibilidadeServices from '@/shared/services/admissibilidade/admissibilidade.services';
-import * as parecerServices from '@/shared/services/parecer_admissibilidade.service';
-import { IAdmissibilidade, IPaginadoAdmissibilidade } from '@/shared/services/admissibilidade/admissibilidade.services';
-import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
+import * as parecerServices from '@/shared/services/parecer-admissibilidade/parecer_admissibilidade.service';
+import { IAdmissibilidade, IPaginadoAdmissibilidade } from '@/types/admissibilidade/admissibilidade.dto';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Add, Check, Clear, Refresh, Search } from '@mui/icons-material';
+import { Check, Clear, Refresh, Search } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
 import { AlertsContext } from '@/providers/alertsProvider';
 import BackHandIcon from '@mui/icons-material/BackHand';
@@ -25,8 +23,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { ModalDialogProps } from '@mui/joy/ModalDialog';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
-import { IPaginadoParecer, IParecer } from '@/shared/services/parecer_admissibilidade.service';
-
+import { IPaginadoParecer, IParecer } from '@/types/parecer-admissibilidade/parecer-admissibilidade.dto';
 
 export default function Admissibilidade() {
   const searchParams = useSearchParams();
@@ -34,7 +31,6 @@ export default function Admissibilidade() {
   const [open, setOpen] = React.useState<boolean>(false);
   const [admissibilidade, setAdmissibilidade] = useState<IAdmissibilidade[]>([]);
   const [parecer, setParecer] = useState<IParecer[]>([]);
-  const [pareceres, setPareceres] = useState<IParecer[]>([]);
   const [pagina, setPagina] = useState(searchParams.get('pagina') ? Number(searchParams.get('pagina')) : 1);
   const [limite, setLimite] = useState(searchParams.get('limite') ? Number(searchParams.get('limite')) : 10);
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
@@ -43,7 +39,6 @@ export default function Admissibilidade() {
   const [statusAtual, setStatusAtual] = useState<number>(0);
   const [reconsiderado, setReconsiderado] = useState(true)
   const [parecer_admissibilidade_id, setParecer_admissibilidade_id] = useState("");
-  const [idInicial, setIdInicial] = useState("");
   const [modal, setModal] = useState<any>([]);
   const [layout, setLayout] = React.useState<ModalDialogProps['layout'] | undefined>(
     undefined,
