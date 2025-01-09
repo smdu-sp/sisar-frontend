@@ -3,7 +3,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/shared/auth/authOptions";
 import { signOut } from "next-auth/react";
-import { IPaginadoAlvaraTipo, auterarStatus, IAlvaraTipo, IUpdateAlvaraTipo, ICreateAlvaraTipo } from "@/types/alvara-tipo/alvara-tipo.dto";
+import { IAlvaraTipo } from "@/types/admissibilidade/admissibilidade.dto";
+import { ICreateAlvaraTipo, IPaginadoAlvaraTipo, IUpdateAlvaraTipo } from "@/types/alvara-tipo/alvara-tipo.dto";
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 

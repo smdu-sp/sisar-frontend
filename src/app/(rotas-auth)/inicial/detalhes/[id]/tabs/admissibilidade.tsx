@@ -1,15 +1,15 @@
 'use client'
 
 import { IInicial } from "@/shared/services/inicial.services";
-import { IAdmissibilidade } from "@/shared/services/admissibilidade/admissibilidade.services";
+import { IAdmissibilidade } from "@/types/admissibilidade/admissibilidade.dto";
 import React, { useEffect, useState } from "react";
 import * as admissibilidadeServices from "@/shared/services/admissibilidade/admissibilidade.services";
-import * as unidadeServices from "@/shared/services/unidade.services";
+import * as unidadeServices from "@/shared/services/unidade/unidade.services";
 import * as inicialServices from "@/shared/services/inicial.services";
-import * as subprefeituraServices from "@/shared/services/subprefeitura.services";
-import { IUnidade } from "@/shared/services/unidade.services";
-import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
-import * as comum from "@/shared/services/comum.services";
+import * as subprefeituraServices from "@/shared/services/subprefeitura/subprefeitura.services";
+import { IUnidade } from "@/types/unidade/unidade.dto";
+import { ISubprefeitura } from "@/types/subprefeitura/subprefeitura.dto";
+import * as comum from "@/shared/services/common/comum.services";
 import { useRouter as useRouterNavigation } from "next/navigation";
 import { Autocomplete, AutocompleteOption, Box, Button, Checkbox, Chip, Divider, FormControl, FormHelperText, FormLabel, Grid, Input, Option, Select, Skeleton } from "@mui/joy";
 import { Check } from "@mui/icons-material";

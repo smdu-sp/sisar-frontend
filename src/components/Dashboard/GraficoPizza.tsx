@@ -1,3 +1,5 @@
+/** @format */
+
 'use client';
 
 import * as React from 'react';
@@ -14,61 +16,92 @@ import { DeviceTablet as DeviceTabletIcon } from '@phosphor-icons/react/dist/ssr
 import { Phone as PhoneIcon } from '@phosphor-icons/react/dist/ssr/Phone';
 import type { ApexOptions } from 'apexcharts';
 
-import { Chart } from '@/components/Dashboard/Chart'
+import { Chart } from '@/components/Dashboard/Chart';
 
-const iconMapping = { Desktop: DesktopIcon, Tablet: DeviceTabletIcon, Phone: PhoneIcon } as Record<string, Icon>;
+const iconMapping = {
+	Desktop: DesktopIcon,
+	Tablet: DeviceTabletIcon,
+	Phone: PhoneIcon,
+} as Record<string, Icon>;
 
 export interface TrafficProps {
-  chartSeries: number[];
-  labels: string[];
-  sx?: SxProps;
-  titulo: string
+	chartSeries: number[];
+	labels: string[];
+	sx?: SxProps;
+	titulo: string;
 }
 
-export function GraficoPizza({ chartSeries, labels, sx, titulo }: TrafficProps): React.JSX.Element {
-  const chartOptions = useChartOptions(labels);
+export function GraficoPizza({
+	chartSeries,
+	labels,
+	sx,
+	titulo,
+}: TrafficProps): React.JSX.Element {
+	const chartOptions = useChartOptions(labels);
 
-  return (
-    <Card sx={{borderRadius: 4, boxShadow:'0px 4px 12px rgba(0, 0, 0, 0.1)'}}>
-      <CardHeader title={titulo} />
-      <CardContent>
-        <Stack spacing={2}>
-          <Chart height={300} options={chartOptions} series={chartSeries} type="donut" width="100%" />
-          <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'center' }}>
-            {chartSeries.map((item, index) => {
-              const label = labels[index];
-              const Icon = iconMapping[label];
+	return (
+		<Card
+			sx={{ borderRadius: 4, boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)' }}>
+			<CardHeader title={titulo} />
+			<CardContent>
+				<Stack spacing={2}>
+					<Chart
+						height={300}
+						options={chartOptions}
+						series={chartSeries}
+						type='donut'
+						width='100%'
+					/>
+					<Stack
+						direction='row'
+						spacing={2}
+						sx={{ alignItems: 'center', justifyContent: 'center' }}>
+						{chartSeries.map((item, index) => {
+							const label = labels[index];
+							const Icon = iconMapping[label];
 
-              return (
-                <Stack key={label} spacing={1} sx={{ alignItems: 'center' }}>
-                  {Icon ? <Icon fontSize="var(--icon-fontSize-lg)" /> : null}
-                  <Typography variant="h6">{label}</Typography>
-                  <Typography color="text.secondary" variant="subtitle2">
-                    {item}%
-                  </Typography>
-                </Stack>
-              );
-            })}
-          </Stack>
-        </Stack>
-      </CardContent>
-    </Card>
-  );
+							return (
+								<Stack
+									key={label}
+									spacing={1}
+									sx={{ alignItems: 'center' }}>
+									{Icon ? <Icon fontSize='var(--icon-fontSize-lg)' /> : null}
+									<Typography variant='h6'>{label}</Typography>
+									<Typography
+										color='text.secondary'
+										variant='subtitle2'>
+										{item}%
+									</Typography>
+								</Stack>
+							);
+						})}
+					</Stack>
+				</Stack>
+			</CardContent>
+		</Card>
+	);
 }
 
 function useChartOptions(labels: string[]): ApexOptions {
-  const theme = useTheme();
+	const theme = useTheme();
 
-  return {
-    chart: { background: 'transparent' },
-    colors: [theme.palette.primary.main, theme.palette.success.main, theme.palette.warning.main],
-    dataLabels: { enabled: false },
-    labels,
-    legend: { show: false },
-    plotOptions: { pie: { expandOnClick: false } },
-    states: { active: { filter: { type: 'none' } }, hover: { filter: { type: 'none' } } },
-    stroke: { width: 0 },
-    theme: { mode: theme.palette.mode },
-    tooltip: { fillSeriesColor: false },
-  };
+	return {
+		chart: { background: 'transparent' },
+		colors: [
+			theme.palette.primary.main,
+			theme.palette.success.main,
+			theme.palette.warning.main,
+		],
+		dataLabels: { enabled: false },
+		labels,
+		legend: { show: false },
+		plotOptions: { pie: { expandOnClick: false } },
+		states: {
+			active: { filter: { type: 'none' } },
+			hover: { filter: { type: 'none' } },
+		},
+		stroke: { width: 0 },
+		theme: { mode: theme.palette.mode },
+		tooltip: { fillSeriesColor: false },
+	};
 }

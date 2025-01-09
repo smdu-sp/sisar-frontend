@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import * as unidadeServices from "@/shared/services/unidade.services";
+import * as unidadeServices from "@/shared/services/unidade/unidade.services";
 import { Button, CardActions, CardOverflow, Divider, FormControl, FormHelperText, FormLabel, Input, Modal, ModalDialog, Option, Select, Skeleton, Stack } from "@mui/joy";
 // @ts-ignore
 import { Business } from "@mui/icons-material";
-import { IUnidade } from "@/shared/services/unidade.services";
+import { IUnidade } from "@/types/unidade/unidade.dto";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {

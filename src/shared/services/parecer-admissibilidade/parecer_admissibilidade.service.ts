@@ -1,30 +1,13 @@
 'use server'
 
 import { authOptions } from "@/shared/auth/authOptions";
+import { ICriarParecer, IPaginadoParecer, IParecer } from "@/types/parecer-admissibilidade/parecer-admissibilidade.dto";
 import { getServerSession } from "next-auth";
 import { signOut } from "next-auth/react";
 
 async function Logout() {
     await signOut({ redirect: false });
     window.location.href = '/login';
-}
-
-export interface IParecer {
-    id: string;
-    parecer: string;
-    status: number;
-}
-
-export interface ICriarParecer {
-    parecer: string;
-    status?: number;
-}
-
-export interface IPaginadoParecer {
-    data: IParecer[];
-    total: number;
-    pagina: number;
-    limite: number;
 }
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';

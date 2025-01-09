@@ -5,7 +5,7 @@ import InicialTab from './tabs/inicial';
 import AdmissibilidadeTab from './tabs/admissibilidade';
 import DistribuicaoTab from './tabs/distribuicao';
 import { IInicial } from '@/shared/services/inicial.services';
-import { IUsuario } from '@/shared/services/usuario.services';
+import { IUsuario } from '@/types/usuario/usuario.dto';
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';

@@ -1,26 +1,17 @@
 import * as React from 'react';
-import Avatar from '@mui/joy/Avatar';
 import Chip from '@mui/joy/Chip';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
-import ButtonGroup from '@mui/joy/ButtonGroup';
 import Card from '@mui/joy/Card';
-import CardContent from '@mui/joy/CardContent';
-import CardOverflow from '@mui/joy/CardOverflow';
-import CardActions from '@mui/joy/CardActions';
 import IconButton from '@mui/joy/IconButton';
 import Typography from '@mui/joy/Typography';
-import SvgIcon from '@mui/joy/SvgIcon';
 import { Input, Snackbar, Stack, Textarea } from '@mui/joy';
-import { BorderAll, Style } from '@mui/icons-material';
 import * as avisos from "@/shared/services/avisos.services"
-import { IAvisos } from "@/shared/services/avisos.services"
-import { Interface } from 'readline';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CancelIcon from '@mui/icons-material/Cancel';
 import DoneIcon from '@mui/icons-material/Done';
-import * as comum from "@/shared/services/comum.services";
+import * as comum from "@/shared/services/common/comum.services";
 
 interface ICardAviso {
     id: string,

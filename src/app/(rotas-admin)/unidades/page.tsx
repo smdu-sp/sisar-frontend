@@ -2,7 +2,7 @@
 
 import Content from '@/components/Content';
 import { Suspense, useCallback, useContext, useEffect, useState } from 'react';
-import * as unidadeServices from '@/shared/services/unidade.services';
+import * as unidadeServices from '@/shared/services/unidade/unidade.services';
 import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
 // @ts-ignore
 import { Add, Cancel, Check, Clear, Refresh, Search, Warning } from '@mui/icons-material';
@@ -10,7 +10,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertsContext } from '@/providers/alertsProvider';
 import { TablePagination } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
-import { IPaginadoUnidade, IUnidade } from '@/shared/services/unidade.services';
+import { IPaginadoUnidade, IUnidade } from '@/types/unidade/unidade.dto';
 import { UnidadeRegisterModal } from '@/components/unidades/UnidadeRegisterModal';
 
 export default function Unidades() {
