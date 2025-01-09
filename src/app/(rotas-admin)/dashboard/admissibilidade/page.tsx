@@ -11,7 +11,7 @@ import {
   admissibilidadeFinalizada,
   medianaAdmissibilidade,
   pegarRegistrosAdmissibilidade,
-} from "@/shared/services/admissibilidade.services";
+} from "@/shared/services/admissibilidade/admissibilidade.services";
 import Tabela from "@/components/Dashboard/Tabela";
 
 export interface RegistroAdmissibilidade {

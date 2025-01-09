@@ -1,7 +1,7 @@
 'use client'
 
 import { SyntheticEvent, useContext, useEffect, useState } from 'react';
-import { Button, Sheet, FormControl, Input, SvgIcon, IconButton, CircularProgress } from '@mui/joy';
+import { Button, Sheet, FormControl, Input, SvgIcon, IconButton } from '@mui/joy';
 import Image from 'next/image';
 import logo from '@/assets/logo.png';
 import ThemeToggle from '@/components/ThemeToggle';

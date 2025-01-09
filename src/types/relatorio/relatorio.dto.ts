@@ -1,4 +1,4 @@
-import { IInicial } from "@/shared/services/admissibilidade.services";
+import { IInicial } from "@/shared/services/admissibilidade/admissibilidade.services";
 
 export interface IAprovaRapidoQuantitativoResponse {
   total: number;

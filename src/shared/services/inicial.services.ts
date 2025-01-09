@@ -5,7 +5,7 @@ import { authOptions } from "@/shared/auth/authOptions";
 import { IAlvaraTipo } from "./alvara-tipo.services";
 import { signOut } from "next-auth/react";
 import { IUsuario } from "./usuario.services";
-import { IAdmissibilidade } from "./admissibilidade.services";
+import { IAdmissibilidade } from "./admissibilidade/admissibilidade.services";
 import { Interface } from "readline";
 
 export interface IInicial_Sqls {

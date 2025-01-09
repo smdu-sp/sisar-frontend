@@ -4,9 +4,9 @@ import Content from '@/components/Content';
 import { Box, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, List, ListItem, ModalClose, ModalOverflow, Option, Select, Snackbar, Stack, Switch, Tab, TabList, TabPanel, Table, Tabs, Textarea, Tooltip, Typography, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
 import * as inicialServices from '@/shared/services/inicial.services';
-import * as admissibilidadeServices from '@/shared/services/admissibilidade.services';
+import * as admissibilidadeServices from '@/shared/services/admissibilidade/admissibilidade.services';
 import * as parecerServices from '@/shared/services/parecer_admissibilidade.service';
-import { IAdmissibilidade, IPaginadoAdmissibilidade } from '@/shared/services/admissibilidade.services';
+import { IAdmissibilidade, IPaginadoAdmissibilidade } from '@/shared/services/admissibilidade/admissibilidade.services';
 import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -130,7 +130,6 @@ export default function Admissibilidade() {
     "Não foi dada baixa no pagamento das guias",
     "N/A"
   ]
-
 
   const mudaPagina = (
     _: React.MouseEvent<HTMLButtonElement> | null, novaPagina: number,

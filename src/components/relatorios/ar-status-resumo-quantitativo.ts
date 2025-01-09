@@ -1,6 +1,6 @@
 // APROVA RÁPIDO STATUS E RESUMO QUANTITATIVO
 
-import { IInicial } from '@/shared/services/admissibilidade.services';
+import { IInicial } from '@/shared/services/admissibilidade/admissibilidade.services';
 import * as relatorioService from '@/shared/services/relatorios/relatorio.service';
 import { IAprovaRapidoQuantitativoResponse } from '@/types/relatorio/relatorio.dto';
 

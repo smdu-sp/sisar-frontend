@@ -29,7 +29,6 @@ export default function Inicial() {
     buscaIniciais();
   }, [pagina, limite, statusBusca]);
 
-
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
