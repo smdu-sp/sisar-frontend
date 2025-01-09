@@ -78,6 +78,9 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
             }).then(() => inicialServices.atualizar(admissibilidade.inicial_id, { tipo_processo, status: 2 })
                 .then((e) => {
                     if (e) setAlert('Admissão Realizada', `${comum.formatarSei(inicial?.sei ? inicial?.sei : "")} admitido com sucesso`, 'success', 3000, Check);
+                    setTimeout(() => {
+                        router.back();
+                    }, 1000);
                 }))
         }
     }
@@ -92,15 +95,9 @@ export default function AdmissibilidadeTab({ inicial, admissibilidade }: { inici
     }
 
     useEffect(() => {
-        unidadeServices.listaCompleta()
-            .then((response: IUnidade[]) => {
-                setUnidades(response);
-            })
-        subprefeituraServices.listaCompleta()
-            .then((response: ISubprefeitura[]) => {
-                setSubprefeitura(response);
-            })
-        setCarregando(false)
+        unidadeServices.listaCompleta().then((response: IUnidade[]) => setUnidades(response));
+        subprefeituraServices.listaCompleta().then((response: ISubprefeitura[]) => setSubprefeitura(response));
+        setCarregando(false);
         buscarDados();
     }, []);
 
