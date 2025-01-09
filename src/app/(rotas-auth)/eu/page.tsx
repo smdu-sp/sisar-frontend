@@ -7,8 +7,8 @@ import { useRouter } from 'next/navigation';
 import { OverridableStringUnion } from '@mui/types';
 
 import Content from "@/components/Content";
-import { IUsuario } from "@/shared/services/usuario.services";
-import * as usuarioServices from "@/shared/services/usuario.services";
+import { IUsuario } from "@/shared/services/usuario/usuario.services";
+import * as usuarioServices from "@/shared/services/usuario/usuario.services";
 
 export default function UsuarioDetalhes() {
     const [usuario, setUsuario] = useState<IUsuario>();

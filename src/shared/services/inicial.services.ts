@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/shared/auth/authOptions";
 import { IAlvaraTipo } from "./alvara-tipo/alvara-tipo.services";
 import { signOut } from "next-auth/react";
-import { IUsuario } from "./usuario.services";
+import { IUsuario } from "./usuario/usuario.services";
 import { IAdmissibilidade } from "./admissibilidade/admissibilidade.services";
 import { Interface } from "readline";
 

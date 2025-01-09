@@ -1,4 +1,4 @@
-import { IUsuario } from "@/shared/services/usuario.services"
+import { IUsuario } from "@/shared/services/usuario/usuario.services"
 
 export interface IInicial_Sqls {
   id: string
