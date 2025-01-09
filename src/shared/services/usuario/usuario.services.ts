@@ -4,10 +4,6 @@ import { authOptions } from "@/shared/auth/authOptions";
 import { IAddFeriasUsuario, ICreateUsuario, IFerias, IPaginadoUsuario, ISubstituto, IUpdateUsuario, IUsuario } from "@/types/usuario/usuario.dto";
 import { getServerSession } from "next-auth";
 import { signOut } from "next-auth/react";
-<<<<<<< HEAD:src/shared/services/usuario.services.ts
-import { IUnidade } from "./unidade/unidade.services";
-=======
->>>>>>> f01059f94fd79e67b3bc0ec4bfc600c410fe8d15:src/shared/services/usuario/usuario.services.ts
 
 async function Logout() {
     await signOut({ redirect: false });
