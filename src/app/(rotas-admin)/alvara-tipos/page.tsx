@@ -5,7 +5,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Tooltip, Typography } from '@mui/joy';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import * as alvaraTipoService from '@/shared/services/alvara-tipo/alvara-tipo.services';
-import { IPaginadoAlvaraTipo, IAlvaraTipo } from '@/shared/services/alvara-tipo/alvara-tipo.services';
+import { IPaginadoAlvaraTipo, IAlvaraTipo } from '@/types/alvara-tipo/alvara-tipo.dto';
 import { TablePagination } from '@mui/material';
 import { Add, Cancel, Check, Clear, Refresh, Search } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';

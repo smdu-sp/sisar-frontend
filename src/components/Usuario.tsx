@@ -3,7 +3,7 @@ import { OverridableStringUnion } from '@mui/types';
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import * as usuarioServices from "@/shared/services/usuario/usuario.services";
-import { IUsuario } from "@/shared/services/usuario/usuario.services";
+import { IUsuario } from "@/types/usuario/usuario.dto";
 
 export default function Usuario() {
     const router = useRouter();

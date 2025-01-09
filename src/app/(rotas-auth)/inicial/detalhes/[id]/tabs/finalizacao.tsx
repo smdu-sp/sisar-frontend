@@ -1,7 +1,7 @@
 'use client'
 
 import { IInicial } from "@/shared/services/inicial.services";
-import { IAdmissibilidade } from "@/shared/services/admissibilidade/admissibilidade.services";
+import { IAdmissibilidade } from "@/types/admissibilidade/admissibilidade.dto";
 import React, { useEffect, useState } from "react";
 import * as comum from "@/shared/services/common/comum.services";
 import * as finalizacaoServices from "@/shared/services/finalizacao.service";

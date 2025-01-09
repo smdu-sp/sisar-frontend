@@ -7,7 +7,7 @@ import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, For
 // @ts-ignore
 import { Business } from "@mui/icons-material";
 import { useRouter } from 'next/navigation';
-import { IUnidade } from "@/shared/services/unidade/unidade.services";
+import { IUnidade } from "@/types/unidade/unidade.dto";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {

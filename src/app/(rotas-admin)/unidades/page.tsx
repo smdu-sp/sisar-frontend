@@ -10,7 +10,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertsContext } from '@/providers/alertsProvider';
 import { TablePagination } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
-import { IPaginadoUnidade, IUnidade } from '@/shared/services/unidade/unidade.services';
+import { IPaginadoUnidade, IUnidade } from '@/types/unidade/unidade.dto';
 import { UnidadeRegisterModal } from '@/components/unidades/UnidadeRegisterModal';
 
 export default function Unidades() {

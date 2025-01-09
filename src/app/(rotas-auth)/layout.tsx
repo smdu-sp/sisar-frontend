@@ -1,5 +1,5 @@
 import { authOptions } from '@/shared/auth/authOptions';
-import { IUsuario } from '@/shared/services/usuario/usuario.services';
+import { IUsuario } from '@/types/usuario/usuario.dto';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import * as usuarioServices from '@/shared/services/usuario/usuario.services';

@@ -17,6 +17,15 @@ export interface IUsuario {
   unidade?: IUnidade;
 }
 
+export interface UsuarioToken {
+  id: string;
+  nome: string;
+  login: string;
+  email: string;
+  permissao: string;
+  status: number;
+}
+
 export interface IFerias {
   id: string;
   inicio: Date;

@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 import { Box, Card, Chip, ChipPropsColorOverrides, ColorPaletteProp, Divider, FormControl, FormLabel, Input, Option, Select, Stack } from "@mui/joy";
 import { EmailRounded } from "@mui/icons-material";
-import { useRouter } from 'next/navigation';
 import { OverridableStringUnion } from '@mui/types';
 
 import Content from "@/components/Content";
-import { IUsuario } from "@/shared/services/usuario/usuario.services";
+import { IUsuario } from "@/types/usuario/usuario.dto";
 import * as usuarioServices from "@/shared/services/usuario/usuario.services";
 
 export default function UsuarioDetalhes() {

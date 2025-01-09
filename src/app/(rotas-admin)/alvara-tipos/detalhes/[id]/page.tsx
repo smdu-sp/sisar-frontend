@@ -3,7 +3,7 @@
 import Content from "@/components/Content";
 import { useContext, useEffect, useState } from "react";
 import * as alvaraTiposService from "@/shared/services/alvara-tipo/alvara-tipo.services";
-import { IAlvaraTipo } from "@/shared/services/alvara-tipo/alvara-tipo.services";
+import { IAlvaraTipo } from "@/types/alvara-tipo/alvara-tipo.dto";
 import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
 import { useRouter } from "next/navigation";
 import { AlertsContext } from "@/providers/alertsProvider";
@@ -17,7 +17,6 @@ import {
     string,
     enum as zodEnum,
 } from "zod";
-import { MenuItem } from "@mui/material";
 
 const schema = z.object({
     nome: string().min(2, { message: "O nome deve ter pelo menos 2 caracteres" }),
@@ -66,7 +65,6 @@ export default function AlvaraTipoDetalhes(props: any) {
     const [status, setStatus] = useState<number>(1);
     const { setAlert } = useContext(AlertsContext);
 
-
     const {
         control,
         handleSubmit,
@@ -107,6 +105,7 @@ export default function AlvaraTipoDetalhes(props: any) {
         setCarregando(true)
         if (id) {
             alvaraTiposService.buscarPorId(id)
+                // @ts-ignore
                 .then((response: IAlvaraTipo) => {
                     setNome(response.nome);
                     setStatus(response.status);

@@ -5,7 +5,7 @@ import { MenuContext } from '@/shared/contexts/MenuContext';
 import Usuario from './Usuario';
 import { ListSubheader } from '@mui/material';
 import * as usuarioServices from '@/shared/services/usuario/usuario.services';
-import { IUsuario } from '@/shared/services/usuario/usuario.services';
+import { IUsuario } from '@/types/usuario/usuario.dto';
 import { usePathname } from 'next/navigation';
 
 const RenderMenu = (menu: IMenu) => {
@@ -122,4 +122,3 @@ export default function SecondSidebar({
     </>
   );
 }
-
