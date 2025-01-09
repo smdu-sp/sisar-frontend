@@ -10,7 +10,6 @@ async function Logout() {
     window.location.href = '/login';
 }
 
-
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
 async function buscarPorMesAno(mes: string, ano: string){
