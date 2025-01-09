@@ -4,40 +4,7 @@ import { IInicial } from "@/shared/services/inicial.services"
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/authOptions";
 import { signOut } from "next-auth/react";
-
-export interface FinalizacaoPaginado {
-    data: IFinalizacaoResponse[];
-    total: number;
-    pagina: number;
-    limite: number;
-}
-
-export interface IFinalizacaoResponse {
-    inicial: IInicial
-    inicial_id: number
-    data_apostilamento: Date
-    data_conclusao: Date
-    data_emissao: Date
-    data_outorga: Date
-    data_resposta: Date
-    data_termo: Date
-    num_alvara: string
-    obs: string
-    outorga: boolean
-}
-
-export interface IFinalizacao{
-    inicial_id: number
-    data_apostilamento: Date
-    data_conclusao: Date
-    data_emissao: Date
-    data_outorga: Date
-    data_resposta: Date
-    data_termo: Date
-    num_alvara: string
-    obs: string
-    outorga: boolean
-}
+import { FinalizacaoPaginado, IFinalizacaoResponse, IFinalizacao } from "@/types/finalizacao/finalizacao.dto";
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 

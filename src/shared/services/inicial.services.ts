@@ -2,7 +2,7 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/shared/auth/authOptions";
-import { IAlvaraTipo } from "./alvara-tipo.services";
+import { IAlvaraTipo } from "@/types/admissibilidade/admissibilidade.dto";
 import { signOut } from "next-auth/react";
 import { IUsuario } from "./usuario.services";
 import { IAdmissibilidade } from "./admissibilidade/admissibilidade.services";
