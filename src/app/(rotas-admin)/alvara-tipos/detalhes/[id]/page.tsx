@@ -2,8 +2,8 @@
 
 import Content from "@/components/Content";
 import { useContext, useEffect, useState } from "react";
-import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
-import { IAlvaraTipo } from "@/shared/services/alvara-tipo.services";
+import * as alvaraTiposService from "@/shared/services/alvara-tipo/alvara-tipo.services";
+import { IAlvaraTipo } from "@/shared/services/alvara-tipo/alvara-tipo.services";
 import { Box, Button, Card, CardActions, CardOverflow, Divider, FormControl, FormHelperText, FormLabel, Input, Option, Select, Skeleton, Stack } from "@mui/joy";
 import { useRouter } from "next/navigation";
 import { AlertsContext } from "@/providers/alertsProvider";
