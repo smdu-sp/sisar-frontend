@@ -9,7 +9,7 @@ import * as inicialServices from "@/shared/services/inicial.services";
 import * as subprefeituraServices from "@/shared/services/subprefeitura.services";
 import { IUnidade } from "@/shared/services/unidade.services";
 import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
-import * as comum from "@/shared/services/comum.services";
+import * as comum from "@/shared/services/common/comum.services";
 import { useRouter as useRouterNavigation } from "next/navigation";
 import { Autocomplete, AutocompleteOption, Box, Button, Checkbox, Chip, Divider, FormControl, FormHelperText, FormLabel, Grid, Input, Option, Select, Skeleton } from "@mui/joy";
 import { Check } from "@mui/icons-material";

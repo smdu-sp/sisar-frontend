@@ -32,7 +32,7 @@ import { AlertsContext } from '@/providers/alertsProvider';
 import 'dayjs/locale/pt-br';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as comum from "@/shared/services/comum.services";
+import * as comum from "@/shared/services/common/comum.services";
 import { date, z } from 'zod';
 import {
   infer as Infer,

@@ -9,7 +9,7 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import { IAlvaraTipo } from "@/shared/services/alvara-tipo/alvara-tipo.services";
 import * as alvaraTiposService from "@/shared/services/alvara-tipo/alvara-tipo.services";
 import { useRouter } from "next/navigation";
-import * as comum from "@/shared/services/comum.services";
+import * as comum from "@/shared/services/common/comum.services";
 import { AlertsContext } from "@/providers/alertsProvider";
 import * as React from 'react';
 import Textarea from '@mui/joy/Textarea';

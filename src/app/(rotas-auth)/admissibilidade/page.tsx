@@ -18,7 +18,7 @@ import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import DialogTitle from '@mui/joy/DialogTitle';
 import DialogContent from '@mui/joy/DialogContent';
-import * as comum from "@/shared/services/comum.services";
+import * as comum from "@/shared/services/common/comum.services";
 import MenuIcon from '@mui/icons-material/Menu';
 import { ModalDialogProps } from '@mui/joy/ModalDialog';
 import CancelIcon from '@mui/icons-material/Cancel';

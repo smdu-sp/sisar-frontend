@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Add } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
-import * as comum from "@/shared/services/comum.services";
+import * as comum from "@/shared/services/common/comum.services";
 import AssistantIcon from '@mui/icons-material/Assistant';
 
 export default function Inicial() {
