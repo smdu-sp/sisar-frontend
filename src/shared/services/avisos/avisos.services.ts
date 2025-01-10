@@ -3,7 +3,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/shared/auth/authOptions";
 import { signOut } from "next-auth/react";
-import { ICreateAvisos, IUpdateAvisos, IInicial, IAvisos } from "@/types/avisos/avisos.dto";
+import { ICreateAvisos, IAvisos } from "@/types/avisos/avisos.dto";
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 

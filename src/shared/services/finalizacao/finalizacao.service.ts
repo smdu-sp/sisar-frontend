@@ -1,10 +1,9 @@
 'use server';
 
-import { IInicial } from "@/shared/services/inicial/inicial.services"
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/authOptions";
 import { signOut } from "next-auth/react";
-import { FinalizacaoPaginado, IFinalizacaoResponse, IFinalizacao } from "@/types/finalizacao/finalizacao.dto";
+import { IFinalizacaoResponse, IFinalizacao } from "@/types/finalizacao/finalizacao.dto";
 
 const baseURL = process.env.API_URL || 'http://localhost:3000/';
 
