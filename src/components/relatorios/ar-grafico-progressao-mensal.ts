@@ -1,7 +1,5 @@
-import { AlignHorizontalCenter, Style } from "@mui/icons-material";
-import { text } from "stream/consumers";
-
 export const getArGraficoProgressaoMensal = async (month: string, year: string) => {
+
   const docDefinition = {
     content: [
       {text: 'Progressão AR Protocolados'},
@@ -9,7 +7,10 @@ export const getArGraficoProgressaoMensal = async (month: string, year: string) 
       {
         layout: {
          vLineColor:'#000000',
-         hLineColor: '#E0D8D3'
+         hLineColor: (i: number) => {
+          if ([0,1].includes(i)) return '#000000';
+          return '#E0D8D3'
+         }
 
         },
         table: {
@@ -17,10 +18,10 @@ export const getArGraficoProgressaoMensal = async (month: string, year: string) 
           widths: [60, 130, 55, 130],
           body: [
             [
-              { text: 'Ano', style: 'header'  },
-              { text: 'Mês', style: 'header' },
-              { text: 'Mensal', style: 'header' },
-              { text: 'Acumulado', style: 'header' }
+              { text: 'Ano', style: 'header', layout: 'noBorders'  },
+              { text: 'Mês', style: 'header', layout: 'noBorders' },
+              { text: 'Mensal', style: 'header', layout: 'noBorders' },
+              { text: 'Acumulado', style: 'header', layout: 'noBorders' }
             ],
 
             [
@@ -117,9 +118,6 @@ export const getArGraficoProgressaoMensal = async (month: string, year: string) 
       },
       monthlyAndAccCel: {
         alignment: 'right'
-      },
-      monthlyCel: {
-        color: 'green'
       },
       insivibleLine: {
         margin: [0, 10, 0, 10]
