@@ -51,163 +51,972 @@ export const getArControleGabinetePrefeito = async (
 							{ text: 'REGIÃO DA CIDADE', style: 'tableHeader' },
 						],
 						[
-							{ text: 'JANEIRO', style: 'tableCell', rowSpan: 2 },
-							{ text: '4', style: 'tableCell', rowSpan: 2 },
-							{ text: '2', style: 'tableCell', rowSpan: 2 },
+							{ text: 'JANEIRO', style: 'tableCell' },
+							{ text: '4', style: 'tableCell' },
+							{ text: '2', style: 'tableCell' },
+
 							{
-								text: ['2018.0.034.567-1  ', '2018.0.034.567-1'],
-								style: 'tableCell',
-								rowSpan: 2,
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+									],
+								},
 							},
-							{ text: ['32', '42'], style: 'tableCell', rowSpan: 2 },
-							{ text: '--', style: 'tableCell', rowSpan: 2 },
-							{ text: '--', style: 'tableCell', rowSpan: 2 },
-							{ text: '--', style: 'tableCell', rowSpan: 2 },
-							{ text: '--', style: 'tableCell', rowSpan: 2 },
-							{ text: '--', style: 'tableCell', rowSpan: 2 },
-							{ text: '--', style: 'tableCell', rowSpan: 2 },
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '32', style: 'tableCell' }],
+										[{ text: '42', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '52', style: 'tableCell' }],
+										[{ text: '22', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'HMP', style: 'tableCell' }],
+										[{ text: 'HIS', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Rafael Pereira', style: 'tableCell' }],
+										[{ text: 'João Santos', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Empresa 1', style: 'tableCell' }],
+										[{ text: 'Empresa 2', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Zona Leste', style: 'tableCell' }],
+										[{ text: 'Zona Oeste', style: 'tableCell' }],
+									],
+								},
+							},
 						],
 						[
 							{ text: 'FEVEREIRO', style: 'tableCell' },
-							{ text: '5', style: 'tableCell' },
-							{ text: '3', style: 'tableCell', rowSpan: 3 },
-							{
-								text: [
-									'2018.0.045.678-2',
-									'2018.0.045.678-2',
-									'2018.0.045.678-2',
-								],
-								style: 'tableCell',
-								rowSpan: 3,
-							},
+							{ text: '4', style: 'tableCell' },
+							{ text: '2', style: 'tableCell' },
 
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '32', style: 'tableCell' }],
+										[{ text: '42', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '52', style: 'tableCell' }],
+										[{ text: '22', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'HMP', style: 'tableCell' }],
+										[{ text: 'HIS', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Rafael Pereira', style: 'tableCell' }],
+										[{ text: 'João Santos', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Empresa 1', style: 'tableCell' }],
+										[{ text: 'Empresa 2', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Zona Leste', style: 'tableCell' }],
+										[{ text: 'Zona Oeste', style: 'tableCell' }],
+									],
+								},
+							},
 						],
 						[
 							{ text: 'ABRIL', style: 'tableCell' },
-							{ text: '7', style: 'tableCell' },
-							{ text: '6', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
+							{ text: '4', style: 'tableCell' },
+							{ text: '2', style: 'tableCell' },
+
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '32', style: 'tableCell' }],
+										[{ text: '42', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '52', style: 'tableCell' }],
+										[{ text: '22', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'HMP', style: 'tableCell' }],
+										[{ text: 'HIS', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Rafael Pereira', style: 'tableCell' }],
+										[{ text: 'João Santos', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Empresa 1', style: 'tableCell' }],
+										[{ text: 'Empresa 2', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Zona Leste', style: 'tableCell' }],
+										[{ text: 'Zona Oeste', style: 'tableCell' }],
+									],
+								},
+							},
 						],
 						[
 							{ text: 'MAIO', style: 'tableCell' },
-							{ text: '6', style: 'tableCell' },
 							{ text: '4', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
+							{ text: '2', style: 'tableCell' },
+
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '32', style: 'tableCell' }],
+										[{ text: '42', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '52', style: 'tableCell' }],
+										[{ text: '22', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'HMP', style: 'tableCell' }],
+										[{ text: 'HIS', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Rafael Pereira', style: 'tableCell' }],
+										[{ text: 'João Santos', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Empresa 1', style: 'tableCell' }],
+										[{ text: 'Empresa 2', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Zona Leste', style: 'tableCell' }],
+										[{ text: 'Zona Oeste', style: 'tableCell' }],
+									],
+								},
+							},
 						],
 						[
 							{ text: 'JUNHO', style: 'tableCell' },
-							{ text: '7', style: 'tableCell' },
-							{ text: '6', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
+							{ text: '4', style: 'tableCell' },
+							{ text: '2', style: 'tableCell' },
+
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '32', style: 'tableCell' }],
+										[{ text: '42', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '52', style: 'tableCell' }],
+										[{ text: '22', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'HMP', style: 'tableCell' }],
+										[{ text: 'HIS', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Rafael Pereira', style: 'tableCell' }],
+										[{ text: 'João Santos', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Empresa 1', style: 'tableCell' }],
+										[{ text: 'Empresa 2', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Zona Leste', style: 'tableCell' }],
+										[{ text: 'Zona Oeste', style: 'tableCell' }],
+									],
+								},
+							},
 						],
 						[
 							{ text: 'JULHO', style: 'tableCell' },
-							{ text: '6', style: 'tableCell' },
-							{ text: '5', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
+							{ text: '4', style: 'tableCell' },
+							{ text: '2', style: 'tableCell' },
+
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '32', style: 'tableCell' }],
+										[{ text: '42', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '52', style: 'tableCell' }],
+										[{ text: '22', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'HMP', style: 'tableCell' }],
+										[{ text: 'HIS', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Rafael Pereira', style: 'tableCell' }],
+										[{ text: 'João Santos', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Empresa 1', style: 'tableCell' }],
+										[{ text: 'Empresa 2', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Zona Leste', style: 'tableCell' }],
+										[{ text: 'Zona Oeste', style: 'tableCell' }],
+									],
+								},
+							},
 						],
 						[
 							{ text: 'AGOSTO', style: 'tableCell' },
-							{ text: '3', style: 'tableCell' },
-							{ text: '1', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
+							{ text: '4', style: 'tableCell' },
+							{ text: '2', style: 'tableCell' },
+
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '32', style: 'tableCell' }],
+										[{ text: '42', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '52', style: 'tableCell' }],
+										[{ text: '22', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'HMP', style: 'tableCell' }],
+										[{ text: 'HIS', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Rafael Pereira', style: 'tableCell' }],
+										[{ text: 'João Santos', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Empresa 1', style: 'tableCell' }],
+										[{ text: 'Empresa 2', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Zona Leste', style: 'tableCell' }],
+										[{ text: 'Zona Oeste', style: 'tableCell' }],
+									],
+								},
+							},
 						],
 						[
 							{ text: 'SETEMBRO', style: 'tableCell' },
-							{ text: '6', style: 'tableCell' },
 							{ text: '4', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
+							{ text: '2', style: 'tableCell' },
+
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '32', style: 'tableCell' }],
+										[{ text: '42', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '52', style: 'tableCell' }],
+										[{ text: '22', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'HMP', style: 'tableCell' }],
+										[{ text: 'HIS', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Rafael Pereira', style: 'tableCell' }],
+										[{ text: 'João Santos', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Empresa 1', style: 'tableCell' }],
+										[{ text: 'Empresa 2', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Zona Leste', style: 'tableCell' }],
+										[{ text: 'Zona Oeste', style: 'tableCell' }],
+									],
+								},
+							},
 						],
 						[
 							{ text: 'OUTUBRO', style: 'tableCell' },
-							{ text: '7', style: 'tableCell' },
-							{ text: '5', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
+							{ text: '4', style: 'tableCell' },
+							{ text: '2', style: 'tableCell' },
+
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '32', style: 'tableCell' }],
+										[{ text: '42', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '52', style: 'tableCell' }],
+										[{ text: '22', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'HMP', style: 'tableCell' }],
+										[{ text: 'HIS', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Rafael Pereira', style: 'tableCell' }],
+										[{ text: 'João Santos', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Empresa 1', style: 'tableCell' }],
+										[{ text: 'Empresa 2', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Zona Leste', style: 'tableCell' }],
+										[{ text: 'Zona Oeste', style: 'tableCell' }],
+									],
+								},
+							},
 						],
 						[
 							{ text: 'NOVEMBRO', style: 'tableCell' },
-							{ text: '8', style: 'tableCell' },
-							{ text: '6', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
+							{ text: '4', style: 'tableCell' },
+							{ text: '2', style: 'tableCell' },
+
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '32', style: 'tableCell' }],
+										[{ text: '42', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '52', style: 'tableCell' }],
+										[{ text: '22', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'HMP', style: 'tableCell' }],
+										[{ text: 'HIS', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Rafael Pereira', style: 'tableCell' }],
+										[{ text: 'João Santos', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Empresa 1', style: 'tableCell' }],
+										[{ text: 'Empresa 2', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Zona Leste', style: 'tableCell' }],
+										[{ text: 'Zona Oeste', style: 'tableCell' }],
+									],
+								},
+							},
 						],
 						[
 							{ text: 'DEZEMBRO', style: 'tableCell' },
-							{ text: '3', style: 'tableCell' },
+							{ text: '4', style: 'tableCell' },
 							{ text: '2', style: 'tableCell' },
-							{ text: '2018.0.048.779-3', style: 'tableCell' },
-							{ text: '37', style: 'tableCell' },
-							{ text: '--', style: 'tableCell' },
-							{ text: 'HMP / HIS-1 / HIS 2', style: 'tableCell' },
-							{ text: 'William Vitor de Souza', style: 'tableCell' },
-							{ text: 'Stônia Maria Simão Jacob', style: 'tableCell' },
+
 							{
-								text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
-								style: 'tableCell',
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+										[{ text: '2018.0.034.567-1', style: 'tableCell' }],
+									],
+								},
 							},
-							{ text: 'Zona Leste', style: 'tableCell' },
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '32', style: 'tableCell' }],
+										[{ text: '42', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: '52', style: 'tableCell' }],
+										[{ text: '22', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'HMP', style: 'tableCell' }],
+										[{ text: 'HIS', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Rafael Pereira', style: 'tableCell' }],
+										[{ text: 'João Santos', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Empresa 1', style: 'tableCell' }],
+										[{ text: 'Empresa 2', style: 'tableCell' }],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+										[
+											{
+												text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+												style: 'tableCaracteristica',
+											},
+										],
+									],
+								},
+							},
+							{
+								layout: 'headerLineOnly',
+								table: {
+									body: [
+										[{ text: 'Zona Leste', style: 'tableCell' }],
+										[{ text: 'Zona Oeste', style: 'tableCell' }],
+									],
+								},
+							},
 						],
 						// Continue adicionando os dados das linhas aqui...
 					],
@@ -236,10 +1045,9 @@ export const getArControleGabinetePrefeito = async (
 			},
 			tableCell: {
 				fontSize: 8,
-				borderTopColor: 'black',
-				borderTopSize: 2,
-				display: 'flex',
-				flexDirection: 'column',
+			},
+			tableCaracteristica: {
+				fontSize: 7,
 			},
 		},
 	};
