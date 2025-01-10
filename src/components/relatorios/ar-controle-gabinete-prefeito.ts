@@ -1,17 +1,247 @@
-export const getArControleGabinetePrefeito = async (month: string, year: string) => {
-  // const quantitativo: IAprovaRapidoQuantitativoResponse = await getRelatorioArQuantitativo(month, year);
-  // if (!quantitativo) throw new Error("Não existe relatório na variável quantitativo - PDF");
-  const docDefinition = {
-      content: [
-        { text: 'Testando o pdf', style: 'classe_teste' }
-      ],
-  
-      // Estilização via CSS personalizado
-      styles: {
-        classe_teste: {
-          color: 'blue'
-        }
-      }
-    };
-    return docDefinition;
+/** @format */
+
+export const getArControleGabinetePrefeito = async (
+	month: string,
+	year: string,
+) => {
+	// const quantitativo: IAprovaRapidoQuantitativoResponse = await getRelatorioArQuantitativo(month, year);
+	// if (!quantitativo) throw new Error("Não existe relatório na variável quantitativo - PDF");
+	const docDefinition = {
+		pageOrientation: 'landscape',
+		content: [
+			{ text: 'APROVA RÁPIDO', style: 'heading1' },
+			{
+				text: 'RELAÇÃO DE PROCESSOS PROTOCOLADOS | PROCESSOS DEFERIDOS',
+				style: 'heading2',
+			},
+			{
+				table: {
+					headerRows: 1,
+					widths: [
+						'8%',
+						'10%',
+						'8%',
+						'10%',
+						'9%',
+						'8.5%',
+						'8%',
+						'8%',
+						'10%',
+						'13%',
+						'8%',
+					],
+					body: [
+						[
+							{ text: 'MÊS/2018', style: 'tableHeader' },
+							{
+								text: 'PROCESSOS PROTOCOLADOS APROVA RÁPIDO',
+								style: 'tableHeader',
+							},
+							{ text: 'PROCESSOS APROVADOS', style: 'tableHeader' },
+							{ text: 'Nº PROCESSO', style: 'tableHeader' },
+							{
+								text: 'TEMPO DE ANÁLISE PEDIDO INICIAL (dias)',
+								style: 'tableHeader',
+							},
+							{ text: 'TEMPO DE ANÁLISE RECURSO (dias)', style: 'tableHeader' },
+							{ text: 'CATEGORIA DE USO', style: 'tableHeader' },
+							{ text: 'RESPONSÁVEL PELO PROJETO', style: 'tableHeader' },
+							{ text: 'EMPRESA', style: 'tableHeader' },
+							{ text: 'CARACTERÍSTICAS PROJETO', style: 'tableHeader' },
+							{ text: 'REGIÃO DA CIDADE', style: 'tableHeader' },
+						],
+						[
+							{ text: 'JANEIRO', style: 'tableCell', rowSpan: 2 },
+							{ text: '4', style: 'tableCell', rowSpan: 2 },
+							{ text: '2', style: 'tableCell', rowSpan: 2 },
+							{
+								text: ['2018.0.034.567-1  ', '2018.0.034.567-1'],
+								style: 'tableCell',
+								rowSpan: 2,
+							},
+							{ text: ['32', '42'], style: 'tableCell', rowSpan: 2 },
+							{ text: '--', style: 'tableCell', rowSpan: 2 },
+							{ text: '--', style: 'tableCell', rowSpan: 2 },
+							{ text: '--', style: 'tableCell', rowSpan: 2 },
+							{ text: '--', style: 'tableCell', rowSpan: 2 },
+							{ text: '--', style: 'tableCell', rowSpan: 2 },
+							{ text: '--', style: 'tableCell', rowSpan: 2 },
+						],
+						[
+							{ text: 'FEVEREIRO', style: 'tableCell' },
+							{ text: '5', style: 'tableCell' },
+							{ text: '3', style: 'tableCell', rowSpan: 3 },
+							{
+								text: [
+									'2018.0.045.678-2',
+									'2018.0.045.678-2',
+									'2018.0.045.678-2',
+								],
+								style: 'tableCell',
+								rowSpan: 3,
+							},
+
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+						],
+						[
+							{ text: 'ABRIL', style: 'tableCell' },
+							{ text: '7', style: 'tableCell' },
+							{ text: '6', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+						],
+						[
+							{ text: 'MAIO', style: 'tableCell' },
+							{ text: '6', style: 'tableCell' },
+							{ text: '4', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+						],
+						[
+							{ text: 'JUNHO', style: 'tableCell' },
+							{ text: '7', style: 'tableCell' },
+							{ text: '6', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+						],
+						[
+							{ text: 'JULHO', style: 'tableCell' },
+							{ text: '6', style: 'tableCell' },
+							{ text: '5', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+						],
+						[
+							{ text: 'AGOSTO', style: 'tableCell' },
+							{ text: '3', style: 'tableCell' },
+							{ text: '1', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+						],
+						[
+							{ text: 'SETEMBRO', style: 'tableCell' },
+							{ text: '6', style: 'tableCell' },
+							{ text: '4', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+						],
+						[
+							{ text: 'OUTUBRO', style: 'tableCell' },
+							{ text: '7', style: 'tableCell' },
+							{ text: '5', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+						],
+						[
+							{ text: 'NOVEMBRO', style: 'tableCell' },
+							{ text: '8', style: 'tableCell' },
+							{ text: '6', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+						],
+						[
+							{ text: 'DEZEMBRO', style: 'tableCell' },
+							{ text: '3', style: 'tableCell' },
+							{ text: '2', style: 'tableCell' },
+							{ text: '2018.0.048.779-3', style: 'tableCell' },
+							{ text: '37', style: 'tableCell' },
+							{ text: '--', style: 'tableCell' },
+							{ text: 'HMP / HIS-1 / HIS 2', style: 'tableCell' },
+							{ text: 'William Vitor de Souza', style: 'tableCell' },
+							{ text: 'Stônia Maria Simão Jacob', style: 'tableCell' },
+							{
+								text: 'Dois blocos, com 23 e 22 pavimentos, totalizando 392 unidades',
+								style: 'tableCell',
+							},
+							{ text: 'Zona Leste', style: 'tableCell' },
+						],
+						// Continue adicionando os dados das linhas aqui...
+					],
+				},
+			},
+		],
+
+		// Estilização via CSS personalizado
+		styles: {
+			heading1: {
+				fontSize: 18,
+				bold: true,
+				marginBottom: 8,
+				color: 'black',
+			},
+			heading2: {
+				fontSize: 14,
+				semibold: true,
+				marginBottom: 16,
+				color: 'grey',
+			},
+			tableHeader: {
+				bold: true,
+				fontSize: 8,
+				color: 'black',
+			},
+			tableCell: {
+				fontSize: 8,
+				borderTopColor: 'black',
+				borderTopSize: 2,
+				display: 'flex',
+				flexDirection: 'column',
+			},
+		},
+	};
+	return docDefinition;
 };
