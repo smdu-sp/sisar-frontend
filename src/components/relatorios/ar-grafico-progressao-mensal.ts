@@ -1,13 +1,93 @@
+// Definindo o tipo dos dados que serão passados para a função
+type DadosMes = {
+  mes: string;
+  mensal: number;
+  acc: number;
+};
+
+type LinhaDados = {
+  ano: number;
+  jan: DadosMes;
+  fev: DadosMes;
+  mar: DadosMes;
+  abr: DadosMes;
+  mai: DadosMes;
+  jun: DadosMes;
+  jul: DadosMes;
+  ago: DadosMes;
+  set: DadosMes;
+  out: DadosMes;
+  nov: DadosMes;
+  dez: DadosMes;
+};
+
+// Função para gerar as linhas dos dados com base no padrão de estilo solicitado
+function gerarLinhaDados(data: LinhaDados): { text: string | number, style: string }[][] {
+  return [
+    [
+      { text: `${data.ano}`, style: 'yearCell' },
+      { text: data.jan.mes, style: 'monthCell' },
+      { text: data.jan.mensal, style: 'monthlyAndAccCel' },
+      { text: data.jan.acc, style: 'monthlyAndAccCel' },
+
+      { text: data.fev.mes, style: 'monthCell' },
+      { text: data.fev.mensal, style: 'monthlyAndAccCel' },
+      { text: data.fev.acc, style: 'monthlyAndAccCel' },
+
+      { text: data.mar.mes, style: 'monthCell' },
+      { text: data.mar.mensal, style: 'monthlyAndAccCel' },
+      { text: data.mar.acc, style: 'monthlyAndAccCel' },
+
+      { text: data.abr.mes, style: 'monthCell' }, 
+      { text: data.abr.mensal, style: 'monthlyAndAccCel' },  
+      { text: data.abr.acc, style: 'monthlyAndAccCel' },
+
+      { text: data.mai.mes, style: 'monthCell' }, 
+      { text: data.mai.mensal, style: 'monthlyAndAccCel' },
+      { text: data.mai.acc, style: 'monthlyAndAccCel' },
+
+      { text: data.jun.mes, style: 'monthCell' },
+      { text: data.jun.mensal, style: 'monthlyAndAccCel' },
+      { text: data.jun.acc, style: 'monthlyAndAccCel' },
+
+      { text: data.jul.mes, style: 'monthCell' },
+      { text: data.jul.mensal, style: 'monthlyAndAccCel' },
+      { text: data.jul.acc, style: 'monthlyAndAccCel' },
+
+      { text: data.ago.mes, style: 'monthCell' },
+      { text: data.ago.mensal, style: 'monthlyAndAccCel' },
+      { text: data.ago.acc, style: 'monthlyAndAccCel' },
+
+      { text: data.set.mes, style: 'monthCell' },
+      { text: data.set.mensal, style: 'monthlyAndAccCel' },
+      { text: data.set.acc, style: 'monthlyAndAccCel' },
+
+      { text: data.out.mes, style: 'monthCell' },
+      { text: data.out.mensal, style: 'monthlyAndAccCel' },
+      { text: data.out.acc, style: 'monthlyAndAccCel' },
+
+      { text: data.nov.mes, style: 'monthCell' },
+      { text: data.nov.mensal, style: 'monthlyAndAccCel' },
+      { text: data.nov.acc, style: 'monthlyAndAccCel' },
+
+      { text: data.dez.mes, style: 'monthCell' },
+      { text: data.dez.mensal, style: 'monthlyAndAccCel' },
+      { text: data.dez.acc, style: 'monthlyAndAccCel' },
+    ],
+  ];
+}
+
+
 export const getArGraficoProgressaoMensal = async (month: string, year: string) => {
-  const anos = [2018, 2019, 2020, 2021, 2022, 2023, 2024];
 
   const docDefinition = {
+    pageOrientation: 'landscape',
     content: [
       { text: 'Progressão AR Protocolados' },
       { text: '', style: 'insivibleLine' },
 
       // Itera sobre os anos e cria uma tabela para cada um
-      ...anos.map((ano) => ({
+      ...arrProgProct.map((obj) => ({
         layout: {
           vLineColor: '#000000',
           hLineColor: (i: number) => {
@@ -27,33 +107,16 @@ export const getArGraficoProgressaoMensal = async (month: string, year: string) 
             ],
 
             // Meses são fixos, mas o ano será dinâmico
-            ...[
-              { mes: 'Janeiro', mensal: '100', acumulado: '100' },
-              { mes: 'Fevereiro', mensal: '100', acumulado: '100' },
-              { mes: 'Março', mensal: '100', acumulado: '100' },
-              { mes: 'Abril', mensal: '100', acumulado: '100' },
-              { mes: 'Maio', mensal: '100', acumulado: '100' },
-              { mes: 'Junho', mensal: '100', acumulado: '100' },
-              { mes: 'Julho', mensal: '100', acumulado: '100' },
-              { mes: 'Agosto', mensal: '100', acumulado: '100' },
-              { mes: 'Setembro', mensal: '100', acumulado: '100' },
-              { mes: 'Outubro', mensal: '100', acumulado: '100' },
-              { mes: 'Novembro', mensal: '100', acumulado: '100' },
-              { mes: 'Dezembro', mensal: '100', acumulado: '100' },
-            ].map(({ mes, mensal, acumulado }) => [
-              { text: `${ano}`, style: 'yearCell' },
+              { text: `${obj.ano}`, style: 'yearCell' },
               { text: mes },
               { text: mensal, style: 'monthlyAndAccCel' },
               { text: acumulado, style: 'monthlyAndAccCel' }
-            ])
+
           ]
         }
       })),
     ],
     styles: {
-      classe_teste: {
-        color: 'blue'
-      },
       header: {
         alignment: 'center',
         text: 'bold',
