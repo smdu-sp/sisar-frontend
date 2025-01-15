@@ -1,9 +1,299 @@
 export const getArGraficoProgressaoMensal = async (month: string, year: string) => {
 
   const docDefinition = {
+    pageOrientation: 'landscape',
     content: [
       {text: 'Progressão AR Protocolados'},
       {text: '', style: 'insivibleLine'},
+      
+      {
+        layout: {
+         vLineColor:'#000000',
+         hLineColor: (i: number) => {
+          if ([0,1].includes(i)) return '#000000';
+          return '#E0D8D3'
+         }
+
+        },
+        table: {
+          headerRows: 1,
+          widths: [60, 130, 55, 130],
+          body: [
+            [
+              { text: 'Ano', style: 'header', layout: 'noBorders'  },
+              { text: 'Mês', style: 'header', layout: 'noBorders' },
+              { text: 'Mensal', style: 'header', layout: 'noBorders' },
+              { text: 'Acumulado', style: 'header', layout: 'noBorders' }
+            ],
+
+            [
+              {text: '2018', rowSpan:12, style: 'yearCell'},
+              {text: 'Janeiro'},
+              {text: '100', style: 'monthlyAndAccCel'},
+              {text: '100', style: 'monthlyAndAccCel'},
+            ],
+
+            [
+              { text: '2025'},
+              { text: 'Fevereiro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Março'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Abril'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Maio'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Junho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Julho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Agosto'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Setembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Outubro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Novembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Dezembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ]
+          ]
+        }
+      },
+      {
+        layout: {
+         vLineColor:'#000000',
+         hLineColor: (i: number) => {
+          if ([0,1].includes(i)) return '#000000';
+          return '#E0D8D3'
+         }
+
+        },
+        table: {
+          headerRows: 1,
+          widths: [60, 130, 55, 130],
+          body: [
+            [
+              { text: 'Ano', style: 'header', layout: 'noBorders'  },
+              { text: 'Mês', style: 'header', layout: 'noBorders' },
+              { text: 'Mensal', style: 'header', layout: 'noBorders' },
+              { text: 'Acumulado', style: 'header', layout: 'noBorders' }
+            ],
+
+            [
+              {text: '2019', rowSpan:12, style: 'yearCell'},
+              {text: 'Janeiro'},
+              {text: '100', style: 'monthlyAndAccCel'},
+              {text: '100', style: 'monthlyAndAccCel'},
+            ],
+
+            [
+              { text: '2025'},
+              { text: 'Fevereiro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Março'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Abril'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Maio'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Junho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Julho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Agosto'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Setembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Outubro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Novembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Dezembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ]
+          ]
+        }
+      },
+      {
+        layout: {
+         vLineColor:'#000000',
+         hLineColor: (i: number) => {
+          if ([0,1].includes(i)) return '#000000';
+          return '#E0D8D3'
+         }
+
+        },
+        table: {
+          headerRows: 1,
+          widths: [60, 130, 55, 130],
+          body: [
+            [
+              { text: 'Ano', style: 'header', layout: 'noBorders'  },
+              { text: 'Mês', style: 'header', layout: 'noBorders' },
+              { text: 'Mensal', style: 'header', layout: 'noBorders' },
+              { text: 'Acumulado', style: 'header', layout: 'noBorders' }
+            ],
+
+            [
+              {text: '2020', rowSpan:12, style: 'yearCell'},
+              {text: 'Janeiro'},
+              {text: '100', style: 'monthlyAndAccCel'},
+              {text: '100', style: 'monthlyAndAccCel'},
+            ],
+
+            [
+              { text: '2025'},
+              { text: 'Fevereiro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Março'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Abril'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Maio'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Junho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Julho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Agosto'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Setembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Outubro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Novembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Dezembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ]
+          ]
+        }
+      },
       {
         layout: {
          vLineColor:'#000000',
@@ -26,6 +316,294 @@ export const getArGraficoProgressaoMensal = async (month: string, year: string) 
 
             [
               {text: '2025', rowSpan:12, style: 'yearCell'},
+              {text: 'Janeiro'},
+              {text: '100', style: 'monthlyAndAccCel'},
+              {text: '100', style: 'monthlyAndAccCel'},
+            ],
+
+            [
+              { text: '2021'},
+              { text: 'Fevereiro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Março'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Abril'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Maio'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Junho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Julho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Agosto'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Setembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Outubro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Novembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Dezembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ]
+          ]
+        }
+      },
+      {
+        layout: {
+         vLineColor:'#000000',
+         hLineColor: (i: number) => {
+          if ([0,1].includes(i)) return '#000000';
+          return '#E0D8D3'
+         }
+
+        },
+        table: {
+          headerRows: 1,
+          widths: [60, 130, 55, 130],
+          body: [
+            [
+              { text: 'Ano', style: 'header', layout: 'noBorders'  },
+              { text: 'Mês', style: 'header', layout: 'noBorders' },
+              { text: 'Mensal', style: 'header', layout: 'noBorders' },
+              { text: 'Acumulado', style: 'header', layout: 'noBorders' }
+            ],
+
+            [
+              {text: '2025', rowSpan:12, style: 'yearCell'},
+              {text: 'Janeiro'},
+              {text: '100', style: 'monthlyAndAccCel'},
+              {text: '100', style: 'monthlyAndAccCel'},
+            ],
+
+            [
+              { text: '2022'},
+              { text: 'Fevereiro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Março'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Abril'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Maio'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Junho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Julho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Agosto'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Setembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Outubro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Novembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Dezembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ]
+          ]
+        }
+      },
+      {
+        layout: {
+         vLineColor:'#000000',
+         hLineColor: (i: number) => {
+          if ([0,1].includes(i)) return '#000000';
+          return '#E0D8D3'
+         }
+
+        },
+        table: {
+          headerRows: 1,
+          widths: [60, 130, 55, 130],
+          body: [
+            [
+              { text: 'Ano', style: 'header', layout: 'noBorders'  },
+              { text: 'Mês', style: 'header', layout: 'noBorders' },
+              { text: 'Mensal', style: 'header', layout: 'noBorders' },
+              { text: 'Acumulado', style: 'header', layout: 'noBorders' }
+            ],
+
+            [
+              {text: '2023', rowSpan:12, style: 'yearCell'},
+              {text: 'Janeiro'},
+              {text: '100', style: 'monthlyAndAccCel'},
+              {text: '100', style: 'monthlyAndAccCel'},
+            ],
+
+            [
+              { text: '2025'},
+              { text: 'Fevereiro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Março'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Abril'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Maio'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Junho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Julho'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Agosto'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Setembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Outubro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Novembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ],
+            [
+              { text: '2025'},
+              { text: 'Dezembro'},
+              { text: '100', style: 'monthlyAndAccCel' },
+              { text: '100', style: 'monthlyAndAccCel' }
+            ]
+          ]
+        }
+      },
+      {
+        layout: {
+         vLineColor:'#000000',
+         hLineColor: (i: number) => {
+          if ([0,1].includes(i)) return '#000000';
+          return '#E0D8D3'
+         }
+
+        },
+        table: {
+          headerRows: 1,
+          widths: [60, 130, 55, 130],
+          body: [
+            [
+              { text: 'Ano', style: 'header', layout: 'noBorders'  },
+              { text: 'Mês', style: 'header', layout: 'noBorders' },
+              { text: 'Mensal', style: 'header', layout: 'noBorders' },
+              { text: 'Acumulado', style: 'header', layout: 'noBorders' }
+            ],
+
+            [
+              {text: '2024', rowSpan:12, style: 'yearCell'},
               {text: 'Janeiro'},
               {text: '100', style: 'monthlyAndAccCel'},
               {text: '100', style: 'monthlyAndAccCel'},
@@ -105,6 +683,7 @@ export const getArGraficoProgressaoMensal = async (month: string, year: string) 
       classe_teste: {
         color: 'blue'
       },
+      pageOrientation: 'landscape',
       header: {
         alignment: 'center',
         text: 'bold',
