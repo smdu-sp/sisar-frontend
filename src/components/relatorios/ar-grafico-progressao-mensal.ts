@@ -1,26 +1,26 @@
-type DadosMes = {
+type MesDadosType = {
   mes: string;
   mensal: number;
   acc: number;
 };
 
-type LinhaDados = {
+type LinhasTabelasDadosType = {
   ano: number;
-  jan: DadosMes;
-  fev: DadosMes;
-  mar: DadosMes;
-  abr: DadosMes;
-  mai: DadosMes;
-  jun: DadosMes;
-  jul: DadosMes;
-  ago: DadosMes;
-  set: DadosMes;
-  out: DadosMes;
-  nov: DadosMes;
-  dez: DadosMes;
+  jan: MesDadosType;
+  fev: MesDadosType;
+  mar: MesDadosType;
+  abr: MesDadosType;
+  mai: MesDadosType;
+  jun: MesDadosType;
+  jul: MesDadosType;
+  ago: MesDadosType;
+  set: MesDadosType;
+  out: MesDadosType;
+  nov: MesDadosType;
+  dez: MesDadosType;
 };
 
-type TableRowType = {
+type LinhaTabelaType = {
   text: string | number;
   style: string;
   rowSpan?: number
@@ -29,7 +29,7 @@ type TableRowType = {
 type TableType = {
   headerRows?: number;
   widths?: number[];
-  body?: TableRowType[][]
+  body?: LinhaTabelaType[][]
 }
 
 type LayoutType = {
@@ -42,7 +42,7 @@ type ObjectContent = {
   table?: TableType
 }
 
-const arrProgProct: LinhaDados[] = [
+const arrProgProct: LinhasTabelasDadosType[] = [
   {
     ano: 2018,
     jan: {
@@ -485,112 +485,41 @@ const arrProgProct: LinhaDados[] = [
   }
 ]
 
+function gerarLinhasDados(data:)
 
 ///////////////////////
 
 export const getArGraficoProgressaoMensal = async (month: string, year: string) => {
 
   const docDefinition = {
-    // content: [
-    //   {text: 'Progressão AR Protocolados'},
-    //   {text: '', style: 'insivibleLine'},
-    //   {
-    //     layout: {
-    //      vLineColor:'#000000',
-    //      hLineColor: (i: number) => {
-    //       if ([0,1].includes(i)) return '#000000';
-    //       return '#E0D8D3'
-    //      }
+    content: [
+      { text: 'Progressão AR Protocolados' },
+      { text: '', style: 'insivibleLine' },
+      {
+        layout: {
+          vLineColor: '#000000',
+          hLineColor: (i: number) => {
+            if ([0, 1].includes(i)) return '#000000';
+            return '#E0D8D3'
+          }
 
-    //     },
-    //     table: {
-    //       headerRows: 1,
-    //       widths: [60, 130, 55, 130],
-    //       body: [
-    //         [
-    //           { text: 'Ano', style: 'header', layout: 'noBorders'  },
-    //           { text: 'Mês', style: 'header', layout: 'noBorders' },
-    //           { text: 'Mensal', style: 'header', layout: 'noBorders' },
-    //           { text: 'Acumulado', style: 'header', layout: 'noBorders' }
-    //         ],
+        },
+        table: {
+          headerRows: 1,
+          widths: [60, 130, 55, 130],
+          body: [
+            [
+              { text: 'Ano', style: 'header', layout: 'noBorders' },
+              { text: 'Mês', style: 'header', layout: 'noBorders' },
+              { text: 'Mensal', style: 'header', layout: 'noBorders' },
+              { text: 'Acumulado', style: 'header', layout: 'noBorders' },
 
-    //         [
-    //           {text: '2025', rowSpan: 12, style: 'yearCell'},
-    //           {text: 'Janeiro'},
-    //           {text: '100', style: 'monthlyAndAccCel'},
-    //           {text: '100', style: 'monthlyAndAccCel'},
-    //         ],
+            ]
 
-    //         [
-    //           { text: '2025'},
-    //           { text: 'Fevereiro'},
-    //           { text: '100', style: 'monthlyAndAccCel' },
-    //           { text: '100', style: 'monthlyAndAccCel' }
-    //         ],
-    //         [
-    //           { text: '2025'},
-    //           { text: 'Março'},
-    //           { text: '100', style: 'monthlyAndAccCel' },
-    //           { text: '100', style: 'monthlyAndAccCel' }
-    //         ],
-    //         [
-    //           { text: '2025'},
-    //           { text: 'Abril'},
-    //           { text: '100', style: 'monthlyAndAccCel' },
-    //           { text: '100', style: 'monthlyAndAccCel' }
-    //         ],
-    //         [
-    //           { text: '2025'},
-    //           { text: 'Maio'},
-    //           { text: '100', style: 'monthlyAndAccCel' },
-    //           { text: '100', style: 'monthlyAndAccCel' }
-    //         ],
-    //         [
-    //           { text: '2025'},
-    //           { text: 'Junho'},
-    //           { text: '100', style: 'monthlyAndAccCel' },
-    //           { text: '100', style: 'monthlyAndAccCel' }
-    //         ],
-    //         [
-    //           { text: '2025'},
-    //           { text: 'Julho'},
-    //           { text: '100', style: 'monthlyAndAccCel' },
-    //           { text: '100', style: 'monthlyAndAccCel' }
-    //         ],
-    //         [
-    //           { text: '2025'},
-    //           { text: 'Agosto'},
-    //           { text: '100', style: 'monthlyAndAccCel' },
-    //           { text: '100', style: 'monthlyAndAccCel' }
-    //         ],
-    //         [
-    //           { text: '2025'},
-    //           { text: 'Setembro'},
-    //           { text: '100', style: 'monthlyAndAccCel' },
-    //           { text: '100', style: 'monthlyAndAccCel' }
-    //         ],
-    //         [
-    //           { text: '2025'},
-    //           { text: 'Outubro'},
-    //           { text: '100', style: 'monthlyAndAccCel' },
-    //           { text: '100', style: 'monthlyAndAccCel' }
-    //         ],
-    //         [
-    //           { text: '2025'},
-    //           { text: 'Novembro'},
-    //           { text: '100', style: 'monthlyAndAccCel' },
-    //           { text: '100', style: 'monthlyAndAccCel' }
-    //         ],
-    //         [
-    //           { text: '2025'},
-    //           { text: 'Dezembro'},
-    //           { text: '100', style: 'monthlyAndAccCel' },
-    //           { text: '100', style: 'monthlyAndAccCel' }
-    //         ]
-    //       ]
-    //     }
-    //   },
-    // ],
+          ]
+        }
+      },
+    ],
 
     styles: {
       classe_teste: {
