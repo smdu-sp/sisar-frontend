@@ -73,9 +73,9 @@ const gerarLinhasDeDados = (data: { nome: string, count: number }[], style: stri
   const linhas = [];
   for (const unidade in data) {
     const valor = data[unidade];
-    linhas.push([ 
-      { text: unidade, style: style }, 
-      { text: valor.toString(), style: style } 
+    linhas.push([
+      { text: unidade, style: style },
+      { text: valor.toString(), style: style }
     ]);
   }
   return linhas;
@@ -258,96 +258,96 @@ export const getArStatusResumoQuantitativoPdf = async (month: string, year: stri
 
             // Dados de processos em analise de admissibilidade
             ...quantitativo?.analise_admissiveis_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
-              { 
-                text: a.sei || a.processo_fisico || a.aprova_digital , 
+              {
+                text: a.sei || a.processo_fisico || a.aprova_digital,
                 style: 'analiseData'
               },
               {
                 text: 'Em analise de admissibilidade',
                 style: 'analiseData'
               },
-              { 
-                text: a.obs, 
+              {
+                text: a.obs,
                 style: 'analiseData'
               }
             ]),
 
             // Dados de processos inadimissíveis
             ...quantitativo?.inadmissiveis_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
-              { 
-                text: a.sei || a.processo_fisico || a.aprova_digital, 
+              {
+                text: a.sei || a.processo_fisico || a.aprova_digital,
                 style: 'inadmissivelData'
               },
               {
                 text: 'Inadmissível',
                 style: 'inadmissivelData'
               },
-              { 
-                text: a.obs, 
-                style: 'inadmissivelData'  
+              {
+                text: a.obs,
+                style: 'inadmissivelData'
               }
             ]),
 
             // Dados de processos admissíveis ainda em análise
             ...quantitativo?.em_analise_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
-              { 
-                text: a.sei || a.processo_fisico || a.aprova_digital, 
+              {
+                text: a.sei || a.processo_fisico || a.aprova_digital,
                 style: 'admissivelData'
               },
               {
                 text: 'Admissível em análise',
                 style: 'admissivelData'
               },
-              { 
-                text: a.obs, 
+              {
+                text: a.obs,
                 style: 'admissivelData'
               }
             ]),
 
             // Dados de processos deferidos
             ...quantitativo?.deferidos_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
-              { 
-                text: a.sei || a.processo_fisico || a.aprova_digital, 
+              {
+                text: a.sei || a.processo_fisico || a.aprova_digital,
                 style: 'deferidoData'
               },
               {
                 text: 'Deferido',
                 style: 'deferidoData'
               },
-              { 
-                text: a.obs, 
-                style: 'deferidoData'  
+              {
+                text: a.obs,
+                style: 'deferidoData'
               }
             ]),
 
             // Dados de processos indeferidos
             ...quantitativo?.indeferidos_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
-              { 
-                text: a.sei || a.processo_fisico || a.aprova_digital, 
+              {
+                text: a.sei || a.processo_fisico || a.aprova_digital,
                 style: 'indeferidoData'
               },
               {
                 text: 'Indeferido',
                 style: 'indeferidoData'
               },
-              { 
-                text: a.obs, 
-                style: 'indeferidoData' 
+              {
+                text: a.obs,
+                style: 'indeferidoData'
               }
             ]),
 
             // Dados de processos em via ordinaria
             ...quantitativo?.via_ordinaria_dados?.map((a: IInicial): { text: string | undefined, style: string }[] => [
-              { 
-                text: a.sei || a.processo_fisico || a.aprova_digital, 
+              {
+                text: a.sei || a.processo_fisico || a.aprova_digital,
                 style: 'tableUnidadesViaOrdinaria'
               },
               {
                 text: 'Via orinária',
                 style: 'tableUnidadesViaOrdinaria'
               },
-              { 
-                text: a.obs, 
+              {
+                text: a.obs,
                 style: 'tableUnidadesViaOrdinaria'
               }
             ]),
