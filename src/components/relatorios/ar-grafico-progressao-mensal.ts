@@ -1,3 +1,5 @@
+import { DateRange } from "@mui/icons-material";
+
 type MesDadosType = {
   mes: string;
   mensal: number;
@@ -42,26 +44,67 @@ type ObjectContent = {
   table?: TableType
 }
 
-function gerarLinhasDados(data: LinhasTabelasDadosType): LinhaTabelaType[][] {
-  const linhas: LinhaTabelaType[] = [];
-  const body: LinhaTabelaType[][] = [];
-
-  for (const key in data) {
-    if (key === 'ano') {
-      // Ignora a chave 'ano' e adiciona na linha como a primeira célula
-      linhas.push({ text: data[key], rowSpan: 12, style: 'yearCell' });
-    } else {
-      // Para as outras chaves (jan, fev, mar, etc.), acessa 'mes', 'mensal' e 'acc'
-      const monthData = data[key];
-
-      linhas.push({ text: monthData.mes, style: 'monthlyAndAccCel' });
-      linhas.push({ text: monthData.mensal, style: 'monthlyAndAccCel' });
-      linhas.push({ text: monthData.acc, style: 'monthlyAndAccCel' });
-    }
+const arrProgProct = [
+  {
+    ano: 2018,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2019,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2020,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2021,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2022,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2023,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2024,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
   }
+]
 
-  body.push(linhas); // Adiciona todas as linhas na estrutura 'body'
-  return body;
+const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outurbo', 'novembro', 'dezembro']
+
+function gerarLinhasDados(data: { ano: number, mensal: number[] }) {
+  let linha: { text?: string, style?: string, rowSpan?: number }[] = []
+  let linhas: { text?: string, style?: string, rowSpan?: number }[][] = []
+  let acc = 0
+
+  // console.log("1: lista de meses", meses)
+  // console.log("2: mês de janeiro aqui", meses[0])
+  // console.log("3: objeto recebido aqui", data)
+  // console.log("4: lista do objeto aqui", data.mensal)
+
+  data.mensal.forEach((num, index) => {
+    // console.log("5: itens da lista", num)
+    console.log("6: index da lista", index)
+    acc += num
+
+    // console.log("8: acc aqui", acc)
+    if (index === 0) {
+      linha.push({ text: data.ano.toString(), rowSpan: 12, style: 'yearCell' });
+    } else {
+      linha.push({ text: data.ano.toString() });
+    }
+    linha.push({ text: meses[index] })
+    linha.push({ text: num.toString(), style: 'monthlyAndAccCel' })
+    linha.push({ text: acc.toString(), style: 'monthlyAndAccCel' })
+    linhas.push(linha)
+    linha = []
+  })
+  return linhas
 }
 
 
@@ -93,7 +136,9 @@ export const getArGraficoProgressaoMensal = async (month: string, year: string) 
               { text: 'Mensal', style: 'header', layout: 'noBorders' },
               { text: 'Acumulado', style: 'header', layout: 'noBorders' },
 
-            ]
+            ],
+
+            ...gerarLinhasDados(arrProgProct[0])
 
           ]
         }
