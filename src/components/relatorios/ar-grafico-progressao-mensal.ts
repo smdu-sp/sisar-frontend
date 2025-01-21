@@ -1,11 +1,101 @@
+const arrProgProct = [
+  {
+    ano: 2018,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2019,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2020,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2021,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2022,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2023,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  },
+  {
+    ano: 2024,
+    mensal: [7, 2, 0, 5, 12, 17, 10, 1, 9, 44, 2]
+  }
+]
+
+
+function gerarLinhasDados(data: { ano: number, mensal: number[] }) {
+  const meses = [
+    'janeiro',
+    'fevereiro',
+    'março',
+    'abril',
+    'maio',
+    'junho',
+    'julho',
+    'agosto',
+    'setembro',
+    'outurbo',
+    'novembro',
+    'dezembro'
+  ]
+  let linha: { text?: string, style?: string, layout?: string }[] = []
+  let linhas: { text?: string, style?: string, layout?: string }[][] = [
+    [
+      { text: 'Ano', style: 'header', layout: 'noBorders' },
+      { text: 'Mês', style: 'header', layout: 'noBorders' },
+      { text: 'Mensal', style: 'header', layout: 'noBorders' },
+      { text: 'Acumulado', style: 'header', layout: 'noBorders' },
+
+    ]
+  ]
+  let acc = 0
+
+  data.mensal.forEach((num, index) => {
+    acc += num
+
+    linha.push({ text: data.ano.toString() });
+    linha.push({ text: meses[index] })
+    linha.push({ text: num.toString(), style: 'monthlyAndAccCel' })
+    linha.push({ text: acc.toString(), style: 'monthlyAndAccCel' })
+    linhas.push(linha)
+    linha = []
+  })
+  return linhas
+}
+
+
+
+function gerarCabecalhoDados() {
+  return {
+    headerRows: 1,
+    widths: [60, 130, 55, 130],
+  }
+}
+
+function gerarTabelaDados(data: { ano: number, mensal: number[] }) {
+  return {
+    ...gerarCabecalhoDados(),
+    body: [
+      ...gerarLinhasDados(data)
+    ]
+  }
+}
+
+
+
 export const getArGraficoProgressaoMensal = async (month: string, year: string) => {
 
   const docDefinition = {
-    pageOrientation: 'landscape',
     content: [
       { text: 'Progressão AR Protocolados' },
       { text: '', style: 'insivibleLine' },
-
       {
         layout: {
           vLineColor: '#000000',
@@ -16,98 +106,26 @@ export const getArGraficoProgressaoMensal = async (month: string, year: string) 
 
         },
         table: {
-          headerRows: 1,
-          widths: [60, 130, 55, 130],
-          body: [
-            [
-              { text: 'Ano', style: 'header', layout: 'noBorders' },
-              { text: 'Mês', style: 'header', layout: 'noBorders' },
-              { text: 'Mensal', style: 'header', layout: 'noBorders' },
-              { text: 'Acumulado', style: 'header', layout: 'noBorders' }
-            ],
+          // headerRows: 1,
+          // widths: [60, 130, 55, 130],
 
-            [
-              { text: '2018', rowSpan: 12, style: 'yearCell' },
-              { text: 'Janeiro' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' },
-            ],
+          /////
 
-            [
-              { text: '2025' },
-              { text: 'Fevereiro' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' }
-            ],
-            [
-              { text: '2025' },
-              { text: 'Março' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' }
-            ],
-            [
-              { text: '2025' },
-              { text: 'Abril' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' }
-            ],
-            [
-              { text: '2025' },
-              { text: 'Maio' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' }
-            ],
-            [
-              { text: '2025' },
-              { text: 'Junho' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' }
-            ],
-            [
-              { text: '2025' },
-              { text: 'Julho' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' }
-            ],
-            [
-              { text: '2025' },
-              { text: 'Agosto' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' }
-            ],
-            [
-              { text: '2025' },
-              { text: 'Setembro' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' }
-            ],
-            [
-              { text: '2025' },
-              { text: 'Outubro' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' }
-            ],
-            [
-              { text: '2025' },
-              { text: 'Novembro' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' }
-            ],
-            [
-              { text: '2025' },
-              { text: 'Dezembro' },
-              { text: '100', style: 'monthlyAndAccCel' },
-              { text: '100', style: 'monthlyAndAccCel' }
-            ]
-          ]
-        }
+
+          // ...gerarCabecalhoDados(),
+          // body: [
+          //   ...gerarLinhasDados(arrProgProct[0])
+          // ]
+
+          ...gerarTabelaDados(arrProgProct[0])
+        },
       },
     ],
+
     styles: {
       classe_teste: {
         color: 'blue'
       },
-      pageOrientation: 'landscape',
       header: {
         alignment: 'center',
         text: 'bold',
