@@ -1,49 +1,3 @@
-import { DateRange } from "@mui/icons-material";
-
-type MesDadosType = {
-  mes: string;
-  mensal: number;
-  acc: number;
-};
-
-type LinhasTabelasDadosType = {
-  ano: number;
-  jan: MesDadosType;
-  fev: MesDadosType;
-  mar: MesDadosType;
-  abr: MesDadosType;
-  mai: MesDadosType;
-  jun: MesDadosType;
-  jul: MesDadosType;
-  ago: MesDadosType;
-  set: MesDadosType;
-  out: MesDadosType;
-  nov: MesDadosType;
-  dez: MesDadosType;
-};
-
-type LinhaTabelaType = {
-  text: string | number;
-  style: string;
-  rowSpan?: number
-}[];
-
-type TableType = {
-  headerRows?: number;
-  widths?: number[];
-  body?: LinhaTabelaType[][]
-}
-
-type LayoutType = {
-  vLineColor: string;
-  hLineColor: (i: number) => string
-}
-
-type ObjectContent = {
-  layout?: LayoutType;
-  table?: TableType
-}
-
 const arrProgProct = [
   {
     ano: 2018,
@@ -75,29 +29,38 @@ const arrProgProct = [
   }
 ]
 
-const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outurbo', 'novembro', 'dezembro']
 
 function gerarLinhasDados(data: { ano: number, mensal: number[] }) {
-  let linha: { text?: string, style?: string, rowSpan?: number }[] = []
-  let linhas: { text?: string, style?: string, rowSpan?: number }[][] = []
+  const meses = [
+    'janeiro',
+    'fevereiro',
+    'março',
+    'abril',
+    'maio',
+    'junho',
+    'julho',
+    'agosto',
+    'setembro',
+    'outurbo',
+    'novembro',
+    'dezembro'
+  ]
+  let linha: { text?: string, style?: string, layout?: string }[] = []
+  let linhas: { text?: string, style?: string, layout?: string }[][] = [
+    [
+      { text: 'Ano', style: 'header', layout: 'noBorders' },
+      { text: 'Mês', style: 'header', layout: 'noBorders' },
+      { text: 'Mensal', style: 'header', layout: 'noBorders' },
+      { text: 'Acumulado', style: 'header', layout: 'noBorders' },
+
+    ]
+  ]
   let acc = 0
 
-  // console.log("1: lista de meses", meses)
-  // console.log("2: mês de janeiro aqui", meses[0])
-  // console.log("3: objeto recebido aqui", data)
-  // console.log("4: lista do objeto aqui", data.mensal)
-
   data.mensal.forEach((num, index) => {
-    // console.log("5: itens da lista", num)
-    console.log("6: index da lista", index)
     acc += num
 
-    // console.log("8: acc aqui", acc)
-    if (index === 0) {
-      linha.push({ text: data.ano.toString(), rowSpan: 12, style: 'yearCell' });
-    } else {
-      linha.push({ text: data.ano.toString() });
-    }
+    linha.push({ text: data.ano.toString() });
     linha.push({ text: meses[index] })
     linha.push({ text: num.toString(), style: 'monthlyAndAccCel' })
     linha.push({ text: acc.toString(), style: 'monthlyAndAccCel' })
@@ -109,7 +72,23 @@ function gerarLinhasDados(data: { ano: number, mensal: number[] }) {
 
 
 
-///////////////////////
+function gerarCabecalhoDados() {
+  return {
+    headerRows: 1,
+    widths: [60, 130, 55, 130],
+  }
+}
+
+function gerarTabelaDados(data: { ano: number, mensal: number[] }) {
+  return {
+    ...gerarCabecalhoDados(),
+    body: [
+      ...gerarLinhasDados(data)
+    ]
+  }
+}
+
+
 
 export const getArGraficoProgressaoMensal = async (month: string, year: string) => {
 
@@ -127,21 +106,19 @@ export const getArGraficoProgressaoMensal = async (month: string, year: string) 
 
         },
         table: {
-          headerRows: 1,
-          widths: [60, 130, 55, 130],
-          body: [
-            [
-              { text: 'Ano', style: 'header', layout: 'noBorders' },
-              { text: 'Mês', style: 'header', layout: 'noBorders' },
-              { text: 'Mensal', style: 'header', layout: 'noBorders' },
-              { text: 'Acumulado', style: 'header', layout: 'noBorders' },
+          // headerRows: 1,
+          // widths: [60, 130, 55, 130],
 
-            ],
+          /////
 
-            ...gerarLinhasDados(arrProgProct[0])
 
-          ]
-        }
+          // ...gerarCabecalhoDados(),
+          // body: [
+          //   ...gerarLinhasDados(arrProgProct[0])
+          // ]
+
+          ...gerarTabelaDados(arrProgProct[0])
+        },
       },
     ],
 
