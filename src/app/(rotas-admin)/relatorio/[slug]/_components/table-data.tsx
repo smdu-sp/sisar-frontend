@@ -10,29 +10,38 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { mockDataTable } from '../_constants/mockdata';
 
-function createData(
-	name: string,
-	calories: number,
-	fat: number,
-	carbs: number,
-	protein: number,
+function createDadosAnuais(
+	ano: number,
+	mes: string[],
+	mensal: number[],
+	acumulado: number[],
 ) {
-	return { name, calories, fat, carbs, protein };
+	return { ano, mes, mensal, acumulado };
 }
 
-const rows = [
-	createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-	createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-	createData('Eclair', 262, 16.0, 24, 6.0),
-	createData('Cupcake', 305, 3.7, 67, 4.3),
-	createData('Gingerbread', 356, 16.0, 49, 3.9),
+const dadosAnuais = [
+	createDadosAnuais(
+		2017,
+		[
+			'Janeiro',
+			'Fevereiro',
+			'Março',
+			'Abril',
+			'Maio',
+			'Junho',
+			'Julho',
+			'Agosto',
+			'Setembro',
+			'Outubro',
+			'Novembro',
+			'Dezembro',
+		],
+		[47, 27, 48, 43, 20, 47, 27, 46, 48, 39, 29, 26],
+		[31, 38, 36, 35, 29, 38, 46, 25, 29, 45, 44, 38],
+	),
 ];
 
-export default function TableData({
-	data,
-}: {
-	data: (typeof mockDataTable)[0];
-}) {
+export default function TableData() {
 	return (
 		<TableContainer component={Paper}>
 			<Table
@@ -47,66 +56,57 @@ export default function TableData({
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					<TableRow
-						key={data?.ano}
-						style={{ width: 'fit-content' }}>
-						<TableCell
-							align='center'
-							style={{ fontSize: '16px' }}>
-							{data?.ano}
-						</TableCell>
-						<TableCell>
-							{data?.mes?.map((item, index) => {
-								return (
-									<TableCell
-										key={index}
-										style={{
-											fontSize: '11px',
-											display: 'flex',
-											flexDirection: 'column',
-											gap: '0px',
-										}}
-										align='center'>
-										{item}
-									</TableCell>
-								);
-							})}
-						</TableCell>
-						<TableCell>
-							{data?.mensal?.map((item, index) => {
-								return (
-									<TableCell
-										key={index}
-										style={{
-											fontSize: '11px',
-											display: 'flex',
-											flexDirection: 'column',
-											gap: '0px',
-										}}
-										align='center'>
-										{item}
-									</TableCell>
-								);
-							})}
-						</TableCell>
-						<TableCell>
-							{data?.acumulado?.map((item, index) => {
-								return (
-									<TableCell
-										key={index}
-										style={{
-											fontSize: '11px',
-											display: 'flex',
-											flexDirection: 'column',
-											gap: '0px',
-										}}
-										align='center'>
-										{item}
-									</TableCell>
-								);
-							})}
-						</TableCell>
-					</TableRow>
+					{dadosAnuais?.map((item, index) => {
+						return (
+							<TableRow key={index}>
+								<TableCell
+									key={index}
+									align='center'>
+									{item.ano}
+								</TableCell>
+
+								<TableCell
+									key={index}
+									align='center'>
+									{item.mes.map((item, index) => {
+										return (
+											<div
+												style={{ borderBottom: '1px solid #d0d0d0' }}
+												key={index}>
+												{item}
+											</div>
+										);
+									})}
+								</TableCell>
+								<TableCell
+									key={index}
+									align='center'>
+									{item.mensal.map((item, index) => {
+										return (
+											<div
+												style={{ borderBottom: '1px solid #d0d0d0' }}
+												key={index}>
+												{item}
+											</div>
+										);
+									})}
+								</TableCell>
+								<TableCell
+									key={index}
+									align='center'>
+									{item.acumulado.map((item, index) => {
+										return (
+											<div
+												style={{ borderBottom: '1px solid #d0d0d0' }}
+												key={index}>
+												{item}
+											</div>
+										);
+									})}
+								</TableCell>
+							</TableRow>
+						);
+					})}
 				</TableBody>
 			</Table>
 		</TableContainer>

@@ -111,7 +111,9 @@ export default function RootLayout({
 				<CssBaseline />
 				<MenuProvider>
 					<ThemeProvider>
-						<html lang='pt-BR'>
+						<html
+							lang='pt-BR'
+							suppressHydrationWarning>
 							<head>
 								<link
 									rel='preconnect'

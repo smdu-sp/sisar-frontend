@@ -5,28 +5,20 @@ import React from 'react';
 import TableData from './_components/table-data';
 import { mockDataTable } from './_constants/mockdata';
 import dynamic from 'next/dynamic';
+import Header from '@/components/Header';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const LineChart = dynamic(() => import('./_components/line-chart'), {
 	ssr: false,
 });
 
-const LineChartExample = dynamic(
-	() => import('./_components/line-chert-exemples'),
-	{
-		ssr: false,
-	},
-);
-
-export default async function PageRelatioSlug({
-	params,
-}: {
-	params: Promise<{ slug: string }>;
-}) {
+export default function PageRelatioSlug() {
 	return (
 		<Container
 			maxWidth={'xl'}
-			style={{ paddingBottom: '16px', paddingTop: '20px' }}>
-			<Stack spacing={10}>
+			style={{ paddingBottom: '0px', paddingTop: '16px' }}>
+			<Stack spacing={4}>
+				{/* <ThemeToggle /> */}
 				<Typography variant='h4'>Progressão AR Protocolados</Typography>
 				<div
 					style={{
@@ -34,19 +26,39 @@ export default async function PageRelatioSlug({
 						gridTemplateColumns: 'repeat(2, 1fr)',
 						gap: '16px',
 					}}>
-					{mockDataTable.map((item, index) => {
-						return (
-							<div
-								key={index}
-								style={{ paddingBottom: `${index == 0 ? '20px' : '8px'} ` }}>
-								<TableData data={item} />
-							</div>
-						);
-					})}
+					<TableData />
+					<TableData />
+					<TableData />
+					<TableData />
+					<TableData />
+					<TableData />
+					<TableData />
+					<TableData />
 				</div>
-
-				<LineChart />
-				<LineChartExample />
+				<LineChart
+					title='AR'
+					series={[
+						{
+							name: 'AR',
+							data: [30, 40, 45, 50, 49, 60, 70, 91, 49, 60, 70, 91],
+						},
+					]}
+					categories={[
+						'Janeiro',
+						'Fevereiro',
+						'Março',
+						'Abril',
+						'Maio',
+						'Junho',
+						'Julho',
+						'Agosto',
+						'Setembro',
+						'Outubro',
+						'Novembro',
+						'Dezembro',
+					]}
+					height={520}
+				/>
 			</Stack>
 		</Container>
 	);
