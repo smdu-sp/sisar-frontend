@@ -3,7 +3,7 @@
 import { Container, Stack, Typography } from '@mui/material';
 import React from 'react';
 import TableData from './_components/table-data';
-import { mockDataTable } from './constants/mockdata';
+import { mockDataTable } from './_constants/mockdata';
 import dynamic from 'next/dynamic';
 
 const LineChart = dynamic(() => import('./_components/line-chart'), {
