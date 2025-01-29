@@ -30,7 +30,7 @@ export default function LineChartsApexUnity(props: AreaChartsApexProps) {
 			stacked: false,
 			width: '100%',
 			type: 'line',
-			foreColor: '#242424',
+			foreColor: `${mode == 'light' ? '#242424' : 'fafafa'}`,
 			zoom: {
 				enabled: false,
 			},
@@ -40,27 +40,27 @@ export default function LineChartsApexUnity(props: AreaChartsApexProps) {
 			},
 		},
 		legend: {
-			showForSingleSeries: true,
+			showForSingleSeries: false,
 			position: 'top',
 			horizontalAlign: 'center',
-			fontSize: '8x',
+			fontSize: '16x',
 			fontWeight: 'bold',
 			onItemHover: { highlightDataSeries: true },
 			onItemClick: { toggleDataSeries: false },
 			itemMargin: {
-				vertical: 8,
+				vertical: 4,
 				horizontal: 20,
 			},
 		},
 		grid: {
-			borderColor: 'rgba(255,255,255,0.1)',
-
+			borderColor: 'rgba(0,0,0,0.1)',
 			xaxis: {
 				lines: {
 					show: true,
 				},
 			},
 			show: true,
+
 			yaxis: {
 				lines: {
 					show: true,
@@ -111,6 +111,7 @@ export default function LineChartsApexUnity(props: AreaChartsApexProps) {
 		},
 		colors: ['#00a1b9', '#f47e43'],
 		title: {
+			align: 'center',
 			text: props.title,
 			style: { fontWeight: 'bold', fontSize: '18px' },
 		},

@@ -8,7 +8,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { mockDataTable } from '../_constants/mockdata';
+import { mockDataTable } from '../../_constants/mockdata';
 
 function createDadosAnuais(
 	ano: number,
@@ -71,7 +71,7 @@ export default function TableData() {
 									{item.mes.map((item, index) => {
 										return (
 											<div
-												style={{ borderBottom: '1px solid #d0d0d0' }}
+												style={{ borderBottom: '.5px solid #e0e0e0' }}
 												key={index}>
 												{item}
 											</div>
@@ -84,7 +84,7 @@ export default function TableData() {
 									{item.mensal.map((item, index) => {
 										return (
 											<div
-												style={{ borderBottom: '1px solid #d0d0d0' }}
+												style={{ borderBottom: '.5px solid #e0e0e0' }}
 												key={index}>
 												{item}
 											</div>
@@ -97,7 +97,7 @@ export default function TableData() {
 									{item.acumulado.map((item, index) => {
 										return (
 											<div
-												style={{ borderBottom: '1px solid #d0d0d0' }}
+												style={{ borderBottom: '.5px solid #e0e0e0' }}
 												key={index}>
 												{item}
 											</div>
