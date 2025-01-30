@@ -2,14 +2,16 @@
 
 import Content from '@/components/Content';
 import { Suspense, useCallback, useContext, useEffect, useState } from 'react';
-import * as unidadeServices from '@/shared/services/unidade.services';
+import * as unidadeServices from '@/shared/services/unidade/unidade.services';
 import { Box, Button, ChipPropsColorOverrides, ColorPaletteProp, FormControl, FormLabel, IconButton, Input, Option, Select, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
+// @ts-ignore
 import { Add, Cancel, Check, Clear, Refresh, Search, Warning } from '@mui/icons-material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertsContext } from '@/providers/alertsProvider';
 import { TablePagination } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
-import { IPaginadoUnidade, IUnidade } from '@/shared/services/unidade.services';
+import { IPaginadoUnidade, IUnidade } from '@/types/unidade/unidade.dto';
+import { UnidadeRegisterModal } from '@/components/unidades/UnidadeRegisterModal';
 
 export default function Unidades() {
   return (
@@ -29,6 +31,8 @@ function SearchUnidades() {
   const [status, setStatus] = useState<number>(2);
   const [filtro, setFiltro] = useState(-1);
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
+  const [ openNew, setOpenNew ] = useState<boolean>(false);
+  const [ idUnidade, setIdUnidade ] = useState<string| null>(null);
   const { setAlert } = useContext(AlertsContext);
   const theme = useTheme();
   const router = useRouter();
@@ -68,16 +72,14 @@ function SearchUnidades() {
         setAlert('Unidade alterada!', 'Unidade alterada com sucesso.', 'success', 3000, Check);
       if (notificacao == '0') 
         setAlert('Unidade criada!', 'Unidade criada com sucesso.', 'success', 3000, Check);
-      const newUrl = `${window.location.pathname}`;
-      window.history.replaceState({}, '', newUrl);
+      window.history.replaceState({}, '', `${window.location.pathname}`);
       buscaUnidades();
     }
   }
 
   const buscaUnidades = async () => {
     try {
-      const unidades: IPaginadoUnidade = await unidadeServices
-        .buscarTudo(filtro.toString(), pagina, limite, busca);
+      const unidades: IPaginadoUnidade = await unidadeServices.buscarTudo(filtro.toString(), pagina, limite, busca);
       setTotal(unidades.total);
       setPagina(unidades.pagina);
       setLimite(unidades.limite);
@@ -102,17 +104,12 @@ function SearchUnidades() {
     return
   }
 
-  const mudaPagina = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    novaPagina: number,
-  ) => {
+  const mudaPagina = (event: React.MouseEvent<HTMLButtonElement> | null, novaPagina: number) => {
     router.push(pathname + '?' + createQueryString('pagina', String(novaPagina + 1)));
     setPagina(novaPagina + 1);
   };
 
-  const mudaLimite = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const mudaLimite = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     router.push(pathname + '?' + createQueryString('limite', String(event.target.value)));
     setLimite(parseInt(event.target.value, 10));
     setPagina(1);
@@ -141,15 +138,15 @@ function SearchUnidades() {
     setConfirma(confirmaVazio);
   }
 
-  const confirmaAtivaUnidade = async (id: string) => {
-    setConfirma({
-      aberto: true,
-      confirmaOperacao: () => ativaUnidade(id),
-      titulo: 'Ativar unidade',
-      pergunta: 'Deseja ativar esta unidade?',
-      color: 'primary'
-    });
-  }
+  // const confirmaAtivaUnidade = async (id: string) => {
+  //   setConfirma({
+  //     aberto: true,
+  //     confirmaOperacao: () => ativaUnidade(id),
+  //     titulo: 'Ativar unidade',
+  //     pergunta: 'Deseja ativar esta unidade?',
+  //     color: 'primary'
+  //   });
+  // }
 
   const limpaFitros = () => {
     setBusca('');
@@ -162,9 +159,7 @@ function SearchUnidades() {
 
   return (
     <Content
-      breadcrumbs={[
-        { label: 'Unidades', href: '/unidades' }
-      ]}
+      breadcrumbs={[{ label: 'Unidades', href: '/unidades' }]}
       titulo='Unidades'
     >
       <Snackbar
@@ -254,9 +249,12 @@ function SearchUnidades() {
                 theme.vars.palette.danger.plainActiveBg :
                 undefined
             }}>
-              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.codigo}</td>
+              {/* <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.codigo}</td>
               <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.sigla}</td>
-              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.nome}</td>
+              <td onClick={() => router.push('/unidades/detalhes/' + unidade.id)}>{unidade.nome}</td> */}
+              <td onClick={() => { setIdUnidade(unidade.id); setOpenNew(true) }}>{unidade.codigo}</td>
+              <td onClick={() => { setIdUnidade(unidade.id); setOpenNew(true) }}>{unidade.sigla}</td>
+              <td onClick={() => { setIdUnidade(unidade.id); setOpenNew(true) }}>{unidade.nome}</td>
               <td>
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                   {unidade.id && unidade.status === 0 ? (
@@ -289,16 +287,13 @@ function SearchUnidades() {
         labelRowsPerPage="Registros por página"
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
       /> : null}
+      <UnidadeRegisterModal id={idUnidade} open={openNew} setOpen={setOpenNew} />
       <IconButton 
-        onClick={() => router.push('/unidades/detalhes/')} 
+        onClick={() => { setIdUnidade(null); setOpenNew(true); }}
         color='primary' 
         variant='soft' 
         size='lg' 
-        sx={{
-          position: 'fixed',
-          bottom: '2rem',
-          right: '2rem',
-        }}
+        sx={{ position: 'fixed', bottom: '2rem', right: '2rem' }}
       >
         <Add />
       </IconButton>

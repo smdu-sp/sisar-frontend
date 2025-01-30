@@ -2,18 +2,18 @@
 
 import Content from '@/components/Content';
 import { Suspense, useCallback, useContext, useEffect, useState } from 'react';
-import * as subprefeituraServices from '@/shared/services/subprefeitura.services';
+import * as subprefeituraServices from '@/shared/services/subprefeitura/subprefeitura.services';
 import { Box, Button, CardActions, CardOverflow, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, IconButton, Input, Modal, ModalDialog, Option, Select, Skeleton, Snackbar, Stack, Table, Tooltip, Typography, useTheme } from '@mui/joy';
 import { Add, Cancel, Check, Clear, Refresh, Search } from '@mui/icons-material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertsContext } from '@/providers/alertsProvider';
 import { TablePagination } from '@mui/material';
 import { OverridableStringUnion } from '@mui/types';
-import { IPaginadoSubprefeitura } from '@/shared/services/subprefeitura.services';
+import { IPaginadoSubprefeitura } from '@/types/subprefeitura/subprefeitura.dto';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ISubprefeitura } from "@/shared/services/subprefeitura.services";
+import { ISubprefeitura } from "@/types/subprefeitura/subprefeitura.dto";
 import {
   infer as Infer,
   number,
@@ -45,7 +45,6 @@ function SearchUnidades() {
   const [total, setTotal] = useState(searchParams.get('total') ? Number(searchParams.get('total')) : 1);
   const [status, setStatus] = useState<string>(searchParams.get('status') ? searchParams.get('status') + '' : 'true');
   const [busca, setBusca] = useState(searchParams.get('busca') || '');
-  const [notificacao, setNotificacao] = useState(0);
   const [openComfirm, setOpenComfirm] = useState(false);
   const [openNovaSub, setOpenNovaSub] = useState(false);
   const [mensagemStatus, setMensagemStatus] = useState(1);

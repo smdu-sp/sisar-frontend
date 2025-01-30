@@ -5,12 +5,12 @@ import CardAviso from '@/components/CardAviso';
 import * as React from 'react';
 import { Autocomplete, AutocompleteOption, Button, Chip, ChipPropsColorOverrides, ColorPaletteProp, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, IconButton, Input, Modal, ModalDialog, Skeleton, Stack, Tab, TabList, TabPanel, Table, Tabs, Textarea, tabClasses } from '@mui/joy';
 import { TablePagination } from '@mui/material';
-import * as inicialServices from '@/shared/services/inicial.services';
-import { IInicial, IPaginatedInicial } from '@/shared/services/inicial.services';
+import * as inicialServices from '@/shared/services/inicial/inicial.services';
+import { IInicial, IPaginatedInicial } from '@/shared/services/inicial/inicial.services';
 import { useCallback, useEffect, useState } from 'react';
-import { IProcesso } from '@/shared/services/reunioes.services';
+import { IProcesso } from '@/types/reunioes/reunioes.dto';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Add, Check, Key } from '@mui/icons-material';
+import { Add, Check } from '@mui/icons-material';
 import { OverridableStringUnion } from '@mui/types';
 import dayjs, { Dayjs } from 'dayjs';
 import Badge from '@mui/material/Badge';
@@ -19,20 +19,20 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
-import * as reunioes from '@/shared/services/reunioes.services';
+import * as reunioes from '@/shared/services/reunioes/reunioes.services';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import ListDecoration from '../../components/ListDecoration';
 import Icon from '@mui/material/Icon';;
 import { Card, CardContent, Grid, Option, Select, Sheet, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
-import * as avisos from '@/shared/services/avisos.services'
+import * as avisos from '@/shared/services/avisos/avisos.services'
 import CircleIcon from '@mui/icons-material/RadioButtonCheckedRounded';
 import Link from '@mui/joy/Link';
 import { AlertsContext } from '@/providers/alertsProvider';
 import 'dayjs/locale/pt-br';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as comum from "@/shared/services/comum.services";
+import * as comum from "@/shared/services/common/comum.services";
 import { date, z } from 'zod';
 import {
   infer as Infer,

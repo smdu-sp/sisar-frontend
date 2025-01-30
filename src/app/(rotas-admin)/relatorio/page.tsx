@@ -19,11 +19,18 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 import { AlertsContext } from '@/providers/alertsProvider';
 import { getArQunatitativoXlsx, getArStatusResumoQuantitativoPdf } from '@/components/relatorios/ar-status-resumo-quantitativo';
 import { getRrQunatitativoXlsx, getRrStatusResumoQuantitativoPdf } from '@/components/relatorios/rr-status-resumo-quantitativo';
+import { getArGraficoProgressaoMensal } from '@/components/relatorios/ar-grafico-progressao-mensal';
+import { getArControleGabinetePrefeito } from '@/components/relatorios/ar-controle-gabinete-prefeito';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export default function ExportRelatorios() {
-  const [ relatorioType, setRelatorioType ] = useState<'aprova-rapido' | 'requalifica-rapido'>();
+  const [ relatorioType, setRelatorioType ] = useState<
+    'ar-status-resumo-quantitativo' | 
+    'rr-status-resumo-quantitativo' |
+    'ar-grafico-progressao-mensal' |
+    'ar-controle-gabinete-prefeito'
+  >();
   const [ fileType, setFileType ] = useState<'XLSX' | 'PDF'>('XLSX');
   const [ date, setDate ] = useState<Date | undefined>();
   const [ pdfUrl, setPdfUrl ] = useState<string>('');
@@ -39,10 +46,10 @@ export default function ExportRelatorios() {
       if (!date) throw new Error('Selecione uma data!');
       let worksheetMain: XLSX.WorkSheet | null = null;
       switch (relatorioType) {
-        case 'aprova-rapido':
+        case 'ar-status-resumo-quantitativo':
           worksheetMain = XLSX.utils.json_to_sheet(await getArQunatitativoXlsx((date.getMonth() + 1).toString(), date.getFullYear().toString()));
           break;
-        case 'requalifica-rapido':
+        case 'rr-status-resumo-quantitativo':
           worksheetMain = XLSX.utils.json_to_sheet(await getRrQunatitativoXlsx((date.getMonth() + 1).toString(), date.getFullYear().toString()));
           break;
       }
@@ -62,11 +69,17 @@ export default function ExportRelatorios() {
       if (!date) throw new Error('Selecione uma data!');
       let docDefinition;
       switch (relatorioType) {
-        case 'aprova-rapido':
+        case 'ar-status-resumo-quantitativo':
           docDefinition = await getArStatusResumoQuantitativoPdf((date.getMonth() + 1).toString(), date.getFullYear().toString());
           break;
-        case 'requalifica-rapido':
+        case 'rr-status-resumo-quantitativo':
           docDefinition = await getRrStatusResumoQuantitativoPdf((date.getMonth() + 1).toString(), date.getFullYear().toString());
+          break;
+        case 'ar-grafico-progressao-mensal':
+          docDefinition = await getArGraficoProgressaoMensal((date.getMonth() + 1).toString(), date.getFullYear().toString());
+          break;
+        case 'ar-controle-gabinete-prefeito':
+          docDefinition = await getArControleGabinetePrefeito((date.getMonth() + 1).toString(), date.getFullYear().toString());
           break;
       }
       if (!docDefinition) throw new Error('Relatório indisponível.');
@@ -122,13 +135,25 @@ export default function ExportRelatorios() {
               }}
             >
               <Option
-                onClick={() => setRelatorioType('aprova-rapido')}
+                onClick={() => setRelatorioType('ar-status-resumo-quantitativo')}
                 value='aprova-rapido'
               >
                 Aprova Rápido - Status e Resumo Quantitativo
               </Option>
               <Option
-                onClick={() => setRelatorioType('requalifica-rapido')}
+                onClick={() => setRelatorioType('ar-grafico-progressao-mensal')}
+                value='ar-grafico-progressao-mensal'
+              >
+                Aprova Rápido - Gráfico de Progressão Mensal
+              </Option>
+              <Option
+                onClick={() => setRelatorioType('ar-controle-gabinete-prefeito')}
+                value='ar-controle-gabinete-prefeito'
+              >
+                Aprova Rápido - Controle Gabinete Prefeito
+              </Option>
+              <Option
+                onClick={() => setRelatorioType('rr-status-resumo-quantitativo')}
                 value='requalifica-rapido'
               >
                 Requalifica Rápido - Status e Resumo Quantitativo

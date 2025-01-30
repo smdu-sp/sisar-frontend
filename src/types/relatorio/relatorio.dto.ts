@@ -1,4 +1,4 @@
-import { ICreateAdmissibilidade } from "@/shared/services/admissibilidade.services";
+import { IInicial } from "@/shared/services/admissibilidade/admissibilidade.services";
 
 export interface IAprovaRapidoQuantitativoResponse {
   total: number;
@@ -9,37 +9,40 @@ export interface IAprovaRapidoQuantitativoResponse {
   em_analise: {
     smul: {
       quantidade: number;
-      data: Array<{ nome: string; count: number }>;
+      data: { nome: string; count: number }[];
     };
     graproem: {
       quantidade: number;
-      data: Array<{ nome: string; count: number }>;
+      data: { nome: string; count: number }[];
     };
     total_parcial: number;
   };
   deferidos: {
     smul: {
       quantidade: number;
-      data: Array<{ nome: string; count: number }>;
+      data: { nome: string; count: number }[];
     };
     graproem: {
       quantidade: number;
-      data: Array<{ nome: string; count: number }>;
+      data: { nome: string; count: number }[];
     };
     total_parcial: number;
   };
   indeferidos: {
     smul: {
       quantidade: number;
-      data: Array<{ nome: string; count: number }>;
+      data: { nome: string; count: number }[];
     };
     graproem: {
       quantidade: number;
-      data: Array<{ nome: string; count: number }>;
+      data: { nome: string; count: number }[];
     };
     total_parcial: number;
   };
-  "inadmissiveis_dados": any,
-  "admissiveis_dados": any,
-  "em_analise_dados": any
+  "analise_admissiveis_dados": IInicial[],
+  "inadmissiveis_dados": IInicial[],
+  "em_analise_dados": IInicial[],
+  "deferidos_dados": IInicial[],
+  "indeferidos_dados": IInicial[],
+  "via_ordinaria_dados": IInicial[]
 }

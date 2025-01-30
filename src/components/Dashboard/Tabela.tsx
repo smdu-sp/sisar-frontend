@@ -2,7 +2,6 @@ import * as React from "react";
 import Table from "@mui/joy/Table";
 import { RegistroAdmissibilidade } from "@/app/(rotas-admin)/dashboard/admissibilidade/page";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 interface TabelaProps {
  dados: RegistroAdmissibilidade []

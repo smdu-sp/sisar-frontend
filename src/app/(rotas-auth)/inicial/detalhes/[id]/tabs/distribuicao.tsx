@@ -1,7 +1,7 @@
 'use client';
 
-import { IDistribuicao } from "@/shared/services/admissibilidade.services";
-import { IUsuario } from "@/shared/services/usuario.services";
+import { IDistribuicao } from "@/types/admissibilidade/admissibilidade.dto";
+import { IUsuario } from "@/types/usuario/usuario.dto";
 import { Box, Chip, Divider, FormControl, FormLabel, Grid, Option, Select } from "@mui/joy";
 
 import * as inicialServices from '@/shared/services/inicial.services';

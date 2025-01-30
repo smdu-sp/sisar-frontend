@@ -1,15 +1,15 @@
 'use client'
 
-import * as inicialServices from "@/shared/services/inicial.services";
-import { IInicial } from "@/shared/services/inicial.services";
+import * as inicialServices from "@/shared/services/inicial/inicial.services";
+import { IInicial } from "@/shared/services/inicial/inicial.services";
 import { Add, Cancel, Check, PlaylistAddCheckCircleRounded } from "@mui/icons-material"
-import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, Box, ModalDialog, DialogTitle, DialogContent, Stack, List, ListItem, Skeleton, FormHelperText, Checkbox } from "@mui/joy"
+import { Alert, Button, Card, FormControl, FormLabel, IconButton, Input, Select, Table, Option, Grid, ColorPaletteProp, ChipPropsColorOverrides, Box, ModalDialog, DialogTitle, DialogContent, Stack, Skeleton, FormHelperText, Checkbox } from "@mui/joy"
 import { OverridableStringUnion } from '@mui/types';
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { IAlvaraTipo } from "@/shared/services/alvara-tipo.services";
-import * as alvaraTiposService from "@/shared/services/alvara-tipo.services";
+import { IAlvaraTipo } from "@/types/alvara-tipo/alvara-tipo.dto";
+import * as alvaraTiposService from "@/shared/services/alvara-tipo/alvara-tipo.services";
 import { useRouter } from "next/navigation";
-import * as comum from "@/shared/services/comum.services";
+import * as comum from "@/shared/services/common/comum.services";
 import { AlertsContext } from "@/providers/alertsProvider";
 import * as React from 'react';
 import Textarea from '@mui/joy/Textarea';

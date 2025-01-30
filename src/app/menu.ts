@@ -1,7 +1,8 @@
-import { AssignmentTurnedIn, Business, Checklist, Handyman, Home, Person, PlayArrow, UploadFile } from '@mui/icons-material';
+import { AssignmentTurnedIn, Business, Checklist, Home, Person, PlayArrow, UploadFile } from '@mui/icons-material';
 import TroubleshootIcon from '@mui/icons-material/Troubleshoot';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
+
 export interface IMenuOption {
     title:  string;
     href:   string;
@@ -13,7 +14,6 @@ export interface IMenu {
     userOptions:    IMenuOption[];
     adminOptions:   IMenuOption[];
 }
-
 
 export const menu: IMenu = {
     userOptions: [
