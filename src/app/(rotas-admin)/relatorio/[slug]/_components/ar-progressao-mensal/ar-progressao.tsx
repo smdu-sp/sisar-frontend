@@ -1,6 +1,6 @@
 /** @format */
 
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography, Grid } from '@mui/material';
 import dynamic from 'next/dynamic';
 import TableData from './table-data';
 
@@ -8,23 +8,17 @@ const LineChart = dynamic(() => import('./line-chart'), {
 	ssr: false,
 });
 
-export default function ARProtocolado() {
+export default function ARProgressão() {
 	return (
 		<Container
 			maxWidth={'xl'}
 			style={{ paddingBottom: '0px', paddingTop: '16px' }}>
 			<Stack spacing={4}>
 				{/* <ThemeToggle /> */}
-				<Typography variant='h4'>Progressão AR Protocolados</Typography>
-				<div
-					style={{
-						display: 'grid',
-						gridTemplateColumns: 'repeat(2, 1fr)',
-						gap: '16px',
-						paddingBottom: '20px',
-					}}>
+				<Typography variant='h4' style={{fontWeight:'700'}}>Progressão AR Protocolados</Typography>
+				
 					<TableData />
-				</div>
+
 				<LineChart
 					title="AR's Protocolados no tempo"
 					series={[
