@@ -6,14 +6,24 @@ import { Box, Chip, Divider, FormControl, FormLabel, Grid, Option, Select } from
 
 import * as inicialServices from '@/shared/services/inicial.services';
 import * as usuarioServices from '@/shared/services/usuario.services';
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AlertsContext } from "@/providers/alertsProvider";
+import { Check } from "@mui/icons-material";
 
 export default function DistribuicaoTab({ distribuicao, funcionarios }: { distribuicao?: IDistribuicao, funcionarios?: { administrativos: IUsuario[], tecnicos: IUsuario[] }}) {
     const [administrativo_responsavel_id, setAdministrativoResponsavelId] = useState(distribuicao?.administrativo_responsavel_id);
     const [tecnico_responsavel_id, setTecnicoResponsavelId] = useState(distribuicao?.tecnico_responsavel_id);
     const [usuario, setUsuario] = useState<IUsuario>();
+    const { setAlert } = useContext(AlertsContext);
+    
     useEffect(() => {
         usuarioServices.validaUsuario().then(setUsuario);
+        distribuicao && inicialServices.buscarPorId(distribuicao?.inicial_id).then((resp) => {
+            if (resp){
+                setAdministrativoResponsavelId(resp.distribuicao?.administrativo_responsavel_id);
+                setTecnicoResponsavelId(resp.distribuicao?.tecnico_responsavel_id);
+            }
+        })
     }, [])
     function atualizaAdministrativo(administrativo_responsavel_id: string) {
         if (distribuicao) {
@@ -21,6 +31,7 @@ export default function DistribuicaoTab({ distribuicao, funcionarios }: { distri
             .then((response: IDistribuicao) => {
                 if (response.inicial_id) {
                     setAdministrativoResponsavelId(response.administrativo_responsavel_id);
+                    setAlert("Sucesso", "Administrativo responsável atualizado!", "success", 3000, Check);
                 }
             });
         }
@@ -31,6 +42,7 @@ export default function DistribuicaoTab({ distribuicao, funcionarios }: { distri
             .then((response: IDistribuicao) => {
                 if (response.inicial_id) {
                     setTecnicoResponsavelId(response.tecnico_responsavel_id);
+                    setAlert("Sucesso", "Técnico responsável atualizado!", "success", 3000, Check);
                 }
             });
         }

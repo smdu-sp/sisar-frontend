@@ -14,6 +14,7 @@ import * as inicialServices from '@/shared/services/inicial.services';
 import { Check } from '@mui/icons-material';
 import { AlertsContext } from '@/providers/alertsProvider';
 import FinalizaçãoTab from './tabs/finalizacao';
+import AnaliseTab from './tabs/analise';
 
 export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInicial, funcionarios?: { administrativos: IUsuario[], tecnicos: IUsuario[] }}) {
     const query = useSearchParams();
@@ -161,6 +162,9 @@ export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInic
                     {(inicial) && <Tab variant="soft">
                         Admissibilidade
                     </Tab>}
+                    {(inicial) && <Tab variant="soft">
+                        Análise
+                    </Tab>}
                     {(inicial && inicial?.status === 2 || inicial?.status === 3 || inicial?.status === 4 ) && <Tab variant="soft">
                         Finalização
                     </Tab>}
@@ -184,6 +188,9 @@ export default function ContentTabs({ inicial, funcionarios }: { inicial?: IInic
                     <AdmissibilidadeTab inicial={inicial} admissibilidade={inicial.admissibilidade} />
                 </TabPanel>}
                 {(inicial && inicial?.status === 2 || inicial?.status === 3 || inicial?.status === 4 ) && <TabPanel value={3}>
+                    <AnaliseTab />
+                </TabPanel>}
+                {(inicial && inicial?.status === 2 || inicial?.status === 3 || inicial?.status === 4 ) && <TabPanel value={4}>
                     <FinalizaçãoTab inicial={inicial} admissibilidade={inicial.admissibilidade} />
                 </TabPanel>}
             </Tabs>
