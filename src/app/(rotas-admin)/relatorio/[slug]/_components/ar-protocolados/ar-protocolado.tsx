@@ -24,13 +24,6 @@ export default function ARProtocolado() {
 						paddingBottom: '20px',
 					}}>
 					<TableData />
-					<TableData />
-					<TableData />
-					<TableData />
-					<TableData />
-					<TableData />
-					<TableData />
-					<TableData />
 				</div>
 				<LineChart
 					title="AR's Protocolados no tempo"
