@@ -1,53 +1,79 @@
 /** @format */
 
-import { Container, Stack, Typography } from '@mui/material';
-import React from 'react';
-import TableData from './_components/table-data';
-import { mockDataTable } from './constants/mockdata';
-import dynamic from 'next/dynamic';
+import ARProgressao from './_components/ar-progressao-mensal/ar-progressao';
+import { Container } from '@mui/material';
+import { ArrowBack } from '@mui/icons-material';
+import ArGabienetePrefeito from './_components/ar-gabinete-prefeito/ar-gabinete-prefeito';
+import ArStatusResumoQnt from './_components/ar-status-resumo-quantitaivo/ar-status-resumo-quantitaivo';
+import RRStatusResumoQtn from './_components/rr-status-resumo-quantitativo/rr-status-resumo-quantitativo';
+import { Button, Card, CardContent, Sheet, Typography } from '@mui/joy';
 
-const LineChart = dynamic(() => import('./_components/line-chart'), {
-	ssr: false,
-});
-
-const LineChartExample = dynamic(
-	() => import('./_components/line-chert-exemples'),
-	{
-		ssr: false,
-	},
-);
-
-export default async function PageRelatioSlug({
+export default async function PageRelatorioSlug({
 	params,
 }: {
 	params: Promise<{ slug: string }>;
 }) {
-	return (
-		<Container
-			maxWidth={'xl'}
-			style={{ paddingBottom: '16px', paddingTop: '20px' }}>
-			<Stack spacing={10}>
-				<Typography variant='h4'>Progressão AR Protocolados</Typography>
-				<div
-					style={{
-						display: 'grid',
-						gridTemplateColumns: 'repeat(2, 1fr)',
-						gap: '16px',
-					}}>
-					{mockDataTable.map((item, index) => {
-						return (
-							<div
-								key={index}
-								style={{ paddingBottom: `${index == 0 ? '20px' : '8px'} ` }}>
-								<TableData data={item} />
-							</div>
-						);
-					})}
-				</div>
+	const { slug } = await params;
 
-				<LineChart />
-				<LineChartExample />
-			</Stack>
-		</Container>
-	);
+	switch (slug) {
+		case `ar-grafico-progressao-mensal`:
+			return <ARProgressao />;
+		case `ar-gabinete-prefeito`:
+			return <ArGabienetePrefeito />;
+		case `ar-status-resumo-quantitaivo`:
+			return <ArStatusResumoQnt />;
+		case `rr-status-resumo-quantitativo`:
+			return <RRStatusResumoQtn />;
+		default:
+			return (
+				<Sheet
+					sx={{
+						height: '100vh',
+						width: '100%',
+						alignItems: 'center',
+						justifyContent: 'center',
+						flex: 1,
+						display: 'flex',
+						flexDirection: 'column',
+						gap: 2,
+					}}>
+					<Typography
+						level='h1'
+						color='primary'>
+						404
+					</Typography>
+					<Card
+						variant='outlined'
+						color='primary'
+						size='lg'
+						invertedColors
+						sx={{
+							boxShadow: 'lg',
+							width: 400,
+							maxWidth: '100%',
+						}}>
+						<CardContent sx={{ gap: 2 }}>
+							<Typography level='title-lg'>Relatório não encontrado</Typography>
+							<Typography level='body-md'>
+								Parece que a página que você está procurando não existe ou foi
+								movida.
+							</Typography>
+						</CardContent>
+					</Card>
+					<a href='/relatorio'>
+						<Button
+							startDecorator={<ArrowBack />}
+							variant='plain'
+							color='primary'
+							sx={{
+								':hover': {
+									bgcolor: 'transparent',
+								},
+							}}>
+							Retornar aos relatórios
+						</Button>
+					</a>
+				</Sheet>
+			);
+	}
 }
