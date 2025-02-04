@@ -18,7 +18,7 @@ export default function ARGabienetePrefeito() {
 				</Typography>
 				<Typography
 					variant='h5'
-					style={{ fontWeight: '500' }}>
+					style={{ fontWeight: '500', color: '#acacac' }}>
 					Relação de Processos Protocolados | Processos Deferidos
 				</Typography>
 

@@ -24,670 +24,248 @@ const arrayMeses = [
 	'Dezembro',
 ];
 
-const relatorio = {
-	dados: [
-		{
-			ano: 2017,
-			processos: [47, 27, 48, 43, 20, 47, 27, 46, 48, 39, 29, 26],
-			processos_aprovados: [16, 14, 24, 22, 7, 16, 9, 23, 24, 13, 14, 13],
-			num_processo: [
-				201800487793, 201801234567, 201807890123, 201803456789, 201809012345,
-				201805678901, 201802345678, 201808901234, 201804567890, 201800123456,
-				201804567890, 201800123456,
-			],
-			initial_time: [86, 18, 28, 73, 64, 56, 67, 64, 36, 28, 84, 58],
-			analysis_time: [27, 21, 10, 25, 10, 11, 28, 18, 16, 10, 19, 16],
-			category: [
-				'HMP / HIS-1 / HIS2',
-				'R2v / nR1 (Residencial)',
-				'HMP',
-				'EZEIS',
-				'R2v-02 / nR1,R2v / nR1',
-				'HIS',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-			],
-			responsavel: [
-				'William Vitor de Souza',
-				'Marcelo Saicaly Zapparoli',
-				'Bruno Ribeiro Ferreira',
-				'Amanda Bezerra da Silva',
-				'Paulo Roberto Tanaka',
-				'Magno Emílio Moreira Leite',
-				'Abrão Elias Frankel',
-				'Carlos Eduardo Monteiro',
-				'Marcos Garrubbo',
-				'Adriana Zampieri Albuquerque',
-				'Mario Tiburcio Tiberio',
-				'Tarjab Incorporadora LTDA',
-				'Sérgio Mester',
-			],
-			empresa: [
-				'biraja Empreendimentos Imobiliarios Spe Ltda.',
-				'Idea Empreendimentos Spe 10 Ltda',
-				'José Antonio Figueiredo Da Silva',
-				'TDSP Nilo Empreendimentos Imobiliários Ltda.',
-				'Ali Zohair Anka',
-				'Cbr 048 Empreendimentos Imobiliários Ltda.',
-				'Paes & Gregori LTDA',
-				'Merc Engenharia E Arquitetura Ltda',
-				'Idea Empreendimentos 31 Ltda.',
-				'HR Participações LTDA',
-				'Tenda Negócios Imobiliários S/A',
-				' Ana Beatriz Warde Kouak e Outro',
-			],
-			catacteristica: [
-				'1 prédio com 22 andraes e 152 unidades',
-				'1 prédio com 18 andares e 294 unidades',
-				'2 prédios, totalizando 54 andares e 2 subsolos.',
-				'1 prédio com 19 andares e 33 unidades, mais 2 subsolos.',
-				'1 prédio com 2 andares e 1 subsolo',
-				'1 prédio com 32 andares, 116 unidades, 2 duplex e 3 subsolos',
-				'1 prédio com 27 andares e 3 subsolos. ',
-				'1 prédio com 27 andares e 50 unidades.',
-				'1 prédio com 15 andares e 48 unidades',
-				'1 prédio com 28 andares e 4 sbsolos. ',
-				'5 blocos, com 1 prédio de 11 andares e 88 unidades em cada bloco.',
-				'1 prédio, com 2 andares, 4 unidades e 1 subsolo.',
-			],
-			regiao: [
-				'Zona Oeste',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-			],
-		},
+export interface IProcessoAprovado {
+	numProcesso: number;
+	tempoAnaliseInicial: number;
+	tempoAnaliseRecurso?: number;
+	categoriaUso: string;
+	responsavelProjeto: string;
+	empresa: string;
+	carecteristicasProjeto?: string;
+	regiaoCidade: string;
+}
+
+export interface IMes {
+	mes: string;
+	processosProtocolados: number;
+	processosAprovados: IProcessoAprovado[];
+}
+export interface IAno {
+	ano: number;
+	meses: IMes[];
+}
+
+export interface IRelatorioAnual {
+	anos: IAno[];
+}
+
+const relatorio: IRelatorioAnual = {
+	anos: [
 		{
 			ano: 2018,
-			processos: [47, 27, 48, 43, 20, 47, 27, 46, 48, 39, 29, 26],
-			processos_aprovados: [16, 14, 24, 22, 7, 16, 9, 23, 24, 13, 14, 13],
-			num_processo: [
-				201800487793, 201801234567, 201807890123, 201803456789, 201809012345,
-				201805678901, 201802345678, 201808901234, 201804567890, 201800123456,
-				201804567890, 201800123456,
-			],
-			initial_time: [86, 18, 28, 73, 64, 56, 67, 64, 36, 28, 84, 58],
-			analysis_time: [27, 21, 10, 25, 10, 11, 28, 18, 16, 10, 19, 16],
-			category: [
-				'HMP / HIS-1 / HIS2',
-				'R2v / nR1 (Residencial)',
-				'HMP',
-				'EZEIS',
-				'R2v-02 / nR1,R2v / nR1',
-				'HIS',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-			],
-			responsavel: [
-				'William Vitor de Souza',
-				'Marcelo Saicaly Zapparoli',
-				'Bruno Ribeiro Ferreira',
-				'Amanda Bezerra da Silva',
-				'Paulo Roberto Tanaka',
-				'Magno Emílio Moreira Leite',
-				'Abrão Elias Frankel',
-				'Carlos Eduardo Monteiro',
-				'Marcos Garrubbo',
-				'Adriana Zampieri Albuquerque',
-				'Mario Tiburcio Tiberio',
-				'Tarjab Incorporadora LTDA',
-				'Sérgio Mester',
-			],
-			empresa: [
-				'biraja Empreendimentos Imobiliarios Spe Ltda.',
-				'Idea Empreendimentos Spe 10 Ltda',
-				'José Antonio Figueiredo Da Silva',
-				'TDSP Nilo Empreendimentos Imobiliários Ltda.',
-				'Ali Zohair Anka',
-				'Cbr 048 Empreendimentos Imobiliários Ltda.',
-				'Paes & Gregori LTDA',
-				'Merc Engenharia E Arquitetura Ltda',
-				'Idea Empreendimentos 31 Ltda.',
-				'HR Participações LTDA',
-				'Tenda Negócios Imobiliários S/A',
-				' Ana Beatriz Warde Kouak e Outro',
-			],
-			catacteristica: [
-				'1 prédio com 22 andraes e 152 unidades',
-				'1 prédio com 18 andares e 294 unidades',
-				'2 prédios, totalizando 54 andares e 2 subsolos.',
-				'1 prédio com 19 andares e 33 unidades, mais 2 subsolos.',
-				'1 prédio com 2 andares e 1 subsolo',
-				'1 prédio com 32 andares, 116 unidades, 2 duplex e 3 subsolos',
-				'1 prédio com 27 andares e 3 subsolos. ',
-				'1 prédio com 27 andares e 50 unidades.',
-				'1 prédio com 15 andares e 48 unidades',
-				'1 prédio com 28 andares e 4 sbsolos. ',
-				'5 blocos, com 1 prédio de 11 andares e 88 unidades em cada bloco.',
-				'1 prédio, com 2 andares, 4 unidades e 1 subsolo.',
-			],
-			regiao: [
-				'Zona Oeste',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-			],
-		},
-		{
-			ano: 2019,
-			processos: [47, 27, 48, 43, 20, 47, 27, 46, 48, 39, 29, 26],
-			processos_aprovados: [16, 14, 24, 22, 7, 16, 9, 23, 24, 13, 14, 13],
-			num_processo: [
-				201800487793, 201801234567, 201807890123, 201803456789, 201809012345,
-				201805678901, 201802345678, 201808901234, 201804567890, 201800123456,
-				201804567890, 201800123456,
-			],
-			initial_time: [86, 18, 28, 73, 64, 56, 67, 64, 36, 28, 84, 58],
-			analysis_time: [27, 21, 10, 25, 10, 11, 28, 18, 16, 10, 19, 16],
-			category: [
-				'HMP / HIS-1 / HIS2',
-				'R2v / nR1 (Residencial)',
-				'HMP',
-				'EZEIS',
-				'R2v-02 / nR1,R2v / nR1',
-				'HIS',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-			],
-			responsavel: [
-				'William Vitor de Souza',
-				'Marcelo Saicaly Zapparoli',
-				'Bruno Ribeiro Ferreira',
-				'Amanda Bezerra da Silva',
-				'Paulo Roberto Tanaka',
-				'Magno Emílio Moreira Leite',
-				'Abrão Elias Frankel',
-				'Carlos Eduardo Monteiro',
-				'Marcos Garrubbo',
-				'Adriana Zampieri Albuquerque',
-				'Mario Tiburcio Tiberio',
-				'Tarjab Incorporadora LTDA',
-				'Sérgio Mester',
-			],
-			empresa: [
-				'biraja Empreendimentos Imobiliarios Spe Ltda.',
-				'Idea Empreendimentos Spe 10 Ltda',
-				'José Antonio Figueiredo Da Silva',
-				'TDSP Nilo Empreendimentos Imobiliários Ltda.',
-				'Ali Zohair Anka',
-				'Cbr 048 Empreendimentos Imobiliários Ltda.',
-				'Paes & Gregori LTDA',
-				'Merc Engenharia E Arquitetura Ltda',
-				'Idea Empreendimentos 31 Ltda.',
-				'HR Participações LTDA',
-				'Tenda Negócios Imobiliários S/A',
-				' Ana Beatriz Warde Kouak e Outro',
-			],
-			catacteristica: [
-				'1 prédio com 22 andraes e 152 unidades',
-				'1 prédio com 18 andares e 294 unidades',
-				'2 prédios, totalizando 54 andares e 2 subsolos.',
-				'1 prédio com 19 andares e 33 unidades, mais 2 subsolos.',
-				'1 prédio com 2 andares e 1 subsolo',
-				'1 prédio com 32 andares, 116 unidades, 2 duplex e 3 subsolos',
-				'1 prédio com 27 andares e 3 subsolos. ',
-				'1 prédio com 27 andares e 50 unidades.',
-				'1 prédio com 15 andares e 48 unidades',
-				'1 prédio com 28 andares e 4 sbsolos. ',
-				'5 blocos, com 1 prédio de 11 andares e 88 unidades em cada bloco.',
-				'1 prédio, com 2 andares, 4 unidades e 1 subsolo.',
-			],
-			regiao: [
-				'Zona Oeste',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-			],
-		},
-		{
-			ano: 2020,
-			processos: [47, 27, 48, 43, 20, 47, 27, 46, 48, 39, 29, 26],
-			processos_aprovados: [16, 14, 24, 22, 7, 16, 9, 23, 24, 13, 14, 13],
-			num_processo: [
-				201800487793, 201801234567, 201807890123, 201803456789, 201809012345,
-				201805678901, 201802345678, 201808901234, 201804567890, 201800123456,
-				201804567890, 201800123456,
-			],
-			initial_time: [86, 18, 28, 73, 64, 56, 67, 64, 36, 28, 84, 58],
-			analysis_time: [27, 21, 10, 25, 10, 11, 28, 18, 16, 10, 19, 16],
-			category: [
-				'HMP / HIS-1 / HIS2',
-				'R2v / nR1 (Residencial)',
-				'HMP',
-				'EZEIS',
-				'R2v-02 / nR1,R2v / nR1',
-				'HIS',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-			],
-			responsavel: [
-				'William Vitor de Souza',
-				'Marcelo Saicaly Zapparoli',
-				'Bruno Ribeiro Ferreira',
-				'Amanda Bezerra da Silva',
-				'Paulo Roberto Tanaka',
-				'Magno Emílio Moreira Leite',
-				'Abrão Elias Frankel',
-				'Carlos Eduardo Monteiro',
-				'Marcos Garrubbo',
-				'Adriana Zampieri Albuquerque',
-				'Mario Tiburcio Tiberio',
-				'Tarjab Incorporadora LTDA',
-				'Sérgio Mester',
-			],
-			empresa: [
-				'biraja Empreendimentos Imobiliarios Spe Ltda.',
-				'Idea Empreendimentos Spe 10 Ltda',
-				'José Antonio Figueiredo Da Silva',
-				'TDSP Nilo Empreendimentos Imobiliários Ltda.',
-				'Ali Zohair Anka',
-				'Cbr 048 Empreendimentos Imobiliários Ltda.',
-				'Paes & Gregori LTDA',
-				'Merc Engenharia E Arquitetura Ltda',
-				'Idea Empreendimentos 31 Ltda.',
-				'HR Participações LTDA',
-				'Tenda Negócios Imobiliários S/A',
-				' Ana Beatriz Warde Kouak e Outro',
-			],
-			catacteristica: [
-				'1 prédio com 22 andraes e 152 unidades',
-				'1 prédio com 18 andares e 294 unidades',
-				'2 prédios, totalizando 54 andares e 2 subsolos.',
-				'1 prédio com 19 andares e 33 unidades, mais 2 subsolos.',
-				'1 prédio com 2 andares e 1 subsolo',
-				'1 prédio com 32 andares, 116 unidades, 2 duplex e 3 subsolos',
-				'1 prédio com 27 andares e 3 subsolos. ',
-				'1 prédio com 27 andares e 50 unidades.',
-				'1 prédio com 15 andares e 48 unidades',
-				'1 prédio com 28 andares e 4 sbsolos. ',
-				'5 blocos, com 1 prédio de 11 andares e 88 unidades em cada bloco.',
-				'1 prédio, com 2 andares, 4 unidades e 1 subsolo.',
-			],
-			regiao: [
-				'Zona Oeste',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-			],
-		},
-		{
-			ano: 2021,
-			processos: [47, 27, 48, 43, 20, 47, 27, 46, 48, 39, 29, 26],
-			processos_aprovados: [16, 14, 24, 22, 7, 16, 9, 23, 24, 13, 14, 13],
-			num_processo: [
-				201800487793, 201801234567, 201807890123, 201803456789, 201809012345,
-				201805678901, 201802345678, 201808901234, 201804567890, 201800123456,
-				201804567890, 201800123456,
-			],
-			initial_time: [86, 18, 28, 73, 64, 56, 67, 64, 36, 28, 84, 58],
-			analysis_time: [27, 21, 10, 25, 10, 11, 28, 18, 16, 10, 19, 16],
-			category: [
-				'HMP / HIS-1 / HIS2',
-				'R2v / nR1 (Residencial)',
-				'HMP',
-				'EZEIS',
-				'R2v-02 / nR1,R2v / nR1',
-				'HIS',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-			],
-			responsavel: [
-				'William Vitor de Souza',
-				'Marcelo Saicaly Zapparoli',
-				'Bruno Ribeiro Ferreira',
-				'Amanda Bezerra da Silva',
-				'Paulo Roberto Tanaka',
-				'Magno Emílio Moreira Leite',
-				'Abrão Elias Frankel',
-				'Carlos Eduardo Monteiro',
-				'Marcos Garrubbo',
-				'Adriana Zampieri Albuquerque',
-				'Mario Tiburcio Tiberio',
-				'Tarjab Incorporadora LTDA',
-				'Sérgio Mester',
-			],
-			empresa: [
-				'biraja Empreendimentos Imobiliarios Spe Ltda.',
-				'Idea Empreendimentos Spe 10 Ltda',
-				'José Antonio Figueiredo Da Silva',
-				'TDSP Nilo Empreendimentos Imobiliários Ltda.',
-				'Ali Zohair Anka',
-				'Cbr 048 Empreendimentos Imobiliários Ltda.',
-				'Paes & Gregori LTDA',
-				'Merc Engenharia E Arquitetura Ltda',
-				'Idea Empreendimentos 31 Ltda.',
-				'HR Participações LTDA',
-				'Tenda Negócios Imobiliários S/A',
-				' Ana Beatriz Warde Kouak e Outro',
-			],
-			catacteristica: [
-				'1 prédio com 22 andraes e 152 unidades',
-				'1 prédio com 18 andares e 294 unidades',
-				'2 prédios, totalizando 54 andares e 2 subsolos.',
-				'1 prédio com 19 andares e 33 unidades, mais 2 subsolos.',
-				'1 prédio com 2 andares e 1 subsolo',
-				'1 prédio com 32 andares, 116 unidades, 2 duplex e 3 subsolos',
-				'1 prédio com 27 andares e 3 subsolos. ',
-				'1 prédio com 27 andares e 50 unidades.',
-				'1 prédio com 15 andares e 48 unidades',
-				'1 prédio com 28 andares e 4 sbsolos. ',
-				'5 blocos, com 1 prédio de 11 andares e 88 unidades em cada bloco.',
-				'1 prédio, com 2 andares, 4 unidades e 1 subsolo.',
-			],
-			regiao: [
-				'Zona Oeste',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-			],
-		},
-		{
-			ano: 2022,
-			processos: [47, 27, 48, 43, 20, 47, 27, 46, 48, 39, 29, 26],
-			processos_aprovados: [16, 14, 24, 22, 7, 16, 9, 23, 24, 13, 14, 13],
-			num_processo: [
-				201800487793, 201801234567, 201807890123, 201803456789, 201809012345,
-				201805678901, 201802345678, 201808901234, 201804567890, 201800123456,
-				201804567890, 201800123456,
-			],
-			initial_time: [86, 18, 28, 73, 64, 56, 67, 64, 36, 28, 84, 58],
-			analysis_time: [27, 21, 10, 25, 10, 11, 28, 18, 16, 10, 19, 16],
-			category: [
-				'HMP / HIS-1 / HIS2',
-				'R2v / nR1 (Residencial)',
-				'HMP',
-				'EZEIS',
-				'R2v-02 / nR1,R2v / nR1',
-				'HIS',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-			],
-			responsavel: [
-				'William Vitor de Souza',
-				'Marcelo Saicaly Zapparoli',
-				'Bruno Ribeiro Ferreira',
-				'Amanda Bezerra da Silva',
-				'Paulo Roberto Tanaka',
-				'Magno Emílio Moreira Leite',
-				'Abrão Elias Frankel',
-				'Carlos Eduardo Monteiro',
-				'Marcos Garrubbo',
-				'Adriana Zampieri Albuquerque',
-				'Mario Tiburcio Tiberio',
-				'Tarjab Incorporadora LTDA',
-				'Sérgio Mester',
-			],
-			empresa: [
-				'biraja Empreendimentos Imobiliarios Spe Ltda.',
-				'Idea Empreendimentos Spe 10 Ltda',
-				'José Antonio Figueiredo Da Silva',
-				'TDSP Nilo Empreendimentos Imobiliários Ltda.',
-				'Ali Zohair Anka',
-				'Cbr 048 Empreendimentos Imobiliários Ltda.',
-				'Paes & Gregori LTDA',
-				'Merc Engenharia E Arquitetura Ltda',
-				'Idea Empreendimentos 31 Ltda.',
-				'HR Participações LTDA',
-				'Tenda Negócios Imobiliários S/A',
-				' Ana Beatriz Warde Kouak e Outro',
-			],
-			catacteristica: [
-				'1 prédio com 22 andraes e 152 unidades',
-				'1 prédio com 18 andares e 294 unidades',
-				'2 prédios, totalizando 54 andares e 2 subsolos.',
-				'1 prédio com 19 andares e 33 unidades, mais 2 subsolos.',
-				'1 prédio com 2 andares e 1 subsolo',
-				'1 prédio com 32 andares, 116 unidades, 2 duplex e 3 subsolos',
-				'1 prédio com 27 andares e 3 subsolos. ',
-				'1 prédio com 27 andares e 50 unidades.',
-				'1 prédio com 15 andares e 48 unidades',
-				'1 prédio com 28 andares e 4 sbsolos. ',
-				'5 blocos, com 1 prédio de 11 andares e 88 unidades em cada bloco.',
-				'1 prédio, com 2 andares, 4 unidades e 1 subsolo.',
-			],
-			regiao: [
-				'Zona Oeste',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-			],
-		},
-		{
-			ano: 2023,
-			processos: [47, 27, 48, 43, 20, 47, 27, 46, 48, 39, 29, 26],
-			processos_aprovados: [16, 14, 24, 22, 7, 16, 9, 23, 24, 13, 14, 13],
-			num_processo: [
-				201800487793, 201801234567, 201807890123, 201803456789, 201809012345,
-				201805678901, 201802345678, 201808901234, 201804567890, 201800123456,
-				201804567890, 201800123456,
-			],
-			initial_time: [86, 18, 28, 73, 64, 56, 67, 64, 36, 28, 84, 58],
-			analysis_time: [27, 21, 10, 25, 10, 11, 28, 18, 16, 10, 19, 16],
-			category: [
-				'HMP / HIS-1 / HIS2',
-				'R2v / nR1 (Residencial)',
-				'HMP',
-				'EZEIS',
-				'R2v-02 / nR1,R2v / nR1',
-				'HIS',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-			],
-			responsavel: [
-				'William Vitor de Souza',
-				'Marcelo Saicaly Zapparoli',
-				'Bruno Ribeiro Ferreira',
-				'Amanda Bezerra da Silva',
-				'Paulo Roberto Tanaka',
-				'Magno Emílio Moreira Leite',
-				'Abrão Elias Frankel',
-				'Carlos Eduardo Monteiro',
-				'Marcos Garrubbo',
-				'Adriana Zampieri Albuquerque',
-				'Mario Tiburcio Tiberio',
-				'Tarjab Incorporadora LTDA',
-				'Sérgio Mester',
-			],
-			empresa: [
-				'biraja Empreendimentos Imobiliarios Spe Ltda.',
-				'Idea Empreendimentos Spe 10 Ltda',
-				'José Antonio Figueiredo Da Silva',
-				'TDSP Nilo Empreendimentos Imobiliários Ltda.',
-				'Ali Zohair Anka',
-				'Cbr 048 Empreendimentos Imobiliários Ltda.',
-				'Paes & Gregori LTDA',
-				'Merc Engenharia E Arquitetura Ltda',
-				'Idea Empreendimentos 31 Ltda.',
-				'HR Participações LTDA',
-				'Tenda Negócios Imobiliários S/A',
-				' Ana Beatriz Warde Kouak e Outro',
-			],
-			catacteristica: [
-				'1 prédio com 22 andraes e 152 unidades',
-				'1 prédio com 18 andares e 294 unidades',
-				'2 prédios, totalizando 54 andares e 2 subsolos.',
-				'1 prédio com 19 andares e 33 unidades, mais 2 subsolos.',
-				'1 prédio com 2 andares e 1 subsolo',
-				'1 prédio com 32 andares, 116 unidades, 2 duplex e 3 subsolos',
-				'1 prédio com 27 andares e 3 subsolos. ',
-				'1 prédio com 27 andares e 50 unidades.',
-				'1 prédio com 15 andares e 48 unidades',
-				'1 prédio com 28 andares e 4 sbsolos. ',
-				'5 blocos, com 1 prédio de 11 andares e 88 unidades em cada bloco.',
-				'1 prédio, com 2 andares, 4 unidades e 1 subsolo.',
-			],
-			regiao: [
-				'Zona Oeste',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-			],
-		},
-		{
-			ano: 2024,
-			processos: [47, 27, 48, 43, 20, 47, 27, 46, 48, 39, 29, 26],
-			processos_aprovados: [16, 14, 24, 22, 7, 16, 9, 23, 24, 13, 14, 13],
-			num_processo: [
-				201800487794, 201801234567, 201807890123, 201803456789, 201809012345,
-				201805678901, 201802345678, 201808901234, 201804567890, 201800123456,
-				201804567890, 201800123456,
-			],
-			initial_time: [86, 18, 28, 73, 64, 56, 67, 64, 36, 28, 84, 58],
-			analysis_time: [27, 21, 10, 25, 10, 11, 28, 18, 16, 10, 19, 16],
-			category: [
-				'HMP / HIS-1 / HIS2',
-				'R2v / nR1 (Residencial)',
-				'HMP',
-				'EZEIS',
-				'R2v-02 / nR1,R2v / nR1',
-				'HIS',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-				'R2H',
-				'NR2 NR1 R2V',
-				'R2H-03',
-			],
-			responsavel: [
-				'William Vitor de Souza',
-				'Marcelo Saicaly Zapparoli',
-				'Bruno Ribeiro Ferreira',
-				'Amanda Bezerra da Silva',
-				'Paulo Roberto Tanaka',
-				'Magno Emílio Moreira Leite',
-				'Abrão Elias Frankel',
-				'Carlos Eduardo Monteiro',
-				'Marcos Garrubbo',
-				'Adriana Zampieri Albuquerque',
-				'Mario Tiburcio Tiberio',
-				'Tarjab Incorporadora LTDA',
-				'Sérgio Mester',
-			],
-			empresa: [
-				'biraja Empreendimentos Imobiliarios Spe Ltda.',
-				'Idea Empreendimentos Spe 10 Ltda',
-				'José Antonio Figueiredo Da Silva',
-				'TDSP Nilo Empreendimentos Imobiliários Ltda.',
-				'Ali Zohair Anka',
-				'Cbr 048 Empreendimentos Imobiliários Ltda.',
-				'Paes & Gregori LTDA',
-				'Merc Engenharia E Arquitetura Ltda',
-				'Idea Empreendimentos 31 Ltda.',
-				'HR Participações LTDA',
-				'Tenda Negócios Imobiliários S/A',
-				' Ana Beatriz Warde Kouak e Outro',
-			],
-			catacteristica: [
-				'1 prédio com 22 andraes e 152 unidades',
-				'1 prédio com 18 andares e 294 unidades',
-				'2 prédios, totalizando 54 andares e 2 subsolos.',
-				'1 prédio com 19 andares e 33 unidades, mais 2 subsolos.',
-				'1 prédio com 2 andares e 1 subsolo',
-				'1 prédio com 32 andares, 116 unidades, 2 duplex e 3 subsolos',
-				'1 prédio com 27 andares e 3 subsolos. ',
-				'1 prédio com 27 andares e 50 unidades.',
-				'1 prédio com 15 andares e 48 unidades',
-				'1 prédio com 28 andares e 4 sbsolos. ',
-				'5 blocos, com 1 prédio de 11 andares e 88 unidades em cada bloco.',
-				'1 prédio, com 2 andares, 4 unidades e 1 subsolo.',
-			],
-			regiao: [
-				'Zona Oeste',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
-				'Zona Norte',
-				'Zona Sul',
-				'Centro',
-				'Zona Sul',
-				'Centro',
-				'Zona Leste',
+			meses: [
+				{
+					mes: 'Janeiro',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487794,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 45,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'EZEIS',
+							empresa: 'Merc Engenharia E Arquitetura Ltda',
+							numProcesso: 201800487999,
+							regiaoCidade: 'Zona Norte',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 90,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'R2v / nR1 (Residencial)',
+							empresa: 'Paes & Gregori LTDA',
+							numProcesso: 201800487884,
+							regiaoCidade: 'Zona Oeste',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 35,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
+				{
+					mes: 'Fevereiro',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487774,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 36,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
+				{
+					mes: 'Março',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487554,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 46,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
+				{
+					mes: 'Abril',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487664,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 56,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
+				{
+					mes: 'Maio',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487739,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 66,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
+				{
+					mes: 'Junho',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487738,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 76,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
+				{
+					mes: 'Julho',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487724,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 80,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
+				{
+					mes: 'Agosto',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487754,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 81,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
+				{
+					mes: 'Setembro',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487734,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 82,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
+				{
+					mes: 'Outubro',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487744,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 83,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
+				{
+					mes: 'Novembro',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487775,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 84,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
+				{
+					mes: 'Dezembro',
+					processosProtocolados: 40,
+					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+					],
+				},
 			],
 		},
 	],
@@ -713,7 +291,7 @@ export default function TableData() {
 		<Grid
 			style={{ paddingBottom: '16px', paddingTop: '16px' }}
 			container>
-			{relatorio.dados.map((ano, indexRelatorio) => {
+			{relatorio.anos.map((ano, indexRelatorio) => {
 				return (
 					<Grid
 						item
@@ -743,10 +321,10 @@ export default function TableData() {
 									</TableRow>
 								</TableHead>
 								<TableBody>
-									{ano.processos.map((processo, indexProcesso: number) => {
+									{ano.meses.map((mes, indexMes: number) => {
 										return (
-											<TableRow key={indexProcesso}>
-												{indexProcesso === 0 && (
+											<TableRow key={indexMes}>
+												{indexMes === 0 && (
 													<TableCell
 														style={{
 															fontWeight: 'bold',
@@ -755,90 +333,150 @@ export default function TableData() {
 														}}
 														align='center'
 														rowSpan={12}>
-														{indexProcesso === 0 && ano.ano}
+														{indexMes === 0 && ano.ano}
 													</TableCell>
 												)}
 												<TableCell
-													align='center'
 													style={{
-														borderRight: '1px solid #242424',
-													}}>
-													{arrayMeses[indexProcesso]}
+														border: '1px solid #242424',
+													}}
+													align='center'>
+													{mes.mes}
 												</TableCell>
 												<TableCell
-													align='center'
 													style={{
-														borderRight: '1px solid #242424',
-													}}>
-													{processo}
+														border: '1px solid #242424',
+													}}
+													align='center'>
+													{mes.processosProtocolados}
 												</TableCell>
 												<TableCell
-													align='center'
 													style={{
-														borderRight: '1px solid #242424',
-													}}>
-													{ano.processos_aprovados[indexProcesso]}
+														border: '1px solid #242424',
+													}}
+													align='center'>
+													{mes.processosAprovados.length}
 												</TableCell>
+
 												<TableCell
-													align='center'
 													style={{
-														borderRight: '1px solid #242424',
-													}}>
-													{ano.num_processo[indexProcesso]}
-												</TableCell>
-												<TableCell
-													align='center'
-													style={{
-														borderRight: '1px solid #242424',
-													}}>
-													{ano.initial_time[indexProcesso]}
-												</TableCell>
-												<TableCell
-													align='center'
-													style={{
-														borderRight: '1px solid #242424',
-													}}>
-													{ano.analysis_time[indexProcesso]}
-												</TableCell>{' '}
-												<TableCell
-													align='center'
-													style={{
+														border: '1px solid #242424',
 														fontSize: '12px',
-														borderRight: '1px solid #242424',
 													}}>
-													{ano.category[indexProcesso]}
+													{mes.processosAprovados.map((item, index) => {
+														return (
+															<TableRow key={index}>
+																<TableCell align='center'>
+																	{item.numProcesso}
+																</TableCell>
+															</TableRow>
+														);
+													})}
 												</TableCell>
 												<TableCell
-													align='center'
 													style={{
+														border: '1px solid #242424',
 														fontSize: '12px',
-														borderRight: '1px solid #242424',
 													}}>
-													{ano.responsavel[indexProcesso]}
+													{mes.processosAprovados.map((item, index) => {
+														return (
+															<TableRow key={index}>
+																<TableCell align='center'>
+																	{item.tempoAnaliseInicial}
+																</TableCell>
+															</TableRow>
+														);
+													})}
 												</TableCell>
 												<TableCell
-													align='center'
 													style={{
+														border: '1px solid #242424',
 														fontSize: '12px',
-														borderRight: '1px solid #242424',
 													}}>
-													{ano.empresa[indexProcesso]}
-												</TableCell>{' '}
-												<TableCell
-													align='center'
-													style={{
-														fontSize: '12px',
-														borderRight: '1px solid #242424',
-													}}>
-													{ano.catacteristica[indexProcesso]}
+													{mes.processosAprovados.map((item, index) => {
+														return (
+															<TableRow key={index}>
+																<TableCell align='center'>
+																	{item.tempoAnaliseRecurso}
+																</TableCell>
+															</TableRow>
+														);
+													})}
 												</TableCell>
 												<TableCell
-													align='center'
 													style={{
+														border: '1px solid #242424',
 														fontSize: '12px',
-														borderRight: '1px solid #242424',
 													}}>
-													{ano.regiao[indexProcesso]}
+													{mes.processosAprovados.map((item, index) => {
+														return (
+															<TableRow key={index}>
+																<TableCell align='center'>
+																	{item.categoriaUso}
+																</TableCell>
+															</TableRow>
+														);
+													})}
+												</TableCell>
+												<TableCell
+													style={{
+														border: '1px solid #242424',
+														fontSize: '12px',
+													}}>
+													{mes.processosAprovados.map((item, index) => {
+														return (
+															<TableRow key={index}>
+																<TableCell align='center'>
+																	{item.responsavelProjeto}
+																</TableCell>
+															</TableRow>
+														);
+													})}
+												</TableCell>
+												<TableCell
+													style={{
+														border: '1px solid #242424',
+														fontSize: '12px',
+													}}>
+													{mes.processosAprovados.map((item, index) => {
+														return (
+															<TableRow key={index}>
+																<TableCell align='center'>
+																	{item.empresa}
+																</TableCell>
+															</TableRow>
+														);
+													})}
+												</TableCell>
+												<TableCell
+													style={{
+														border: '1px solid #242424',
+														fontSize: '12px',
+													}}>
+													{mes.processosAprovados.map((item, index) => {
+														return (
+															<TableRow key={index}>
+																<TableCell align='center'>
+																	{item.carecteristicasProjeto}
+																</TableCell>
+															</TableRow>
+														);
+													})}
+												</TableCell>
+												<TableCell
+													style={{
+														border: '1px solid #242424',
+														fontSize: '12px',
+													}}>
+													{mes.processosAprovados.map((item, index) => {
+														return (
+															<TableRow key={index}>
+																<TableCell align='center'>
+																	{item.regiaoCidade}
+																</TableCell>
+															</TableRow>
+														);
+													})}
 												</TableCell>
 											</TableRow>
 										);
