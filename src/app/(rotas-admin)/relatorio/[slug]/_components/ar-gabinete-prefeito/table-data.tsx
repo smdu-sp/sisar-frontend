@@ -109,18 +109,7 @@ const relatorio: IRelatorioAnual = {
 				{
 					mes: 'Março',
 					processosProtocolados: 40,
-					processosAprovados: [
-						{
-							categoriaUso: 'HMP',
-							empresa: 'Idea Empreendimentos Spe 10 Ltda',
-							numProcesso: 201800487554,
-							regiaoCidade: 'Zona Sul',
-							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
-							tempoAnaliseInicial: 46,
-							tempoAnaliseRecurso: 8,
-							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
-						},
-					],
+					processosAprovados: [],
 				},
 				{
 					mes: 'Abril',
@@ -133,6 +122,26 @@ const relatorio: IRelatorioAnual = {
 							regiaoCidade: 'Zona Sul',
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 56,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
@@ -149,6 +158,16 @@ const relatorio: IRelatorioAnual = {
 							regiaoCidade: 'Zona Sul',
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 66,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
@@ -184,6 +203,46 @@ const relatorio: IRelatorioAnual = {
 							tempoAnaliseRecurso: 8,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
 					],
 				},
 				{
@@ -216,6 +275,66 @@ const relatorio: IRelatorioAnual = {
 							tempoAnaliseRecurso: 8,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
 					],
 				},
 				{
@@ -232,28 +351,57 @@ const relatorio: IRelatorioAnual = {
 							tempoAnaliseRecurso: 8,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
-					],
-				},
-				{
-					mes: 'Novembro',
-					processosProtocolados: 40,
-					processosAprovados: [
 						{
 							categoriaUso: 'HMP',
 							empresa: 'Idea Empreendimentos Spe 10 Ltda',
-							numProcesso: 201800487775,
+							numProcesso: 201800487784,
 							regiaoCidade: 'Zona Sul',
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
-							tempoAnaliseInicial: 84,
+							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 					],
 				},
 				{
+					mes: 'Novembro',
+					processosProtocolados: 40,
+					processosAprovados: [],
+				},
+				{
 					mes: 'Dezembro',
 					processosProtocolados: 40,
 					processosAprovados: [
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
+						{
+							categoriaUso: 'HMP',
+							empresa: 'Idea Empreendimentos Spe 10 Ltda',
+							numProcesso: 201800487784,
+							regiaoCidade: 'Zona Sul',
+							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
+							tempoAnaliseInicial: 85,
+							tempoAnaliseRecurso: 8,
+							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
+						},
 						{
 							categoriaUso: 'HMP',
 							empresa: 'Idea Empreendimentos Spe 10 Ltda',
@@ -301,185 +449,54 @@ export default function TableData() {
 							<Table
 								aria-label='simple table'
 								size='small'>
-								<TableHead style={{ background: '#00a1b9' }}>
+								<TableHead style={{ background: '#00a1b9', color: 'white' }}>
 									<TableRow>
-										{headerTable.map((item, index) => {
-											return (
-												<TableCell
-													key={index}
-													style={{
-														color: '#fff',
-														fontWeight: '700',
-														fontSize: '12px',
-														border: '1px solid #242424',
-													}}
-													align='center'>
-													{item}
-												</TableCell>
-											);
-										})}
+										<TableCell align='center'>Ano</TableCell>
+										<TableCell align='center'>Mês</TableCell>
+										<TableCell align='center'>Processos Protocolados</TableCell>
+										<TableCell align='center'>Processos Aprovados</TableCell>
+										<TableCell align='center'>Num. Processo</TableCell>
+										<TableCell align='center'>Tempo de Análise Inicial</TableCell>
+										<TableCell align='center'>Tempo de Análise de Recurso</TableCell>
+										<TableCell align='center'>Categoria de Uso</TableCell>
+										<TableCell align='center'>Responsável pelo Projeto</TableCell>
+										<TableCell align='center'>Empresa</TableCell>
+										<TableCell align='center'>Características do Projeto</TableCell>
+										<TableCell align='center'>Região</TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
 									{ano.meses.map((mes, indexMes: number) => {
-										return (
-											<TableRow key={indexMes}>
-												{indexMes === 0 && (
-													<TableCell
-														style={{
-															fontWeight: 'bold',
-															fontSize: '16px',
-															border: '1px solid #242424',
-														}}
-														align='center'
-														rowSpan={12}>
-														{indexMes === 0 && ano.ano}
-													</TableCell>
-												)}
-												<TableCell
-													style={{
-														border: '1px solid #242424',
-													}}
-													align='center'>
-													{mes.mes}
-												</TableCell>
-												<TableCell
-													style={{
-														border: '1px solid #242424',
-													}}
-													align='center'>
-													{mes.processosProtocolados}
-												</TableCell>
-												<TableCell
-													style={{
-														border: '1px solid #242424',
-													}}
-													align='center'>
-													{mes.processosAprovados.length}
-												</TableCell>
-
-												<TableCell
-													style={{
-														border: '1px solid #242424',
-														fontSize: '12px',
-													}}>
-													{mes.processosAprovados.map((item, index) => {
-														return (
-															<TableRow key={index}>
-																<TableCell align='center'>
-																	{item.numProcesso}
-																</TableCell>
-															</TableRow>
-														);
-													})}
-												</TableCell>
-												<TableCell
-													style={{
-														border: '1px solid #242424',
-														fontSize: '12px',
-													}}>
-													{mes.processosAprovados.map((item, index) => {
-														return (
-															<TableRow key={index}>
-																<TableCell align='center'>
-																	{item.tempoAnaliseInicial}
-																</TableCell>
-															</TableRow>
-														);
-													})}
-												</TableCell>
-												<TableCell
-													style={{
-														border: '1px solid #242424',
-														fontSize: '12px',
-													}}>
-													{mes.processosAprovados.map((item, index) => {
-														return (
-															<TableRow key={index}>
-																<TableCell align='center'>
-																	{item.tempoAnaliseRecurso}
-																</TableCell>
-															</TableRow>
-														);
-													})}
-												</TableCell>
-												<TableCell
-													style={{
-														border: '1px solid #242424',
-														fontSize: '12px',
-													}}>
-													{mes.processosAprovados.map((item, index) => {
-														return (
-															<TableRow key={index}>
-																<TableCell align='center'>
-																	{item.categoriaUso}
-																</TableCell>
-															</TableRow>
-														);
-													})}
-												</TableCell>
-												<TableCell
-													style={{
-														border: '1px solid #242424',
-														fontSize: '12px',
-													}}>
-													{mes.processosAprovados.map((item, index) => {
-														return (
-															<TableRow key={index}>
-																<TableCell align='center'>
-																	{item.responsavelProjeto}
-																</TableCell>
-															</TableRow>
-														);
-													})}
-												</TableCell>
-												<TableCell
-													style={{
-														border: '1px solid #242424',
-														fontSize: '12px',
-													}}>
-													{mes.processosAprovados.map((item, index) => {
-														return (
-															<TableRow key={index}>
-																<TableCell align='center'>
-																	{item.empresa}
-																</TableCell>
-															</TableRow>
-														);
-													})}
-												</TableCell>
-												<TableCell
-													style={{
-														border: '1px solid #242424',
-														fontSize: '12px',
-													}}>
-													{mes.processosAprovados.map((item, index) => {
-														return (
-															<TableRow key={index}>
-																<TableCell align='center'>
-																	{item.carecteristicasProjeto}
-																</TableCell>
-															</TableRow>
-														);
-													})}
-												</TableCell>
-												<TableCell
-													style={{
-														border: '1px solid #242424',
-														fontSize: '12px',
-													}}>
-													{mes.processosAprovados.map((item, index) => {
-														return (
-															<TableRow key={index}>
-																<TableCell align='center'>
-																	{item.regiaoCidade}
-																</TableCell>
-															</TableRow>
-														);
-													})}
-												</TableCell>
+										const totalProcessos = ano.meses.reduce((acc, mes) => acc + mes.processosProtocolados, 0);
+										return mes.processosAprovados && mes.processosAprovados.length > 0 ? mes.processosAprovados.map((processo, indexProcesso) => {
+											return <TableRow key={`${indexMes}-${indexProcesso}`}>
+												{indexMes === 0 && indexProcesso === 0 && <TableCell align='center' rowSpan={totalProcessos}>{ano.ano}</TableCell>}
+												{indexProcesso === 0 && <TableCell align='center' rowSpan={mes.processosAprovados.length}>{mes.mes}</TableCell>}
+												{indexProcesso === 0 && <TableCell align='center' rowSpan={mes.processosAprovados.length}>{mes.processosProtocolados}</TableCell>}
+												{indexProcesso === 0 && <TableCell align='center' rowSpan={mes.processosAprovados.length}>{mes.processosAprovados.length}</TableCell>}
+												<TableCell align='center'>{processo.numProcesso}</TableCell>
+												<TableCell align='center'>{processo.tempoAnaliseInicial}</TableCell>
+												<TableCell align='center'>{processo.tempoAnaliseRecurso}</TableCell>
+												<TableCell align='center'>{processo.categoriaUso}</TableCell>
+												<TableCell align='center'>{processo.responsavelProjeto}</TableCell>
+												<TableCell align='center'>{processo.empresa}</TableCell>
+												<TableCell align='center'>{processo.carecteristicasProjeto}</TableCell>
+												<TableCell align='center'>{processo.regiaoCidade}</TableCell>
 											</TableRow>
-										);
+										}) : <TableRow>
+											{indexMes === 0 && <TableCell align='center' rowSpan={totalProcessos}>{ano.ano}</TableCell>}
+											<TableCell align='center'>{mes.mes}</TableCell>
+											<TableCell align='center'>{mes.processosProtocolados}</TableCell>
+											<TableCell align='center'>-</TableCell>
+											<TableCell align='center'>-</TableCell>
+											<TableCell align='center'>-</TableCell>
+											<TableCell align='center'>-</TableCell>
+											<TableCell align='center'>-</TableCell>
+											<TableCell align='center'>-</TableCell>
+											<TableCell align='center'>-</TableCell>
+											<TableCell align='center'>-</TableCell>
+											<TableCell align='center'>-</TableCell>
+										</TableRow>
 									})}
 								</TableBody>
 							</Table>

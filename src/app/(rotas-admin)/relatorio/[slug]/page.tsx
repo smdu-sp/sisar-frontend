@@ -3,7 +3,7 @@
 import ARProgressao from './_components/ar-progressao-mensal/ar-progressao';
 import { Container } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
-import ArGabienetePrefeito from './_components/ar-gabinete-prefeito/ar-gabinete-prefeito';
+import ArGabinetePrefeito from './_components/ar-gabinete-prefeito/ar-gabinete-prefeito';
 import ArStatusResumoQnt from './_components/ar-status-resumo-quantitaivo/ar-status-resumo-quantitaivo';
 import RRStatusResumoQtn from './_components/rr-status-resumo-quantitativo/rr-status-resumo-quantitativo';
 import { Button, Card, CardContent, Sheet, Typography } from '@mui/joy';
@@ -19,7 +19,7 @@ export default async function PageRelatorioSlug({
 		case `ar-grafico-progressao-mensal`:
 			return <ARProgressao />;
 		case `ar-gabinete-prefeito`:
-			return <ArGabienetePrefeito />;
+			return <ArGabinetePrefeito />;
 		case `ar-status-resumo-quantitaivo`:
 			return <ArStatusResumoQnt />;
 		case `rr-status-resumo-quantitativo`:
