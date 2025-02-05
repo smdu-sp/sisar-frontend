@@ -451,52 +451,250 @@ export default function TableData() {
 								size='small'>
 								<TableHead style={{ background: '#00a1b9', color: 'white' }}>
 									<TableRow>
-										<TableCell align='center'>Ano</TableCell>
-										<TableCell align='center'>Mês</TableCell>
-										<TableCell align='center'>Processos Protocolados</TableCell>
-										<TableCell align='center'>Processos Aprovados</TableCell>
-										<TableCell align='center'>Num. Processo</TableCell>
-										<TableCell align='center'>Tempo de Análise Inicial</TableCell>
-										<TableCell align='center'>Tempo de Análise de Recurso</TableCell>
-										<TableCell align='center'>Categoria de Uso</TableCell>
-										<TableCell align='center'>Responsável pelo Projeto</TableCell>
-										<TableCell align='center'>Empresa</TableCell>
-										<TableCell align='center'>Características do Projeto</TableCell>
-										<TableCell align='center'>Região</TableCell>
+										{headerTable.map((item, index) => {
+											return (
+												<TableCell
+													style={{ fontWeight: 'bold', color: 'white' }}
+													align='center'
+													key={index}>
+													{item}
+												</TableCell>
+											);
+										})}
 									</TableRow>
 								</TableHead>
 								<TableBody>
 									{ano.meses.map((mes, indexMes: number) => {
-										const totalRegistros = ano.meses.reduce((acc, mes) => acc + (mes.processosAprovados && mes.processosAprovados.length > 0 ? mes.processosAprovados.length : 1), 0);
-										return mes.processosAprovados && mes.processosAprovados.length > 0 ? mes.processosAprovados.map((processo, indexProcesso) => {
-											return <TableRow key={`${indexMes}-${indexProcesso}`}>
-												{indexMes === 0 && indexProcesso === 0 && <TableCell align='center' rowSpan={totalRegistros}>{ano.ano}</TableCell>}
-												{indexProcesso === 0 && <TableCell align='center' rowSpan={mes.processosAprovados.length}>{mes.mes}</TableCell>}
-												{indexProcesso === 0 && <TableCell align='center' rowSpan={mes.processosAprovados.length}>{mes.processosProtocolados}</TableCell>}
-												{indexProcesso === 0 && <TableCell align='center' rowSpan={mes.processosAprovados.length}>{mes.processosAprovados.length}</TableCell>}
-												<TableCell align='center'>{processo.numProcesso}</TableCell>
-												<TableCell align='center'>{processo.tempoAnaliseInicial}</TableCell>
-												<TableCell align='center'>{processo.tempoAnaliseRecurso}</TableCell>
-												<TableCell align='center'>{processo.categoriaUso}</TableCell>
-												<TableCell align='center'>{processo.responsavelProjeto}</TableCell>
-												<TableCell align='center'>{processo.empresa}</TableCell>
-												<TableCell align='center'>{processo.carecteristicasProjeto}</TableCell>
-												<TableCell align='center'>{processo.regiaoCidade}</TableCell>
+										const totalRegistros = ano.meses.reduce(
+											(acc, mes) =>
+												acc +
+												(mes.processosAprovados &&
+												mes.processosAprovados.length > 0
+													? mes.processosAprovados.length
+													: 1),
+											0,
+										);
+										return mes.processosAprovados &&
+											mes.processosAprovados.length > 0 ? (
+											mes.processosAprovados.map((processo, indexProcesso) => {
+												return (
+													<TableRow key={`${indexMes}-${indexProcesso}`}>
+														{indexMes === 0 && indexProcesso === 0 && (
+															<TableCell
+																style={{
+																	borderRight: '.5px solid #cacaca',
+																	fontWeight: 'bold',
+																	fontSize: '16px',
+																}}
+																align='center'
+																rowSpan={totalRegistros}>
+																{ano.ano}
+															</TableCell>
+														)}
+														{indexProcesso === 0 && (
+															<TableCell
+																style={{
+																	borderRight: '.5px solid #cacaca',
+																	fontSize: '12px',
+																}}
+																align='center'
+																rowSpan={mes.processosAprovados.length}>
+																{mes.mes}
+															</TableCell>
+														)}
+														{indexProcesso === 0 && (
+															<TableCell
+																style={{
+																	borderRight: '.5px solid #cacaca',
+																	fontSize: '12px',
+																}}
+																align='center'
+																rowSpan={mes.processosAprovados.length}>
+																{mes.processosProtocolados}
+															</TableCell>
+														)}
+														{indexProcesso === 0 && (
+															<TableCell
+																style={{
+																	borderRight: '.5px solid #cacaca',
+																	fontSize: '12px',
+																}}
+																align='center'
+																rowSpan={mes.processosAprovados.length}>
+																{mes.processosAprovados.length}
+															</TableCell>
+														)}
+														<TableCell
+															style={{
+																borderRight: '.5px solid #cacaca',
+																fontSize: '12px',
+															}}
+															align='center'>
+															{processo.numProcesso}
+														</TableCell>
+														<TableCell
+															style={{
+																borderRight: '.5px solid #cacaca',
+																fontSize: '12px',
+															}}
+															align='center'>
+															{processo.tempoAnaliseInicial}
+														</TableCell>
+														<TableCell
+															style={{
+																borderRight: '.5px solid #cacaca',
+																fontSize: '12px',
+															}}
+															align='center'>
+															{processo.tempoAnaliseRecurso}
+														</TableCell>
+														<TableCell
+															style={{
+																borderRight: '.5px solid #cacaca',
+																fontSize: '12px',
+															}}
+															align='center'>
+															{processo.categoriaUso}
+														</TableCell>
+														<TableCell
+															style={{
+																borderRight: '.5px solid #cacaca',
+																fontSize: '12px',
+															}}
+															align='center'>
+															{processo.responsavelProjeto}
+														</TableCell>
+														<TableCell
+															style={{
+																borderRight: '.5px solid #cacaca',
+																fontSize: '12px',
+															}}
+															align='center'>
+															{processo.empresa}
+														</TableCell>
+														<TableCell
+															style={{
+																borderRight: '.5px solid #cacaca',
+																fontSize: '12px',
+															}}
+															align='center'>
+															{processo.carecteristicasProjeto}
+														</TableCell>
+														<TableCell
+															style={{
+																borderRight: '.5px solid #cacaca',
+																fontSize: '12px',
+															}}
+															align='center'>
+															{processo.regiaoCidade}
+														</TableCell>
+													</TableRow>
+												);
+											})
+										) : (
+											<TableRow key={`${indexMes}-0`}>
+												{indexMes === 0 && (
+													<TableCell
+														style={{
+															borderRight: '.5px solid #cacaca',
+															fontWeight: 'bold',
+															fontSize: '16px',
+														}}
+														align='center'
+														rowSpan={totalRegistros}>
+														{ano.ano}
+													</TableCell>
+												)}
+												<TableCell
+													style={{
+														borderRight: '.5px solid #cacaca',
+														fontSize: '12px',
+													}}
+													align='center'>
+													{mes.mes}
+												</TableCell>
+												<TableCell
+													style={{
+														borderRight: '.5px solid #cacaca',
+														fontSize: '12px',
+													}}
+													align='center'>
+													{mes.processosProtocolados}
+												</TableCell>
+												<TableCell
+													style={{
+														borderRight: '.5px solid #cacaca',
+														fontSize: '12px',
+													}}
+													align='center'>
+													-
+												</TableCell>
+												<TableCell
+													style={{
+														borderRight: '.5px solid #cacaca',
+														fontSize: '12px',
+													}}
+													align='center'>
+													-
+												</TableCell>
+												<TableCell
+													style={{
+														borderRight: '.5px solid #cacaca',
+														fontSize: '12px',
+													}}
+													align='center'>
+													-
+												</TableCell>
+												<TableCell
+													style={{
+														borderRight: '.5px solid #cacaca',
+														fontSize: '12px',
+													}}
+													align='center'>
+													-
+												</TableCell>
+												<TableCell
+													style={{
+														borderRight: '.5px solid #cacaca',
+														fontSize: '12px',
+													}}
+													align='center'>
+													-
+												</TableCell>
+												<TableCell
+													style={{
+														borderRight: '.5px solid #cacaca',
+														fontSize: '12px',
+													}}
+													align='center'>
+													-
+												</TableCell>
+												<TableCell
+													style={{
+														borderRight: '.5px solid #cacaca',
+														fontSize: '12px',
+													}}
+													align='center'>
+													-
+												</TableCell>
+												<TableCell
+													style={{
+														borderRight: '.5px solid #cacaca',
+														fontSize: '12px',
+													}}
+													align='center'>
+													-
+												</TableCell>
+												<TableCell
+													style={{
+														borderRight: '.5px solid #cacaca',
+														fontSize: '12px',
+													}}
+													align='center'>
+													-
+												</TableCell>
 											</TableRow>
-										}) : <TableRow key={`${indexMes}-0`}>
-											{indexMes === 0 && <TableCell align='center' rowSpan={totalRegistros}>{ano.ano}</TableCell>}
-											<TableCell align='center'>{mes.mes}</TableCell>
-											<TableCell align='center'>{mes.processosProtocolados}</TableCell>
-											<TableCell align='center'>-</TableCell>
-											<TableCell align='center'>-</TableCell>
-											<TableCell align='center'>-</TableCell>
-											<TableCell align='center'>-</TableCell>
-											<TableCell align='center'>-</TableCell>
-											<TableCell align='center'>-</TableCell>
-											<TableCell align='center'>-</TableCell>
-											<TableCell align='center'>-</TableCell>
-											<TableCell align='center'>-</TableCell>
-										</TableRow>
+										);
 									})}
 								</TableBody>
 							</Table>
