@@ -467,10 +467,10 @@ export default function TableData() {
 								</TableHead>
 								<TableBody>
 									{ano.meses.map((mes, indexMes: number) => {
-										const totalProcessos = ano.meses.reduce((acc, mes) => acc + mes.processosProtocolados, 0);
+										const totalRegistros = ano.meses.reduce((acc, mes) => acc + (mes.processosAprovados && mes.processosAprovados.length > 0 ? mes.processosAprovados.length : 1), 0);
 										return mes.processosAprovados && mes.processosAprovados.length > 0 ? mes.processosAprovados.map((processo, indexProcesso) => {
 											return <TableRow key={`${indexMes}-${indexProcesso}`}>
-												{indexMes === 0 && indexProcesso === 0 && <TableCell align='center' rowSpan={totalProcessos}>{ano.ano}</TableCell>}
+												{indexMes === 0 && indexProcesso === 0 && <TableCell align='center' rowSpan={totalRegistros}>{ano.ano}</TableCell>}
 												{indexProcesso === 0 && <TableCell align='center' rowSpan={mes.processosAprovados.length}>{mes.mes}</TableCell>}
 												{indexProcesso === 0 && <TableCell align='center' rowSpan={mes.processosAprovados.length}>{mes.processosProtocolados}</TableCell>}
 												{indexProcesso === 0 && <TableCell align='center' rowSpan={mes.processosAprovados.length}>{mes.processosAprovados.length}</TableCell>}
@@ -483,8 +483,8 @@ export default function TableData() {
 												<TableCell align='center'>{processo.carecteristicasProjeto}</TableCell>
 												<TableCell align='center'>{processo.regiaoCidade}</TableCell>
 											</TableRow>
-										}) : <TableRow>
-											{indexMes === 0 && <TableCell align='center' rowSpan={totalProcessos}>{ano.ano}</TableCell>}
+										}) : <TableRow key={`${indexMes}-0`}>
+											{indexMes === 0 && <TableCell align='center' rowSpan={totalRegistros}>{ano.ano}</TableCell>}
 											<TableCell align='center'>{mes.mes}</TableCell>
 											<TableCell align='center'>{mes.processosProtocolados}</TableCell>
 											<TableCell align='center'>-</TableCell>
