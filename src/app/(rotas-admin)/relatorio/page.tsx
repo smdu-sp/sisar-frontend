@@ -21,10 +21,13 @@ import { getArQunatitativoXlsx, getArStatusResumoQuantitativoPdf } from '@/compo
 import { getRrQunatitativoXlsx, getRrStatusResumoQuantitativoPdf } from '@/components/relatorios/rr-status-resumo-quantitativo';
 import { getArGraficoProgressaoMensal } from '@/components/relatorios/ar-grafico-progressao-mensal';
 import { getArControleGabinetePrefeito } from '@/components/relatorios/ar-controle-gabinete-prefeito';
+import { ArrowRightAlt } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export default function ExportRelatorios() {
+  const router = useRouter()
   const [ relatorioType, setRelatorioType ] = useState<
     'ar-status-resumo-quantitativo' | 
     'rr-status-resumo-quantitativo' |
@@ -102,132 +105,140 @@ export default function ExportRelatorios() {
   }
 
   return (
-    <Content
-      titulo='Relatórios'
-      breadcrumbs={[{
-        label: 'Relatórios',
-        href: ''
-      }]}
-    >
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: 2 
-        }}
-      >
-        <Card
-          size='lg'
-          variant='outlined'
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' }
-          }}
-        >
-          <FormControl>
-            <FormLabel>Tipo de Relatório</FormLabel>
-            <Select
-              defaultValue={'Tipo 1'}
-              sx={{
-                width: '100%',
-                mb: 3,
-                alignSelf: { xs: 'center', sm: 'auto' }
-              }}
-            >
-              <Option
-                onClick={() => setRelatorioType('ar-status-resumo-quantitativo')}
-                value='aprova-rapido'
-              >
-                Aprova Rápido - Status e Resumo Quantitativo
-              </Option>
-              <Option
-                onClick={() => setRelatorioType('ar-grafico-progressao-mensal')}
-                value='ar-grafico-progressao-mensal'
-              >
-                Aprova Rápido - Gráfico de Progressão Mensal
-              </Option>
-              <Option
-                onClick={() => setRelatorioType('ar-controle-gabinete-prefeito')}
-                value='ar-controle-gabinete-prefeito'
-              >
-                Aprova Rápido - Controle Gabinete Prefeito
-              </Option>
-              <Option
-                onClick={() => setRelatorioType('rr-status-resumo-quantitativo')}
-                value='requalifica-rapido'
-              >
-                Requalifica Rápido - Status e Resumo Quantitativo
-              </Option>
-            </Select>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={['DatePicker']}>
-                <DatePicker
-                  onChange={(e) => setDate(e?.toDate())}
-                  views={['month', 'year']}
-                />
-              </DemoContainer>
-            </LocalizationProvider>
-            <FormLabel sx={{ mt: 2 }}>Extensão de Arquivo</FormLabel>
-            <Select
-              defaultValue={'XLSX'}
-              sx={{
-                width: '100%',
-                mb: { xs: 3, sm: 0 },
-                alignSelf: { xs: 'center', sm: 'auto' }
-              }}
-            >
-              <Option
-                onClick={() => setFileType('XLSX')}
-                value='XLSX'
-              >
-                XLSX (Excel)
-              </Option>
-              <Option
-                onClick={() => setFileType('PDF')}
-                value='PDF'
-              >
-                PDF
-              </Option>
-            </Select>
-          </FormControl>
-          <FormControl
-            sx={{
-              mx: 2,
-              alignSelf: { xs: 'start', sm: 'end' },
-              display: 'flex',
-              flexDirection: 'row'
-            }}
-          >
-            <Button
-              color='primary'
-              onClick={exportFile}
-              startDecorator={
-                fileType == 'XLSX' 
-                ? <DownloadForOfflineRoundedIcon /> 
-                : <RemoveRedEyeRoundedIcon />
-              }
-              sx={{ width: 'fit-content' }}
-            >
-              { fileType == 'XLSX' ? 'Download' : 'Pré-visualizar' }
-            </Button>
-          </FormControl>
-        </Card>
-        <Card>
-          <Box>
-            <Typography level='h4'>
-              Visualizar Relatório
-            </Typography>
-          </Box>
-          <Divider />
-          {pdfUrl && (
-            <iframe
-              src={pdfUrl}
-              title="Visualizador de PDF"
-              style={{ width: '100%', height: 1200 }}
-            ></iframe>
-          )}
-        </Card>
-      </Box>
-    </Content>
-  );
+		<Content
+			titulo='Relatórios'
+			breadcrumbs={[
+				{
+					label: 'Relatórios',
+					href: '',
+				},
+			]}>
+			<Box
+				sx={{
+					display: 'flex',
+					flexDirection: 'column',
+					gap: 2,
+				}}>
+				<Card
+					size='lg'
+					variant='outlined'
+					sx={{
+						display: 'flex',
+						flexDirection: { xs: 'column', sm: 'row' },
+					}}>
+					<FormControl>
+						<FormLabel>Tipo de Relatório</FormLabel>
+						<Select
+							defaultValue={'Tipo 1'}
+							sx={{
+								width: '100%',
+								mb: 3,
+								alignSelf: { xs: 'center', sm: 'auto' },
+							}}>
+							<Option
+								onClick={() =>
+									setRelatorioType('ar-status-resumo-quantitativo')
+								}
+								value='aprova-rapido'>
+								Aprova Rápido - Status e Resumo Quantitativo
+							</Option>
+							<Option
+								onClick={() => setRelatorioType('ar-grafico-progressao-mensal')}
+								value='ar-grafico-progressao-mensal'>
+								Aprova Rápido - Gráfico de Progressão Mensal
+							</Option>
+							<Option
+								onClick={() =>
+									setRelatorioType('ar-controle-gabinete-prefeito')
+								}
+								value='ar-controle-gabinete-prefeito'>
+								Aprova Rápido - Controle Gabinete Prefeito
+							</Option>
+							<Option
+								onClick={() =>
+									setRelatorioType('rr-status-resumo-quantitativo')
+								}
+								value='requalifica-rapido'>
+								Requalifica Rápido - Status e Resumo Quantitativo
+							</Option>
+						</Select>
+						<LocalizationProvider dateAdapter={AdapterDayjs}>
+							<DemoContainer components={['DatePicker']}>
+								<DatePicker
+									onChange={(e) => setDate(e?.toDate())}
+									views={['month', 'year']}
+								/>
+							</DemoContainer>
+						</LocalizationProvider>
+						<FormLabel sx={{ mt: 2 }}>Extensão de Arquivo</FormLabel>
+						<Select
+							defaultValue={'XLSX'}
+							sx={{
+								width: '100%',
+								mb: { xs: 3, sm: 0 },
+								alignSelf: { xs: 'center', sm: 'auto' },
+							}}>
+							<Option
+								onClick={() => setFileType('XLSX')}
+								value='XLSX'>
+								XLSX (Excel)
+							</Option>
+							<Option
+								onClick={() => setFileType('PDF')}
+								value='PDF'>
+								PDF
+							</Option>
+						</Select>
+					</FormControl>
+					<FormControl
+						sx={{
+							mx: 2,
+							alignSelf: { xs: 'start', sm: 'end' },
+							display: 'flex',
+							gap: '4px',
+							flexDirection: 'row',
+						}}>
+						<Button
+							color='primary'
+							onClick={exportFile}
+							startDecorator={
+								fileType == 'XLSX' ? (
+									<DownloadForOfflineRoundedIcon />
+								) : (
+									<RemoveRedEyeRoundedIcon />
+								)
+							}
+							sx={{ width: 'fit-content' }}>
+							{fileType == 'XLSX' ? 'Download' : 'Pré-visualizar'}
+						</Button>
+						<Button
+							color='primary'
+							style={{
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								gap: '4px',
+							}}
+							onClick={() =>
+								router.push('/relatorio/ar-grafico-progressao-mensal')
+							}>
+							Mostar em tela <ArrowRightAlt />
+						</Button>
+					</FormControl>
+				</Card>
+				<Card>
+					<Box>
+						<Typography level='h4'>Visualizar Relatório</Typography>
+					</Box>
+					<Divider />
+					{pdfUrl && (
+						<iframe
+							src={pdfUrl}
+							title='Visualizador de PDF'
+							style={{ width: '100%', height: 1200 }}></iframe>
+					)}
+				</Card>
+			</Box>
+		</Content>
+	);
 }
