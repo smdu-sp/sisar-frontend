@@ -1,7 +1,5 @@
 /** @format */
-
 'use client';
-
 import AlertsProvider from '@/providers/alertsProvider';
 import AuthSessionProvider from '@/providers/sessionProvider';
 import MenuProvider from '@/shared/contexts/MenuContext';
