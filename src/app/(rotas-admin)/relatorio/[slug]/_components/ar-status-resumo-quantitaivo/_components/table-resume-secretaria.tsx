@@ -75,16 +75,19 @@ export default function TableResumeSecretaria() {
 								Status
 							</TableCell>
 							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
+								Valor Total
+							</TableCell>
+							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
 								Secretaria
 							</TableCell>
 							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
-								Total
+								Valor Secretaria
 							</TableCell>
 							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
 								Setor
 							</TableCell>
 							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
-								Total
+								Valor Seor
 							</TableCell>
 						</TableRow>
 					</TableHead>
@@ -99,6 +102,11 @@ export default function TableResumeSecretaria() {
 													{secretariaIndex == 0 &&
 														SectorIndex == 0 &&
 														item.title}
+												</TableCell>
+												<TableCell style={{ color: item.color }}>
+													{secretariaIndex == 0 &&
+														SectorIndex == 0 &&
+														item.value}
 												</TableCell>
 												<TableCell style={{ color: item.color }}>
 													{SectorIndex == 0 && secretaria.title}
