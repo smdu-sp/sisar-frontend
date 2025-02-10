@@ -22,7 +22,7 @@ const resume: TableResumeProps[] = [
 	{ label: 'Total de Processos', value: 1767, color: 'black' },
 	{ label: 'Análise de Admissibilidade', value: 9, color: 'orange' },
 	{ label: 'Inadmissíveis', value: 698, color: 'red' },
-	{ label: 'Admissíveis', value: 1060, color: 'purple' },
+	{ label: 'Admissíveis', value: 1060, color: '#1e40af' },
 ];
 
 export default function TableResume() {

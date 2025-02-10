@@ -27,7 +27,7 @@ interface TableResumeSecretariaProps {
 	title: string;
 	value: number;
 	color: string;
-	secretarias: Secretaria[];
+	secretarias?: Secretaria[];
 }
 
 const report: TableResumeSecretariaProps[] = [
@@ -60,71 +60,199 @@ const report: TableResumeSecretariaProps[] = [
 			},
 		],
 	},
+	{
+		title: '2. Deferidos',
+		value: 880,
+		color: '#1e40af',
+		secretarias: [
+			{
+				title: 'SMUL',
+				value: 321,
+				sectors: [
+					{ title: 'RESID', value: 86 },
+					{ title: 'PARHIS', value: 215 },
+					{ title: 'SERVIN', value: 9 },
+					{ title: 'COMIN', value: 7 },
+					{ title: 'CAEPP', value: 4 },
+				],
+			},
+			{
+				title: 'GRAPROEM',
+				value: 559,
+				sectors: [
+					{ title: 'RESID', value: 229 },
+					{ title: 'PARHIS', value: 302 },
+					{ title: 'SERVIN', value: 21 },
+					{ title: 'COMIN', value: 7 },
+					{ title: 'CAEPP', value: 0 },
+				],
+			},
+		],
+	},
+	{
+		title: '3. Indeferidos',
+		value: 93,
+		color: '#60a5fa',
+		secretarias: [
+			{
+				title: 'SMUL',
+				value: 28,
+				sectors: [
+					{ title: 'RESID', value: 6 },
+					{ title: 'PARHIS', value: 20 },
+					{ title: 'SERVIN', value: 1 },
+					{ title: 'COMIN', value: 1 },
+					{ title: 'CAEPP', value: 0 },
+				],
+			},
+			{
+				title: 'GRAPROEM',
+				value: 65,
+				sectors: [
+					{ title: 'RESID', value: 11 },
+					{ title: 'PARHIS', value: 47 },
+					{ title: 'SERVIN', value: 3 },
+					{ title: 'COMIN', value: 4 },
+					{ title: 'CAEPP', value: 0 },
+				],
+			},
+		],
+	},
+	{
+		title: '4. Via Ordinária a pedido do interessado',
+		value: 13,
+		color: '#a8a29e',
+	},
 ];
 
 export default function TableResumeSecretaria() {
 	return (
 		<Stack style={{ paddingBottom: '16px', paddingTop: '16px' }}>
-			<TableContainer
-				style={{ maxWidth: 'fit-content' }}
-				component={Paper}>
+			<TableContainer component={Paper}>
 				<Table aria-label='simple table resume'>
 					<TableHead style={{ background: '#00a1b9' }}>
 						<TableRow style={{ background: '#00a1b9' }}>
 							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
 								Status
 							</TableCell>
-							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
-								Valor Total
+							<TableCell
+								align='center'
+								style={{ color: '#fff', fontWeight: '700' }}>
+								Valor Total Parcial
 							</TableCell>
 							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
 								Secretaria
 							</TableCell>
-							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
-								Valor Secretaria
+							<TableCell
+								align='center'
+								style={{ color: '#fff', fontWeight: '700' }}>
+								Valor Secretaria Parcial
 							</TableCell>
 							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
 								Setor
 							</TableCell>
-							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
-								Valor Seor
+							<TableCell
+								align='center'
+								style={{ color: '#fff', fontWeight: '700' }}>
+								Valor Setor Parcial
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{report.map((item, index) => {
-							return item.secretarias.map((secretaria, secretariaIndex) => {
-								return secretaria.sectors.map((sector, SectorIndex) => {
-									return (
-										index == 0 && (
+							return item.secretarias ? (
+								item.secretarias?.map((secretaria, secretariaIndex) => {
+									return secretaria.sectors.map((sector, SectorIndex) => {
+										return (
 											<TableRow key={index + secretariaIndex + SectorIndex}>
-												<TableCell style={{ color: item.color }}>
-													{secretariaIndex == 0 &&
-														SectorIndex == 0 &&
-														item.title}
-												</TableCell>
-												<TableCell style={{ color: item.color }}>
-													{secretariaIndex == 0 &&
-														SectorIndex == 0 &&
-														item.value}
-												</TableCell>
-												<TableCell style={{ color: item.color }}>
-													{SectorIndex == 0 && secretaria.title}
-												</TableCell>
-												<TableCell style={{ color: item.color }}>
-													{SectorIndex == 0 && secretaria.value}
-												</TableCell>
-												<TableCell style={{ color: item.color }}>
+												{SectorIndex == 0 && secretariaIndex == 0 && (
+													<TableCell
+														rowSpan={
+															(secretaria.sectors.length ?? 1) *
+															(item.secretarias?.length ?? 1)
+														}
+														style={{
+															color: item.color,
+															borderRight: '.5px solid #cacaca',
+														}}>
+														{item.title}
+													</TableCell>
+												)}
+												{SectorIndex == 0 && secretariaIndex == 0 && (
+													<TableCell
+														align='center'
+														rowSpan={
+															(secretaria.sectors.length ?? 1) *
+															(item.secretarias?.length ?? 1)
+														}
+														style={{
+															color: item.color,
+															borderRight: '.5px solid #cacaca',
+														}}>
+														{secretariaIndex == 0 &&
+															SectorIndex == 0 &&
+															item.value}
+													</TableCell>
+												)}
+												{SectorIndex == 0 && (
+													<TableCell
+														rowSpan={secretaria.sectors.length}
+														style={{
+															color: item.color,
+															borderRight: '.5px solid #cacaca',
+														}}>
+														{SectorIndex == 0 && secretaria.title}
+													</TableCell>
+												)}
+
+												{SectorIndex == 0 && (
+													<TableCell
+														align='center'
+														rowSpan={secretaria.sectors.length}
+														style={{
+															color: item.color,
+															borderRight: '.5px solid #cacaca',
+														}}>
+														{SectorIndex == 0 && secretaria.value}
+													</TableCell>
+												)}
+												<TableCell
+													style={{
+														color: item.color,
+														borderRight: '.5px solid #cacaca',
+													}}>
 													{sector.title}
 												</TableCell>
-												<TableCell style={{ color: item.color }}>
+												<TableCell
+													align='center'
+													style={{ color: item.color }}>
 													{sector.value}
 												</TableCell>
 											</TableRow>
-										)
-									);
-								});
-							});
+										);
+									});
+								})
+							) : (
+								<TableRow>
+									<TableCell
+										colSpan={3}
+										style={{
+											color: item.color,
+											borderRight: '.5px solid #cacaca',
+										}}>
+										{item.title}
+									</TableCell>
+									<TableCell
+										align='center'
+										colSpan={3}
+										style={{
+											color: item.color,
+											borderRight: '.5px solid #cacaca',
+										}}>
+										{item.value}
+									</TableCell>
+								</TableRow>
+							);
 						})}
 					</TableBody>
 				</Table>

@@ -40,7 +40,7 @@ export default function ARStatusResumoQnt() {
 						<ListItem style={{ color: '#22c55e' }}>
 							verde = Admissíveis ainda em análise{' '}
 						</ListItem>
-						<ListItem style={{ color: '#1e3a8a' }}>
+						<ListItem style={{ color: '#1e40af' }}>
 							azul escuro = Processos deferidos{' '}
 						</ListItem>
 						<ListItem style={{ color: '#60a5fa' }}>
