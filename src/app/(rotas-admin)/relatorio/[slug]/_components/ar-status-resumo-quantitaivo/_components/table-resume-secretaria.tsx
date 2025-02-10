@@ -119,7 +119,7 @@ const report: TableResumeSecretariaProps[] = [
 		],
 	},
 	{
-		title: '4. Via Ordinária a pedido do interessado',
+		title: '4. Via ordinária a pedido do interessado',
 		value: 13,
 		color: '#a8a29e',
 	},
