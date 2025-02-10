@@ -233,7 +233,7 @@ export default function TableResumeSecretaria() {
 									});
 								})
 							) : (
-								<TableRow>
+								<TableRow key={index}>
 									<TableCell
 										colSpan={3}
 										style={{
