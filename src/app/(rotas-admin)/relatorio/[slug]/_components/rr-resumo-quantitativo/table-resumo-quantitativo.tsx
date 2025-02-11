@@ -294,25 +294,35 @@ export default function TableResumoQuantitativo() {
 				<Table aria-label='simple table resume'>
 					<TableHead style={{ background: '#00a1b9' }}>
 						<TableRow style={{ background: '#00a1b9' }}>
-							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
+							<TableCell align='center' rowSpan={2} style={{ color: '#fff', fontWeight: '700' }}>
 								Status
 							</TableCell>
 							<TableCell
+								rowSpan={2}
 								align='center'
 								style={{ color: '#fff', fontWeight: '700' }}>
-								Valor Total Parcial
+								Total Parcial
 							</TableCell>
-							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
+							<TableCell align='center' rowSpan={2} style={{ color: '#fff', fontWeight: '700' }}>
 								Secretaria
 							</TableCell>
 							<TableCell
+								rowSpan={2}
 								align='center'
 								style={{ color: '#fff', fontWeight: '700' }}>
-								Valor Secretaria Parcial
+								Secretaria Parcial
 							</TableCell>
-							<TableCell style={{ color: '#fff', fontWeight: '700' }}>
-								Setor
+							<TableCell align='center' rowSpan={2} style={{ color: '#fff', fontWeight: '700' }}>
+								Unidade
 							</TableCell>
+							<TableCell
+								colSpan={3}
+								align='center'
+								style={{ color: '#fff', fontWeight: '700' }}>
+								Legislação de Patrimônio Cultural
+							</TableCell>
+						</TableRow>
+						<TableRow style={{ background: '#00a1b9' }}>
 							<TableCell
 								align='center'
 								style={{ color: '#fff', fontWeight: '700' }}>
