@@ -1,10 +1,10 @@
 'use client'
 
-import { IInicial } from "@/shared/services/inicial/inicial.services";
+import { IInicial } from "@/types/inicial/inicial.dto";
 import { IAdmissibilidade } from "@/types/admissibilidade/admissibilidade.dto";
 import React, { useEffect, useState } from "react";
 import * as comum from "@/shared/services/common/comum.services";
-import * as finalizacaoServices from "@/shared/services/finalizacao.service";
+import * as finalizacaoServices from "@/shared/services/finalizacao/finalizacao.service";
 import { useRouter as useRouterNavigation } from "next/navigation";
 import { Box, Button, Chip, Divider, FormControl, FormHelperText, FormLabel, Grid, Input, Option, Select, Skeleton, Textarea } from "@mui/joy";
 import { AlertsContext } from '@/providers/alertsProvider';

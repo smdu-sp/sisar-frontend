@@ -1,7 +1,7 @@
 'use server';
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/authOptions";
+import { authOptions } from "../../auth/authOptions";
 import { signOut } from "next-auth/react";
 import { IFinalizacaoResponse, IFinalizacao } from "@/types/finalizacao/finalizacao.dto";
 

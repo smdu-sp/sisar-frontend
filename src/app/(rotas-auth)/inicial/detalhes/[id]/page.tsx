@@ -5,7 +5,7 @@ import * as inicialServices from '@/shared/services/inicial/inicial.services';
 import * as usuarioServices from '@/shared/services/usuario/usuario.services';
 import ContentTabs from './content';
 import { useEffect, useState } from "react";
-import { IInicial } from "@/shared/services/inicial/inicial.services";
+import { IInicial } from "@/types/inicial/inicial.dto";
 import { IUsuario } from "@/shared/services/usuario/usuario.services";
 
 export default async function InicialDetalhes(props: any) {

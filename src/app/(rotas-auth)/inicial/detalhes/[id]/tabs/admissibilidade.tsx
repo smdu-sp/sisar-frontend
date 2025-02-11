@@ -1,6 +1,6 @@
 'use client'
 
-import { IInicial } from "@/shared/services/inicial/inicial.services";
+import { IInicial } from "@/types/inicial/inicial.dto";
 import { IAdmissibilidade } from "@/types/admissibilidade/admissibilidade.dto";
 import React, { useEffect, useState } from "react";
 import * as admissibilidadeServices from "@/shared/services/admissibilidade/admissibilidade.services";
