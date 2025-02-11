@@ -1,12 +1,12 @@
 /** @format */
 
-import ARProgressao from './_components/ar-progressao-mensal/ar-progressao';
-import { Container } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
-import ArGabinetePrefeito from './_components/ar-gabinete-prefeito/ar-gabinete-prefeito';
-import ArStatusResumoQnt from './_components/ar-status-resumo-quantitaivo/ar-status-resumo-quantitaivo';
-import RRStatusResumoQtn from './_components/rr-status-resumo-quantitativo/rr-status-resumo-quantitativo';
 import { Button, Card, CardContent, Sheet, Typography } from '@mui/joy';
+import ArGabinetePrefeito from './_components/ar-gabinete-prefeito/ar-gabinete-prefeito';
+import ARProgressao from './_components/ar-progressao-mensal/ar-progressao';
+import ArStatusResumoQnt from './_components/ar-status-resumo-quantitaivo/ar-status-resumo-quantitaivo';
+import RRStatusQuantitativo from './_components/rr-status-quantitativo/rr-status-resumo-quantitativo';
+import RRResumoQuantitativo from './_components/rr-resumo-quantitativo/rr-resumo-quantitativo';
 
 export default async function PageRelatorioSlug({
 	params,
@@ -22,8 +22,10 @@ export default async function PageRelatorioSlug({
 			return <ArGabinetePrefeito />;
 		case `ar-status-resumo-quantitaivo`:
 			return <ArStatusResumoQnt />;
-		case `rr-status-resumo-quantitativo`:
-			return <RRStatusResumoQtn />;
+		case `rr-status-quantitativo`:
+			return <RRStatusQuantitativo />;
+		case `rr-resumo-quantitativo`:
+			return <RRResumoQuantitativo />;
 		default:
 			return (
 				<Sheet
