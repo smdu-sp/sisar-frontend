@@ -4,6 +4,7 @@ import { Container, List, ListItem, Stack, Typography } from '@mui/material';
 import React from 'react';
 import TableResume from './_components/table-resume';
 import TableResumeSecretaria from './_components/table-resume-secretaria';
+import TableProcessos from './_components/table-processos';
 
 export default function ARStatusResumoQnt() {
 	return (
@@ -55,6 +56,7 @@ export default function ARStatusResumoQnt() {
 			</Stack>
 
 			<TableResumeSecretaria />
+			<TableProcessos />
 		</Container>
 	);
 }
