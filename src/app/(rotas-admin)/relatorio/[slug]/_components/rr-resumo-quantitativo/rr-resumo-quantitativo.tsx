@@ -1,11 +1,10 @@
 /** @format */
 
 import { Container, List, ListItem, Stack, Typography } from '@mui/material';
-import TableProcessosAR from './_components/table-processos';
-import TableResume from './_components/table-resume';
-import TableResumeSecretaria from './_components/table-resume-secretaria';
+import TableResumoQuantitativo from './table-resumo-quantitativo';
+import TableResume from '../ar-status-resumo-quantitaivo/_components/table-resume';
 
-export default function ARStatusResumoQnt() {
+export default function RRResumoQuantitativo() {
 	return (
 		<Container
 			maxWidth={'xl'}
@@ -14,7 +13,7 @@ export default function ARStatusResumoQnt() {
 				<Typography
 					variant='h4'
 					style={{ fontWeight: '700' }}>
-					APROVA RÁPIDO
+					REQUALIFICA RÁPIDO
 				</Typography>
 			</Stack>
 			<Stack
@@ -53,8 +52,7 @@ export default function ARStatusResumoQnt() {
 				</div>
 				<TableResume />
 			</Stack>
-			<TableResumeSecretaria />
-			<TableProcessosAR />
+			<TableResumoQuantitativo />
 		</Container>
 	);
 }
