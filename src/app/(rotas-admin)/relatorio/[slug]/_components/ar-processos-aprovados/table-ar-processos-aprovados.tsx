@@ -9,7 +9,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-
 export interface ProcessoData {
 	processo: string;
 	tipoDeUso: string;
@@ -195,7 +194,9 @@ export default function TableARProcessosAprovados() {
 																fontSize: '12px',
 															}}
 															align='center'>
-															{processo.tempoInicial}
+															{processo.tempoInicial == 0
+																? '-'
+																: processo.tempoInicial}
 														</TableCell>
 														<TableCell
 															style={{
@@ -203,7 +204,9 @@ export default function TableARProcessosAprovados() {
 																fontSize: '12px',
 															}}
 															align='center'>
-															{processo.tempoRecurso}
+															{processo.tempoRecurso == 0
+																? '-'
+																: processo.tempoRecurso}
 														</TableCell>
 														<TableCell
 															style={{
@@ -211,7 +214,9 @@ export default function TableARProcessosAprovados() {
 																fontSize: '12px',
 															}}
 															align='center'>
-															{processo.tempoSegundoRecurso}
+															{processo.tempoSegundoRecurso == 0
+																? '-'
+																: processo.tempoSegundoRecurso}
 														</TableCell>
 														<TableCell
 															style={{
