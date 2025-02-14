@@ -13,6 +13,7 @@ export interface IProcessoAprovado {
 	numProcesso: number;
 	tempoAnaliseInicial: number;
 	tempoAnaliseRecurso?: number;
+	tempoAnaliseRecursoTerceiraInstancia?: number;
 	categoriaUso: string;
 	responsavelProjeto: string;
 	empresa: string;
@@ -51,6 +52,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 45,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -61,6 +63,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 90,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -71,6 +74,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 35,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 					],
@@ -87,6 +91,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 36,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 					],
@@ -108,6 +113,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 56,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -118,6 +124,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -128,6 +135,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 					],
@@ -144,6 +152,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 66,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -154,6 +163,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 0,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 					],
@@ -170,6 +180,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 76,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 0,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 					],
@@ -186,6 +197,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 80,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 0,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -196,6 +208,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 0,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -206,6 +219,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 0,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -216,6 +230,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 0,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -226,6 +241,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 0,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 					],
@@ -242,6 +258,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 81,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 0,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 					],
@@ -258,6 +275,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 82,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -278,6 +296,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -298,6 +317,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -318,6 +338,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 					],
@@ -334,6 +355,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 83,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -344,6 +366,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 					],
@@ -365,6 +388,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -375,6 +399,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -385,6 +410,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 						{
@@ -395,6 +421,7 @@ const relatorio: IRelatorioAnual = {
 							responsavelProjeto: 'Marcelo Saicaly Zapparoli',
 							tempoAnaliseInicial: 85,
 							tempoAnaliseRecurso: 8,
+							tempoAnaliseRecursoTerceiraInstancia: 4,
 							carecteristicasProjeto: '1 prédio com 2 andares e 1 subsolo',
 						},
 					],
@@ -407,11 +434,12 @@ const relatorio: IRelatorioAnual = {
 const headerTable = [
 	'Ano',
 	'Mês',
-	'Processos Protocolados Aprova Rápido',
+	'Processos Protocolados Requalifica Rápido',
 	'Processos Aprovados',
 	'Nº Processo',
-	'Tempo de Análise Pedido Inicial',
-	'Tempo de Análise de Recurso',
+	'Tempo de Análise Pedido Inicial (dias)',
+	'Tempo de Análise de Recurso 2ª instância (dias)',
+	'Tempo de Análise de Recurso 3ª instância (dias)',
 	'Categoria de Uso',
 	'Responsável Pelo Projeto',
 	'Empresa',
@@ -419,7 +447,7 @@ const headerTable = [
 	'Região da Cidade',
 ];
 
-export default function TableData() {
+export default function TableRRGabinetePrefeito() {
 	return (
 		<Grid
 			style={{ paddingBottom: '16px', paddingTop: '16px' }}
@@ -532,6 +560,14 @@ export default function TableData() {
 															}}
 															align='center'>
 															{processo.tempoAnaliseRecurso}
+														</TableCell>
+														<TableCell
+															style={{
+																borderRight: '.5px solid #cacaca',
+																fontSize: '12px',
+															}}
+															align='center'>
+															{processo.tempoAnaliseRecursoTerceiraInstancia}
 														</TableCell>
 														<TableCell
 															style={{

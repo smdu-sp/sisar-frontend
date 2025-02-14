@@ -9,6 +9,7 @@ import RRStatusQuantitativo from './_components/rr-status-quantitativo/rr-status
 import RRResumoQuantitativo from './_components/rr-resumo-quantitativo/rr-resumo-quantitativo';
 import ARProcessosAprovados from './_components/ar-processos-aprovados/ar-processos-aprovados';
 import RRProcessosAprovados from './_components/rr-processos-aprovados/rr-processos-aprovados';
+import RRGabienetePrefeito from './_components/rr-gabinete-prefeito/rr-gabinete-prefeito';
 
 export default async function PageRelatorioSlug({
 	params,
@@ -32,6 +33,8 @@ export default async function PageRelatorioSlug({
 			return <ARProcessosAprovados />;
 		case `rr-processos-aprovados`:
 			return <RRProcessosAprovados />;
+		case `rr-gabinete-prefeito`:
+			return <RRGabienetePrefeito />;
 		default:
 			return (
 				<Sheet
