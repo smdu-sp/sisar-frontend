@@ -1,29 +1,33 @@
 /** @format */
 
-import { Container, Stack, Typography, Grid } from '@mui/material';
+import { Container, Stack, Typography } from '@mui/material';
 import dynamic from 'next/dynamic';
-import TableData from './table-data';
+import TableRRProgressao from './table-rr-progressao-mensal';
 
-const LineChart = dynamic(() => import('./line-chart'), {
+const LineChartRR = dynamic(() => import('./line-chart-rr'), {
 	ssr: false,
 });
 
-export default function ARProgressao() {
+export default function RRProgressao() {
 	return (
 		<Container
 			maxWidth={'xl'}
 			style={{ paddingBottom: '0px', paddingTop: '16px' }}>
 			<Stack spacing={4}>
 				{/* <ThemeToggle /> */}
-				<Typography variant='h4' style={{fontWeight:'700'}}>Progressão AR Protocolados</Typography>
-				
-					<TableData />
+				<Typography
+					variant='h4'
+					style={{ fontWeight: '700' }}>
+					Progressão RR Protocolados
+				</Typography>
 
-				<LineChart
-					title="AR's Protocolados no tempo"
+				<TableRRProgressao />
+
+				<LineChartRR
+					title="Progressão RR's Protocolados no tempo"
 					series={[
 						{
-							name: 'AR Protocolados no tempo',
+							name: 'RR Protocolados no tempo',
 							data: [30, 40, 45, 50, 49, 60, 70, 91, 49, 60, 70, 91],
 						},
 					]}
