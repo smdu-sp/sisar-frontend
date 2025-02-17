@@ -3,10 +3,12 @@
 import { ArrowBack } from '@mui/icons-material';
 import { Button, Card, CardContent, Sheet, Typography } from '@mui/joy';
 import ArGabinetePrefeito from './_components/ar-gabinete-prefeito/ar-gabinete-prefeito';
+import ARProcessosAprovados from './_components/ar-processos-aprovados/ar-processos-aprovados';
 import ARProgressao from './_components/ar-progressao-mensal/ar-progressao';
 import ArStatusResumoQnt from './_components/ar-status-resumo-quantitaivo/ar-status-resumo-quantitaivo';
-import RRStatusQuantitativo from './_components/rr-status-quantitativo/rr-status-resumo-quantitativo';
+import RRProgressao from './_components/rr-grafico-progressao-mensal/rr-grafico-progressao-mensal';
 import RRResumoQuantitativo from './_components/rr-resumo-quantitativo/rr-resumo-quantitativo';
+import RRStatusQuantitativo from './_components/rr-status-quantitativo/rr-status-resumo-quantitativo';
 import ARProcessosAprovados from './_components/ar-processos-aprovados/ar-processos-aprovados';
 import RRProcessosAprovados from './_components/rr-processos-aprovados/rr-processos-aprovados';
 import RRGabienetePrefeito from './_components/rr-gabinete-prefeito/rr-gabinete-prefeito';
@@ -32,12 +34,14 @@ export default async function PageRelatorioSlug({
 			return <RRResumoQuantitativo />;
 		case `ar-processos-aprovados`:
 			return <ARProcessosAprovados />;
+		case `rr-grafico-progressao-mensal`:
+			return <RRProgressao />;
 		case `rr-processos-aprovados`:
 			return <RRProcessosAprovados />;
 		case `rr-gabinete-prefeito`:
 			return <RRGabienetePrefeito />;
 		case `rr-analise-admissibilidade`:
-			return <RRAnaliseAdmissibilidade />;
+			return <RRAnaliseAdmissibilidade 
 		default:
 			return (
 				<Sheet
